@@ -1,0 +1,52 @@
+{
+  "name": "rdlcui",
+  "version": "1.0.0",
+  "description": "Next.js application for displaying RDLC Reports with pagination and export functionality",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "next.js",
+    "react",
+    "rdlc",
+    "report"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@mui/icons-material": "^7.3.6",
+    "@mui/system": "^7.3.6",
+    "@tailwindcss/postcss": "^4.1.18",
+    "axios": "^1.13.2",
+    "csv-stringify": "^6.6.0",
+    "lucide-react": "^0.562.0",
+    "next": "^15.5.9",
+    "pdfjs-dist": "^3.11.174",
+    "pdfkit": "^0.17.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hook-form": "^7.69.0",
+    "react-toastify": "^11.0.5",
+    "xml2js": "^0.6.2",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/csv-stringify": "^1.4.3",
+    "@types/node": "^25.0.2",
+    "@types/pdfkit": "^0.17.4",
+    "@types/react": "^19.2.7",
+    "@typescript-eslint/eslint-plugin": "^8.49.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.0.10",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3"
+  }
+}
