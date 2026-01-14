@@ -520,7 +520,7 @@
 // export default MemberReportViewe
 
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -529,7 +529,7 @@ import * as yup from "yup";
 import { RefreshCw } from "lucide-react";
 import ReportNavigation from "@/components/ReportNavigation";
 
-type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
+export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
 
 interface FormInputs {
   startDate: string;
@@ -570,8 +570,6 @@ const MemberReportViewer = () => {
   const [htmlReport, setHtmlReport] = useState("");
   const [hasNextPage, setHasNextPage] = useState(false);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
-
-  const reportRef = useRef(null);
 
   const {
     register,
@@ -860,21 +858,6 @@ const MemberReportViewer = () => {
           className="w-full overflow-auto bg-white rounded-b-lg"
           style={{ height: "90vh" }}
         >
-          <style>{`
-            @keyframes slideInRight {
-              from {
-                opacity: 0;
-                transform: translateX(50px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-            .report-slide {
-              animation: slideInRight 0.4s ease-in-out;
-            }
-          `}</style>
           {loading ? (
             <div className="h-full bg-white rounded-lg p-4 md:p-8 flex items-center justify-center">
               <div className="text-center">
@@ -895,17 +878,20 @@ const MemberReportViewer = () => {
           ) : reportLoaded ? (
             <div
               key={currentPage}
-              className="report-slide p-4 md:p-8"
+              className="flex justify-center items-center p-4 md:p-8"
               style={{
                 minHeight: "100%",
               }}
             >
-              {htmlReport && (
-                <div
-                  dangerouslySetInnerHTML={{ __html: htmlReport }}
-                  className="rdlc-html-report w-full"
-                />
-              )}
+              <div className="w-full flex justify-center ">
+                {htmlReport && (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: htmlReport }}
+                    className=""
+                    style={{ maxWidth: "1200px", margin: "0 auto" }}
+                  />
+                )}
+              </div>
             </div>
           ) : (
             <div className="h-full bg-white rounded-b-lg p-4 md:p-8 text-center text-gray-400 flex items-center justify-center">

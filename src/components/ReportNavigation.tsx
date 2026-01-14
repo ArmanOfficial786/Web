@@ -178,6 +178,7 @@ import {
   Image,
   ChevronDown,
 } from "lucide-react";
+import { ReportFormat } from "@/components/MemberReport";
 
 interface ReportNavigationProps {
   currentPage: number;
@@ -193,7 +194,7 @@ interface ReportNavigationProps {
   onPrint: () => void;
   showDownloadMenu: boolean;
   onToggleDownloadMenu: () => void;
-  onDownload: (format: string) => void;
+  onDownload: (format: ReportFormat) => void;
 }
 
 const ReportNavigation: React.FC<ReportNavigationProps> = ({
