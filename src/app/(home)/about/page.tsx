@@ -37,7 +37,7 @@ const schema = yup.object({
     }),
 });
 
-const MemberReportViewer = () => {
+const MemberSubReportViewer = () => {
   const { t } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -68,7 +68,7 @@ const MemberReportViewer = () => {
   const generateReport = async (
     format?: string,
     page: number = 1,
-    size: number = pageSize,
+    size: number = pageSize
   ) => {
     setLoading(true);
     setError("");
@@ -87,8 +87,8 @@ const MemberReportViewer = () => {
 
       // Build URL with format query parameter only if format is provided
       const url = format
-        ? `http://localhost:5106/api/MemberDetailReport/generate?format=${format}`
-        : `http://localhost:5106/api/MemberDetailReport/generate`;
+        ? `http://localhost:5106/api/DynamicSubReport/generate-memberReport?format=${format}`
+        : `http://localhost:5106/api/DynamicSubReport/generate-memberReport`;
 
       const response = await fetch(url, {
         method: "POST",
@@ -101,7 +101,7 @@ const MemberReportViewer = () => {
 
       if (!response.ok) {
         throw new Error(
-          `Failed to generate report: ${response.status} ${response.statusText}`,
+          `Failed to generate report: ${response.status} ${response.statusText}`
         );
       }
 
@@ -173,7 +173,7 @@ const MemberReportViewer = () => {
         window.URL.revokeObjectURL(url);
 
         toast.success(
-          `${format?.toUpperCase()} report downloaded successfully`,
+          `${format?.toUpperCase()} report downloaded successfully`
         );
       }
     } catch (err: any) {
@@ -238,140 +238,153 @@ const MemberReportViewer = () => {
   };
 
   return (
-    <div className=" card  flex flex-col  rounded-lg shadow-md overflow-hidden">
-      {/* Filter Section as Card */}
-      <div className="md:p-4 border-b ">
-        <div className=" shadow-md rounded-lg">
-          <div className="flex justify-center items-center gap-20 border  rounded-lg p-2">
-            {/* Start Date */}
-            <div className="flex flex-col">
-              <label className="font-semibold text-sm  mb-1">
-                {t("startDate")}
-              </label>
-              <input
-                type="date"
-                {...register("startDate")}
-                className={`w-full md:w-[200px] border rounded h-[30px] text-sm px-2 focus:outline-none focus:ring-2 ${
-                  errors.startDate
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
-                }`}
-              />
-              {errors.startDate && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.startDate.message}
-                </span>
-              )}
-            </div>
+    <div className="min-w-screen min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="w-[95vw] h-[95vh] mx-auto bg-white rounded-lg shadow-md mt-2">
+        {/* Fixed Header Section */}
+        <div className="sticky top-0 z-30 bg-white rounded-t-lg mt-2">
+          {/* Report Title */}
+          <div className="text-center py-4 md:py-6 border-b border-gray-200">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700">
+              {t("memberRegistrationReport")}
+            </h2>
+          </div>
 
-            {/* End Date */}
-            <div className="flex flex-col">
-              <label className="font-semibold text-sm  mb-1">
-                {t("toDate")}
-              </label>
-              <input
-                type="date"
-                {...register("endDate")}
-                className={`w-full md:w-[200px] border rounded h-[30px] text-sm px-2 focus:outline-none focus:ring-2 ${
-                  errors.endDate
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
-                }`}
-              />
-              {errors.endDate && (
-                <span className="text-red-500 text-xs mt-1">
-                  {errors.endDate.message}
-                </span>
-              )}
-            </div>
+          {/* Filter Section as Card */}
+          <div className="p-2 md:p-4 border-b border-gray-200">
+            <div className="bg-white p-2 md:p-4 shadow-md rounded-lg">
+              <div className="flex justify-center items-center gap-20 bg-gray-50 border border-gray-300 rounded-lg min-h-[90px] md:p-4">
+                {/* Start Date */}
+                <div className="flex flex-col">
+                  <label className="font-semibold text-sm text-gray-700 mb-1">
+                    {t("startDate")}
+                  </label>
+                  <input
+                    type="date"
+                    {...register("startDate")}
+                    className={`w-full md:w-[200px] border rounded h-[30px] text-sm px-2 focus:outline-none focus:ring-2 ${
+                      errors.startDate
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
+                    }`}
+                  />
+                  {errors.startDate && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.startDate.message}
+                    </span>
+                  )}
+                </div>
 
-            {/* Generate Report Button */}
-            <div className="flex flex-col justify-end items-end h-[55px]">
-              <button
-                onClick={handleSubmit(onSubmit)}
-                disabled={loading}
-                className="w-full md:w-[150px] h-[35px] bg-green-500  font-semibold rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors md:mt-5"
-              >
-                {loading ? t("generating") : t("generateReport")}
-              </button>
+                {/* End Date */}
+                <div className="flex flex-col">
+                  <label className="font-semibold text-sm text-gray-700 mb-1">
+                    {t("toDate")}
+                  </label>
+                  <input
+                    type="date"
+                    {...register("endDate")}
+                    className={`w-full md:w-[200px] border rounded h-[30px] text-sm px-2 focus:outline-none focus:ring-2 ${
+                      errors.endDate
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-200"
+                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-200"
+                    }`}
+                  />
+                  {errors.endDate && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.endDate.message}
+                    </span>
+                  )}
+                </div>
+
+                {/* Generate Report Button */}
+                <div className="flex flex-col justify-end items-end h-[55px]">
+                  <button
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={loading}
+                    className="w-full md:w-[150px] h-[35px] bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors md:mt-5"
+                  >
+                    {loading ? t("generating") : t("generateReport")}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Navigation Bar */}
+          {reportLoaded && (
+            <div className="sticky top-0 z-20">
+              <ReportNavigation
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalRecords={totalRecords}
+                pageSize={pageSize}
+                hasNextPage={hasNextPage}
+                hasPreviousPage={hasPreviousPage}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                searchText={searchText}
+                onSearchTextChange={setSearchText}
+                onPrint={handlePrint}
+                showDownloadMenu={showDownloadMenu}
+                onToggleDownloadMenu={() =>
+                  setShowDownloadMenu(!showDownloadMenu)
+                }
+                onDownload={handleDownload}
+              />
+            </div>
+          )}
         </div>
-      </div>
 
-      {/* Navigation Bar */}
-      {reportLoaded && (
-        <div className="sticky top-0 z-20">
-          <ReportNavigation
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalRecords={totalRecords}
-            pageSize={pageSize}
-            hasNextPage={hasNextPage}
-            hasPreviousPage={hasPreviousPage}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-            searchText={searchText}
-            onSearchTextChange={setSearchText}
-            onPrint={handlePrint}
-            showDownloadMenu={showDownloadMenu}
-            onToggleDownloadMenu={() => setShowDownloadMenu(!showDownloadMenu)}
-            onDownload={handleDownload}
-          />
-        </div>
-      )}
-      {/* </div> */}
-
-      {/* Report Content - Scrollable */}
-      <div
-        className=" w-full overflow-auto  rounded-b-lg "
-        style={{ height: "100vh" }}
-      >
-        {loading ? (
-          <div className="h-full rounded-lg p-4 md:p-8 flex items-center justify-center">
-            <div className="text-center">
-              <RefreshCw
-                size={48}
-                className="animate-spin text-blue-500 mx-auto mb-4"
-              />
-              <p className="">{t("generatingReport")}</p>
-            </div>
-          </div>
-        ) : error ? (
-          <div className="h-full  rounded-b-lg p-4 md:p-8 text-center text-red-500 flex items-center justify-center">
-            <div>
-              <p className="text-base md:text-lg font-semibold mb-2">
-                {t("error")}
-              </p>
-              <p className="text-sm">{error}</p>
-            </div>
-          </div>
-        ) : reportLoaded ? (
-          <div
-            key={currentPage}
-            className="flex justify-center items-center p-2 md:p-2"
-            style={{
-              minHeight: "100%",
-            }}
-          >
-            <div className="w-full flex justify-center ">
-              {htmlReport && (
-                <div
-                  dangerouslySetInnerHTML={{ __html: htmlReport }}
-                  className="card"
-                  style={{ maxWidth: "1200px", margin: "0 auto" }}
+        {/* Report Content - Scrollable */}
+        <div
+          className="w-full overflow-auto bg-white rounded-b-lg"
+          style={{ height: "90vh" }}
+        >
+          {loading ? (
+            <div className="h-full bg-white rounded-lg p-4 md:p-8 flex items-center justify-center">
+              <div className="text-center">
+                <RefreshCw
+                  size={48}
+                  className="animate-spin text-blue-500 mx-auto mb-4"
                 />
-              )}
+                <p className="text-gray-600">{t("generatingReport")}</p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div className="h-full rounded-b-lg p-4 md:p-8 text-center  flex items-center justify-center">
-            <p className="text-base md:text-lg">{t("clickGenerateReport")}</p>
-          </div>
-        )}
+          ) : error ? (
+            <div className="h-full bg-white rounded-b-lg p-4 md:p-8 text-center text-red-500 flex items-center justify-center">
+              <div>
+                <p className="text-base md:text-lg font-semibold mb-2">
+                  {t("error")}
+                </p>
+                <p className="text-sm">{error}</p>
+              </div>
+            </div>
+          ) : reportLoaded ? (
+            <div
+              key={currentPage}
+              className="flex justify-center items-center p-4 md:p-8"
+              style={{
+                minHeight: "100%",
+              }}
+            >
+              <div className="w-full flex justify-center ">
+                {htmlReport && (
+                  <div
+                    dangerouslySetInnerHTML={{ __html: htmlReport }}
+                    className=""
+                    style={{ maxWidth: "1200px", margin: "0 auto" }}
+                  />
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="h-full bg-white rounded-b-lg p-4 md:p-8 text-center text-gray-400 flex items-center justify-center">
+              <p className="text-base md:text-lg">{t("clickGenerateReport")}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default MemberReportViewer;
+export default MemberSubReportViewer;

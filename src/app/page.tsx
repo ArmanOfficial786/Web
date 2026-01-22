@@ -1,14 +1,13 @@
-import MemberReport from "@/components/MemberReport";
-// import Report from "@/components/Report";
-import React from "react";
+"use client";
+import Sidebar from "@/components/SideBar";
+import Dashboard from "@/components/Dashboard";
 
-function page() {
+import React from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+export default function HomePage() {
+  const { t } = useLanguage();
   return (
-    <div>
-      {/* <Report /> */}
-      <MemberReport />
-    </div>
+    <div className="flex h-screen bg-slate-900">{/* <Dashboard /> */}</div>
   );
 }
-
-export default page;
