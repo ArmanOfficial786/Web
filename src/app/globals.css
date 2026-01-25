@@ -49,4 +49,23 @@ body {
     min-height: 100vh;
     background: transparent !important;
   }
+
+  /* Marquee Animation */
+  @keyframes scroll {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear forwards;
+    will-change: transform; /* Smooth animation performance */
+  }
+
+  .animate-scroll.paused {
+    animation-play-state: paused;
+  }
 }

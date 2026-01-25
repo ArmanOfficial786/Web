@@ -238,7 +238,7 @@ const MemberReportViewer = () => {
   };
 
   return (
-    <div className=" card  flex flex-col  rounded-lg shadow-md overflow-hidden">
+    <div className=" card  flex flex-col   rounded-lg shadow-md overflow-visible">
       {/* Filter Section as Card */}
       <div className="md:p-4 border-b ">
         <div className=" shadow-md rounded-lg">

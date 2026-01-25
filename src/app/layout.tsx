@@ -49,10 +49,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
+// import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ThemeProvider from "./theme-Provider";
+import ToastProvider from "@/utilis/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -70,8 +71,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0">
       <body className={`${inter.className} m-0 p-0`} suppressHydrationWarning>
-        <ThemeProvider>
-          <ToastContainer
+       {/* <ThemeProvider> */}
+          {/* <ToastContainer
             position="top-right"
             autoClose={3000}
             hideProgressBar={false}
@@ -81,10 +82,11 @@ export default function RootLayout({
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="light"
-          />
+
+          /> */}
+          <ToastProvider />
           <LanguageProvider>{children}</LanguageProvider>
-        </ThemeProvider>
+       
       </body>
     </html>
   );

@@ -183,11 +183,11 @@ const theme = createTheme({
           border: "1px solid rgba(255, 255, 255, 0.1)",
           backdropFilter: "blur(10px)",
         },
-        ".dark nav *, .dark aside *, .dark button, .dark h1, .dark div, .dark .label, .dark .span, .dark .card,.dark .select":
+        " .dark aside *, .dark button, .dark h1, .dark div, .dark .label, .dark .span, .dark .card,.dark .select":
           {
             color: "#ffffff !important",
           },
-        ".dark svg": {
+        ".dark nav svg, .dark aside svg": {
           color: "#ffffff !important",
         },
         // Light mode shadows

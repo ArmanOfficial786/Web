@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/SideBar";
+import ThemeProvider from "@/app/theme-Provider";
+import ToastProvider from "@/utilis/ToastProvider";
 
 export default function DashboardLayout({
   children,
@@ -14,18 +16,45 @@ export default function DashboardLayout({
     setSidebarOpen(!sidebarOpen);
   };
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden m-0 p-0">
-      {/* Navbar - Top (Full Width) */}
-      <Navbar toggleSidebar={toggleSidebar} />
+    <ThemeProvider>
+      <ToastProvider />
+      <div className="flex flex-col h-screen w-screen overflow-hidden m-0 p-0">
+        {/* Navbar - Top (Full Width) */}
+        <Navbar toggleSidebar={toggleSidebar} />
 
-      {/* Content Area Below Navbar */}
-      <div className="flex flex-1 overflow-hidden w-full">
-        {/* Sidebar - Left */}
-        <Sidebar isOpen={sidebarOpen} />
+        {/* Content Area Below Navbar */}
+        <div className="flex flex-1 overflow-hidden w-full">
+          {/* Sidebar - Left */}
+          <Sidebar isOpen={sidebarOpen} />
 
-        {/* Main Content - Right */}
-        <main className="flex-1 overflow-y-auto p-2">{children}</main>
+          {/* Main Content - Right */}
+          <main className="flex-1 overflow-y-auto p-2">{children}</main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }
+
+//if we want to use navbar in main layout
+// "use client";
+
+// import React, { useState } from "react";
+// import Sidebar from "@/components/SideBar";
+
+// export default function DashboardLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const [sidebarOpen] = useState(true);
+
+//   return (
+//     <div className="flex flex-1 overflow-hidden w-full h-screen">
+//       {/* Sidebar - Left */}
+//       <Sidebar isOpen={sidebarOpen} />
+
+//       {/* Main Content - Right */}
+//       <main className="flex-1 overflow-y-auto p-2">{children}</main>
+//     </div>
+//   );
+// }
