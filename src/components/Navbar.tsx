@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter, usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 import NightsStayOutlinedIcon from "@mui/icons-material/NightsStayOutlined";
@@ -10,6 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useColorScheme } from "@mui/material/styles";
+import { toast } from "react-toastify";
 
 interface NavBarProps {
   toggleSidebar: () => void;
@@ -21,6 +23,7 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
   const { language, setLanguage, t } = useLanguage();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = useState(false);
   const languageButtonRef = useRef<HTMLDivElement>(null);
@@ -81,16 +84,18 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
     setShowLanguageMenu(false);
   };
 
-  const handleLogout = () => {
-    console.log("=== LOGOUT CLICKED ===");
-    alert("Logout functionality triggered!");
-    setShowUserMenu(false);
-    // Add your logout logic here
-    // Example: Clear session, redirect to login
-    // localStorage.removeItem('token');
-    // router.push("/login");
+  const handleLogout = async () => {
+    try {
+      // Sign out using NextAuth - it will automatically clear cookies and redirect
+      await signOut({
+        callbackUrl: "/", // Your login page is at root based on middleware
+        redirect: true,
+      });
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
-
   const toggleDarkMode = () => {
     setMode(mode === "dark" ? "light" : "dark");
   };

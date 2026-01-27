@@ -1,9 +1,11 @@
+import StudentReport from "@/components/StudentReport";
+
 import React from "react";
 
 function page() {
   return (
     <div>
-      <h1>Student Report</h1>
+      <StudentReport />
     </div>
   );
 }

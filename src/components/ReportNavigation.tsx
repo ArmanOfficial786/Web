@@ -61,8 +61,7 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
         })}
       </span>
 
-      {/* Page Size Selector */}
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <label className="text-sm  font-semibold">{t("show")}</label>
         <select
           value={pageSize}
@@ -76,7 +75,7 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
           <option value={100}>100</option>
         </select>
         <span className="text-sm ">{t("perPage")}</span>
-      </div>
+      </div> */}
 
       {/* Pagination Buttons */}
       <div className="flex items-center gap-2 border-r border-gray-400 pr-4">
@@ -137,7 +136,7 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
         </button>
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className=" flex items-center gap-2">
         <button
           onClick={onPrint}
           className="p-2  rounded transition-colors flex items-center gap-1"
@@ -160,31 +159,31 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
           </button>
 
           {showDownloadMenu && (
-            <div className="absolute right-0 mt-2 w-40 border rounded-lg shadow-lg z-50">
+            <div className="card absolute right-0 mt-2 w-40 border rounded-lg shadow-lg z-[9999] bg-white  dark:bg-gray-800">
               <button
                 onClick={() => onDownload("PDF")}
-                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm"
+                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm hover:bg-slate-300 dark:hover:bg-gray-700"
               >
-                <FileText size={16} className="text-red-600" />
+                <FileText size={16} className=" " />
                 <span>{t("pdf")}</span>
               </button>
               <button
                 onClick={() => onDownload("Word")}
-                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm"
+                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm  hover:bg-slate-300 dark:hover:bg-gray-700"
               >
                 <File size={16} className="text-blue-600" />
                 <span>{t("word")}</span>
               </button>
               <button
                 onClick={() => onDownload("Excel")}
-                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm"
+                className="w-full px-4 py-3 text-left flex items-center gap-2 transition-colors border-b border-gray-200 text-sm  hover:bg-slate-300 dark:hover:bg-gray-700"
               >
                 <Sheet size={16} className="text-green-700" />
                 <span>{t("excel")}</span>
               </button>
               <button
                 onClick={() => onDownload("Image")}
-                className="w-full px-4 py-3 text-left  flex items-center gap-2 transition-colors text-sm"
+                className="w-full px-4 py-3 text-left  flex items-center gap-2 transition-colors text-sm hover:bg-slate-300 dark:hover:bg-gray-700"
               >
                 <Image size={16} className="text-purple-600" />
                 <span>{t("image")}</span>
@@ -193,11 +192,11 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
           )}
         </div>
       </div>
-      <div className="ml-5 px-2 flex text-sm  font-semibold">
+      {/* <div className="ml-5 px-2 flex text-sm  font-semibold">
         {interpolate(t("totalRecords"), {
           totalRecords: totalRecords.toString(),
         })}
-      </div>
+      </div> */}
     </div>
   );
 };
