@@ -68,4 +68,136 @@ body {
   .animate-scroll.paused {
     animation-play-state: paused;
   }
+
+  /* Add these to your global.css */
+
+  /* 1. Prevent text/UI flickering in WebKit browsers */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* 2. Hardware acceleration for problematic areas */
+  .report-container,
+  .pdf-viewer,
+  .student-info-section,
+  .data-table {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+  }
+
+  /* 3. Prevent Flash of Unstyled Content (FOUC) */
+  .react-component {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .react-component.loaded {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* 4. Smooth transitions for state changes */
+  .report-transition {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* 5. Prevent scrollbar-induced layout shifts */
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  /* 6. For PDF/Image content */
+  img,
+  canvas,
+  iframe {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  /* 7. If using animations/transitions */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Add to global.css or report-specific CSS */
+
+  /* 1. Stabilize table rendering */
+  .report-table,
+  table,
+  .data-grid {
+    border-collapse: separate !important; /* Prevents reflow flicker */
+    border-spacing: 0;
+    table-layout: fixed; /* Critical for stable rendering */
+    width: 100%;
+    will-change: transform;
+    contain: layout style paint;
+  }
+
+  /* 2. Prevent text reflow in cells */
+  .report-table td,
+  .report-table th,
+  table td,
+  table th {
+    min-width: 80px; /* Set minimum widths */
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    background-color: white;
+    transition: none !important; /* Remove any transitions */
+  }
+
+  /* 3. For dynamic content cells */
+  .table-cell-content {
+    position: relative;
+    min-height: 24px; /* Prevent height jumps */
+  }
+
+  /* 4. Disable animations in report area */
+  .report-content * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* 5. Force GPU rendering for report sections */
+  .report-section,
+  .data-section,
+  .printable-area {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    isolation: isolate; /* Creates new stacking context */
+  }
+
+  /* 6. Prevent content flash during updates */
+  [data-render="report"] {
+    opacity: 0;
+    animation: fadeInReport 0.1s forwards;
+    animation-delay: 0.05s;
+  }
+
+  @keyframes fadeInReport {
+    to {
+      opacity: 1;
+    }
+  }
 }
