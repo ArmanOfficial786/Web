@@ -4,6 +4,13 @@ const nextConfig = {
   typescript: {
     tsconfigPath: "./tsconfig.json",
   },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false, // ✅ Fix for pdfjs-dist error
+    };
+    return config;
+  },
 };
 
 module.exports = nextConfig;

@@ -8,6 +8,7 @@ import * as yup from "yup";
 import { RefreshCw } from "lucide-react";
 import ReportNavigation from "@/components/ReportNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import PdfSlideViewer from "./PdfSlideViewer";
 
 export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
 
@@ -86,9 +87,13 @@ const MemberReportViewer = () => {
       };
 
       // Build URL with format query parameter only if format is provided
+      // const url = format
+      //   ? `http://localhost:5106/api/MemberDetailReport/generate?format=${format}`
+      //   : `http://localhost:5106/api/MemberDetailReport/generate`;
+
       const url = format
-        ? `http://localhost:5106/api/MemberDetailReport/generate?format=${format}`
-        : `http://localhost:5106/api/MemberDetailReport/generate`;
+        ? `http://localhost:5106/api/MemberDetail/MemberDetailReport?format=${format}`
+        : `http://localhost:5106/api/MemberDetail/MemberDetailReport`;
 
       const response = await fetch(url, {
         method: "POST",
@@ -116,14 +121,14 @@ const MemberReportViewer = () => {
           return;
         }
 
-        if (!data.htmls) {
+        if (!data.pdfData) {
           console.error("No HTML content found. Full response:", data);
           toast.error("No report content available");
           setError("No HTML content in response");
           return;
         }
 
-        setHtmlReport(data.htmls);
+        setHtmlReport(data.pdfData);
         setReportLoaded(true);
 
         // Handle pagination from backend response
@@ -355,11 +360,19 @@ const MemberReportViewer = () => {
             }}
           >
             <div className="w-full flex justify-center ">
-              {htmlReport && (
+              {/* {htmlReport && (
                 <div
                   dangerouslySetInnerHTML={{ __html: htmlReport }}
                   className="card"
                   style={{ maxWidth: "1200px", margin: "0 auto" }}
+                />
+              )} */}
+              {htmlReport && (
+                <PdfSlideViewer
+                  base64Pdf={htmlReport}
+                  pageNumber={currentPage}
+                  onTotalPagesChange={(pages: any) => setTotalPages(pages)}
+                  onLoadError={(err: any) => setError(err)}
                 />
               )}
             </div>

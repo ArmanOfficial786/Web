@@ -371,13 +371,392 @@
 //   );
 // }
 
+// "use client";
+
+// import { useEffect, useRef, useState, useCallback } from "react";
+// import * as pdfjsLib from "pdfjs-dist";
+// import { Box, Paper, CircularProgress, Typography, Fade } from "@mui/material";
+
+// // Configure PDF.js worker
+// if (typeof window !== "undefined") {
+//   pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// }
+
+// interface PdfSlideViewerProps {
+//   base64Pdf: string;
+//   pageNumber: number;
+//   onTotalPagesChange: (pages: number) => void;
+//   onLoadError?: (error: string) => void;
+// }
+
+// export default function PdfSlideViewer({
+//   base64Pdf,
+//   pageNumber,
+//   onTotalPagesChange,
+//   onLoadError,
+// }: PdfSlideViewerProps) {
+//   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const containerRef = useRef<HTMLDivElement>(null);
+//   const [isRendering, setIsRendering] = useState(false);
+//   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+//   const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
+//   const [showCanvas, setShowCanvas] = useState(true);
+
+//   // Track current rendered page to prevent unnecessary re-renders
+//   const [currentRenderedPage, setCurrentRenderedPage] = useState<number | null>(
+//     null,
+//   );
+
+//   /**
+//    * Load PDF document from base64 string
+//    */
+//   useEffect(() => {
+//     if (!base64Pdf) return;
+
+//     let isMounted = true;
+
+//     const loadPdf = async () => {
+//       try {
+//         setIsRendering(true);
+
+//         // Don't hide canvas on initial load
+//         if (currentRenderedPage !== null) {
+//           setShowCanvas(false);
+//         }
+
+//         // Convert base64 to Uint8Array
+//         const pdfData = Uint8Array.from(atob(base64Pdf), (c) =>
+//           c.charCodeAt(0),
+//         );
+
+//         // Load PDF document
+//         const loadingTask = pdfjsLib.getDocument({ data: pdfData });
+//         const pdf = await loadingTask.promise;
+
+//         if (!isMounted) return;
+
+//         setPdfDoc(pdf);
+//         onTotalPagesChange(pdf.numPages);
+//         setIsRendering(false);
+
+//         // Only show canvas if we're rendering a specific page
+//         if (currentRenderedPage === null) {
+//           setShowCanvas(true);
+//         }
+//       } catch (error: any) {
+//         console.error("Error loading PDF:", error);
+//         if (isMounted) {
+//           setIsRendering(false);
+//           setShowCanvas(true); // Ensure canvas is visible on error
+//           onLoadError?.(error.message || "Failed to load PDF");
+//         }
+//       }
+//     };
+
+//     loadPdf();
+
+//     return () => {
+//       isMounted = false;
+//       if (renderTaskRef.current) {
+//         renderTaskRef.current.cancel();
+//       }
+//     };
+//   }, [base64Pdf, onTotalPagesChange, onLoadError]);
+
+//   /**
+//    * Calculate optimal scale for rendering
+//    */
+//   const calculateScale = useCallback(
+//     (viewport: pdfjsLib.PageViewport): number => {
+//       const container = containerRef.current;
+//       if (!container) return 1.5;
+
+//       const containerWidth = container.clientWidth;
+//       const baseScale = (containerWidth - 40) / viewport.width;
+
+//       return Math.min(Math.max(baseScale, 1.0), 2.5);
+//     },
+//     [],
+//   );
+
+//   /**
+//    * Cache rendered pages to prevent re-rendering
+//    */
+//   const pageCache = useRef<Map<number, HTMLCanvasElement>>(new Map());
+
+//   /**
+//    * Render specific PDF page on canvas
+//    */
+//   useEffect(() => {
+//     if (!pdfDoc || !canvasRef.current) return;
+
+//     // Skip if we're already rendering this page
+//     if (
+//       currentRenderedPage === pageNumber &&
+//       pageCache.current.has(pageNumber)
+//     ) {
+//       return;
+//     }
+
+//     let isMounted = true;
+
+//     const renderPage = async () => {
+//       try {
+//         // Check cache first
+//         if (pageCache.current.has(pageNumber)) {
+//           const cachedCanvas = pageCache.current.get(pageNumber);
+//           if (cachedCanvas && canvasRef.current) {
+//             const context = canvasRef.current.getContext("2d");
+//             if (context) {
+//               // Get cached dimensions
+//               canvasRef.current.width = cachedCanvas.width;
+//               canvasRef.current.height = cachedCanvas.height;
+
+//               // Clear canvas
+//               context.clearRect(
+//                 0,
+//                 0,
+//                 canvasRef.current.width,
+//                 canvasRef.current.height,
+//               );
+//               // Draw cached page
+//               context.drawImage(cachedCanvas, 0, 0);
+
+//               setCurrentRenderedPage(pageNumber);
+//               return;
+//             }
+//           }
+//         }
+
+//         // Only show loading if we're changing to a different page
+//         if (
+//           currentRenderedPage !== null &&
+//           currentRenderedPage !== pageNumber
+//         ) {
+//           setIsRendering(true);
+//           setShowCanvas(false);
+//         }
+
+//         // Cancel any previous render task
+//         if (renderTaskRef.current) {
+//           renderTaskRef.current.cancel();
+//           renderTaskRef.current = null;
+//         }
+
+//         // Get the page
+//         const page = await pdfDoc.getPage(pageNumber);
+
+//         if (!isMounted) return;
+
+//         const canvas = canvasRef.current;
+//         if (!canvas) return;
+
+//         const context = canvas.getContext("2d");
+//         if (!context) return;
+
+//         // Calculate viewport and scale
+//         const viewport = page.getViewport({ scale: 1.0 });
+//         const scale = calculateScale(viewport);
+//         const scaledViewport = page.getViewport({ scale });
+
+//         // Set canvas dimensions
+//         canvas.height = scaledViewport.height;
+//         canvas.width = scaledViewport.width;
+
+//         // Clear canvas before rendering
+//         context.clearRect(0, 0, canvas.width, canvas.height);
+
+//         // Render PDF page
+//         const renderContext = {
+//           canvasContext: context,
+//           viewport: scaledViewport,
+//         };
+
+//         renderTaskRef.current = page.render(renderContext);
+//         await renderTaskRef.current.promise;
+
+//         // Cache the rendered page
+//         const cachedCanvas = document.createElement("canvas");
+//         cachedCanvas.width = canvas.width;
+//         cachedCanvas.height = canvas.height;
+//         const cachedContext = cachedCanvas.getContext("2d");
+//         if (cachedContext) {
+//           cachedContext.drawImage(canvas, 0, 0);
+//           pageCache.current.set(pageNumber, cachedCanvas);
+//         }
+
+//         if (isMounted) {
+//           setIsRendering(false);
+//           setShowCanvas(true);
+//           setCurrentRenderedPage(pageNumber);
+//           renderTaskRef.current = null;
+//         }
+//       } catch (error: any) {
+//         // Ignore cancellation errors
+//         if (error.name === "RenderingCancelledException") {
+//           return;
+//         }
+
+//         console.error("Error rendering page:", error);
+//         if (isMounted) {
+//           setIsRendering(false);
+//           setShowCanvas(true);
+//           onLoadError?.(error.message || "Failed to render page");
+//         }
+//       }
+//     };
+
+//     // Use requestAnimationFrame for smoother rendering
+//     const animationFrameId = requestAnimationFrame(() => {
+//       renderPage();
+//     });
+
+//     return () => {
+//       isMounted = false;
+//       cancelAnimationFrame(animationFrameId);
+//       if (renderTaskRef.current) {
+//         renderTaskRef.current.cancel();
+//         renderTaskRef.current = null;
+//       }
+//     };
+//   }, [pdfDoc, pageNumber, calculateScale, onLoadError, currentRenderedPage]);
+
+//   /**
+//    * Clear cache when PDF changes
+//    */
+//   useEffect(() => {
+//     return () => {
+//       pageCache.current.clear();
+//       setCurrentRenderedPage(null);
+//     };
+//   }, [base64Pdf]);
+
+//   /**
+//    * Handle window resize
+//    */
+//   useEffect(() => {
+//     const handleResize = () => {
+//       if (pdfDoc && canvasRef.current) {
+//         // Clear cache on resize since scale changes
+//         pageCache.current.clear();
+//         setCurrentRenderedPage(null);
+//       }
+//     };
+
+//     const resizeTimer = setTimeout(handleResize, 250);
+//     window.addEventListener("resize", handleResize);
+
+//     return () => {
+//       clearTimeout(resizeTimer);
+//       window.removeEventListener("resize", handleResize);
+//     };
+//   }, [pdfDoc]);
+
+//   return (
+//     <Box
+//       ref={containerRef}
+//       sx={{
+//         display: "flex",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         bgcolor: "grey.100",
+//         p: 3,
+//         minHeight: 600,
+//         position: "relative",
+//         overflow: "hidden",
+//       }}
+//     >
+//       {/* Loading Overlay - Only show when changing pages */}
+//       {isRendering && currentRenderedPage !== pageNumber && (
+//         <Fade in={isRendering} timeout={300}>
+//           <Paper
+//             elevation={0}
+//             sx={{
+//               position: "absolute",
+//               top: 0,
+//               left: 0,
+//               right: 0,
+//               bottom: 0,
+//               display: "flex",
+//               justifyContent: "center",
+//               alignItems: "center",
+//               bgcolor: "rgba(255, 255, 255, 0.9)",
+//               zIndex: 10,
+//             }}
+//           >
+//             <Box sx={{ textAlign: "center" }}>
+//               <CircularProgress
+//                 size={48}
+//                 sx={{
+//                   mb: 2,
+//                   color: "primary.main",
+//                 }}
+//               />
+//               <Typography variant="body2" color="text.secondary">
+//                 Loading page {pageNumber}...
+//               </Typography>
+//             </Box>
+//           </Paper>
+//         </Fade>
+//       )}
+
+//       {/* PDF Canvas Container - Always render but control opacity */}
+//       <Paper
+//         elevation={3}
+//         sx={{
+//           p: 2,
+//           bgcolor: "white",
+//           borderRadius: 1,
+//           maxWidth: "100%",
+//           overflow: "auto",
+//           opacity: showCanvas ? 1 : 0,
+//           transition: "opacity 200ms ease-in-out",
+//           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+//           visibility: showCanvas ? "visible" : "hidden",
+//         }}
+//       >
+//         <canvas
+//           ref={canvasRef}
+//           style={{
+//             borderRadius: 4,
+//             maxWidth: "100%",
+//             display: "block",
+//           }}
+//         />
+//       </Paper>
+
+//       {/* Page Indicator */}
+//       {!isRendering && pdfDoc && showCanvas && (
+//         <Box
+//           sx={{
+//             position: "absolute",
+//             bottom: 16,
+//             right: 16,
+//             bgcolor: "rgba(0, 0, 0, 0.7)",
+//             color: "white",
+//             px: 1.5,
+//             py: 0.5,
+//             borderRadius: 1,
+//             fontSize: "0.75rem",
+//             zIndex: 5,
+//             opacity: showCanvas ? 1 : 0,
+//             transition: "opacity 200ms ease-in-out",
+//           }}
+//         >
+//           Page {pageNumber} of {pdfDoc.numPages}
+//         </Box>
+//       )}
+//     </Box>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import * as pdfjsLib from "pdfjs-dist";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 import { Box, Paper, CircularProgress, Typography, Fade } from "@mui/material";
 
-// Configure PDF.js worker
+// ✅ Worker setup
 if (typeof window !== "undefined") {
   pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 }
@@ -397,18 +776,14 @@ export default function PdfSlideViewer({
 }: PdfSlideViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isRendering, setIsRendering] = useState(false);
-  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
-  const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
-  const [showCanvas, setShowCanvas] = useState(true);
 
-  // Track current rendered page to prevent unnecessary re-renders
-  const [currentRenderedPage, setCurrentRenderedPage] = useState<number | null>(
-    null,
-  );
+  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [isRendering, setIsRendering] = useState(false);
+
+  const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
 
   /**
-   * Load PDF document from base64 string
+   * Load PDF
    */
   useEffect(() => {
     if (!base64Pdf) return;
@@ -419,17 +794,10 @@ export default function PdfSlideViewer({
       try {
         setIsRendering(true);
 
-        // Don't hide canvas on initial load
-        if (currentRenderedPage !== null) {
-          setShowCanvas(false);
-        }
-
-        // Convert base64 to Uint8Array
         const pdfData = Uint8Array.from(atob(base64Pdf), (c) =>
           c.charCodeAt(0),
         );
 
-        // Load PDF document
         const loadingTask = pdfjsLib.getDocument({ data: pdfData });
         const pdf = await loadingTask.promise;
 
@@ -438,18 +806,10 @@ export default function PdfSlideViewer({
         setPdfDoc(pdf);
         onTotalPagesChange(pdf.numPages);
         setIsRendering(false);
-
-        // Only show canvas if we're rendering a specific page
-        if (currentRenderedPage === null) {
-          setShowCanvas(true);
-        }
       } catch (error: any) {
-        console.error("Error loading PDF:", error);
-        if (isMounted) {
-          setIsRendering(false);
-          setShowCanvas(true); // Ensure canvas is visible on error
-          onLoadError?.(error.message || "Failed to load PDF");
-        }
+        console.error("PDF load error:", error);
+        setIsRendering(false);
+        onLoadError?.(error.message);
       }
     };
 
@@ -457,290 +817,158 @@ export default function PdfSlideViewer({
 
     return () => {
       isMounted = false;
-      if (renderTaskRef.current) {
-        renderTaskRef.current.cancel();
-      }
+      if (renderTaskRef.current) renderTaskRef.current.cancel();
     };
   }, [base64Pdf, onTotalPagesChange, onLoadError]);
 
   /**
-   * Calculate optimal scale for rendering
+   * Render Page (FULL WIDTH + HD)
    */
-  const calculateScale = useCallback(
-    (viewport: pdfjsLib.PageViewport): number => {
-      const container = containerRef.current;
-      if (!container) return 1.5;
+  const renderPage = useCallback(async () => {
+    if (!pdfDoc || !canvasRef.current || !containerRef.current) return;
 
-      const containerWidth = container.clientWidth;
-      const baseScale = (containerWidth - 40) / viewport.width;
+    try {
+      setIsRendering(true);
 
-      return Math.min(Math.max(baseScale, 1.0), 2.5);
-    },
-    [],
-  );
-
-  /**
-   * Cache rendered pages to prevent re-rendering
-   */
-  const pageCache = useRef<Map<number, HTMLCanvasElement>>(new Map());
-
-  /**
-   * Render specific PDF page on canvas
-   */
-  useEffect(() => {
-    if (!pdfDoc || !canvasRef.current) return;
-
-    // Skip if we're already rendering this page
-    if (
-      currentRenderedPage === pageNumber &&
-      pageCache.current.has(pageNumber)
-    ) {
-      return;
-    }
-
-    let isMounted = true;
-
-    const renderPage = async () => {
-      try {
-        // Check cache first
-        if (pageCache.current.has(pageNumber)) {
-          const cachedCanvas = pageCache.current.get(pageNumber);
-          if (cachedCanvas && canvasRef.current) {
-            const context = canvasRef.current.getContext("2d");
-            if (context) {
-              // Get cached dimensions
-              canvasRef.current.width = cachedCanvas.width;
-              canvasRef.current.height = cachedCanvas.height;
-
-              // Clear canvas
-              context.clearRect(
-                0,
-                0,
-                canvasRef.current.width,
-                canvasRef.current.height,
-              );
-              // Draw cached page
-              context.drawImage(cachedCanvas, 0, 0);
-
-              setCurrentRenderedPage(pageNumber);
-              return;
-            }
-          }
-        }
-
-        // Only show loading if we're changing to a different page
-        if (
-          currentRenderedPage !== null &&
-          currentRenderedPage !== pageNumber
-        ) {
-          setIsRendering(true);
-          setShowCanvas(false);
-        }
-
-        // Cancel any previous render task
-        if (renderTaskRef.current) {
-          renderTaskRef.current.cancel();
-          renderTaskRef.current = null;
-        }
-
-        // Get the page
-        const page = await pdfDoc.getPage(pageNumber);
-
-        if (!isMounted) return;
-
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const context = canvas.getContext("2d");
-        if (!context) return;
-
-        // Calculate viewport and scale
-        const viewport = page.getViewport({ scale: 1.0 });
-        const scale = calculateScale(viewport);
-        const scaledViewport = page.getViewport({ scale });
-
-        // Set canvas dimensions
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
-
-        // Clear canvas before rendering
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Render PDF page
-        const renderContext = {
-          canvasContext: context,
-          viewport: scaledViewport,
-        };
-
-        renderTaskRef.current = page.render(renderContext);
-        await renderTaskRef.current.promise;
-
-        // Cache the rendered page
-        const cachedCanvas = document.createElement("canvas");
-        cachedCanvas.width = canvas.width;
-        cachedCanvas.height = canvas.height;
-        const cachedContext = cachedCanvas.getContext("2d");
-        if (cachedContext) {
-          cachedContext.drawImage(canvas, 0, 0);
-          pageCache.current.set(pageNumber, cachedCanvas);
-        }
-
-        if (isMounted) {
-          setIsRendering(false);
-          setShowCanvas(true);
-          setCurrentRenderedPage(pageNumber);
-          renderTaskRef.current = null;
-        }
-      } catch (error: any) {
-        // Ignore cancellation errors
-        if (error.name === "RenderingCancelledException") {
-          return;
-        }
-
-        console.error("Error rendering page:", error);
-        if (isMounted) {
-          setIsRendering(false);
-          setShowCanvas(true);
-          onLoadError?.(error.message || "Failed to render page");
-        }
-      }
-    };
-
-    // Use requestAnimationFrame for smoother rendering
-    const animationFrameId = requestAnimationFrame(() => {
-      renderPage();
-    });
-
-    return () => {
-      isMounted = false;
-      cancelAnimationFrame(animationFrameId);
       if (renderTaskRef.current) {
         renderTaskRef.current.cancel();
-        renderTaskRef.current = null;
       }
-    };
-  }, [pdfDoc, pageNumber, calculateScale, onLoadError, currentRenderedPage]);
+
+      const page = await pdfDoc.getPage(pageNumber);
+
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      // 🔥 BASE VIEWPORT
+      const viewport = page.getViewport({ scale: 1 });
+
+      // 🔥 FIT TO WIDTH
+      const containerWidth = containerRef.current.clientWidth - 40;
+      const scale = containerWidth / viewport.width;
+
+      // 🔥 HIGH DPI FIX
+      const devicePixelRatio = window.devicePixelRatio || 1;
+
+      const scaledViewport = page.getViewport({
+        scale: scale * devicePixelRatio,
+      });
+
+      // 🔥 SET CANVAS SIZE (REAL + DISPLAY)
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
+
+      canvas.style.width = `${scaledViewport.width / devicePixelRatio}px`;
+      canvas.style.height = `${scaledViewport.height / devicePixelRatio}px`;
+
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      const renderContext = {
+        canvasContext: context,
+        viewport: scaledViewport,
+      };
+
+      renderTaskRef.current = page.render(renderContext);
+      await renderTaskRef.current.promise;
+
+      setIsRendering(false);
+    } catch (error: any) {
+      if (error.name === "RenderingCancelledException") return;
+
+      console.error("Render error:", error);
+      setIsRendering(false);
+      onLoadError?.(error.message);
+    }
+  }, [pdfDoc, pageNumber, onLoadError]);
 
   /**
-   * Clear cache when PDF changes
+   * Trigger render
    */
   useEffect(() => {
-    return () => {
-      pageCache.current.clear();
-      setCurrentRenderedPage(null);
-    };
-  }, [base64Pdf]);
+    renderPage();
+  }, [renderPage]);
 
   /**
-   * Handle window resize
+   * Re-render on resize
    */
   useEffect(() => {
     const handleResize = () => {
-      if (pdfDoc && canvasRef.current) {
-        // Clear cache on resize since scale changes
-        pageCache.current.clear();
-        setCurrentRenderedPage(null);
-      }
+      renderPage();
     };
 
-    const resizeTimer = setTimeout(handleResize, 250);
     window.addEventListener("resize", handleResize);
-
-    return () => {
-      clearTimeout(resizeTimer);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [pdfDoc]);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [renderPage]);
 
   return (
     <Box
       ref={containerRef}
       sx={{
+        width: "100%",
+        height: "100%",
+        overflow: "auto",
+        bgcolor: "transparent", // Adobe-like background
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        bgcolor: "grey.100",
+        alignItems: "flex-start",
         p: 3,
-        minHeight: 600,
         position: "relative",
-        overflow: "hidden",
       }}
     >
-      {/* Loading Overlay - Only show when changing pages */}
-      {isRendering && currentRenderedPage !== pageNumber && (
-        <Fade in={isRendering} timeout={300}>
-          <Paper
-            elevation={0}
+      {/* Loader */}
+      {isRendering && (
+        <Fade in={isRendering}>
+          <Box
             sx={{
               position: "absolute",
               top: 0,
+              bottom: 0,
               left: 0,
               right: 0,
-              bottom: 0,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              bgcolor: "rgba(255, 255, 255, 0.9)",
+              bgcolor: "rgba(255,255,255,0.7)",
               zIndex: 10,
             }}
           >
-            <Box sx={{ textAlign: "center" }}>
-              <CircularProgress
-                size={48}
-                sx={{
-                  mb: 2,
-                  color: "primary.main",
-                }}
-              />
-              <Typography variant="body2" color="text.secondary">
-                Loading page {pageNumber}...
-              </Typography>
-            </Box>
-          </Paper>
+            <CircularProgress />
+          </Box>
         </Fade>
       )}
 
-      {/* PDF Canvas Container - Always render but control opacity */}
+      {/* PDF Page */}
       <Paper
-        elevation={3}
+        elevation={6}
         sx={{
-          p: 2,
-          bgcolor: "white",
-          borderRadius: 1,
-          maxWidth: "100%",
-          overflow: "auto",
-          opacity: showCanvas ? 1 : 0,
-          transition: "opacity 200ms ease-in-out",
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-          visibility: showCanvas ? "visible" : "hidden",
+          background: "white",
+          padding: 2,
+          boxShadow: "0 0 10px rgba(0,0,0,0.6)",
         }}
       >
         <canvas
           ref={canvasRef}
           style={{
-            borderRadius: 4,
-            maxWidth: "100%",
             display: "block",
+            borderRadius: 4,
           }}
         />
       </Paper>
 
-      {/* Page Indicator */}
-      {!isRendering && pdfDoc && showCanvas && (
+      {/* Page Indicator below the canvas */}
+      {pdfDoc && (
         <Box
           sx={{
             position: "absolute",
             bottom: 16,
             right: 16,
-            bgcolor: "rgba(0, 0, 0, 0.7)",
+            bgcolor: "rgba(0,0,0,0.7)",
             color: "white",
             px: 1.5,
             py: 0.5,
             borderRadius: 1,
             fontSize: "0.75rem",
-            zIndex: 5,
-            opacity: showCanvas ? 1 : 0,
-            transition: "opacity 200ms ease-in-out",
           }}
         >
           Page {pageNumber} of {pdfDoc.numPages}
