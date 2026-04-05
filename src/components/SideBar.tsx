@@ -37,6 +37,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   const subMenuItemsReports: SubMenuItem[] = [
     { icon: "📊", label: "Student Report" },
     { icon: "📊", label: "Member Report" },
+    { icon: "📊", label: "MemberID Card Detail " },
   ];
 
   const handleMenuClick = (label: string, hasSubmenu?: boolean) => {
@@ -74,6 +75,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     const submenuRouteMap: { [key: string]: string } = {
       "Student Report": "/reports/studentReport",
       "Member Report": "/reports/memberReport",
+      "MemberID Card Detail ": "/reports/MemberIDCardDetail",
     };
 
     if (submenuRouteMap[label]) {

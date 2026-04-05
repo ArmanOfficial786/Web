@@ -1,7 +1,7 @@
 import React from "react";
 
 import NextAuth, { DefaultSession } from "next-auth";
-
+ 
 declare global {
   namespace JSX {
     interface IntrinsicElements {
