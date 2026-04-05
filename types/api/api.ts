@@ -10,25 +10,6 @@
  * ---------------------------------------------------------------
  */
 
-// ── MemberIdCard ─────────────────────────────────────────────────────────────
-
-export interface MemberIdCardPagination {
-  currentPage: number;
-  totalPages: number;
-  totalRecord: number;
-  pageSize: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface MemberIdCardViewResponse {
-  success: boolean;
-  /** Base64-encoded PDF bytes */
-  pdfData: string;
-  reportName: string;
-  pagination: MemberIdCardPagination;
-}
-
 export interface AccountStatementRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -39,6 +20,33 @@ export interface AccountStatementRequest {
   reportType?: string | null;
   transactionType?: string | null;
   orderBy?: string | null;
+}
+
+export interface AllReportOrderByResponseModel {
+  memberIdCard?: OrderByResponse[] | null;
+  savingTypeWiseBalance?: OrderByResponse[] | null;
+}
+
+export interface AllReportOrderByResponseModelGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: AllReportOrderByResponseModel;
+}
+
+export interface BranchResponse {
+  /** @format int64 */
+  branchId?: number;
+  branchName?: string | null;
+}
+
+export interface BranchResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: BranchResponse[] | null;
 }
 
 export interface MemberDetailRequest {
@@ -68,6 +76,39 @@ export interface MemberIdCardRequest {
   pageSize?: number;
 }
 
+export interface OrderByResponse {
+  /** @format int32 */
+  value?: number;
+  displayName?: string | null;
+}
+
+export interface Pagination {
+  /** @format int32 */
+  currentPage?: number | null;
+  /** @format int32 */
+  totalPages?: number | null;
+  /** @format int32 */
+  pageSize?: number | null;
+  /** @format int32 */
+  totalRecord?: number | null;
+  hasNextPage?: boolean | null;
+  hasPreviousPage?: boolean | null;
+}
+
+export interface ReportResponseDtos {
+  pdfData?: string | null;
+  reportName?: string | null;
+  pagination?: Pagination;
+}
+
+export interface ReportResponseDtosGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: ReportResponseDtos;
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -79,10 +120,8 @@ import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams extends Omit<
-  AxiosRequestConfig,
-  "data" | "params" | "url" | "responseType"
-> {
+export interface FullRequestParams
+  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -102,10 +141,8 @@ export type RequestParams = Omit<
   "body" | "method" | "query" | "path"
 >;
 
-export interface ApiConfig<SecurityDataType = unknown> extends Omit<
-  AxiosRequestConfig,
-  "data" | "cancelToken"
-> {
+export interface ApiConfig<SecurityDataType = unknown>
+  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -270,12 +307,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<ReportResponseDtosGeneralResponse, any>({
         path: `/api/AccountStatement/AccountStatementReport`,
         method: "POST",
         query: query,
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -287,9 +325,10 @@ export class Api<
      * @request GET:/api/Branch/GetAllBranches
      */
     branchGetAllBranchesList: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<BranchResponseListGeneralResponse, any>({
         path: `/api/Branch/GetAllBranches`,
         method: "GET",
+        format: "json",
         ...params,
       }),
 
@@ -308,12 +347,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<ReportResponseDtosGeneralResponse, any>({
         path: `/api/MemberDetail/MemberDetailReport`,
         method: "POST",
         query: query,
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -332,12 +372,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<ReportResponseDtosGeneralResponse, any>({
         path: `/api/MemberIdCard/MemberIdCard`,
         method: "POST",
         query: query,
         body: data,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -349,9 +390,10 @@ export class Api<
      * @request GET:/api/OrderBy/GetAllOrderBy
      */
     orderByGetAllOrderByList: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<AllReportOrderByResponseModelGeneralResponse, any>({
         path: `/api/OrderBy/GetAllOrderBy`,
         method: "GET",
+        format: "json",
         ...params,
       }),
   };

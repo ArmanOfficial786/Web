@@ -912,7 +912,7 @@ export default function PdfSlideViewer({
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        p: 3,
+        p: 1,
         position: "relative",
       }}
     >

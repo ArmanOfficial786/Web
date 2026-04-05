@@ -11,7 +11,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Api, type MemberIdCardRequest } from "../../../../../../types/api/api";
@@ -20,6 +20,7 @@ import MemberIdCard, {
   type ReportFormat,
   type ReportState,
 } from "@/components/MemberIdCard";
+import { branchService } from "@/services/BranchService";
 
 // ── API client ────────────────────────────────────────────────────────────────
 const apiClient = new Api({
@@ -63,6 +64,9 @@ function Page() {
     hasNextPage: false,
     hasPreviousPage: false,
   });
+  const [branchOptions, setBranchOptions] = useState<
+    { id: number; name: string }[]
+  >([]);
 
   // ── Form ────────────────────────────────────────────────────────────────
   const { control, handleSubmit, getValues } = useForm<FormInputs>({
@@ -193,6 +197,27 @@ function Page() {
       setReportState((prev) => ({ ...prev, loading: false }));
     }
   };
+
+  useEffect(() => {
+    const fetchBranches = async () => {
+      try {
+        const response = await branchService.getAll();
+        const branches = response?.data ?? [];
+
+        const mapped = branches.map((b) => ({
+          id: b.branchId ?? 0,
+          name: b.branchName ?? "",
+        }));
+
+        setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      } catch (err) {
+        console.error("Branch fetch error", err);
+        toast.error("Failed to load branches");
+      }
+    };
+
+    fetchBranches();
+  }, []);
 
   // ── Handlers ────────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<FormInputs> = () => {

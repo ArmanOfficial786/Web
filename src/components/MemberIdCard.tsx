@@ -591,10 +591,10 @@ function MemberIdCard({
         >
           Create Member ID Card
         </Typography>
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 1 }} />
 
         {/* Row 1 — Member Id | Member Name */}
-        <Grid container spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        <Grid container spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <FieldRow label="Member Id">
               <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
@@ -628,10 +628,10 @@ function MemberIdCard({
             </FieldRow>
           </Grid>
         </Grid>
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 1 }} />
 
         {/* Row 2 — From Date | Till Date */}
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 1.5 }}>
+        <Grid container spacing={2} alignItems="center" sx={{ mb: 0.5 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <FieldRow label="From Date">
               <DateInput name="fromDate" control={control} dateType="BS" />
@@ -644,10 +644,10 @@ function MemberIdCard({
             </FieldRow>
           </Grid>
         </Grid>
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 1 }} />
 
         {/* Row 3 — Branch Name | Select Group */}
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 1.5 }}>
+        <Grid container spacing={2} alignItems="center" sx={{ mb: 0.5 }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <FieldRow label="Branch Name">
               <DropDown
@@ -672,10 +672,10 @@ function MemberIdCard({
             </FieldRow>
           </Grid>
         </Grid>
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 1 }} />
 
         {/* Row 4 — Order By | View Report */}
-        <Grid container spacing={2} alignItems="center">
+        <Grid container spacing={1} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }}>
             <FieldRow label="Order by">
               <DropDown
@@ -743,7 +743,7 @@ function MemberIdCard({
             <Typography color="error">{error}</Typography>
           </Box>
         ) : reportLoaded ? (
-          <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
             {pdfData && (
               <PdfSlideViewer
                 base64Pdf={pdfData}
