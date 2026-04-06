@@ -1,7 +1,18 @@
 import { Api } from "../../types/api/api";
+import {
+  requestInterceptor,
+  successResponseInterceptor,
+  errorResponseInterceptor,
+} from "./Interceptor";
 
-export const apiClient = new Api({
-  baseURL: "http://localhost:5106", // your backend HTTP URL
+const apiClient = new Api({
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "",
 });
 
-//no use of apiClient instead of it use .env
+apiClient.instance.interceptors.request.use(requestInterceptor);
+apiClient.instance.interceptors.response.use(
+  successResponseInterceptor,
+  errorResponseInterceptor,
+);
+
+export { apiClient };

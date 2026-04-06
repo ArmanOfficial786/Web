@@ -6,114 +6,129 @@ import type {
 import { getSession, signOut } from "next-auth/react";
 import { toast } from "react-toastify";
 
-// ✅ Only change from your original — ErrorDTO now lives in the generated api.ts
-// If your generated api.ts doesn't export ErrorDTO, the inline definition below is used
-// import type { ErrorDTO } from '../types/api/api';
+// ── Shapes ────────────────────────────────────────────────────────────────────
 
-interface ErrorDTO {
-  code?: string | null;
+// Your GeneralResponse shape from backend
+interface GeneralResponse {
+  isValid?: boolean;
+  statusCode?: number;
   message?: string | null;
-  field?: string | null;
-}
-
-export interface ResponseType {
-  success?: boolean;
-  message?: string | null;
-  errors?: ErrorDTO[] | null;
   data?: any;
 }
 
-interface DotnetErrorResponseType {
+// .NET model validation error shape
+interface DotnetValidationError {
   status: number;
   title?: string;
   traceId?: string;
   type?: string;
-  errors: {
-    [key: string]: string[];
-  };
+  errors: Record<string, string[]>;
 }
 
-const requestInterceptor = async (
+// ── Request interceptor ───────────────────────────────────────────────────────
+export const requestInterceptor = async (
   config: InternalAxiosRequestConfig,
 ): Promise<InternalAxiosRequestConfig> => {
-  config.headers.Authorization = `Bearer ${(await getSession())?.accessToken}`;
+  const session = await getSession();
+  config.headers.Authorization = `Bearer ${session?.accessToken}`;
   return config;
 };
 
-const successResponseInterceptor = (response: AxiosResponse): AxiosResponse => {
-  // Blob response that is actually a JSON error
-  if (
-    response.data &&
-    response.data instanceof Blob &&
-    response.data.type === "application/json"
-  ) {
-    response.data
+// ── Success interceptor ───────────────────────────────────────────────────────
+export const successResponseInterceptor = (
+  response: AxiosResponse,
+): AxiosResponse => {
+  const data = response.data;
+
+  // ── Blob response — could be a JSON error disguised as blob ───────────
+  if (data instanceof Blob && data.type === "application/json") {
+    data
       .text()
       .then((txt) => {
-        const errs: ErrorDTO[] = JSON.parse(txt).errors ?? [];
-        for (const err of errs) {
-          // ✅ fixed: `of` not `in`
-          toast.error(err.message, { position: "top-center" });
+        const parsed: GeneralResponse = JSON.parse(txt);
+        if (!parsed.isValid) {
+          toast.error(parsed.message ?? "An error occurred", {
+            position: "top-center",
+          });
         }
       })
       .catch(() => {
-        response.data = {};
+        toast.error("Unexpected error reading response", {
+          position: "top-center",
+        });
       });
-    return response; // ✅ early return — skip JSON path on Blob
+
+    return response;
   }
 
-  // Normal JSON response
-  const success: boolean | undefined = response.data.success;
-  if (success === false) {
-    const errs: ErrorDTO[] = response.data.errors;
-    for (const err of errs) {
-      toast.error(err.message, { position: "top-center" });
-    }
-  } else {
-    const successMsg: string | null | undefined = response.data.message;
-    if (successMsg) {
-      toast.success(successMsg, { position: "top-center" });
+  // ── GeneralResponse shape ─────────────────────────────────────────────
+  if (typeof data === "object" && "isValid" in data) {
+    const res = data as GeneralResponse;
+
+    if (res.isValid === false) {
+      toast.error(res.message ?? "Request failed", { position: "top-center" });
+    } else if (res.message) {
+      // ✅ Only show success toast for mutations (POST/PUT/DELETE), not GET/VIEW
+      const method = response.config.method?.toUpperCase();
+      const isView =
+        response.config.params?.format === "VIEW" || method === "GET";
+
+      if (!isView) {
+        toast.success(res.message, { position: "top-center" });
+      }
     }
   }
 
   return response;
 };
 
-const errorResponseInterceptor = (error: AxiosError) => {
+// ── Error interceptor ─────────────────────────────────────────────────────────
+export const errorResponseInterceptor = (error: AxiosError): Promise<never> => {
+  // ── 401 — force sign out ──────────────────────────────────────────────
   if (error.status === 401 || error.response?.status === 401) {
     signOut();
-    return;
+    return Promise.reject(error);
   }
 
-  if (!error.response) {
-    toast.error(
-      error.message ?? "An error has occurred. Please try again later.",
-      { position: "top-center" },
-    );
-    return;
-  }
+  if (error.response) {
+    const responseData = error.response.data;
 
-  const responseData = error.response.data;
-
-  if ((responseData as ResponseType).success !== undefined) {
-    // Our own API error shape
-    const errs = (responseData as ResponseType).errors ?? [];
-    for (const err of errs) {
-      toast.error(err.message, { position: "top-center" });
+    // ── GeneralResponse error (isValid: false with 4xx/5xx) ───────────
+    if (
+      typeof responseData === "object" &&
+      responseData !== null &&
+      "isValid" in responseData
+    ) {
+      const res = responseData as GeneralResponse;
+      toast.error(res.message ?? "Request failed", { position: "top-center" });
+      return Promise.reject(error);
     }
-  } else {
-    // ASP.NET validation error shape
-    const errs = (responseData as DotnetErrorResponseType).errors ?? {};
-    for (const key of Object.keys(errs).filter((k) => !k.startsWith("$"))) {
-      for (const msg of errs[key]) {
-        toast.error(msg, { position: "top-center" });
+
+    // ── .NET model validation errors ──────────────────────────────────
+    if (
+      typeof responseData === "object" &&
+      responseData !== null &&
+      "errors" in responseData
+    ) {
+      const res = responseData as DotnetValidationError;
+      const keys = Object.keys(res.errors ?? {}).filter(
+        (k) => !k.startsWith("$"),
+      );
+
+      for (const key of keys) {
+        for (const msg of res.errors[key]) {
+          toast.error(msg, { position: "top-center" });
+        }
       }
+
+      return Promise.reject(error);
     }
   }
-};
 
-export {
-  errorResponseInterceptor,
-  requestInterceptor,
-  successResponseInterceptor,
+  // ── Network error / no response ───────────────────────────────────────
+  toast.error(error.message ?? "An error occurred. Please try again later.", {
+    position: "top-center",
+  });
+
+  return Promise.reject(error);
 };
