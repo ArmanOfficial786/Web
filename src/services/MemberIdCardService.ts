@@ -54,17 +54,89 @@
 //   },
 // };
 
+// import { getSession } from "next-auth/react";
+// import { apiClient } from "./apiClient";
+// import {
+//   streamViewToNewTab,
+//   streamDownload,
+//   getFileExtension,
+//   type ReportServiceResult,
+// } from "@/utilis/reportUtils";
+// import type { MemberIdCardRequest } from "../../types/api/api";
+
+// export { triggerFileDownload } from "@/utilis/reportUtils";
+// export type {
+//   ReportServiceResult,
+//   ViewResult,
+//   DownloadResult,
+// } from "@/utilis/reportUtils";
+
+// const getRequestMeta = async (format: string) => {
+//   const session = await getSession();
+//   const token = session?.accessToken ?? "";
+//   const baseURL = apiClient.instance.defaults.baseURL ?? "";
+//   const url = `${baseURL}/api/MemberIdCard/MemberIdCard?format=${format}`;
+//   return { token, url };
+// };
+
+// export const memberIdCardService = {
+//   // ── VIEW ──────────────────────────────────────────────────────────────────
+//   // Backend: compressed images → PDF binary (inline)
+//   // Frontend: blob URL → window.open → native browser PDF tab
+//   // Same UX as old DevExpress ReportViewer
+//   view: async (
+//     payload: MemberIdCardRequest,
+//     page: number,
+//     size: number,
+//     onProgress?: (percent: number) => void,
+//   ): Promise<ReportServiceResult> => {
+//     const { token, url } = await getRequestMeta("VIEW");
+
+//     const { pagination } = await streamViewToNewTab(
+//       url,
+//       { ...payload, currentPage: page, pageSize: size },
+//       token,
+//       onProgress,
+//     );
+
+//     return { isView: true, pagination };
+//   },
+
+//   // ── EXPORT ────────────────────────────────────────────────────────────────
+//   // Backend: binary blob + Content-Disposition filename
+//   // Frontend: stream → Blob → triggerFileDownload
+//   export: async (
+//     payload: MemberIdCardRequest,
+//     format: string,
+//     onProgress?: (percent: number) => void,
+//   ): Promise<ReportServiceResult> => {
+//     const upperFormat = format.toUpperCase();
+//     const { token, url } = await getRequestMeta(upperFormat);
+
+//     const fallbackFilename = `MemberIdCard_${payload.fromDate}_${payload.toDate}.${getFileExtension(upperFormat)}`;
+
+//     const filename = await streamDownload(
+//       url,
+//       payload,
+//       fallbackFilename,
+//       token,
+//       onProgress,
+//     );
+
+//     return { isView: false, filename };
+//   },
+// };
+
 import { getSession } from "next-auth/react";
 import { apiClient } from "./apiClient";
 import {
-  unwrapViewResponse,
-  streamDownload,
+  streamViewToBase64,
+  streamExportToNewTab,
   getFileExtension,
   type ReportServiceResult,
 } from "@/utilis/reportUtils";
 import type { MemberIdCardRequest } from "../../types/api/api";
 
-// ── Re-exports so pages never import from utils directly ──────────────────────
 export { triggerFileDownload } from "@/utilis/reportUtils";
 export type {
   ReportServiceResult,
@@ -72,8 +144,7 @@ export type {
   DownloadResult,
 } from "@/utilis/reportUtils";
 
-// ── Shared: build export URL + get auth token ─────────────────────────────────
-const getExportMeta = async (format: string) => {
+const getRequestMeta = async (format: string) => {
   const session = await getSession();
   const token = session?.accessToken ?? "";
   const baseURL = apiClient.instance.defaults.baseURL ?? "";
@@ -82,39 +153,39 @@ const getExportMeta = async (format: string) => {
 };
 
 export const memberIdCardService = {
-  // ── VIEW — axios JSON → GeneralResponse<ReportResponseDtos> ──────────────
-  // Returns base64 pdfData + pagination
-  // Also caches rendered HTML on backend for subsequent exports
-  // ✅ Axios interceptor handles auth + error toasting automatically
+  // ── VIEW: returns base64 PDF for inline PdfSlideViewer ───────────────────
   view: async (
     payload: MemberIdCardRequest,
     page: number,
     size: number,
+    onProgress?: (percent: number) => void,
   ): Promise<ReportServiceResult> => {
-    const response = await apiClient.api.memberIdCardMemberIdCardCreate(
+    const { token, url } = await getRequestMeta("VIEW");
+    const { base64, pagination } = await streamViewToBase64(
+      url,
       { ...payload, currentPage: page, pageSize: size },
-      { format: "VIEW" },
+      token,
+      onProgress,
     );
-    return { isView: true, report: unwrapViewResponse(response.data) };
+    return { isView: true, pagination, pdfData: base64 };
   },
 
-  // ── EXPORT — fetch stream → binary file → browser download ───────────────
-  // payload MUST match last VIEW call so backend reportKey hits cache
-  // Backend returns filename in Content-Disposition header — we use that directly
-  // fallback filename only used when backend sends no Content-Disposition
+  // ── EXPORT: opens result in a new browser tab ─────────────────────────────
   export: async (
     payload: MemberIdCardRequest,
     format: string,
     onProgress?: (percent: number) => void,
   ): Promise<ReportServiceResult> => {
     const upperFormat = format.toUpperCase();
-    const { token, url } = await getExportMeta(upperFormat);
-
-    // ✅ Fallback only — backend filename from Content-Disposition takes priority
+    const { token, url } = await getRequestMeta(upperFormat);
     const fallbackFilename = `MemberIdCard_${payload.fromDate}_${payload.toDate}.${getFileExtension(upperFormat)}`;
-
-    await streamDownload(url, payload, fallbackFilename, token, onProgress);
-
-    return { isView: false, filename: fallbackFilename };
+    const filename = await streamExportToNewTab(
+      url,
+      payload,
+      fallbackFilename,
+      token,
+      onProgress,
+    );
+    return { isView: false, filename };
   },
 };
