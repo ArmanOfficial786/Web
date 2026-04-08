@@ -52,7 +52,6 @@ import "./globals.css";
 // import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import ThemeProvider from "./theme-Provider";
 import ToastProvider from "@/utilis/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });

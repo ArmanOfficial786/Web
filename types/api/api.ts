@@ -76,6 +76,46 @@ export interface MemberIdCardRequest {
   pageSize?: number;
 }
 
+export interface MemberLookUpDtos {
+  /** @format int64 */
+  memMemberRegistrationId?: number;
+  centerName?: string | null;
+  centerCode?: string | null;
+  groupName?: string | null;
+  groupCode?: string | null;
+  officeName?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  gender?: string | null;
+  temporaryAddress?: string | null;
+  mobileNo?: string | null;
+  /** @format int32 */
+  totalCount?: number;
+  /** @format int32 */
+  currentPage?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  totalPages?: number;
+}
+
+export interface MemberLookUpDtosPagedResult {
+  items?: MemberLookUpDtos[] | null;
+  /** @format int32 */
+  totalCount?: number;
+  /** @format int32 */
+  currentPage?: number;
+  /** @format int32 */
+  pageSize?: number;
+  /** @format int32 */
+  totalPages?: number;
+}
+
+export interface MemberSelectedDto {
+  memberId?: string | null;
+  memberName?: string | null;
+}
+
 export interface OrderByResponse {
   /** @format int32 */
   value?: number;
@@ -372,12 +412,60 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/MemberIdCard/MemberIdCard`,
         method: "POST",
         query: query,
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberLookUp
+     * @name MemberLookUpSearchList
+     * @request GET:/api/MemberLookUp/search
+     */
+    memberLookUpSearchList: (
+      query?: {
+        /** @format int32 */
+        Page?: number;
+        MemberId?: string;
+        MemberName?: string;
+        GroupName?: string;
+        CenterName?: string;
+        Gender?: string;
+        MobileNo?: string;
+        OfficeName?: string;
+        SortColumn?: string;
+        SortDirection?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<MemberLookUpDtosPagedResult, any>({
+        path: `/api/MemberLookUp/search`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberLookUp
+     * @name MemberLookUpSelectDetail
+     * @request GET:/api/MemberLookUp/select/{memMemberRegistrationId}
+     */
+    memberLookUpSelectDetail: (
+      memMemberRegistrationId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<MemberSelectedDto, any>({
+        path: `/api/MemberLookUp/select/${memMemberRegistrationId}`,
+        method: "GET",
         format: "json",
         ...params,
       }),
