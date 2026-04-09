@@ -6,9 +6,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import DropDown from "@/components/form/DropDown";
-import type { FormInputs, SelectOption } from "@/components/MemberIdCard";
+import { useReportForm } from "@/contexts/ReportFormContext";
+import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
-// ── FieldRow (local, keeps label-left design) ─────────────────────────────────
+// ── FieldRow (local component create label in left and input in right) ─────────────────────────────────
 function FieldRow({
   label,
   children,
@@ -34,26 +35,22 @@ function FieldRow({
   );
 }
 
-const DEFAULT_OPTIONS: SelectOption[] = [{ id: 0, name: "-- Select --" }];
-
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface SelectGroupFieldProps {
+interface BranchNameFieldProps {
   control: Control<FormInputs>;
-  groupOptions?: SelectOption[];
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function SelectGroupField({
-  control,
-  groupOptions = DEFAULT_OPTIONS,
-}: SelectGroupFieldProps) {
+export default function BranchNameField({ control }: BranchNameFieldProps) {
+  const { branchOptions } = useReportForm();
+
   return (
-    <FieldRow label="Select Group">
+    <FieldRow label="Branch Name">
       <DropDown
-        name="groupId"
+        name="branchId"
         control={control}
-        label="Select Group"
-        options={groupOptions}
+        label="Branch Name"
+        options={branchOptions}
         fullWidth
       />
     </FieldRow>

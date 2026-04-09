@@ -10,7 +10,7 @@ import type {
 import { useWatch } from "react-hook-form";
 import Button from "@mui/material/Button";
 
-import type { FormInputs } from "@/components/MemberIdCard";
+import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface ViewReportButtonProps {

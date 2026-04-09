@@ -193,9 +193,15 @@ import React, {
 import { branchService } from "@/services/BranchService";
 import { orderByService } from "@/services/OrderByService";
 import { memberLookUpService } from "@/services/MemberLookUpService";
+import { collectionCenterService } from "@/services/CollectionCenterService";
+import {
+  CollectionCenterRequestDtos,
+  MemberGroupRequestDtos,
+} from "types/api/api";
+import { memberGroupService } from "@/services/MemberGroupService";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-export type SelectOption = { id: number; name: string };
+export type SelectOption = { id: number | string; name: string };
 
 export interface MemberRecord {
   memMemberRegistrationId: number;
@@ -235,6 +241,14 @@ interface ReportFormContextType {
   setSelectedMember: (member: MemberRecord | null) => void;
   branchOptions: SelectOption[];
   orderByOptions: SelectOption[];
+  collectionCenterOptions: SelectOption[]; // ← was missing
+  memberGroupOptions: SelectOption[];
+  fetchCollectionCenters: (branchId: number) => Promise<void>;
+  fetchMemberGroups: (
+    branchId: number,
+    collectionCenterId: number,
+  ) => Promise<void>;
+  resetFormFields: () => void;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -262,12 +276,24 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   );
   const [branchOptions, setBranchOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
+  const [collectionCenterOptions, setCollectionCenterOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+  const [memberGroupOptions, setMemberGroupOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
   const [orderByOptions, setOrderByOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
 
-  // ✅ Holds the AbortController for whatever fetch is currently in flight.
-  //    A new ref (not state) so mutating it never triggers a re-render.
-  const abortControllerRef = useRef<AbortController | null>(null);
+  // ✅ Monotonically-increasing counter. Each call to searchmemberLookUp
+  //    captures its own generation number at the point it was invoked.
+  //    When the async response arrives, we compare — if the ref has moved
+  //    on (a newer call or a clearResults happened), we discard silently.
+  //    This replaces AbortController so the service signature is untouched.
+  const searchGenerationRef = useRef(0);
+
+  const resetFormFields = useCallback(() => {
+    setCollectionCenterOptions(DEFAULT_SELECT);
+    setMemberGroupOptions(DEFAULT_SELECT);
+  }, []);
 
   // ── Branch options ────────────────────────────────────────────────────────
   useEffect(() => {
@@ -285,6 +311,65 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       .catch(() => {});
   }, []);
 
+  // ──  Collection Centers ────────────────────────────────────────────────────────
+  const fetchCollectionCenters = useCallback(async (branchId: number) => {
+    // ✅ Don't call API until a real branch is selected
+    if (!branchId || branchId === 0) {
+      setCollectionCenterOptions(DEFAULT_SELECT);
+      setMemberGroupOptions(DEFAULT_SELECT);
+      return;
+    }
+
+    try {
+      const request: CollectionCenterRequestDtos = { lstOfficeId: branchId };
+      const res = await collectionCenterService.getAll(request);
+      const mapped = (res ?? []).map(
+        (c): SelectOption => ({
+          id: c.collectionCenterId ?? 0,
+          name: c.collectionCenterName ?? "",
+        }),
+      );
+      setCollectionCenterOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch (err) {
+      console.error("Error fetching collection centers:", err);
+      setCollectionCenterOptions(DEFAULT_SELECT);
+    }
+  }, []);
+
+  // ──  Select Member Group ────────────────────────────────────────────────────────
+  const fetchMemberGroups = useCallback(
+    async (branchId: number, collectionCenterId: number) => {
+      // ✅ Don't call API until both real values are selected
+      if (
+        !branchId ||
+        branchId === 0 ||
+        !collectionCenterId ||
+        collectionCenterId === 0
+      ) {
+        setMemberGroupOptions(DEFAULT_SELECT);
+        return;
+      }
+
+      try {
+        const request: MemberGroupRequestDtos = {
+          lstOfficeId: branchId,
+          collectionCenterId: collectionCenterId,
+        };
+        const res = await memberGroupService.getAll(request);
+        const mapped = (res ?? []).map(
+          (g): SelectOption => ({
+            id: g.memberGroupId ?? 0,
+            name: g.name ?? "",
+          }),
+        );
+        setMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      } catch (err) {
+        console.error("Error fetching member groups:", err);
+        setMemberGroupOptions(DEFAULT_SELECT);
+      }
+    },
+    [],
+  );
   // ── OrderBy options ───────────────────────────────────────────────────────
   useEffect(() => {
     orderByService
@@ -293,7 +378,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         const list = res?.data?.memberIdCard ?? [];
         const mapped = list.map(
           (o): SelectOption => ({
-            id: o.value ?? 0,
+            id: o.value ?? "",
+            //id: o.displayName ?? "",
             name: o.displayName ?? "",
           }),
         );
@@ -305,27 +391,18 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   // ── Member lookup search ──────────────────────────────────────────────────
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
-      // ✅ Cancel any previous in-flight request before starting a new one.
-      //    This prevents an old slow response from overwriting a newer one.
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+      // Stamp this call with the next generation number
+      const generation = ++searchGenerationRef.current;
 
       setIsLoading(true);
       setError("");
 
       try {
-        const data = await memberLookUpService.getAllWithFilters(
-          params,
-          controller.signal, // ✅ pass signal to your service (see note below)
-        );
+        const data = await memberLookUpService.getAllWithFilters(params);
 
-        // ✅ Guard: if this request was aborted while awaiting, bail out silently.
-        //    Without this check the aborted request's finally block would still
-        //    flip isLoading to false and potentially corrupt state.
-        if (controller.signal.aborted) return;
+        // ✅ If generation no longer matches, a newer call (or clearResults)
+        //    has superseded us — drop the response entirely.
+        if (generation !== searchGenerationRef.current) return;
 
         const mappedItems = (data?.items ?? []).map(
           (item): MemberRecord => ({
@@ -347,15 +424,12 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         setTotalPages(data?.totalPages ?? 1);
         setCurrentPage(data?.currentPage ?? 1);
       } catch (err: any) {
-        // ✅ DOMException with name "AbortError" is expected when we cancel —
-        //    swallow it silently; only surface real errors.
-        if (err?.name === "AbortError") return;
+        if (generation !== searchGenerationRef.current) return;
         setError(err?.message ?? "Failed to load members");
       } finally {
-        // ✅ Only clear loading flag for the request that is still "current".
-        //    If the controller was already replaced by a newer call, leave
-        //    isLoading alone — the newer call owns that flag now.
-        if (!controller.signal.aborted) {
+        // ✅ Only the current generation clears the loading flag.
+        //    A stale response must never flip isLoading to false.
+        if (generation === searchGenerationRef.current) {
           setIsLoading(false);
         }
       }
@@ -365,18 +439,16 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Clear results ─────────────────────────────────────────────────────────
   const clearResults = useCallback(() => {
-    // ✅ Abort any in-flight request immediately so its response can never
-    //    land after we've cleared state (the original race condition).
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
+    // ✅ Advancing the generation invalidates every in-flight request instantly.
+    //    When those promises resolve they will see a mismatched generation
+    //    and bail out without touching state.
+    searchGenerationRef.current += 1;
 
     setMemberLookUp([]);
     setTotalPages(1);
     setCurrentPage(1);
     setError("");
-    setIsLoading(false); // ✅ was missing — left isLoading=true after close
+    setIsLoading(false); // ✅ was missing in original — left spinner stuck on reopen
   }, []);
 
   return (
@@ -393,6 +465,11 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         clearResults,
         branchOptions,
         orderByOptions,
+        collectionCenterOptions,
+        memberGroupOptions,
+        fetchCollectionCenters,
+        fetchMemberGroups,
+        resetFormFields,
       }}
     >
       {children}

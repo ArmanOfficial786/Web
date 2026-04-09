@@ -6,9 +6,9 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import { RefreshCw } from "lucide-react";
-import ReportNavigation from "@/components/ReportNavigation";
+import ReportNavigation from "@/components/reportForm/ReportNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import PdfSlideViewer from "./PdfSlideViewer";
+import PdfSlideViewer from "./reportForm/PdfSlideViewer";
 
 export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
 

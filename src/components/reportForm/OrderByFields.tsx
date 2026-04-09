@@ -95,7 +95,7 @@ import Typography from "@mui/material/Typography";
 
 import DropDown from "@/components/form/DropDown";
 import { useReportForm } from "@/contexts/ReportFormContext";
-import type { FormInputs } from "@/components/MemberIdCard";
+import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
 // ── FieldRow (local, keeps label-left design) ─────────────────────────────────
 function FieldRow({

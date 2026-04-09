@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/SideBar";
+import Navbar from "@/components/Dashboard/Navbar";
+import Sidebar from "@/components/Dashboard/SideBar";
 import ThemeProvider from "@/app/theme-Provider";
 import ToastProvider from "@/utilis/ToastProvider";
 import { ReportFormProvider } from "@/contexts/ReportFormContext";

@@ -49,6 +49,18 @@ export interface BranchResponseListGeneralResponse {
   data?: BranchResponse[] | null;
 }
 
+export interface CollectionCenterRequestDtos {
+  /** @format int64 */
+  lstOfficeId?: number;
+}
+
+export interface CollectionCenterResponseDto {
+  /** @format int64 */
+  collectionCenterId?: number;
+  collectionCenterShortCode?: string | null;
+  collectionCenterName?: string | null;
+}
+
 export interface MemberDetailRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -62,10 +74,28 @@ export interface MemberDetailRequest {
   pageSize?: number;
 }
 
+export interface MemberGroupRequestDtos {
+  /** @format int64 */
+  lstOfficeId?: number;
+  /** @format int64 */
+  collectionCenterId?: number;
+}
+
+export interface MemberGroupResponseDto {
+  /** @format int64 */
+  memberGroupId?: number;
+  /** @format int64 */
+  collectionCenterId?: number;
+  /** @format int64 */
+  usmOfficeId?: number;
+  name?: string | null;
+}
+
 export interface MemberIdCardRequest {
   fromDate?: string | null;
   toDate?: string | null;
   memberId?: string | null;
+  orderby?: string | null;
   /** @format int64 */
   branchId?: number;
   /** @format int64 */
@@ -375,6 +405,26 @@ export class Api<
     /**
      * No description
      *
+     * @tags CollectionCenter
+     * @name CollectionCenterCollectionCentersCreate
+     * @request POST:/api/CollectionCenter/collection-centers
+     */
+    collectionCenterCollectionCentersCreate: (
+      data: CollectionCenterRequestDtos,
+      params: RequestParams = {},
+    ) =>
+      this.request<CollectionCenterResponseDto[], any>({
+        path: `/api/CollectionCenter/collection-centers`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags MemberDetail
      * @name MemberDetailMemberDetailReportCreate
      * @request POST:/api/MemberDetail/MemberDetailReport
@@ -391,6 +441,26 @@ export class Api<
         path: `/api/MemberDetail/MemberDetailReport`,
         method: "POST",
         query: query,
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberGroup
+     * @name MemberGroupMemberGroupsCreate
+     * @request POST:/api/MemberGroup/member-groups
+     */
+    memberGroupMemberGroupsCreate: (
+      data: MemberGroupRequestDtos,
+      params: RequestParams = {},
+    ) =>
+      this.request<MemberGroupResponseDto[], any>({
+        path: `/api/MemberGroup/member-groups`,
+        method: "POST",
         body: data,
         type: ContentType.Json,
         format: "json",
@@ -439,6 +509,8 @@ export class Api<
         Gender?: string;
         MobileNo?: string;
         OfficeName?: string;
+        GroupCode?: string;
+        CenterCode?: string;
         SortColumn?: string;
         SortDirection?: string;
       },

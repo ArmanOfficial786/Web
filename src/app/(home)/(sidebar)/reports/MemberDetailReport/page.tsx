@@ -1,4 +1,4 @@
-import MemberDetialReports from "@/components/MemberDetailReport";
+import MemberDetialReports from "@/components/reports/memberReport/MemberDetailReport";
 
 import React from "react";
 

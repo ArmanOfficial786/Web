@@ -179,7 +179,7 @@
 // export default Page;
 
 "use client";
-
+import { useReportForm } from "@/contexts/ReportFormContext";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -191,7 +191,7 @@ import MemberIdCard, {
   type FormInputs,
   type ReportFormat,
   type ReportState,
-} from "@/components/MemberIdCard";
+} from "@/components/reports/memberReport/MemberIdCard";
 import { memberIdCardService } from "@/services/MemberIdCardService";
 
 // ── Format map ────────────────────────────────────────────────────────────────
@@ -216,6 +216,7 @@ const schema: yup.ObjectSchema<FormInputs> = yup.object({
       return !fromDate || !val || val >= fromDate;
     }),
   branchId: yup.mixed<number | string>().optional().default(0),
+  collectionCenterId: yup.mixed<number | string>().optional().default(0),
   groupId: yup.mixed<number | string>().optional().default(0),
   orderBy: yup.mixed<number | string>().optional().default(0),
 });
@@ -231,9 +232,21 @@ const INITIAL_STATE: ReportState = {
   pdfData: "",
 };
 
+const EMPTY_FORM: FormInputs = {
+  memberId: "",
+  memberName: "",
+  fromDate: "",
+  tillDate: "",
+  branchId: 0,
+  collectionCenterId: 0,
+  groupId: 0,
+  orderBy: 0,
+};
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 function Page() {
   const { t } = useLanguage();
+  const { resetFormFields, setSelectedMember } = useReportForm(); //for clear button
 
   const [reportState, setReportState] = useState<ReportState>(INITIAL_STATE);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -241,18 +254,11 @@ function Page() {
   const lastViewedPayload = useRef<MemberIdCardRequest | null>(null);
 
   // ← destructure setValue so ViewReportButton can clear date fields
-  const { control, handleSubmit, getValues, setValue } = useForm<FormInputs>({
-    resolver: yupResolver(schema) as any,
-    defaultValues: {
-      memberId: "",
-      memberName: "",
-      fromDate: "",
-      tillDate: "",
-      branchId: 0,
-      groupId: 0,
-      orderBy: 0,
-    },
-  });
+  const { control, handleSubmit, getValues, setValue, reset } =
+    useForm<FormInputs>({
+      resolver: yupResolver(schema) as any,
+      defaultValues: EMPTY_FORM,
+    });
 
   const buildPayload = (): MemberIdCardRequest => {
     const v = getValues();
@@ -262,10 +268,19 @@ function Page() {
       toDate: v.tillDate || null,
       branchId: Number(v.branchId) || 0,
       memberGroupId: Number(v.groupId) || 0,
-      orderBy: Number(v.orderBy) || 0,
+      orderby: v.orderBy && v.orderBy !== 0 ? String(v.orderBy) : null,
     };
   };
 
+  // ── Clear form helper (reused by both view-success and clear button) ──
+  const clearForm = () => {
+    reset(EMPTY_FORM);
+    (Object.keys(EMPTY_FORM) as (keyof FormInputs)[]).forEach((key) => {
+      setValue(key, EMPTY_FORM[key]);
+    });
+    resetFormFields();
+    setSelectedMember(null);
+  };
   // ── VIEW ──────────────────────────────────────────────────────────────────
   const viewReport = async (
     page = reportState.currentPage,
@@ -294,9 +309,25 @@ function Page() {
           pageSize: p?.pageSize ?? size,
         }));
 
-        toast.success(`Report loaded (page ${page})`);
+        toast.success(`Report generated Successfully `);
+        // ✅ Clear the form after report loads successfully
+        reset({
+          memberId: "",
+          memberName: "",
+          fromDate: "",
+          tillDate: "",
+          branchId: 0,
+          collectionCenterId: 0,
+          groupId: 0,
+          orderBy: 0,
+        });
+        // ✅ Clear form after successful load
+        clearForm();
       }
-    } catch {
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error ? err.message : "Failed to load report";
+      toast.error(message);
       // Interceptor already toasted
     } finally {
       setReportState((prev) => ({ ...prev, loading: false }));
@@ -348,6 +379,7 @@ function Page() {
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       setValue={setValue} // ← passed through to ViewReportButton
+      reset={reset}
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={(format) => exportReport(FORMAT_MAP[format])}

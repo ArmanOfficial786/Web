@@ -7,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 import DateInput from "@/components/form/DateInput";
-import type { FormInputs } from "@/components/MemberIdCard";
+import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
 // ── FieldRow (local, keeps label-left design) ─────────────────────────────────
 function FieldRow({

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import { RefreshCw } from "lucide-react";
-import ReportNavigation from "@/components/ReportNavigation";
+import ReportNavigation from "@/components/reportForm/ReportNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
@@ -68,7 +68,7 @@ const MemberSubReportViewer = () => {
   const generateReport = async (
     format?: string,
     page: number = 1,
-    size: number = pageSize
+    size: number = pageSize,
   ) => {
     setLoading(true);
     setError("");
@@ -101,7 +101,7 @@ const MemberSubReportViewer = () => {
 
       if (!response.ok) {
         throw new Error(
-          `Failed to generate report: ${response.status} ${response.statusText}`
+          `Failed to generate report: ${response.status} ${response.statusText}`,
         );
       }
 
@@ -173,7 +173,7 @@ const MemberSubReportViewer = () => {
         window.URL.revokeObjectURL(url);
 
         toast.success(
-          `${format?.toUpperCase()} report downloaded successfully`
+          `${format?.toUpperCase()} report downloaded successfully`,
         );
       }
     } catch (err: any) {

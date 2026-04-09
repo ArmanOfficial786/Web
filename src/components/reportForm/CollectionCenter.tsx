@@ -1,15 +1,15 @@
 "use client";
 
-import React from "react";
-import type { Control } from "react-hook-form";
+import React, { useEffect } from "react";
+import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import DropDown from "@/components/form/DropDown";
 import { useReportForm } from "@/contexts/ReportFormContext";
-import type { FormInputs } from "@/components/MemberIdCard";
+import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
-// ── FieldRow (local, keeps label-left design) ─────────────────────────────────
+// ── FieldRow ──────────────────────────────────────────────────────────────────
 function FieldRow({
   label,
   children,
@@ -36,21 +36,34 @@ function FieldRow({
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface BranchNameFieldProps {
+interface CollectionCenterFieldProps {
   control: Control<FormInputs>;
+  setValue: UseFormSetValue<FormInputs>; // ✅ passed as prop, no FormProvider needed
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function BranchNameField({ control }: BranchNameFieldProps) {
-  const { branchOptions } = useReportForm();
+export default function CollectionCenterField({
+  control,
+  setValue,
+}: CollectionCenterFieldProps) {
+  const { collectionCenterOptions, fetchCollectionCenters } = useReportForm();
+
+  const selectedBranchId = useWatch({ control, name: "branchId" });
+
+  useEffect(() => {
+    const id = Number(selectedBranchId);
+    // Reset collection center selection whenever branch changes
+    setValue("collectionCenterId", 0);
+    fetchCollectionCenters(id);
+  }, [selectedBranchId, fetchCollectionCenters, setValue]);
 
   return (
-    <FieldRow label="Branch Name">
+    <FieldRow label="Collection Center">
       <DropDown
-        name="branchId"
+        name="collectionCenterId"
         control={control}
-        label="Branch Name"
-        options={branchOptions}
+        label="Collection Center"
+        options={collectionCenterOptions}
         fullWidth
       />
     </FieldRow>

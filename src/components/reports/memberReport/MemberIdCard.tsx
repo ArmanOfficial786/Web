@@ -438,6 +438,213 @@
 
 // export default MemberIdCard;
 
+// "use client";
+
+// import React from "react";
+// import type {
+//   Control,
+//   SubmitHandler,
+//   UseFormHandleSubmit,
+//   UseFormSetValue,
+// } from "react-hook-form";
+// import { RefreshCw } from "lucide-react";
+// import Box from "@mui/material/Box";
+// import Grid from "@mui/material/Grid";
+// import Paper from "@mui/material/Paper";
+// import Typography from "@mui/material/Typography";
+// import Divider from "@mui/material/Divider";
+
+// import ReportNavigation, {
+//   type ReportFormat,
+// } from "@/components/reportForm/ReportNavigation";
+// import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
+// import MemberLookupButton from "../../reportForm/MemberLookUpButton";
+// import DateFields from "@/components/reportForm/DateFiels";
+// import BranchNameField from "@/components/reportForm/BranchNameField";
+// import SelectGroupField from "../../reportForm/SelectGroupField";
+// import OrderByField from "@/components/reportForm/OrderByFields";
+// import ViewReportButton from "@/components/reportForm/ViewReportButton";
+// import CollectionCenterField from "@/components/reportForm/CollectionCenter";
+
+// // ── Shared types ──────────────────────────────────────────────────────────────
+// export type { ReportFormat };
+
+// export interface FormInputs {
+//   memberId: string;
+//   memberName: string;
+//   fromDate: string;
+//   tillDate: string;
+//   branchId: number | string;
+//   collectionCenterId: number | string;
+//   groupId: number | string;
+//   orderBy: number | string;
+// }
+
+// export interface ReportState {
+//   currentPage: number;
+//   totalPages: number;
+//   totalRecord: number;
+//   pageSize: number;
+//   loading: boolean;
+//   reportLoaded: boolean;
+//   error: string;
+//   pdfData: string;
+// }
+
+// export type SelectOption = { id: number; name: string };
+
+// // ── Props ─────────────────────────────────────────────────────────────────────
+// interface MemberIdCardProps {
+//   control: Control<FormInputs>;
+//   handleSubmit: UseFormHandleSubmit<FormInputs>;
+//   onSubmit: SubmitHandler<FormInputs>;
+//   setValue: UseFormSetValue<FormInputs>;
+//   /** groupOptions still accepted as a prop since it's not in context */
+//   groupOptions?: SelectOption[];
+//   reportState: ReportState;
+//   onPageChange: (page: number) => void;
+//   onDownload: (format: ReportFormat) => void | Promise<void>;
+//   isDownloading?: boolean;
+//   emptyText: string;
+// }
+
+// // ── Component ─────────────────────────────────────────────────────────────────
+// function MemberIdCard({
+//   control,
+//   handleSubmit,
+//   onSubmit,
+//   setValue,
+//   groupOptions,
+//   reportState,
+//   onPageChange,
+//   onDownload,
+//   isDownloading = false,
+//   emptyText,
+// }: MemberIdCardProps) {
+//   const { loading, reportLoaded, error, pdfData, currentPage, totalPages } =
+//     reportState;
+
+//   return (
+//     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+//       {/* ── FILTER FORM ──────────────────────────────────────────────── */}
+//       <Paper variant="outlined" sx={{ p: 1.5 }}>
+//         <Typography
+//           variant="h6"
+//           sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
+//         >
+//           Create Member ID Card
+//         </Typography>
+//         <Divider sx={{ mb: 1.5 }} />
+
+//         {/* Row 1 — Member ID + Name */}
+//         <MemberLookupButton control={control} />
+//         <Divider sx={{ mb: 1.5 }} />
+
+//         {/* Row 2 — From Date | Till Date */}
+//         <Box sx={{ mb: 1 }}>
+//           <DateFields control={control} />
+//         </Box>
+//         <Divider sx={{ mb: 1.5 }} />
+
+//         {/* Row 3 — Branch | Group */}
+//         <Box
+//           sx={{
+//             display: "grid",
+//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+//             gap: 2,
+//             mb: 1,
+//           }}
+//         >
+//           <BranchNameField control={control} />
+//           <CollectionCenterField control={control} />
+//           {/* //<SelectGroupField control={control} groupOptions={groupOptions} /> */}
+//         </Box>
+//         <Divider sx={{ mb: 1.5 }} />
+//         {/* Row  — Branch | Group */}
+//         <Box
+//           sx={{
+//             display: "grid",
+//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+//             gap: 2,
+//             mb: 1,
+//           }}
+//         >
+//           <SelectGroupField control={control} />
+//           <OrderByField control={control} />
+//         </Box>
+//         <Divider sx={{ mb: 1.5 }} />
+
+//         {/* Row 5 — Order By | View Report */}
+//         <Grid container spacing={1} alignItems="center">
+//           <Grid size={{ xs: 12, md: 6 }}>
+//             <ViewReportButton
+//               control={control}
+//               handleSubmit={handleSubmit}
+//               onSubmit={onSubmit}
+//               setValue={setValue}
+//               loading={loading}
+//             />
+//           </Grid>
+//         </Grid>
+//       </Paper>
+
+//       {/* ── NAVIGATION ───────────────────────────────────────────────── */}
+//       {reportLoaded && (
+//         <ReportNavigation
+//           pdfData={pdfData}
+//           currentPage={currentPage}
+//           totalPages={totalPages}
+//           onPageChange={onPageChange}
+//           onDownload={onDownload}
+//           isDownloading={isDownloading}
+//         />
+//       )}
+
+//       {/* ── REPORT AREA ──────────────────────────────────────────────── */}
+//       <Box sx={{ width: "100%", overflow: "auto", height: "100vh" }}>
+//         {loading ? (
+//           <Box
+//             sx={{
+//               display: "flex",
+//               justifyContent: "center",
+//               alignItems: "center",
+//               height: "100%",
+//             }}
+//           >
+//             <RefreshCw className="animate-spin text-blue-500" size={48} />
+//           </Box>
+//         ) : error ? (
+//           <Box sx={{ textAlign: "center", mt: 4 }}>
+//             <Typography color="error">{error}</Typography>
+//           </Box>
+//         ) : reportLoaded && pdfData ? (
+//           <Box sx={{ display: "flex", justifyContent: "center" }}>
+//             <PdfSlideViewer
+//               base64Pdf={pdfData}
+//               pageNumber={currentPage}
+//               onTotalPagesChange={(_pages: number) => {}}
+//               onLoadError={(_err: string) => {}}
+//             />
+//           </Box>
+//         ) : (
+//           <Box
+//             sx={{
+//               display: "flex",
+//               justifyContent: "center",
+//               alignItems: "center",
+//               height: "100%",
+//             }}
+//           >
+//             <Typography color="text.secondary">{emptyText}</Typography>
+//           </Box>
+//         )}
+//       </Box>
+//     </Box>
+//   );
+// }
+
+// export default MemberIdCard;
+
 "use client";
 
 import React from "react";
@@ -446,6 +653,7 @@ import type {
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
+  UseFormReset,
 } from "react-hook-form";
 import { RefreshCw } from "lucide-react";
 import Box from "@mui/material/Box";
@@ -456,16 +664,17 @@ import Divider from "@mui/material/Divider";
 
 import ReportNavigation, {
   type ReportFormat,
-} from "@/components/ReportNavigation";
-import PdfSlideViewer from "./PdfSlideViewer";
-import MemberLookupButton from "./MemberLookUpButton";
-import DateFields from "@/components/DateFiels";
-import BranchNameField from "@/components/BranchNameField";
-import SelectGroupField from "./SelectGroupField";
-import OrderByField from "@/components/OrderByFields";
-import ViewReportButton from "@/components/ViewReportButton";
+} from "@/components/reportForm/ReportNavigation";
+import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
+import MemberLookupButton from "../../reportForm/MemberLookUpButton";
+import DateFields from "@/components/reportForm/DateFiels";
+import BranchNameField from "@/components/reportForm/BranchNameField";
+import CollectionCenterField from "@/components/reportForm/CollectionCenter";
+import SelectGroupField from "../../reportForm/SelectGroupField";
+import OrderByField from "@/components/reportForm/OrderByFields";
+import ViewReportButton from "@/components/reportForm/ViewReportButton";
+import ClearFormButton from "@/components/reportForm/ClearFormButton";
 
-// ── Shared types ──────────────────────────────────────────────────────────────
 export type { ReportFormat };
 
 export interface FormInputs {
@@ -474,6 +683,7 @@ export interface FormInputs {
   fromDate: string;
   tillDate: string;
   branchId: number | string;
+  collectionCenterId: number | string;
   groupId: number | string;
   orderBy: number | string;
 }
@@ -497,8 +707,7 @@ interface MemberIdCardProps {
   handleSubmit: UseFormHandleSubmit<FormInputs>;
   onSubmit: SubmitHandler<FormInputs>;
   setValue: UseFormSetValue<FormInputs>;
-  /** groupOptions still accepted as a prop since it's not in context */
-  groupOptions?: SelectOption[];
+  reset: UseFormReset<FormInputs>;
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -512,7 +721,7 @@ function MemberIdCard({
   handleSubmit,
   onSubmit,
   setValue,
-  groupOptions,
+  reset,
   reportState,
   onPageChange,
   onDownload,
@@ -524,7 +733,6 @@ function MemberIdCard({
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      {/* ── FILTER FORM ──────────────────────────────────────────────── */}
       <Paper variant="outlined" sx={{ p: 1.5 }}>
         <Typography
           variant="h6"
@@ -544,7 +752,7 @@ function MemberIdCard({
         </Box>
         <Divider sx={{ mb: 1.5 }} />
 
-        {/* Row 3 — Branch | Group */}
+        {/* Row 3 — Branch | Collection Center */}
         <Box
           sx={{
             display: "grid",
@@ -554,15 +762,27 @@ function MemberIdCard({
           }}
         >
           <BranchNameField control={control} />
-          <SelectGroupField control={control} groupOptions={groupOptions} />
+          {/* ✅ setValue forwarded — no FormProvider required */}
+          <CollectionCenterField control={control} setValue={setValue} />
         </Box>
         <Divider sx={{ mb: 1.5 }} />
 
-        {/* Row 4 — Order By | View Report */}
+        {/* Row 4 — Select Group | Order By */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+            gap: 2,
+            mb: 1,
+          }}
+        >
+          <SelectGroupField control={control} setValue={setValue} />
+          <OrderByField control={control} />
+        </Box>
+        <Divider sx={{ mb: 1.5 }} />
+
+        {/* Row 5 — View Report */}
         <Grid container spacing={1} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <OrderByField control={control} />
-          </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
             <ViewReportButton
               control={control}
@@ -571,6 +791,7 @@ function MemberIdCard({
               setValue={setValue}
               loading={loading}
             />
+            <ClearFormButton reset={reset} setValue={setValue} />
           </Grid>
         </Grid>
       </Paper>
