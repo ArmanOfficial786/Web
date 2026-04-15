@@ -689,16 +689,6 @@ export interface FormInputs {
   orderBy: number | string;
 }
 
-// export interface ReportState {
-//   currentPage: number;
-//   totalPages: number;
-//   totalRecord: number;
-//   pageSize: number;
-//   loading: boolean;
-//   reportLoaded: boolean;
-//   error: string;
-//   pdfData: string;
-// }
 
 export type SelectOption = { id: number; name: string };
 
@@ -713,7 +703,7 @@ interface MemberIdCardProps {
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
   isDownloading?: boolean;
-  emptyText: string;
+  
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -727,7 +717,7 @@ function MemberIdCard({
   onPageChange,
   onDownload,
   isDownloading = false,
-  emptyText,
+  
 }: MemberIdCardProps) {
   const { loading, reportLoaded, error, pdfData, currentPage, totalPages } =
     reportState;
@@ -844,7 +834,7 @@ function MemberIdCard({
               height: "100%",
             }}
           >
-            <Typography color="text.secondary">{emptyText}</Typography>
+          
           </Box>
         )}
       </Box>
