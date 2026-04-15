@@ -12,6 +12,9 @@ import AccountStatement, {
   type ReportFormat,
   type ReportState,
 } from "@/components/reports/accountReport/AccountStatement";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { toast } from "react-toastify";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 
 // ── Schema typed to FormInputs (not AccountStatementRequest) ─────────────────
 const schema: yup.ObjectSchema<FormInputs> = yup.object({
@@ -123,13 +126,25 @@ export default function AccountStatementPage() {
       setIsDownloading(true);
       try {
         const res = await callApi(lastRequest, format);
-        const blob = res.data as Blob;
+        const blob = responseToBlob(res.data, format);
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `AccountStatement.${format.toLowerCase()}`;
+        let filename = extractFilenameFromResponse(
+          res,
+          format,
+          "AccountStatement",
+        );
+        link.download = filename;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download failed:", error);
+        toast.error(
+          `Download failed: ${error instanceof Error ? error.message : "Failed to download report."}`,
+        );
       } finally {
         setIsDownloading(false);
       }

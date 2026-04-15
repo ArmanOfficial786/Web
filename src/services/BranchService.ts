@@ -1,12 +1,3 @@
-// import { apiClient } from "./apiClient";
-
-// export const branchService = {
-//   getAll: async () => {
-//     const response = await apiClient.api.branchGetAllBranchesList();
-//     return response.data;
-//   },
-// };
-
 import { BranchResponse } from "types/api/api";
 import { apiClient } from "./apiClient";
 

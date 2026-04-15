@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -28,9 +27,10 @@ import {
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { useLanguage, type Translations } from "@/contexts/LanguageContext";
-
+import { type ReportFormat } from "@/utilis/Constants/reportConstants";
 // ── Types ─────────────────────────────────────────────────────────────────────
-export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
+// Re-export so existing consumers of ReportNavigation don't break
+export type { ReportFormat };
 
 interface DownloadOption {
   format: ReportFormat;

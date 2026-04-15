@@ -39,10 +39,19 @@ export const InitialReportState: ReportState = {
   error: "",
   pdfData: "",
 };
+//it is used in AccountStatementReport
+export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
+//it is used in MemberStatementReport
+export const ExportFormat: Record<ReportFormat, string[]> = {
+  PDF: ["pdf"],
+  Word: ["docx"],
+  Excel: ["xlsx"],
+  Image: ["png", "jpg", "jpeg"],
+};
 
-export const ExportFormat: Record<string, string> = {
-  PDF: "PDF",
-  Word: "WORD",
-  Excel: "EXCEL",
-  Image: "PNG",
+export const mimeTypes: Record<ReportFormat, string> = {
+  PDF: "application/pdf",
+  Word: "application/msword", // or 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' for .docx
+  Excel: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // or 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' for .xlsx
+  Image: "image/png",
 };
