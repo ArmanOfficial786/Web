@@ -94,7 +94,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
 import DropDown from "@/components/form/DropDown";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { OrderByReportKey, useReportForm } from "@/contexts/ReportFormContext";
 import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
 
 // ── FieldRow (local, keeps label-left design) ─────────────────────────────────
@@ -126,11 +126,18 @@ function FieldRow({
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface OrderByFieldProps {
   control: Control<FormInputs>;
+  reportKey: OrderByReportKey; // ✅ each report declares which key it needs
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function OrderByField({ control }: OrderByFieldProps) {
-  const { orderByOptions } = useReportForm();
+export default function OrderByField({
+  control,
+  reportKey,
+}: OrderByFieldProps) {
+  const { orderByMap } = useReportForm();
+  // ✅ Automatically picks the correct options for whichever report is using it.
+  // Falls back to empty array if the key somehow isn't in the map yet.
+  const options = orderByMap[reportKey] ?? [];
 
   return (
     <FieldRow label="Order by">
@@ -138,7 +145,7 @@ export default function OrderByField({ control }: OrderByFieldProps) {
         name="orderBy"
         control={control}
         label="Order by"
-        options={orderByOptions}
+        options={options}
         fullWidth
       />
     </FieldRow>

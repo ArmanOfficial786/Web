@@ -38,6 +38,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     { icon: "📊", label: "Student Report" },
     { icon: "📊", label: "Member Report" },
     { icon: "📊", label: "MemberID Card Detail " },
+    { icon: "📊", label: "Account Statement Report" },
   ];
 
   const handleMenuClick = (label: string, hasSubmenu?: boolean) => {
@@ -76,6 +77,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
       "Student Report": "/reports/studentReport",
       "Member Report": "/reports/memberReport",
       "MemberID Card Detail ": "/reports/MemberIDCardDetail",
+      "Account Statement Report": "/reports/AccountStatementReport",
     };
 
     if (submenuRouteMap[label]) {

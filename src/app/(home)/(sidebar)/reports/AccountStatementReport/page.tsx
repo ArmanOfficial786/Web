@@ -1,0 +1,167 @@
+"use client";
+
+import React, { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+import accountStatementService from "@/services/AccountStatementService";
+import type { AccountStatementRequest } from "types/api/api";
+import AccountStatement, {
+  type FormInputs,
+  type ReportFormat,
+  type ReportState,
+} from "@/components/reports/accountReport/AccountStatement";
+
+// ── Schema typed to FormInputs (not AccountStatementRequest) ─────────────────
+const schema: yup.ObjectSchema<FormInputs> = yup.object({
+  memberId: yup.string().default(""),
+  memberName: yup.string().default(""),
+  fromDate: yup.string().default(""),
+  tillDate: yup
+    .string()
+    .default("")
+    .test("date-order", "Till Date cannot be before From Date", function (val) {
+      const { fromDate } = this.parent;
+      return !fromDate || !val || val >= fromDate;
+    }),
+  branchId: yup.mixed<number | string>().default(0),
+  collectionCenterId: yup.mixed<number | string>().default(0),
+  groupId: yup.mixed<number | string>().default(0),
+  orderBy: yup.mixed<number | string>().default(0),
+});
+
+// ── Mapper: FormInputs → AccountStatementRequest ──────────────────────────────
+// Converts form layer types to exact API contract types.
+// branchId etc. are string|number in form (MUI Select) → number in API.
+const toRequest = (form: FormInputs, page = 1): AccountStatementRequest => ({
+  fromDate: form.fromDate || undefined,
+  toDate: form.tillDate || undefined, // API uses toDate
+  branchId: Number(form.branchId) || undefined,
+  branchSelected: String(form.branchId) || undefined,
+  branchName: undefined, // populated server-side
+  reportType: undefined,
+  transactionType: String(form.groupId) || undefined,
+  orderBy: String(form.orderBy) || undefined,
+});
+
+const initialReportState: ReportState = {
+  currentPage: 1,
+  totalPages: 1,
+  totalRecord: 0,
+  pageSize: 10,
+  loading: false,
+  reportLoaded: false,
+  error: "",
+  pdfData: "",
+};
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+export default function AccountStatementPage() {
+  const [reportState, setReportState] =
+    useState<ReportState>(initialReportState);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [lastRequest, setLastRequest] =
+    useState<AccountStatementRequest | null>(null);
+
+  const { control, handleSubmit, setValue, reset } = useForm<FormInputs>({
+    resolver: yupResolver(schema),
+    defaultValues: schema.getDefault(),
+  });
+
+  // ── Single API call shared by VIEW + EXPORT ────────────────────────────────
+  const callApi = useCallback(
+    (request: AccountStatementRequest, format: string) =>
+      accountStatementService.api.accountStatementAccountStatementReportCreate(
+        request,
+        { format },
+      ),
+    [],
+  );
+
+  // ── VIEW ───────────────────────────────────────────────────────────────────
+  const fetchReport = useCallback(
+    async (request: AccountStatementRequest) => {
+      setReportState((prev) => ({ ...prev, loading: true, error: "" }));
+      try {
+        const res = await callApi(request, "VIEW");
+
+        if (res.data?.isValid) {
+          setLastRequest(request);
+          setReportState((prev) => ({
+            ...prev,
+            loading: false,
+            reportLoaded: true,
+            pdfData: res.data.data?.pdfData ?? "",
+            totalPages: res.data.data?.pagination?.totalPages ?? 1,
+            totalRecord: res.data.data?.pagination?.totalRecord ?? 0,
+            currentPage: res.data.data?.pagination?.currentPage ?? 1,
+          }));
+        } else {
+          setReportState((prev) => ({
+            ...prev,
+            loading: false,
+            error: res.data?.message ?? "Failed to load report.",
+          }));
+        }
+      } catch {
+        setReportState((prev) => ({
+          ...prev,
+          loading: false,
+          error: "An unexpected error occurred.",
+        }));
+      }
+    },
+    [callApi],
+  );
+
+  // ── EXPORT (server hits cache — no extra DB call) ──────────────────────────
+  const handleDownload = useCallback(
+    async (format: ReportFormat) => {
+      if (!lastRequest) return;
+
+      setIsDownloading(true);
+      try {
+        const res = await callApi(lastRequest, format);
+        const blob = res.data as Blob;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `AccountStatement.${format.toLowerCase()}`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } finally {
+        setIsDownloading(false);
+      }
+    },
+    [callApi, lastRequest],
+  );
+
+  // ── Handlers ───────────────────────────────────────────────────────────────
+  const onSubmit: SubmitHandler<FormInputs> = useCallback(
+    (formData) => fetchReport(toRequest(formData)), // ✅ mapped here
+    [fetchReport],
+  );
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      if (lastRequest) fetchReport({ ...lastRequest }); // page not in API type
+    },
+    [fetchReport, lastRequest],
+  );
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  return (
+    <AccountStatement
+      control={control}
+      handleSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      setValue={setValue}
+      reset={reset}
+      reportState={reportState}
+      onPageChange={handlePageChange}
+      onDownload={handleDownload}
+      isDownloading={isDownloading}
+    />
+  );
+}

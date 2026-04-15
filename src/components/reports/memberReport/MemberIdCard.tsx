@@ -674,6 +674,7 @@ import SelectGroupField from "../../reportForm/SelectGroupField";
 import OrderByField from "@/components/reportForm/OrderByFields";
 import ViewReportButton from "@/components/reportForm/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/ClearFormButton";
+import type { ReportState } from "@/utilis/Constants/reportConstants";
 
 export type { ReportFormat };
 
@@ -688,16 +689,16 @@ export interface FormInputs {
   orderBy: number | string;
 }
 
-export interface ReportState {
-  currentPage: number;
-  totalPages: number;
-  totalRecord: number;
-  pageSize: number;
-  loading: boolean;
-  reportLoaded: boolean;
-  error: string;
-  pdfData: string;
-}
+// export interface ReportState {
+//   currentPage: number;
+//   totalPages: number;
+//   totalRecord: number;
+//   pageSize: number;
+//   loading: boolean;
+//   reportLoaded: boolean;
+//   error: string;
+//   pdfData: string;
+// }
 
 export type SelectOption = { id: number; name: string };
 
@@ -777,7 +778,7 @@ function MemberIdCard({
           }}
         >
           <SelectGroupField control={control} setValue={setValue} />
-          <OrderByField control={control} />
+          <OrderByField control={control} reportKey="memberIdCard" />
         </Box>
         <Divider sx={{ mb: 1.5 }} />
 

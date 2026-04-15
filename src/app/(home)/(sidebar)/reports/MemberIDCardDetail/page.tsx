@@ -1,5 +1,5 @@
 // "use client";
-
+// import { useReportForm } from "@/contexts/ReportFormContext";
 // import { useForm, type SubmitHandler } from "react-hook-form";
 // import { yupResolver } from "@hookform/resolvers/yup";
 // import { toast } from "react-toastify";
@@ -9,69 +9,60 @@
 // import type { MemberIdCardRequest } from "../../../../../../types/api/api";
 // import MemberIdCard, {
 //   type FormInputs,
-//   type ReportFormat,
-//   type ReportState,
-// } from "@/components/MemberIdCard";
+// } from "@/components/reports/memberReport/MemberIdCard";
 // import { memberIdCardService } from "@/services/MemberIdCardService";
-
-// // ── Format map ────────────────────────────────────────────────────────────────
-// const FORMAT_MAP: Record<ReportFormat, string> = {
-//   PDF: "PDF",
-//   Word: "WORD",
-//   Excel: "EXCEL",
-//   Image: "PNG",
-// };
+// import {
+//   ExportFormat,
+//   InitialReportState,
+//   ReportState,
+// } from "@/utilis/Constants/reportConstants";
 
 // // ── Validation schema ─────────────────────────────────────────────────────────
 // const schema: yup.ObjectSchema<FormInputs> = yup.object({
 //   memberId: yup.string().optional().default(""),
 //   memberName: yup.string().optional().default(""),
-//   fromDate: yup.string().required("From Date is required"),
+//   fromDate: yup.string().optional().default(""),
 //   tillDate: yup
 //     .string()
-//     .required("Till Date is required")
+//     .optional()
+//     .default("")
 //     .test("bs-min", "Till Date cannot be before From Date", function (val) {
 //       const { fromDate } = this.parent;
 //       return !fromDate || !val || val >= fromDate;
 //     }),
 //   branchId: yup.mixed<number | string>().optional().default(0),
+//   collectionCenterId: yup.mixed<number | string>().optional().default(0),
 //   groupId: yup.mixed<number | string>().optional().default(0),
 //   orderBy: yup.mixed<number | string>().optional().default(0),
 // });
 
-// const INITIAL_STATE: ReportState = {
-//   currentPage: 1,
-//   totalPages: 1,
-//   totalRecord: 0,
-//   pageSize: 15,
-//   loading: false,
-//   reportLoaded: false,
-//   error: "",
-//   pdfData: "",
-// };
-
 // // ── Page ──────────────────────────────────────────────────────────────────────
 // function Page() {
 //   const { t } = useLanguage();
+//   const { resetFormFields, setSelectedMember } = useReportForm(); //for clear button
 
-//   const [reportState, setReportState] = useState<ReportState>(INITIAL_STATE);
+//   const [reportState, setReportState] =
+//     useState<ReportState>(InitialReportState);
 //   const [isDownloading, setIsDownloading] = useState(false);
 
-//   // Cache exact payload so export always matches the last view request
 //   const lastViewedPayload = useRef<MemberIdCardRequest | null>(null);
 
-//   const { control, handleSubmit, getValues } = useForm<FormInputs>({
-//     resolver: yupResolver(schema) as any,
-//     defaultValues: {
-//       memberId: "",
-//       memberName: "",
-//       fromDate: "",
-//       tillDate: "",
-//       branchId: 0,
-//       groupId: 0,
-//       orderBy: 0,
-//     },
-//   });
+//   // ← destructure setValue so ViewReportButton can clear date fields
+//   const { control, handleSubmit, getValues, setValue, reset } =
+//     useForm<FormInputs>({
+//       resolver: yupResolver(schema) as any,
+//       defaultValues: {
+//         // ✅ Ensure form resets to default values for form fields
+//         memberId: "",
+//         memberName: "",
+//         fromDate: "",
+//         tillDate: "",
+//         branchId: 0,
+//         collectionCenterId: 0,
+//         groupId: 0,
+//         orderBy: 0,
+//       },
+//     });
 
 //   const buildPayload = (): MemberIdCardRequest => {
 //     const v = getValues();
@@ -81,10 +72,15 @@
 //       toDate: v.tillDate || null,
 //       branchId: Number(v.branchId) || 0,
 //       memberGroupId: Number(v.groupId) || 0,
-//       orderBy: Number(v.orderBy) || 0,
+//       orderby: v.orderBy && v.orderBy !== 0 ? String(v.orderBy) : null,
 //     };
 //   };
 
+//   const clearForm = () => {
+//     reset(); // ✅ resets to defaultValues, no args needed
+//     resetFormFields(); // ✅ clears context fields (branch, group, etc.)
+//     setSelectedMember(null);
+//   };
 //   // ── VIEW ──────────────────────────────────────────────────────────────────
 //   const viewReport = async (
 //     page = reportState.currentPage,
@@ -113,9 +109,25 @@
 //           pageSize: p?.pageSize ?? size,
 //         }));
 
-//         toast.success(`Report loaded (page ${page})`);
+//         toast.success(`Report generated Successfully `);
+//         // ✅ Clear the form after report loads successfully
+//         reset({
+//           memberId: "",
+//           memberName: "",
+//           fromDate: "",
+//           tillDate: "",
+//           branchId: 0,
+//           collectionCenterId: 0,
+//           groupId: 0,
+//           orderBy: 0,
+//         });
+//         // ✅ Clear form after successful load
+//         clearForm();
 //       }
-//     } catch {
+//     } catch (err: unknown) {
+//       const message =
+//         err instanceof Error ? err.message : "Failed to load report";
+//       toast.error(message);
 //       // Interceptor already toasted
 //     } finally {
 //       setReportState((prev) => ({ ...prev, loading: false }));
@@ -166,10 +178,11 @@
 //       control={control}
 //       handleSubmit={handleSubmit}
 //       onSubmit={onSubmit}
-//       // branchOptions and orderByOptions are now read from context inside MemberIdCard
+//       setValue={setValue} // ← passed through to ViewReportButton
+//       reset={reset}
 //       reportState={reportState}
 //       onPageChange={handlePageChange}
-//       onDownload={(format) => exportReport(FORMAT_MAP[format])}
+//       onDownload={(format) => exportReport(ExportFormat[format])}
 //       isDownloading={isDownloading}
 //       emptyText={t("clickGenerateReport")}
 //     />
@@ -179,30 +192,31 @@
 // export default Page;
 
 "use client";
+
 import { useReportForm } from "@/contexts/ReportFormContext";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import * as yup from "yup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MemberIdCardRequest } from "../../../../../../types/api/api";
 import MemberIdCard, {
   type FormInputs,
-  type ReportFormat,
-  type ReportState,
+  //type ReportState,
 } from "@/components/reports/memberReport/MemberIdCard";
-import { memberIdCardService } from "@/services/MemberIdCardService";
-
-// ── Format map ────────────────────────────────────────────────────────────────
-const FORMAT_MAP: Record<ReportFormat, string> = {
-  PDF: "PDF",
-  Word: "WORD",
-  Excel: "EXCEL",
-  Image: "PNG",
-};
+import {
+  memberIdCardService,
+  triggerDownload,
+} from "@/services/MemberIdCardService";
+import {
+  ExportFormat,
+  InitialReportState,
+  ReportState,
+} from "@/utilis/Constants/reportConstants";
 
 // ── Validation schema ─────────────────────────────────────────────────────────
+
 const schema: yup.ObjectSchema<FormInputs> = yup.object({
   memberId: yup.string().optional().default(""),
   memberName: yup.string().optional().default(""),
@@ -221,46 +235,41 @@ const schema: yup.ObjectSchema<FormInputs> = yup.object({
   orderBy: yup.mixed<number | string>().optional().default(0),
 });
 
-const INITIAL_STATE: ReportState = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 15,
-  loading: false,
-  reportLoaded: false,
-  error: "",
-  pdfData: "",
-};
-
-const EMPTY_FORM: FormInputs = {
-  memberId: "",
-  memberName: "",
-  fromDate: "",
-  tillDate: "",
-  branchId: 0,
-  collectionCenterId: 0,
-  groupId: 0,
-  orderBy: 0,
-};
-
 // ── Page ──────────────────────────────────────────────────────────────────────
-function Page() {
+
+function Page(): React.ReactElement {
   const { t } = useLanguage();
-  const { resetFormFields, setSelectedMember } = useReportForm(); //for clear button
+  const { resetFormFields, setSelectedMember } = useReportForm();
 
-  const [reportState, setReportState] = useState<ReportState>(INITIAL_STATE);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [reportState, setReportState] =
+    useState<ReportState>(InitialReportState);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
+  // Mirrors reportState into a ref — keeps useCallback deps stable
+  const reportStateRef = useRef<ReportState>(InitialReportState);
+  reportStateRef.current = reportState;
+
+  // Caches the last viewed payload so export always matches viewed report
   const lastViewedPayload = useRef<MemberIdCardRequest | null>(null);
 
-  // ← destructure setValue so ViewReportButton can clear date fields
   const { control, handleSubmit, getValues, setValue, reset } =
     useForm<FormInputs>({
       resolver: yupResolver(schema) as any,
-      defaultValues: EMPTY_FORM,
+      defaultValues: {
+        memberId: "",
+        memberName: "",
+        fromDate: "",
+        tillDate: "",
+        branchId: 0,
+        collectionCenterId: 0,
+        groupId: 0,
+        orderBy: 0,
+      },
     });
 
-  const buildPayload = (): MemberIdCardRequest => {
+  // ── Build payload from form values ────────────────────────────────────────
+
+  const buildPayload = useCallback((): MemberIdCardRequest => {
     const v = getValues();
     return {
       memberId: v.memberId || null,
@@ -270,76 +279,101 @@ function Page() {
       memberGroupId: Number(v.groupId) || 0,
       orderby: v.orderBy && v.orderBy !== 0 ? String(v.orderBy) : null,
     };
-  };
+  }, [getValues]);
 
-  // ── Clear form helper (reused by both view-success and clear button) ──
-  const clearForm = () => {
-    reset(EMPTY_FORM);
-    (Object.keys(EMPTY_FORM) as (keyof FormInputs)[]).forEach((key) => {
-      setValue(key, EMPTY_FORM[key]);
+  // ── Clear form ────────────────────────────────────────────────────────────
+
+  const clearForm = useCallback((): void => {
+    reset({
+      memberId: "",
+      memberName: "",
+      fromDate: "",
+      tillDate: "",
+      branchId: 0,
+      collectionCenterId: 0,
+      groupId: 0,
+      orderBy: 0,
     });
     resetFormFields();
     setSelectedMember(null);
-  };
+  }, [reset, resetFormFields, setSelectedMember]);
+
   // ── VIEW ──────────────────────────────────────────────────────────────────
-  const viewReport = async (
-    page = reportState.currentPage,
-    size = reportState.pageSize,
-  ) => {
-    setReportState((prev) => ({ ...prev, loading: true, error: "" }));
-    try {
-      const payload = buildPayload();
-      const result = await memberIdCardService.view(payload, page, size);
 
-      if (result.isView) {
-        lastViewedPayload.current = {
-          ...payload,
-          currentPage: page,
-          pageSize: size,
-        };
+  const viewReport = useCallback(
+    async (
+      page: number = reportStateRef.current.currentPage,
+      size: number = reportStateRef.current.pageSize,
+    ): Promise<void> => {
+      setReportState((prev: any) => ({ ...prev, loading: true, error: "" }));
+      try {
+        const payload = buildPayload();
+        const result = await memberIdCardService.view(payload, page, size);
 
-        const p = result.pagination as any;
-        setReportState((prev) => ({
-          ...prev,
-          reportLoaded: true,
-          pdfData: result.pdfData,
-          currentPage: p?.currentPage ?? page,
-          totalPages: p?.totalPages ?? 1,
-          totalRecord: p?.totalRecord ?? 0,
-          pageSize: p?.pageSize ?? size,
-        }));
+        if (result.isView) {
+          lastViewedPayload.current = {
+            ...payload,
+            currentPage: page,
+            pageSize: size,
+          };
 
-        toast.success(`Report generated Successfully `);
-        // ✅ Clear the form after report loads successfully
-        reset({
-          memberId: "",
-          memberName: "",
-          fromDate: "",
-          tillDate: "",
-          branchId: 0,
-          collectionCenterId: 0,
-          groupId: 0,
-          orderBy: 0,
-        });
-        // ✅ Clear form after successful load
-        clearForm();
+          const p = result.pagination;
+          setReportState((prev: any) => ({
+            ...prev,
+            reportLoaded: true,
+            pdfData: result.pdfData ?? "",
+            currentPage: p?.currentPage ?? page,
+            totalPages: p?.totalPages ?? 1,
+            totalRecord: p?.totalRecord ?? 0,
+            pageSize: p?.pageSize ?? size,
+          }));
+
+          toast.success("Report generated successfully");
+          clearForm();
+        }
+      } catch {
+        // Interceptor already toasted the error
+      } finally {
+        setReportState((prev: any) => ({ ...prev, loading: false }));
       }
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Failed to load report";
-      toast.error(message);
-      // Interceptor already toasted
-    } finally {
-      setReportState((prev) => ({ ...prev, loading: false }));
-    }
-  };
+    },
+    [buildPayload, clearForm],
+  );
 
   // ── EXPORT ────────────────────────────────────────────────────────────────
-  const exportReport = async (format: string) => {
+
+  const exportReport = useCallback(async (format: string): Promise<void> => {
     if (!lastViewedPayload.current) {
       toast.warning("Please view the report before exporting.");
       return;
     }
+
+    // ── PDF: reuse cached base64 — zero extra API call ────────────────
+    if (format.toUpperCase() === "PDF") {
+      const base64 = reportStateRef.current.pdfData;
+      if (!base64) {
+        toast.warning("No report data available.");
+        return;
+      }
+      setIsDownloading(true);
+      try {
+        const binary = atob(base64);
+        const buffer = new ArrayBuffer(binary.length);
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        triggerDownload(buffer, "MemberIdCardReport.pdf");
+        toast.success("MemberIdCardReport.pdf downloaded");
+      } catch {
+        toast.error("Failed to download PDF.");
+      } finally {
+        setIsDownloading(false);
+      }
+      return;
+    }
+
+    // ── Word / Excel / Image: hit the server ──────────────────────────
     setIsDownloading(true);
     try {
       const result = await memberIdCardService.export(
@@ -347,42 +381,61 @@ function Page() {
         format,
       );
       if (!result.isView) {
-        toast.success(`${result.filename} opened in new tab`);
+        toast.success(`${result.filename} downloaded`);
       }
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Export failed");
+    } catch {
+      // Interceptor already toasted the error
     } finally {
       setIsDownloading(false);
     }
-  };
+  }, []);
 
-  const onSubmit: SubmitHandler<FormInputs> = () => {
+  // ── Form submit — resets to page 1 ────────────────────────────────────────
+
+  const onSubmit: SubmitHandler<FormInputs> = useCallback((): void => {
     lastViewedPayload.current = null;
-    setReportState((prev) => ({
+    setReportState((prev: any) => ({
       ...prev,
       currentPage: 1,
       reportLoaded: false,
       pdfData: "",
     }));
-    viewReport(1, reportState.pageSize);
-  };
+    viewReport(1, reportStateRef.current.pageSize);
+  }, [viewReport]);
 
-  const handlePageChange = (newPage: number) => {
-    const { currentPage, totalPages } = reportState;
-    if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage)
-      viewReport(newPage, reportState.pageSize);
-  };
+  // ── Pagination ────────────────────────────────────────────────────────────
+
+  const handlePageChange = useCallback(
+    (newPage: number): void => {
+      const { currentPage, totalPages } = reportStateRef.current;
+      if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
+        viewReport(newPage, reportStateRef.current.pageSize);
+      }
+    },
+    [viewReport],
+  );
+
+  // ── Download (called from ReportNavigation) ───────────────────────────────
+
+  const handleDownload = useCallback(
+    (format: keyof typeof ExportFormat): void => {
+      exportReport(ExportFormat[format]);
+    },
+    [exportReport],
+  );
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <MemberIdCard
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
-      setValue={setValue} // ← passed through to ViewReportButton
+      setValue={setValue}
       reset={reset}
       reportState={reportState}
       onPageChange={handlePageChange}
-      onDownload={(format) => exportReport(FORMAT_MAP[format])}
+      onDownload={handleDownload}
       isDownloading={isDownloading}
       emptyText={t("clickGenerateReport")}
     />

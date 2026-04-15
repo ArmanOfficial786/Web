@@ -6,14 +6,21 @@
 //   useState,
 //   useEffect,
 //   useCallback,
+//   useRef,
 //   ReactNode,
 // } from "react";
 // import { branchService } from "@/services/BranchService";
 // import { orderByService } from "@/services/OrderByService";
 // import { memberLookUpService } from "@/services/MemberLookUpService";
+// import { collectionCenterService } from "@/services/CollectionCenterService";
+// import {
+//   CollectionCenterRequestDtos,
+//   MemberGroupRequestDtos,
+// } from "types/api/api";
+// import { memberGroupService } from "@/services/MemberGroupService";
 
 // // ── Types ─────────────────────────────────────────────────────────────────────
-// export type SelectOption = { id: number; name: string };
+// export type SelectOption = { id: number | string; name: string };
 
 // export interface MemberRecord {
 //   memMemberRegistrationId: number;
@@ -53,6 +60,14 @@
 //   setSelectedMember: (member: MemberRecord | null) => void;
 //   branchOptions: SelectOption[];
 //   orderByOptions: SelectOption[];
+//   collectionCenterOptions: SelectOption[]; // ← was missing
+//   memberGroupOptions: SelectOption[];
+//   fetchCollectionCenters: (branchId: number) => Promise<void>;
+//   fetchMemberGroups: (
+//     branchId: number,
+//     collectionCenterId: number,
+//   ) => Promise<void>;
+//   resetFormFields: () => void;
 // }
 
 // const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -80,8 +95,25 @@
 //   );
 //   const [branchOptions, setBranchOptions] =
 //     useState<SelectOption[]>(DEFAULT_SELECT);
+//   const [collectionCenterOptions, setCollectionCenterOptions] =
+//     useState<SelectOption[]>(DEFAULT_SELECT);
+//   const [memberGroupOptions, setMemberGroupOptions] =
+//     useState<SelectOption[]>(DEFAULT_SELECT);
 //   const [orderByOptions, setOrderByOptions] =
 //     useState<SelectOption[]>(DEFAULT_SELECT);
+
+//   // ✅ Monotonically-increasing counter. Each call to searchmemberLookUp
+//   //    captures its own generation number at the point it was invoked.
+//   //    When the async response arrives, we compare — if the ref has moved
+//   //    on (a newer call or a clearResults happened), we discard silently.
+//   //    This replaces AbortController so the service signature is untouched.
+//   const searchGenerationRef = useRef(0);
+
+//   //clear button will reset all reportform fields to default value
+//   const resetFormFields = useCallback(() => {
+//     setCollectionCenterOptions(DEFAULT_SELECT);
+//     setMemberGroupOptions(DEFAULT_SELECT);
+//   }, []);
 
 //   // ── Branch options ────────────────────────────────────────────────────────
 //   useEffect(() => {
@@ -99,6 +131,65 @@
 //       .catch(() => {});
 //   }, []);
 
+//   // ──  Collection Centers ────────────────────────────────────────────────────────
+//   const fetchCollectionCenters = useCallback(async (branchId: number) => {
+//     // ✅ Don't call API until a real branch is selected
+//     if (!branchId || branchId === 0) {
+//       setCollectionCenterOptions(DEFAULT_SELECT);
+//       setMemberGroupOptions(DEFAULT_SELECT);
+//       return;
+//     }
+
+//     try {
+//       const request: CollectionCenterRequestDtos = { lstOfficeId: branchId };
+//       const res = await collectionCenterService.getAll(request);
+//       const mapped = (res ?? []).map(
+//         (c): SelectOption => ({
+//           id: c.collectionCenterId ?? 0,
+//           name: c.collectionCenterName ?? "",
+//         }),
+//       );
+//       setCollectionCenterOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+//     } catch (err) {
+//       console.error("Error fetching collection centers:", err);
+//       setCollectionCenterOptions(DEFAULT_SELECT);
+//     }
+//   }, []);
+
+//   // ──  Select Member Group ────────────────────────────────────────────────────────
+//   const fetchMemberGroups = useCallback(
+//     async (branchId: number, collectionCenterId: number) => {
+//       // ✅ Don't call API until both real values are selected
+//       if (
+//         !branchId ||
+//         branchId === 0 ||
+//         !collectionCenterId ||
+//         collectionCenterId === 0
+//       ) {
+//         setMemberGroupOptions(DEFAULT_SELECT);
+//         return;
+//       }
+
+//       try {
+//         const request: MemberGroupRequestDtos = {
+//           lstOfficeId: branchId,
+//           collectionCenterId: collectionCenterId,
+//         };
+//         const res = await memberGroupService.getAll(request);
+//         const mapped = (res ?? []).map(
+//           (g): SelectOption => ({
+//             id: g.memberGroupId ?? 0,
+//             name: g.name ?? "",
+//           }),
+//         );
+//         setMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+//       } catch (err) {
+//         console.error("Error fetching member groups:", err);
+//         setMemberGroupOptions(DEFAULT_SELECT);
+//       }
+//     },
+//     [],
+//   );
 //   // ── OrderBy options ───────────────────────────────────────────────────────
 //   useEffect(() => {
 //     orderByService
@@ -107,7 +198,8 @@
 //         const list = res?.data?.memberIdCard ?? [];
 //         const mapped = list.map(
 //           (o): SelectOption => ({
-//             id: o.value ?? 0,
+//             id: o.value ?? "",
+//             //id: o.displayName ?? "",
 //             name: o.displayName ?? "",
 //           }),
 //         );
@@ -119,10 +211,19 @@
 //   // ── Member lookup search ──────────────────────────────────────────────────
 //   const searchmemberLookUp = useCallback(
 //     async (params: MemberLookUpSearchParams) => {
+//       // Stamp this call with the next generation number
+//       const generation = ++searchGenerationRef.current;
+
 //       setIsLoading(true);
 //       setError("");
+
 //       try {
 //         const data = await memberLookUpService.getAllWithFilters(params);
+
+//         // ✅ If generation no longer matches, a newer call (or clearResults)
+//         //    has superseded us — drop the response entirely.
+//         if (generation !== searchGenerationRef.current) return;
+
 //         const mappedItems = (data?.items ?? []).map(
 //           (item): MemberRecord => ({
 //             memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
@@ -138,13 +239,19 @@
 //             mobileNo: item.mobileNo ?? "",
 //           }),
 //         );
+
 //         setMemberLookUp(mappedItems);
 //         setTotalPages(data?.totalPages ?? 1);
 //         setCurrentPage(data?.currentPage ?? 1);
 //       } catch (err: any) {
+//         if (generation !== searchGenerationRef.current) return;
 //         setError(err?.message ?? "Failed to load members");
 //       } finally {
-//         setIsLoading(false);
+//         // ✅ Only the current generation clears the loading flag.
+//         //    A stale response must never flip isLoading to false.
+//         if (generation === searchGenerationRef.current) {
+//           setIsLoading(false);
+//         }
 //       }
 //     },
 //     [],
@@ -152,10 +259,16 @@
 
 //   // ── Clear results ─────────────────────────────────────────────────────────
 //   const clearResults = useCallback(() => {
+//     // ✅ Advancing the generation invalidates every in-flight request instantly.
+//     //    When those promises resolve they will see a mismatched generation
+//     //    and bail out without touching state.
+//     searchGenerationRef.current += 1;
+
 //     setMemberLookUp([]);
 //     setTotalPages(1);
 //     setCurrentPage(1);
 //     setError("");
+//     setIsLoading(false); // ✅ was missing in original — left spinner stuck on reopen
 //   }, []);
 
 //   return (
@@ -172,6 +285,11 @@
 //         clearResults,
 //         branchOptions,
 //         orderByOptions,
+//         collectionCenterOptions,
+//         memberGroupOptions,
+//         fetchCollectionCenters,
+//         fetchMemberGroups,
+//         resetFormFields,
 //       }}
 //     >
 //       {children}
@@ -190,18 +308,23 @@ import React, {
   useRef,
   ReactNode,
 } from "react";
-import { branchService } from "@/services/BranchService";
-import { orderByService } from "@/services/OrderByService";
+import branchService from "@/services/BranchService";
+import orderByService from "@/services/OrderByService";
 import { memberLookUpService } from "@/services/MemberLookUpService";
 import { collectionCenterService } from "@/services/CollectionCenterService";
 import {
+  BranchResponse,
   CollectionCenterRequestDtos,
   MemberGroupRequestDtos,
+  OrderByResponse, // ← import the actual type
 } from "types/api/api";
 import { memberGroupService } from "@/services/MemberGroupService";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type SelectOption = { id: number | string; name: string };
+
+export type OrderByReportKey = "memberIdCard" | "savingTypeWiseBalance";
+// ↑ extend this union when new reports are added
 
 export interface MemberRecord {
   memMemberRegistrationId: number;
@@ -240,8 +363,8 @@ interface ReportFormContextType {
   clearResults: () => void;
   setSelectedMember: (member: MemberRecord | null) => void;
   branchOptions: SelectOption[];
-  orderByOptions: SelectOption[];
-  collectionCenterOptions: SelectOption[]; // ← was missing
+  orderByMap: Record<OrderByReportKey, SelectOption[]>;
+  collectionCenterOptions: SelectOption[];
   memberGroupOptions: SelectOption[];
   fetchCollectionCenters: (branchId: number) => Promise<void>;
   fetchMemberGroups: (
@@ -253,6 +376,11 @@ interface ReportFormContextType {
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
 
+const DEFAULT_ORDER_BY_MAP: Record<OrderByReportKey, SelectOption[]> = {
+  memberIdCard: DEFAULT_SELECT,
+  savingTypeWiseBalance: DEFAULT_SELECT,
+};
+
 const ReportFormContext = createContext<ReportFormContextType | undefined>(
   undefined,
 );
@@ -263,6 +391,20 @@ export const useReportForm = () => {
     throw new Error("useReportForm must be used within ReportFormProvider");
   return ctx;
 };
+
+// ── Helper or OrderBy — accepts the actual API type which has null ───────────────────────
+// ✅ Fix: `null` is coerced to "" so it never reaches SelectOption as null
+function mapOptions(list: OrderByResponse[]): SelectOption[] {
+  return [
+    { id: 0, name: "-- Select --" },
+    ...list.map(
+      (o): SelectOption => ({
+        id: o.value ?? 0,
+        name: o.displayName ?? "", // ✅ handles null | undefined | string
+      }),
+    ),
+  ];
+}
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
@@ -280,14 +422,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [memberGroupOptions, setMemberGroupOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
-  const [orderByOptions, setOrderByOptions] =
-    useState<SelectOption[]>(DEFAULT_SELECT);
+  const [orderByMap, setOrderByMap] =
+    useState<Record<OrderByReportKey, SelectOption[]>>(DEFAULT_ORDER_BY_MAP);
 
-  // ✅ Monotonically-increasing counter. Each call to searchmemberLookUp
-  //    captures its own generation number at the point it was invoked.
-  //    When the async response arrives, we compare — if the ref has moved
-  //    on (a newer call or a clearResults happened), we discard silently.
-  //    This replaces AbortController so the service signature is untouched.
   const searchGenerationRef = useRef(0);
 
   const resetFormFields = useCallback(() => {
@@ -299,27 +436,24 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     branchService
       .getAll()
-      .then((res) => {
-        const mapped = (res?.data ?? []).map(
-          (b): SelectOption => ({
-            id: b.branchId ?? 0,
-            name: b.branchName ?? "",
-          }),
-        );
+      .then((res: BranchResponse[]) => {
+        const mapped = res.map((b: BranchResponse) => ({
+          id: b.branchId ?? 0,
+          name: b.branchName ?? "",
+        }));
+
         setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
       })
       .catch(() => {});
   }, []);
 
-  // ──  Collection Centers ────────────────────────────────────────────────────────
+  // ── Collection Centers ────────────────────────────────────────────────────
   const fetchCollectionCenters = useCallback(async (branchId: number) => {
-    // ✅ Don't call API until a real branch is selected
     if (!branchId || branchId === 0) {
       setCollectionCenterOptions(DEFAULT_SELECT);
       setMemberGroupOptions(DEFAULT_SELECT);
       return;
     }
-
     try {
       const request: CollectionCenterRequestDtos = { lstOfficeId: branchId };
       const res = await collectionCenterService.getAll(request);
@@ -336,10 +470,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // ──  Select Member Group ────────────────────────────────────────────────────────
+  // ── Member Groups ─────────────────────────────────────────────────────────
   const fetchMemberGroups = useCallback(
     async (branchId: number, collectionCenterId: number) => {
-      // ✅ Don't call API until both real values are selected
       if (
         !branchId ||
         branchId === 0 ||
@@ -349,7 +482,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         setMemberGroupOptions(DEFAULT_SELECT);
         return;
       }
-
       try {
         const request: MemberGroupRequestDtos = {
           lstOfficeId: branchId,
@@ -370,40 +502,31 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     },
     [],
   );
-  // ── OrderBy options ───────────────────────────────────────────────────────
+
+  // ── OrderBy map ───────────────────────────────────────────────────────────
   useEffect(() => {
     orderByService
       .getAll()
       .then((res) => {
-        const list = res?.data?.memberIdCard ?? [];
-        const mapped = list.map(
-          (o): SelectOption => ({
-            id: o.value ?? "",
-            //id: o.displayName ?? "",
-            name: o.displayName ?? "",
-          }),
-        );
-        setOrderByOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+        setOrderByMap({
+          memberIdCard: mapOptions(res.memberIdCard ?? []),
+          savingTypeWiseBalance: mapOptions(res.savingTypeWiseBalance ?? []),
+          // ↓ future reports: just add the key here and in OrderByReportKey
+          // loanStatement: mapOptions(res?.data?.loanStatement ?? []),
+        });
       })
       .catch(() => {});
   }, []);
 
-  // ── Member lookup search ──────────────────────────────────────────────────
+  // ── Member lookup ─────────────────────────────────────────────────────────
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
-      // Stamp this call with the next generation number
       const generation = ++searchGenerationRef.current;
-
       setIsLoading(true);
       setError("");
-
       try {
         const data = await memberLookUpService.getAllWithFilters(params);
-
-        // ✅ If generation no longer matches, a newer call (or clearResults)
-        //    has superseded us — drop the response entirely.
         if (generation !== searchGenerationRef.current) return;
-
         const mappedItems = (data?.items ?? []).map(
           (item): MemberRecord => ({
             memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
@@ -419,7 +542,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
             mobileNo: item.mobileNo ?? "",
           }),
         );
-
         setMemberLookUp(mappedItems);
         setTotalPages(data?.totalPages ?? 1);
         setCurrentPage(data?.currentPage ?? 1);
@@ -427,8 +549,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         if (generation !== searchGenerationRef.current) return;
         setError(err?.message ?? "Failed to load members");
       } finally {
-        // ✅ Only the current generation clears the loading flag.
-        //    A stale response must never flip isLoading to false.
         if (generation === searchGenerationRef.current) {
           setIsLoading(false);
         }
@@ -439,16 +559,12 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Clear results ─────────────────────────────────────────────────────────
   const clearResults = useCallback(() => {
-    // ✅ Advancing the generation invalidates every in-flight request instantly.
-    //    When those promises resolve they will see a mismatched generation
-    //    and bail out without touching state.
     searchGenerationRef.current += 1;
-
     setMemberLookUp([]);
     setTotalPages(1);
     setCurrentPage(1);
     setError("");
-    setIsLoading(false); // ✅ was missing in original — left spinner stuck on reopen
+    setIsLoading(false);
   }, []);
 
   return (
@@ -464,7 +580,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         searchmemberLookUp,
         clearResults,
         branchOptions,
-        orderByOptions,
+        orderByMap,
         collectionCenterOptions,
         memberGroupOptions,
         fetchCollectionCenters,

@@ -478,6 +478,8 @@ export class Api<
       data: MemberIdCardRequest,
       query?: {
         /** @default "VIEW" */
+        requestType?: string;
+        /** @default "VIEW" */
         format?: string;
       },
       params: RequestParams = {},
