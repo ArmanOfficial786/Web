@@ -250,6 +250,7 @@
 // }
 
 // export default Page;
+
 "use client";
 
 import { useReportForm } from "@/contexts/ReportFormContext";
@@ -314,18 +315,6 @@ const toRequest = (
   currentPage: page,
   pageSize: size,
 });
-
-/** Convert a Blob → base64 string (needed by PdfSlideViewer) */
-const blobToBase64 = (blob: Blob): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      resolve(result.split(",")[1] ?? "");
-    };
-    reader.onerror = () => reject(new Error("Failed to read blob"));
-    reader.readAsDataURL(blob);
-  });
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -392,7 +381,8 @@ function Page(): React.ReactElement {
         })();
 
         const blob = responseToBlob(res.data, "PDF");
-        const pdfData = await blobToBase64(blob);
+        //const pdfData = await blobToBase64(blob);
+        const pdfData = URL.createObjectURL(blob);
 
         setLastRequest(request);
 
@@ -405,7 +395,6 @@ function Page(): React.ReactElement {
           totalRecord: pagination?.totalRecord ?? 0,
           pageSize: pagination?.pageSize ?? request.pageSize ?? 10,
         }));
-
         toast.success("Report generated successfully");
         clearForm();
       } catch {

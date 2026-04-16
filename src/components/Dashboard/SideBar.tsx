@@ -88,7 +88,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   return (
     <aside
       className={`h-screen shadow-lg flex flex-col justify-start transition-all duration-400 ease-in-out ${
-        isOpen ? "w-[14rem]" : "w-0"
+        isOpen ? "w-[20rem]" : "w-0"
       } overflow-hidden`}
     >
       {/* Main Menu */}

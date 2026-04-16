@@ -647,7 +647,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -665,7 +665,7 @@ import Divider from "@mui/material/Divider";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/ReportNavigation";
-import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
+//import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
 import MemberLookupButton from "../../reportForm/MemberLookUpButton";
 import DateFields from "@/components/reportForm/DateFiels";
 import BranchNameField from "@/components/reportForm/BranchNameField";
@@ -689,7 +689,6 @@ export interface FormInputs {
   orderBy: number | string;
 }
 
-
 export type SelectOption = { id: number; name: string };
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -703,7 +702,6 @@ interface MemberIdCardProps {
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
   isDownloading?: boolean;
-  
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -717,10 +715,17 @@ function MemberIdCard({
   onPageChange,
   onDownload,
   isDownloading = false,
-  
 }: MemberIdCardProps) {
   const { loading, reportLoaded, error, pdfData, currentPage, totalPages } =
     reportState;
+  //Scroll up to report area when report is loaded
+  const reportRef = useRef<HTMLDivElement>(null);
+  const scrollToReport = () => {
+    reportRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -775,14 +780,23 @@ function MemberIdCard({
         {/* Row 5 — View Report */}
         <Grid container spacing={1} alignItems="center">
           <Grid size={{ xs: 12, md: 6 }}>
-            <ViewReportButton
-              control={control}
-              handleSubmit={handleSubmit}
-              onSubmit={onSubmit}
-              setValue={setValue}
-              loading={loading}
-            />
-            <ClearFormButton reset={reset} setValue={setValue} />
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              gap={5}
+              width="100%"
+            >
+              <ViewReportButton
+                control={control}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                setValue={setValue}
+                loading={loading}
+                onBeforeSubmit={scrollToReport}
+              />
+              <ClearFormButton reset={reset} setValue={setValue} />
+            </Box>
           </Grid>
         </Grid>
       </Paper>
@@ -800,7 +814,10 @@ function MemberIdCard({
       )}
 
       {/* ── REPORT AREA ──────────────────────────────────────────────── */}
-      <Box sx={{ width: "100%", overflow: "auto", height: "100vh" }}>
+      <Box
+        ref={reportRef}
+        sx={{ width: "100%", overflow: "auto", height: "100vh" }}
+      >
         {loading ? (
           <Box
             sx={{
@@ -812,31 +829,18 @@ function MemberIdCard({
           >
             <RefreshCw className="animate-spin text-blue-500" size={48} />
           </Box>
-        ) : error ? (
-          <Box sx={{ textAlign: "center", mt: 4 }}>
-            <Typography color="error">{error}</Typography>
-          </Box>
         ) : reportLoaded && pdfData ? (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <PdfSlideViewer
-              base64Pdf={pdfData}
-              pageNumber={currentPage}
-              onTotalPagesChange={(_pages: number) => {}}
-              onLoadError={(_err: string) => {}}
-            />
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
+          <iframe
+            src={`${pdfData}#zoom=155`}
+            style={{
+              width: "100%",
+              height: "1000px",
+              border: "none",
+              display: "block",
+              margin: "0 auto",
             }}
-          >
-          
-          </Box>
-        )}
+          />
+        ) : null}
       </Box>
     </Box>
   );

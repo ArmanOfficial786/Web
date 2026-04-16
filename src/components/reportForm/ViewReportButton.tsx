@@ -19,6 +19,7 @@ interface ViewReportButtonProps {
   onSubmit: SubmitHandler<FormInputs>;
   setValue: UseFormSetValue<FormInputs>;
   loading: boolean;
+  onBeforeSubmit?: () => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -28,6 +29,7 @@ export default function ViewReportButton({
   onSubmit,
   setValue,
   loading,
+  onBeforeSubmit,
 }: ViewReportButtonProps) {
   // Watch memberId reactively so we can detect when it has a value
   const memberId = useWatch({ control, name: "memberId" });
@@ -39,6 +41,7 @@ export default function ViewReportButton({
       setValue("fromDate", "");
       setValue("tillDate", "");
     }
+    onBeforeSubmit?.();
     handleSubmit(onSubmit)();
   };
 
