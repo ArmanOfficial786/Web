@@ -1,52 +1,47 @@
 "use client";
-
 import React from "react";
-import type { UseFormReset, UseFormSetValue } from "react-hook-form";
+import type {
+  FieldValues,
+  Path,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 import Button from "@mui/material/Button";
-
 import { useReportForm } from "@/contexts/ReportFormContext";
-import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
-
-// ── Default blank values ──────────────────────────────────────────────────────
-const EMPTY_FORM: FormInputs = {
-  memberId: "",
-  memberName: "",
-  fromDate: "",
-  tillDate: "",
-  branchId: 0,
-  collectionCenterId: 0,
-  groupId: 0,
-  orderBy: 0,
-};
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface ClearFormButtonProps {
-  reset: UseFormReset<FormInputs>;
-  setValue: UseFormSetValue<FormInputs>;
+interface ClearFormButtonProps<T extends FieldValues> {
+  reset: UseFormReset<T>;
+  setValue: UseFormSetValue<T>;
+
+  // 🔥 instead of form type → we use field names
+  clearFields?: Path<T>[];
+
+  clearSelectedMember?: () => void;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-export default function ClearFormButton({
+export default function ClearFormButton<T extends FieldValues>({
   reset,
   setValue,
-}: ClearFormButtonProps) {
-  const { resetFormFields, setSelectedMember } = useReportForm();
+  clearFields = [],
+  clearSelectedMember,
+}: ClearFormButtonProps<T>) {
+  const { resetFormFields } = useReportForm();
 
   const handleClear = () => {
-    // Step 1 — reset RHF internal state
-    reset(EMPTY_FORM);
+    // reset full form
+    reset();
 
-    // Step 2 — explicitly setValue each field so useWatch fires in
-    //          child components and cascade dropdowns re-render
-    (Object.keys(EMPTY_FORM) as (keyof FormInputs)[]).forEach((key) => {
-      setValue(key, EMPTY_FORM[key]);
+    // clear only specified fields
+    clearFields.forEach((field) => {
+      setValue(field, "" as any);
     });
 
-    // Step 3 — reset context cascade options back to "-- Select --"
+    // reset shared context
     resetFormFields();
 
-    // Step 4 — clear member lookup selection
-    setSelectedMember(null);
+    // optional external reset
+    clearSelectedMember?.();
   };
 
   return (

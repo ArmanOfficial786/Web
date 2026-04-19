@@ -1,76 +1,72 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-
+import {
+  useWatch,
+  type Control,
+  type UseFormSetValue,
+  type FieldValues,
+  type Path,
+} from "react-hook-form";
+import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 import { useReportForm } from "@/contexts/ReportFormContext";
-import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
-
-// ── FieldRow ──────────────────────────────────────────────────────────────────
-function FieldRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 40 }}>
-      <Typography
-        sx={{
-          width: 110,
-          flexShrink: 0,
-          fontSize: 13,
-          fontWeight: 500,
-          color: "text.secondary",
-        }}
-      >
-        {label}
-      </Typography>
-      <Box sx={{ flex: 1 }}>{children}</Box>
-    </Box>
-  );
-}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface SelectGroupFieldProps {
-  control: Control<FormInputs>;
-  setValue: UseFormSetValue<FormInputs>; // ✅ prop instead of useFormContext
+interface SelectGroupFieldProps<T extends FieldValues> {
+  control: Control<T>;
+  setValue: UseFormSetValue<T>;
+
+  branchFieldName: Path<T>;
+  collectionCenterFieldName: Path<T>;
+  groupFieldName: Path<T>;
+
+  defaultGroupValue?: any; // optional safer reset value
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function SelectGroupField({
+export default function SelectGroupField<T extends FieldValues>({
   control,
   setValue,
-}: SelectGroupFieldProps) {
+  branchFieldName,
+  collectionCenterFieldName,
+  groupFieldName,
+  defaultGroupValue = 0,
+}: SelectGroupFieldProps<T>) {
   const { memberGroupOptions, fetchMemberGroups } = useReportForm();
 
-  const selectedBranchId = useWatch({ control, name: "branchId" });
+  const selectedBranchId = useWatch({
+    control,
+    name: branchFieldName,
+  });
+
   const selectedCollectionCenterId = useWatch({
     control,
-    name: "collectionCenterId",
+    name: collectionCenterFieldName,
   });
 
   useEffect(() => {
     const branchId = Number(selectedBranchId);
     const collectionCenterId = Number(selectedCollectionCenterId);
-    // Reset group selection whenever collection center changes
-    setValue("groupId", 0);
+
+    // reset dependent field
+    setValue(groupFieldName, defaultGroupValue);
+
+    // fetch new options
     fetchMemberGroups(branchId, collectionCenterId);
   }, [
     selectedBranchId,
     selectedCollectionCenterId,
     fetchMemberGroups,
     setValue,
+    groupFieldName,
+    defaultGroupValue,
   ]);
 
   return (
     <FieldRow label="Select Group">
       <DropDown
-        name="groupId"
+        name={groupFieldName}
         control={control}
         label="Select Group"
         options={memberGroupOptions}

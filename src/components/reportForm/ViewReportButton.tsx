@@ -3,6 +3,8 @@
 import React from "react";
 import type {
   Control,
+  FieldValues,
+  Path,
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
@@ -10,37 +12,45 @@ import type {
 import { useWatch } from "react-hook-form";
 import Button from "@mui/material/Button";
 
-import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
-
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface ViewReportButtonProps {
-  control: Control<FormInputs>;
-  handleSubmit: UseFormHandleSubmit<FormInputs>;
-  onSubmit: SubmitHandler<FormInputs>;
-  setValue: UseFormSetValue<FormInputs>;
+interface ViewReportButtonProps<T extends FieldValues> {
+  control: Control<T>;
+  handleSubmit: UseFormHandleSubmit<T>;
+  onSubmit: SubmitHandler<T>;
+  setValue: UseFormSetValue<T>;
   loading: boolean;
   onBeforeSubmit?: () => void;
+
+  // 🔥 configurable logic (instead of hardcoded memberId)
+  watchField?: Path<T>;
+  clearFields?: Path<T>[]; // fields to clear before submit
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function ViewReportButton({
+export default function ViewReportButton<T extends FieldValues>({
   control,
   handleSubmit,
   onSubmit,
   setValue,
   loading,
   onBeforeSubmit,
-}: ViewReportButtonProps) {
-  // Watch memberId reactively so we can detect when it has a value
-  const memberId = useWatch({ control, name: "memberId" });
+  watchField,
+  clearFields = [],
+}: ViewReportButtonProps<T>) {
+  const watchedValue = useWatch({
+    control,
+    name: watchField as Path<T>,
+    disabled: !watchField, // ← skips subscription when undefined
+  });
 
   const handleClick = () => {
-    // If a member is selected via lookup, date fields are not required —
-    // clear them from the payload so the API only filters by memberId.
-    if (memberId) {
-      setValue("fromDate", "");
-      setValue("tillDate", "");
+    // Clear dependent fields if condition is met
+    if (watchedValue && watchedValue) {
+      clearFields.forEach((field) => {
+        setValue(field, "" as any);
+      });
     }
+
     onBeforeSubmit?.();
     handleSubmit(onSubmit)();
   };

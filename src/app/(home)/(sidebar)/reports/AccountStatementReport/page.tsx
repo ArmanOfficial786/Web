@@ -16,6 +16,7 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { toast } from "react-toastify";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 
+
 // ── Schema typed to FormInputs (not AccountStatementRequest) ─────────────────
 const schema: yup.ObjectSchema<FormInputs> = yup.object({
   memberId: yup.string().default(""),
@@ -32,6 +33,8 @@ const schema: yup.ObjectSchema<FormInputs> = yup.object({
   collectionCenterId: yup.mixed<number | string>().default(0),
   groupId: yup.mixed<number | string>().default(0),
   orderBy: yup.mixed<number | string>().default(0),
+  reportType: yup.string().default("Summary"),
+  transactionType: yup.string().default("All"),
 });
 
 // ── Mapper: FormInputs → AccountStatementRequest ──────────────────────────────
@@ -43,8 +46,8 @@ const toRequest = (form: FormInputs, page = 1): AccountStatementRequest => ({
   branchId: Number(form.branchId) || undefined,
   branchSelected: String(form.branchId) || undefined,
   branchName: undefined, // populated server-side
-  reportType: undefined,
-  transactionType: String(form.groupId) || undefined,
+  reportType: String(form.reportType) || undefined,
+  transactionType: String(form.transactionType) || undefined,
   orderBy: String(form.orderBy) || undefined,
 });
 

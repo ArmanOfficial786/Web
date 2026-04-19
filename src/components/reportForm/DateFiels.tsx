@@ -1,57 +1,36 @@
 "use client";
 
 import React from "react";
-import type { Control } from "react-hook-form";
-import Box from "@mui/material/Box";
+import type { Control, FieldValues, Path } from "react-hook-form";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-
 import DateInput from "@/components/form/DateInput";
-import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
+import FieldRow from "@/utilis/FieldRow";
 
-// ── FieldRow (local, keeps label-left design) ─────────────────────────────────
-function FieldRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 40 }}>
-      <Typography
-        sx={{
-          width: 110,
-          flexShrink: 0,
-          fontSize: 13,
-          fontWeight: 500,
-          color: "text.secondary",
-        }}
-      >
-        {label}
-      </Typography>
-      <Box sx={{ flex: 1 }}>{children}</Box>
-    </Box>
-  );
+interface DateFieldsProps<T extends FieldValues> {
+  control: Control<T>;
 }
 
-// ── Props ─────────────────────────────────────────────────────────────────────
-interface DateFieldsProps {
-  control: Control<FormInputs>;
-}
-
-// ── Component ─────────────────────────────────────────────────────────────────
-export default function DateFields({ control }: DateFieldsProps) {
+export default function DateFields<T extends FieldValues>({
+  control,
+}: DateFieldsProps<T>) {
   return (
     <Grid container spacing={2} alignItems="center">
       <Grid size={{ xs: 12, md: 6 }}>
         <FieldRow label="From Date">
-          <DateInput name="fromDate" control={control} dateType="BS" />
+          <DateInput
+            name={"fromDate" as Path<T>}
+            control={control}
+            dateType="BS"
+          />
         </FieldRow>
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <FieldRow label="Till Date">
-          <DateInput name="tillDate" control={control} dateType="BS" />
+          <DateInput
+            name={"tillDate" as Path<T>}
+            control={control}
+            dateType="BS"
+          />
         </FieldRow>
       </Grid>
     </Grid>

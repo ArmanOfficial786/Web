@@ -261,12 +261,9 @@ import { useState, useCallback } from "react";
 import * as yup from "yup";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MemberIdCardRequest } from "../../../../../../types/api/api";
-import MemberIdCard, {
-  type FormInputs,
-} from "@/components/reports/memberReport/MemberIdCard";
+import MemberIdCard from "@/components/reports/memberReport/MemberIdCard";
 import memberIdCardService from "@/services/MemberIdCardService";
 import {
-  ExportFormat,
   InitialReportState,
   PaginationHeader,
   DefaultPagination,
@@ -276,42 +273,50 @@ import {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 
+// ── Extended form type — collectionCenterId is UI-only, not in API request ────
+export interface MemberIdCardFormValues extends MemberIdCardRequest {
+  collectionCenterId?: number;
+  memberName?: string;
+}
+
 // ── Validation schema ─────────────────────────────────────────────────────────
 
-const schema: yup.ObjectSchema<FormInputs> = yup.object({
-  memberId: yup.string().optional().default(""),
-  memberName: yup.string().optional().default(""),
-  fromDate: yup.string().optional().default(""),
-  tillDate: yup
+const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
+  memberId: yup.string().nullable().optional().default(null),
+  memberName: yup.string().optional().default(""), // ✅ UI-only
+  fromDate: yup.string().nullable().optional().default(null),
+  toDate: yup
     .string()
+    .nullable()
     .optional()
-    .default("")
+    .default(null)
     .test("bs-min", "Till Date cannot be before From Date", function (val) {
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
-  branchId: yup.mixed<number | string>().optional().default(0),
-  collectionCenterId: yup.mixed<number | string>().optional().default(0),
-  groupId: yup.mixed<number | string>().optional().default(0),
-  orderBy: yup.mixed<number | string>().optional().default(0),
+  orderby: yup.string().nullable().optional().default(null),
+  branchId: yup.number().optional().default(0),
+  collectionCenterId: yup.number().optional().default(0),
+  memberGroupId: yup.number().optional().default(0),
+  currentPage: yup.number().optional().default(1),
+  pageSize: yup.number().optional().default(10),
 });
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /** Convert FormInputs → API request shape */
 const toRequest = (
   // ← return type narrowed
-  v: FormInputs,
+  v: MemberIdCardFormValues,
   page = 1,
   size = 10,
-): MemberIdCardRequest => ({
+): MemberIdCardFormValues => ({
   memberId: v.memberId || null,
   fromDate: v.fromDate || null,
-  toDate: v.tillDate || null,
+  toDate: v.toDate || null,
   branchId: Number(v.branchId) || 0,
   //collectionCenterId: Number(v.collectionCenterId) || 0,
-  memberGroupId: Number(v.groupId) || 0,
-  orderby: v.orderBy && v.orderBy !== 0 ? String(v.orderBy) : null,
+  memberGroupId: Number(v.memberGroupId) || 0,
+  orderby: v.orderby,
   currentPage: page,
   pageSize: size,
 });
@@ -329,8 +334,8 @@ function Page(): React.ReactElement {
   );
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const { control, handleSubmit, getValues, setValue, reset } =
-    useForm<FormInputs>({
+  const { control, handleSubmit, setValue, reset } =
+    useForm<MemberIdCardFormValues>({
       resolver: yupResolver(schema) as any,
       defaultValues: schema.getDefault(),
     });
@@ -342,11 +347,11 @@ function Page(): React.ReactElement {
       memberId: "",
       memberName: "",
       fromDate: "",
-      tillDate: "",
+      toDate: "",
       branchId: 0,
       collectionCenterId: 0,
-      groupId: 0,
-      orderBy: 0,
+      memberGroupId: 0,
+      orderby: "",
     });
     resetFormFields();
     setSelectedMember(null);
@@ -444,7 +449,7 @@ function Page(): React.ReactElement {
 
   // ── Form submit — resets to page 1 ───────────────────────────────────────
 
-  const onSubmit: SubmitHandler<FormInputs> = useCallback(
+  const onSubmit: SubmitHandler<MemberIdCardRequest> = useCallback(
     (formData) => {
       const request = toRequest(formData, 1, reportState.pageSize ?? 10);
       fetchReport(request); // ← now MemberIdCardRequest, not unknown

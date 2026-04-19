@@ -1,66 +1,61 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useWatch, type Control, type UseFormSetValue } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-
+import {
+  useWatch,
+  type Control,
+  type UseFormSetValue,
+  type FieldValues,
+  type Path,
+} from "react-hook-form";
+import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 import { useReportForm } from "@/contexts/ReportFormContext";
-import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
-
-// ── FieldRow ──────────────────────────────────────────────────────────────────
-function FieldRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 40 }}>
-      <Typography
-        sx={{
-          width: 110,
-          flexShrink: 0,
-          fontSize: 13,
-          fontWeight: 500,
-          color: "text.secondary",
-        }}
-      >
-        {label}
-      </Typography>
-      <Box sx={{ flex: 1 }}>{children}</Box>
-    </Box>
-  );
-}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
-interface CollectionCenterFieldProps {
-  control: Control<FormInputs>;
-  setValue: UseFormSetValue<FormInputs>; // ✅ passed as prop, no FormProvider needed
+interface CollectionCenterFieldProps<T extends FieldValues> {
+  control: Control<T>;
+  setValue: UseFormSetValue<T>;
+
+  branchFieldName: Path<T>;
+  collectionCenterFieldName: Path<T>;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export default function CollectionCenterField({
+export default function CollectionCenterField<T extends FieldValues>({
   control,
   setValue,
-}: CollectionCenterFieldProps) {
+  branchFieldName,
+  collectionCenterFieldName,
+}: CollectionCenterFieldProps<T>) {
   const { collectionCenterOptions, fetchCollectionCenters } = useReportForm();
 
-  const selectedBranchId = useWatch({ control, name: "branchId" });
+  // ✅ cast to unknown first, then to a safe primitive type
+  const rawBranchId = useWatch({ control, name: branchFieldName });
+  const selectedBranchId = rawBranchId as number | string | undefined;
 
   useEffect(() => {
-    const id = Number(selectedBranchId);
-    // Reset collection center selection whenever branch changes
-    setValue("collectionCenterId", 0);
+    const id = Number(selectedBranchId ?? 0); // ← guaranteed number, never NaN
+
+    setValue(collectionCenterFieldName, 0 as any);
+
+    if (!id || id === 0) {
+      // don't bother fetching — reset is enough
+      return;
+    }
+
     fetchCollectionCenters(id);
-  }, [selectedBranchId, fetchCollectionCenters, setValue]);
+  }, [
+    selectedBranchId,
+    fetchCollectionCenters,
+    setValue,
+    collectionCenterFieldName,
+  ]);
 
   return (
     <FieldRow label="Collection Center">
       <DropDown
-        name="collectionCenterId"
+        name={collectionCenterFieldName}
         control={control}
         label="Collection Center"
         options={collectionCenterOptions}

@@ -1,302 +1,3 @@
-// "use client";
-
-// import React, {
-//   createContext,
-//   useContext,
-//   useState,
-//   useEffect,
-//   useCallback,
-//   useRef,
-//   ReactNode,
-// } from "react";
-// import { branchService } from "@/services/BranchService";
-// import { orderByService } from "@/services/OrderByService";
-// import { memberLookUpService } from "@/services/MemberLookUpService";
-// import { collectionCenterService } from "@/services/CollectionCenterService";
-// import {
-//   CollectionCenterRequestDtos,
-//   MemberGroupRequestDtos,
-// } from "types/api/api";
-// import { memberGroupService } from "@/services/MemberGroupService";
-
-// // ── Types ─────────────────────────────────────────────────────────────────────
-// export type SelectOption = { id: number | string; name: string };
-
-// export interface MemberRecord {
-//   memMemberRegistrationId: number;
-//   memberId: string;
-//   memberName: string;
-//   centerName: string;
-//   centerCode: string;
-//   groupName: string;
-//   groupCode: string;
-//   officeName: string;
-//   gender: string;
-//   temporaryAddress: string;
-//   mobileNo: string;
-// }
-
-// export interface MemberLookUpSearchParams {
-//   Page?: number;
-//   MemberId?: string;
-//   MemberName?: string;
-//   GroupName?: string;
-//   CenterName?: string;
-//   Gender?: string;
-//   MobileNo?: string;
-//   OfficeName?: string;
-// }
-
-// // ── Context type ──────────────────────────────────────────────────────────────
-// interface ReportFormContextType {
-//   memberLookUp: MemberRecord[];
-//   totalPages: number;
-//   currentPage: number;
-//   isLoading: boolean;
-//   error: string;
-//   selectedMember: MemberRecord | null;
-//   searchmemberLookUp: (params: MemberLookUpSearchParams) => Promise<void>;
-//   clearResults: () => void;
-//   setSelectedMember: (member: MemberRecord | null) => void;
-//   branchOptions: SelectOption[];
-//   orderByOptions: SelectOption[];
-//   collectionCenterOptions: SelectOption[]; // ← was missing
-//   memberGroupOptions: SelectOption[];
-//   fetchCollectionCenters: (branchId: number) => Promise<void>;
-//   fetchMemberGroups: (
-//     branchId: number,
-//     collectionCenterId: number,
-//   ) => Promise<void>;
-//   resetFormFields: () => void;
-// }
-
-// const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
-
-// const ReportFormContext = createContext<ReportFormContextType | undefined>(
-//   undefined,
-// );
-
-// export const useReportForm = () => {
-//   const ctx = useContext(ReportFormContext);
-//   if (!ctx)
-//     throw new Error("useReportForm must be used within ReportFormProvider");
-//   return ctx;
-// };
-
-// // ── Provider ──────────────────────────────────────────────────────────────────
-// export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
-//   const [memberLookUp, setMemberLookUp] = useState<MemberRecord[]>([]);
-//   const [totalPages, setTotalPages] = useState(1);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState("");
-//   const [selectedMember, setSelectedMember] = useState<MemberRecord | null>(
-//     null,
-//   );
-//   const [branchOptions, setBranchOptions] =
-//     useState<SelectOption[]>(DEFAULT_SELECT);
-//   const [collectionCenterOptions, setCollectionCenterOptions] =
-//     useState<SelectOption[]>(DEFAULT_SELECT);
-//   const [memberGroupOptions, setMemberGroupOptions] =
-//     useState<SelectOption[]>(DEFAULT_SELECT);
-//   const [orderByOptions, setOrderByOptions] =
-//     useState<SelectOption[]>(DEFAULT_SELECT);
-
-//   // ✅ Monotonically-increasing counter. Each call to searchmemberLookUp
-//   //    captures its own generation number at the point it was invoked.
-//   //    When the async response arrives, we compare — if the ref has moved
-//   //    on (a newer call or a clearResults happened), we discard silently.
-//   //    This replaces AbortController so the service signature is untouched.
-//   const searchGenerationRef = useRef(0);
-
-//   //clear button will reset all reportform fields to default value
-//   const resetFormFields = useCallback(() => {
-//     setCollectionCenterOptions(DEFAULT_SELECT);
-//     setMemberGroupOptions(DEFAULT_SELECT);
-//   }, []);
-
-//   // ── Branch options ────────────────────────────────────────────────────────
-//   useEffect(() => {
-//     branchService
-//       .getAll()
-//       .then((res) => {
-//         const mapped = (res?.data ?? []).map(
-//           (b): SelectOption => ({
-//             id: b.branchId ?? 0,
-//             name: b.branchName ?? "",
-//           }),
-//         );
-//         setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-//       })
-//       .catch(() => {});
-//   }, []);
-
-//   // ──  Collection Centers ────────────────────────────────────────────────────────
-//   const fetchCollectionCenters = useCallback(async (branchId: number) => {
-//     // ✅ Don't call API until a real branch is selected
-//     if (!branchId || branchId === 0) {
-//       setCollectionCenterOptions(DEFAULT_SELECT);
-//       setMemberGroupOptions(DEFAULT_SELECT);
-//       return;
-//     }
-
-//     try {
-//       const request: CollectionCenterRequestDtos = { lstOfficeId: branchId };
-//       const res = await collectionCenterService.getAll(request);
-//       const mapped = (res ?? []).map(
-//         (c): SelectOption => ({
-//           id: c.collectionCenterId ?? 0,
-//           name: c.collectionCenterName ?? "",
-//         }),
-//       );
-//       setCollectionCenterOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-//     } catch (err) {
-//       console.error("Error fetching collection centers:", err);
-//       setCollectionCenterOptions(DEFAULT_SELECT);
-//     }
-//   }, []);
-
-//   // ──  Select Member Group ────────────────────────────────────────────────────────
-//   const fetchMemberGroups = useCallback(
-//     async (branchId: number, collectionCenterId: number) => {
-//       // ✅ Don't call API until both real values are selected
-//       if (
-//         !branchId ||
-//         branchId === 0 ||
-//         !collectionCenterId ||
-//         collectionCenterId === 0
-//       ) {
-//         setMemberGroupOptions(DEFAULT_SELECT);
-//         return;
-//       }
-
-//       try {
-//         const request: MemberGroupRequestDtos = {
-//           lstOfficeId: branchId,
-//           collectionCenterId: collectionCenterId,
-//         };
-//         const res = await memberGroupService.getAll(request);
-//         const mapped = (res ?? []).map(
-//           (g): SelectOption => ({
-//             id: g.memberGroupId ?? 0,
-//             name: g.name ?? "",
-//           }),
-//         );
-//         setMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-//       } catch (err) {
-//         console.error("Error fetching member groups:", err);
-//         setMemberGroupOptions(DEFAULT_SELECT);
-//       }
-//     },
-//     [],
-//   );
-//   // ── OrderBy options ───────────────────────────────────────────────────────
-//   useEffect(() => {
-//     orderByService
-//       .getAll()
-//       .then((res) => {
-//         const list = res?.data?.memberIdCard ?? [];
-//         const mapped = list.map(
-//           (o): SelectOption => ({
-//             id: o.value ?? "",
-//             //id: o.displayName ?? "",
-//             name: o.displayName ?? "",
-//           }),
-//         );
-//         setOrderByOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-//       })
-//       .catch(() => {});
-//   }, []);
-
-//   // ── Member lookup search ──────────────────────────────────────────────────
-//   const searchmemberLookUp = useCallback(
-//     async (params: MemberLookUpSearchParams) => {
-//       // Stamp this call with the next generation number
-//       const generation = ++searchGenerationRef.current;
-
-//       setIsLoading(true);
-//       setError("");
-
-//       try {
-//         const data = await memberLookUpService.getAllWithFilters(params);
-
-//         // ✅ If generation no longer matches, a newer call (or clearResults)
-//         //    has superseded us — drop the response entirely.
-//         if (generation !== searchGenerationRef.current) return;
-
-//         const mappedItems = (data?.items ?? []).map(
-//           (item): MemberRecord => ({
-//             memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
-//             memberId: item.memberId ?? "",
-//             memberName: item.memberName ?? "",
-//             centerName: item.centerName ?? "",
-//             centerCode: item.centerCode ?? "",
-//             groupName: item.groupName ?? "",
-//             groupCode: item.groupCode ?? "",
-//             officeName: item.officeName ?? "",
-//             gender: item.gender ?? "",
-//             temporaryAddress: item.temporaryAddress ?? "",
-//             mobileNo: item.mobileNo ?? "",
-//           }),
-//         );
-
-//         setMemberLookUp(mappedItems);
-//         setTotalPages(data?.totalPages ?? 1);
-//         setCurrentPage(data?.currentPage ?? 1);
-//       } catch (err: any) {
-//         if (generation !== searchGenerationRef.current) return;
-//         setError(err?.message ?? "Failed to load members");
-//       } finally {
-//         // ✅ Only the current generation clears the loading flag.
-//         //    A stale response must never flip isLoading to false.
-//         if (generation === searchGenerationRef.current) {
-//           setIsLoading(false);
-//         }
-//       }
-//     },
-//     [],
-//   );
-
-//   // ── Clear results ─────────────────────────────────────────────────────────
-//   const clearResults = useCallback(() => {
-//     // ✅ Advancing the generation invalidates every in-flight request instantly.
-//     //    When those promises resolve they will see a mismatched generation
-//     //    and bail out without touching state.
-//     searchGenerationRef.current += 1;
-
-//     setMemberLookUp([]);
-//     setTotalPages(1);
-//     setCurrentPage(1);
-//     setError("");
-//     setIsLoading(false); // ✅ was missing in original — left spinner stuck on reopen
-//   }, []);
-
-//   return (
-//     <ReportFormContext.Provider
-//       value={{
-//         memberLookUp,
-//         totalPages,
-//         currentPage,
-//         isLoading,
-//         error,
-//         selectedMember,
-//         setSelectedMember,
-//         searchmemberLookUp,
-//         clearResults,
-//         branchOptions,
-//         orderByOptions,
-//         collectionCenterOptions,
-//         memberGroupOptions,
-//         fetchCollectionCenters,
-//         fetchMemberGroups,
-//         resetFormFields,
-//       }}
-//     >
-//       {children}
-//     </ReportFormContext.Provider>
-//   );
-// };
-
 "use client";
 
 import React, {
@@ -432,6 +133,45 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     setMemberGroupOptions(DEFAULT_SELECT);
   }, []);
 
+  // ── Member lookup ─────────────────────────────────────────────────────────
+  const searchmemberLookUp = useCallback(
+    async (params: MemberLookUpSearchParams) => {
+      const generation = ++searchGenerationRef.current;
+      setIsLoading(true);
+      setError("");
+      try {
+        const data = await memberLookUpService.getAllWithFilters(params);
+        if (generation !== searchGenerationRef.current) return;
+        const mappedItems = (data?.items ?? []).map(
+          (item): MemberRecord => ({
+            memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
+            memberId: item.memberId ?? "",
+            memberName: item.memberName ?? "",
+            centerName: item.centerName ?? "",
+            centerCode: item.centerCode ?? "",
+            groupName: item.groupName ?? "",
+            groupCode: item.groupCode ?? "",
+            officeName: item.officeName ?? "",
+            gender: item.gender ?? "",
+            temporaryAddress: item.temporaryAddress ?? "",
+            mobileNo: item.mobileNo ?? "",
+          }),
+        );
+        setMemberLookUp(mappedItems);
+        setTotalPages(data?.totalPages ?? 1);
+        setCurrentPage(data?.currentPage ?? 1);
+      } catch (err: any) {
+        if (generation !== searchGenerationRef.current) return;
+        setError(err?.message ?? "Failed to load members");
+      } finally {
+        if (generation === searchGenerationRef.current) {
+          setIsLoading(false);
+        }
+      }
+    },
+    [],
+  );
+
   // ── Branch options ────────────────────────────────────────────────────────
   useEffect(() => {
     branchService
@@ -517,45 +257,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch(() => {});
   }, []);
-
-  // ── Member lookup ─────────────────────────────────────────────────────────
-  const searchmemberLookUp = useCallback(
-    async (params: MemberLookUpSearchParams) => {
-      const generation = ++searchGenerationRef.current;
-      setIsLoading(true);
-      setError("");
-      try {
-        const data = await memberLookUpService.getAllWithFilters(params);
-        if (generation !== searchGenerationRef.current) return;
-        const mappedItems = (data?.items ?? []).map(
-          (item): MemberRecord => ({
-            memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
-            memberId: item.memberId ?? "",
-            memberName: item.memberName ?? "",
-            centerName: item.centerName ?? "",
-            centerCode: item.centerCode ?? "",
-            groupName: item.groupName ?? "",
-            groupCode: item.groupCode ?? "",
-            officeName: item.officeName ?? "",
-            gender: item.gender ?? "",
-            temporaryAddress: item.temporaryAddress ?? "",
-            mobileNo: item.mobileNo ?? "",
-          }),
-        );
-        setMemberLookUp(mappedItems);
-        setTotalPages(data?.totalPages ?? 1);
-        setCurrentPage(data?.currentPage ?? 1);
-      } catch (err: any) {
-        if (generation !== searchGenerationRef.current) return;
-        setError(err?.message ?? "Failed to load members");
-      } finally {
-        if (generation === searchGenerationRef.current) {
-          setIsLoading(false);
-        }
-      }
-    },
-    [],
-  );
 
   // ── Clear results ─────────────────────────────────────────────────────────
   const clearResults = useCallback(() => {

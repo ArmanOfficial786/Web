@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -19,46 +19,26 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/ReportNavigation";
 import PdfSlideViewer from "@/components/reportForm/PdfSlideViewer";
-import MemberLookupButton from "@/components/reportForm/MemberLookUpButton";
+//import MemberLookupButton from "@/components/reportForm/MemberLookUpButton";
 import DateFields from "@/components/reportForm/DateFiels";
 import BranchNameField from "@/components/reportForm/BranchNameField";
-import CollectionCenterField from "@/components/reportForm/CollectionCenter";
-import SelectGroupField from "@/components/reportForm/SelectGroupField";
+// import CollectionCenterField from "@/components/reportForm/CollectionCenter";
+// import SelectGroupField from "@/components/reportForm/SelectGroupField";
 import OrderByField from "@/components/reportForm/OrderByFields";
 import ViewReportButton from "@/components/reportForm/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/ClearFormButton";
+import ReportTypeField from "@/components/reportForm/ReportType";
+import TransactionTypeField from "@/components/reportForm/TransactionType";
+import { AccountStatementRequest } from "types/api/api";
+import type { ReportState } from "@/utilis/Constants/reportConstants";
 
 export type { ReportFormat };
-
-// ── FormInputs matches exactly what child components expect ───────────────────
-export interface FormInputs {
-  memberId: string;
-  memberName: string;
-  fromDate: string;
-  tillDate: string;
-  branchId: number | string;
-  collectionCenterId: number | string;
-  groupId: number | string;
-  orderBy: number | string;
-}
-
-export interface ReportState {
-  currentPage: number;
-  totalPages: number;
-  totalRecord: number;
-  pageSize: number;
-  loading: boolean;
-  reportLoaded: boolean;
-  error: string;
-  pdfData: string;
-}
-
 interface AccountStatementProps {
-  control: Control<FormInputs>;
-  handleSubmit: UseFormHandleSubmit<FormInputs>;
-  onSubmit: SubmitHandler<FormInputs>;
-  setValue: UseFormSetValue<FormInputs>;
-  reset: UseFormReset<FormInputs>;
+  control: Control<AccountStatementRequest>;
+  handleSubmit: UseFormHandleSubmit<AccountStatementRequest>;
+  onSubmit: SubmitHandler<AccountStatementRequest>;
+  setValue: UseFormSetValue<AccountStatementRequest>;
+  reset: UseFormReset<AccountStatementRequest>;
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -78,6 +58,14 @@ export default function AccountStatement({
 }: AccountStatementProps) {
   const { loading, reportLoaded, error, pdfData, currentPage, totalPages } =
     reportState;
+  //Scroll up to report area when report is loaded
+  const reportRef = useRef<HTMLDivElement>(null);
+  const scrollToReport = () => {
+    reportRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -91,8 +79,11 @@ export default function AccountStatement({
         </Typography>
         <Divider sx={{ mb: 1.5 }} />
 
-        <MemberLookupButton control={control} />
-        <Divider sx={{ mb: 1.5 }} />
+        {/* <MemberLookupButton
+          control={control}
+          title="Account Statement — Member Directory"
+        />
+        <Divider sx={{ mb: 1.5 }} /> */}
 
         <Box sx={{ mb: 1 }}>
           <DateFields control={control} />
@@ -107,8 +98,18 @@ export default function AccountStatement({
             mb: 1,
           }}
         >
-          <BranchNameField control={control} />
-          <CollectionCenterField control={control} setValue={setValue} />
+          {/* <BranchNameField control={control} /> */}
+          <BranchNameField<AccountStatementRequest>
+            control={control}
+            branchFieldName="branchId"
+          />
+
+          {/* <CollectionCenterField control={control} setValue={setValue} /> */}
+          {/* <ReportTypeField control={control} /> */}
+          <ReportTypeField<AccountStatementRequest>
+            control={control}
+            name="reportType"
+          />
         </Box>
         <Divider sx={{ mb: 1.5 }} />
 
@@ -120,8 +121,18 @@ export default function AccountStatement({
             mb: 1,
           }}
         >
-          <SelectGroupField control={control} setValue={setValue} />
-          <OrderByField control={control} reportKey="savingTypeWiseBalance" />
+          {/* <SelectGroupField control={control} setValue={setValue} /> */}
+          {/* <TransactionTypeField control={control} /> */}
+          <TransactionTypeField<AccountStatementRequest>
+            control={control}
+            name="transactionType"
+          />
+          {/* <OrderByField control={control} reportKey="savingTypeWiseBalance" /> */}
+          <OrderByField<AccountStatementRequest>
+            control={control}
+            name="orderBy"
+            reportKey="savingTypeWiseBalance"
+          />
         </Box>
         <Divider sx={{ mb: 1.5 }} />
 
@@ -134,15 +145,43 @@ export default function AccountStatement({
               gap={5}
               width="100%"
             >
-              <ViewReportButton
+              {/* <ViewReportButton
                 control={control}
                 handleSubmit={handleSubmit}
                 onSubmit={onSubmit}
                 setValue={setValue}
                 loading={loading}
+                onBeforeSubmit={scrollToReport}
+              /> */}
+              <ViewReportButton<AccountStatementRequest>
+                control={control}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                setValue={setValue}
+                loading={loading}
+                onBeforeSubmit={scrollToReport}
+                clearFields={[
+                  "fromDate",
+                  "toDate",
+                  "branchId",
+                  "reportType",
+                  "transactionType",
+                  "orderBy",
+                ]}
               />
 
-              <ClearFormButton reset={reset} setValue={setValue} />
+              <ClearFormButton
+                reset={reset}
+                setValue={setValue}
+                clearFields={[
+                  "fromDate",
+                  "toDate",
+                  "branchId",
+                  "reportType",
+                  "transactionType",
+                  "orderBy",
+                ]}
+              />
             </Box>
           </Grid>
         </Grid>
@@ -161,7 +200,10 @@ export default function AccountStatement({
       )}
 
       {/* ── REPORT AREA ──────────────────────────────────────────────────── */}
-      <Box sx={{ width: "100%", overflow: "auto", height: "100vh" }}>
+      <Box
+        ref={reportRef}
+        sx={{ width: "100%", overflow: "auto", height: "100vh" }}
+      >
         {loading ? (
           <Box
             sx={{
@@ -178,15 +220,25 @@ export default function AccountStatement({
             <Typography color="error">{error}</Typography>
           </Box>
         ) : reportLoaded && pdfData ? (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <PdfSlideViewer
-              base64Pdf={pdfData}
-              pageNumber={currentPage}
-              onTotalPagesChange={(_pages: number) => {}}
-              onLoadError={(_err: string) => {}}
-            />
-          </Box>
+          <iframe
+            src={`data:application/pdf;base64,${pdfData}#zoom=155`}
+            style={{
+              width: "100%",
+              height: "1000px",
+              border: "none",
+              display: "block",
+              margin: "0 auto",
+            }}
+          />
         ) : (
+          // <Box sx={{ display: "flex", justifyContent: "center" }}>
+          //   <PdfSlideViewer
+          //     base64Pdf={pdfData}
+          //     pageNumber={currentPage}
+          //     onTotalPagesChange={(_pages: number) => {}}
+          //     onLoadError={(_err: string) => {}}
+          //   />
+          // </Box>
           <Box
             sx={{
               display: "flex",
