@@ -215,11 +215,8 @@ export default function MemberLookupButton<T extends FieldValues>({
               size="small"
               onClick={handleOpen}
               sx={{
-                bgcolor: "#2c6fad",
-                color: "#fff",
                 px: 2,
                 borderRadius: 1,
-                "&:hover": { bgcolor: "#1a5a96" },
               }}
               title="Search for member"
             >

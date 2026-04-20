@@ -386,7 +386,6 @@ function Page(): React.ReactElement {
         })();
 
         const blob = responseToBlob(res.data, "PDF");
-        //const pdfData = await blobToBase64(blob);
         const pdfData = URL.createObjectURL(blob);
 
         setLastRequest(request);

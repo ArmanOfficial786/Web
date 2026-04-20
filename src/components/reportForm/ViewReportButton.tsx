@@ -57,7 +57,7 @@ export default function ViewReportButton<T extends FieldValues>({
 
   return (
     <Button
-      variant="contained"
+      variant="outlined"
       size="small"
       disabled={loading}
       onClick={handleClick}
