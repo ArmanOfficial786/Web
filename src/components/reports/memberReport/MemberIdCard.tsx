@@ -99,12 +99,12 @@ function MemberIdCard({
             mb: 1,
           }}
         >
-          <BranchNameField<MemberIdCardRequest>
+          <BranchNameField<MemberIdCardFormValues>
             control={control}
             branchFieldName="branchId"
           />
 
-          <CollectionCenterField<MemberIdCardRequest>
+          <CollectionCenterField<MemberIdCardFormValues>
             control={control}
             setValue={setValue}
             branchFieldName="branchId"
@@ -121,7 +121,7 @@ function MemberIdCard({
             mb: 1,
           }}
         >
-          <SelectGroupField<MemberIdCardRequest>
+          <SelectGroupField<MemberIdCardFormValues>
             control={control}
             setValue={setValue}
             branchFieldName="branchId"
