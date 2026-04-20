@@ -373,8 +373,8 @@ import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import { RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import PdfSlideViewer from "@/components/reportForm/PdfSlideViewer";
-import ReportNavigation from "@/components/reportForm/ReportNavigation";
+import PdfSlideViewer from "@/components/reportForm/Common/PdfSlideViewer";
+import ReportNavigation from "@/components/reportForm/Common/ReportNavigation";
 
 interface FormInputs {
   startDate: string;

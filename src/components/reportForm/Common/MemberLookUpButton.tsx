@@ -139,7 +139,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useController } from "react-hook-form";
 
 import TextInput from "@/components/form/TextInput";
-import MemberLookUpModal from "@/components/reportForm/MemberLookUpModal";
+import MemberLookUpModal from "@/components/reportForm/Common/MemberLookUpModal";
 import { useReportForm } from "@/contexts/ReportFormContext";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
 

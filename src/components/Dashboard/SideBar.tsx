@@ -39,6 +39,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     { icon: "📊", label: "Member Report" },
     { icon: "📊", label: "MemberID Card Detail " },
     { icon: "📊", label: "Account Statement Report" },
+    { icon: "📊", label: "SavingAcWiseBalance Report" },
   ];
 
   const handleMenuClick = (label: string, hasSubmenu?: boolean) => {
@@ -78,6 +79,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
       "Member Report": "/reports/memberReport",
       "MemberID Card Detail ": "/reports/MemberIDCardDetail",
       "Account Statement Report": "/reports/AccountStatementReport",
+      "SavingAcWiseBalance Report": "/reports/SavingAcWiseBalanceReport",
     };
 
     if (submenuRouteMap[label]) {

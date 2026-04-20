@@ -20,6 +20,7 @@ interface TextInputPropType {
   }[];
   error?: boolean;
   helperText?: string;
+  onOpen?: (() => void | Promise<void>) | null; // ← add this
 }
 
 export default function DropDown({
@@ -32,6 +33,7 @@ export default function DropDown({
   options,
   error,
   helperText,
+  onOpen, // ← destructure
 }: TextInputPropType) {
   if (isObjEmpty(control)) {
     return (
@@ -55,6 +57,7 @@ export default function DropDown({
           input={<OutlinedInput label={label} />}
           fullWidth={fullWidth}
           disabled={disabled}
+          onOpen={onOpen ?? undefined} // ← forward here
         >
           {options.map((op) => (
             <MenuItem key={op.id} value={op.id}>
@@ -95,6 +98,7 @@ export default function DropDown({
               fullWidth={fullWidth}
               disabled={disabled}
               value={value ?? ""}
+              onOpen={onOpen ?? undefined} // ← forward here
               {...restFieldOpts}
             >
               {options.map((op) => (

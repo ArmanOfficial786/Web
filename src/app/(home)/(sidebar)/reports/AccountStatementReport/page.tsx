@@ -8,21 +8,17 @@ import * as yup from "yup";
 import accountStatementService from "@/services/AccountStatementService";
 import type { AccountStatementRequest } from "types/api/api";
 import AccountStatement, {
-  type FormInputs,
   type ReportFormat,
-  type ReportState,
 } from "@/components/reports/accountReport/AccountStatement";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { toast } from "react-toastify";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-
+import { InitialReportState, ReportState } from "@/utilis/Constants/reportConstants";
 
 // ── Schema typed to FormInputs (not AccountStatementRequest) ─────────────────
-const schema: yup.ObjectSchema<FormInputs> = yup.object({
-  memberId: yup.string().default(""),
-  memberName: yup.string().default(""),
+const schema: yup.ObjectSchema<AccountStatementRequest> = yup.object({
   fromDate: yup.string().default(""),
-  tillDate: yup
+  toDate: yup
     .string()
     .default("")
     .test("date-order", "Till Date cannot be before From Date", function (val) {
@@ -30,8 +26,6 @@ const schema: yup.ObjectSchema<FormInputs> = yup.object({
       return !fromDate || !val || val >= fromDate;
     }),
   branchId: yup.mixed<number | string>().default(0),
-  collectionCenterId: yup.mixed<number | string>().default(0),
-  groupId: yup.mixed<number | string>().default(0),
   orderBy: yup.mixed<number | string>().default(0),
   reportType: yup.string().default("Summary"),
   transactionType: yup.string().default("All"),
@@ -40,9 +34,12 @@ const schema: yup.ObjectSchema<FormInputs> = yup.object({
 // ── Mapper: FormInputs → AccountStatementRequest ──────────────────────────────
 // Converts form layer types to exact API contract types.
 // branchId etc. are string|number in form (MUI Select) → number in API.
-const toRequest = (form: FormInputs, page = 1): AccountStatementRequest => ({
+const toRequest = (
+  form: AccountStatementRequest,
+  page = 1,
+): AccountStatementRequest => ({
   fromDate: form.fromDate || undefined,
-  toDate: form.tillDate || undefined, // API uses toDate
+  toDate: form.toDate || undefined, // API uses toDate
   branchId: Number(form.branchId) || undefined,
   branchSelected: String(form.branchId) || undefined,
   branchName: undefined, // populated server-side
@@ -51,26 +48,17 @@ const toRequest = (form: FormInputs, page = 1): AccountStatementRequest => ({
   orderBy: String(form.orderBy) || undefined,
 });
 
-const initialReportState: ReportState = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 10,
-  loading: false,
-  reportLoaded: false,
-  error: "",
-  pdfData: "",
-};
+
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function AccountStatementPage() {
   const [reportState, setReportState] =
-    useState<ReportState>(initialReportState);
+    useState<ReportState>(InitialReportState);
   const [isDownloading, setIsDownloading] = useState(false);
   const [lastRequest, setLastRequest] =
     useState<AccountStatementRequest | null>(null);
 
-  const { control, handleSubmit, setValue, reset } = useForm<FormInputs>({
+  const { control, handleSubmit, setValue, reset } = useForm<AccountStatementRequest>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
   });
@@ -156,7 +144,7 @@ export default function AccountStatementPage() {
   );
 
   // ── Handlers ───────────────────────────────────────────────────────────────
-  const onSubmit: SubmitHandler<FormInputs> = useCallback(
+  const onSubmit: SubmitHandler<AccountStatementRequest> = useCallback(
     (formData) => fetchReport(toRequest(formData)), // ✅ mapped here
     [fetchReport],
   );

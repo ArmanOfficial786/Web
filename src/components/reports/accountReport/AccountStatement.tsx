@@ -17,18 +17,18 @@ import Typography from "@mui/material/Typography";
 
 import ReportNavigation, {
   type ReportFormat,
-} from "@/components/reportForm/ReportNavigation";
-import PdfSlideViewer from "@/components/reportForm/PdfSlideViewer";
+} from "@/components/reportForm/Common/ReportNavigation";
+import PdfSlideViewer from "@/components/reportForm/Common/PdfSlideViewer";
 //import MemberLookupButton from "@/components/reportForm/MemberLookUpButton";
-import DateFields from "@/components/reportForm/DateFiels";
-import BranchNameField from "@/components/reportForm/BranchNameField";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 // import CollectionCenterField from "@/components/reportForm/CollectionCenter";
 // import SelectGroupField from "@/components/reportForm/SelectGroupField";
-import OrderByField from "@/components/reportForm/OrderByFields";
-import ViewReportButton from "@/components/reportForm/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/ClearFormButton";
-import ReportTypeField from "@/components/reportForm/ReportType";
-import TransactionTypeField from "@/components/reportForm/TransactionType";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import ReportTypeField from "@/components/reportForm/Account/ReportType";
+import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
 import { AccountStatementRequest } from "types/api/api";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
 

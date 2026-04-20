@@ -63,7 +63,9 @@ interface ReportFormContextType {
   searchmemberLookUp: (params: MemberLookUpSearchParams) => Promise<void>;
   clearResults: () => void;
   setSelectedMember: (member: MemberRecord | null) => void;
+  fetchBranches: () => Promise<void>; // when click branch dropdwon then only call api and once call it is used in another by ref
   branchOptions: SelectOption[];
+  fetchOrderBy: () => void;
   orderByMap: Record<OrderByReportKey, SelectOption[]>;
   collectionCenterOptions: SelectOption[];
   memberGroupOptions: SelectOption[];
@@ -127,7 +129,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<Record<OrderByReportKey, SelectOption[]>>(DEFAULT_ORDER_BY_MAP);
 
   const searchGenerationRef = useRef(0);
-
+  // ── Guard: fetch branches only once across all reports ────────────────────
+  const branchFetchedRef = useRef(false);
+  const orderbyFetchRef = useRef(false);
+  //reset the form field
   const resetFormFields = useCallback(() => {
     setCollectionCenterOptions(DEFAULT_SELECT);
     setMemberGroupOptions(DEFAULT_SELECT);
@@ -172,19 +177,21 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // ── Branch options ────────────────────────────────────────────────────────
-  useEffect(() => {
-    branchService
-      .getAll()
-      .then((res: BranchResponse[]) => {
-        const mapped = res.map((b: BranchResponse) => ({
-          id: b.branchId ?? 0,
-          name: b.branchName ?? "",
-        }));
+  // ── Branch options (lazy — called only when dropdown is opened) ───────────
+  const fetchBranches = useCallback(async () => {
+    if (branchFetchedRef.current) return; // already fetched, skip API call
+    branchFetchedRef.current = true;
 
-        setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-      })
-      .catch(() => {});
+    try {
+      const res: BranchResponse[] = await branchService.getAll();
+      const mapped = res.map((b: BranchResponse) => ({
+        id: b.branchId ?? 0,
+        name: b.branchName ?? "",
+      }));
+      setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch {
+      branchFetchedRef.current = false; // allow retry on next open if failed
+    }
   }, []);
 
   // ── Collection Centers ────────────────────────────────────────────────────
@@ -243,19 +250,20 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // ── OrderBy map ───────────────────────────────────────────────────────────
-  useEffect(() => {
-    orderByService
-      .getAll()
-      .then((res) => {
-        setOrderByMap({
-          memberIdCard: mapOptions(res.memberIdCard ?? []),
-          savingTypeWiseBalance: mapOptions(res.savingTypeWiseBalance ?? []),
-          // ↓ future reports: just add the key here and in OrderByReportKey
-          // loanStatement: mapOptions(res?.data?.loanStatement ?? []),
-        });
-      })
-      .catch(() => {});
+  // ── OrderBy map (lazy — called only when dropdown is opened) ──────────────
+  const fetchOrderBy = useCallback(async () => {
+    if (orderbyFetchRef.current) return; // already fetched, skip
+    orderbyFetchRef.current = true;
+
+    try {
+      const res = await orderByService.getAll();
+      setOrderByMap({
+        memberIdCard: mapOptions(res.memberIdCard ?? []),
+        savingTypeWiseBalance: mapOptions(res.savingTypeWiseBalance ?? []),
+      });
+    } catch {
+      orderbyFetchRef.current = false; // allow retry on failure
+    }
   }, []);
 
   // ── Clear results ─────────────────────────────────────────────────────────
@@ -280,7 +288,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         setSelectedMember,
         searchmemberLookUp,
         clearResults,
+        fetchBranches,
         branchOptions,
+        fetchOrderBy,
         orderByMap,
         collectionCenterOptions,
         memberGroupOptions,

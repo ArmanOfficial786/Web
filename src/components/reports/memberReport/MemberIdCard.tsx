@@ -17,16 +17,16 @@ import Divider from "@mui/material/Divider";
 
 import ReportNavigation, {
   type ReportFormat,
-} from "@/components/reportForm/ReportNavigation";
+} from "@/components/reportForm/Common/ReportNavigation";
 //import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
-import MemberLookupButton from "../../reportForm/MemberLookUpButton";
-import DateFields from "@/components/reportForm/DateFiels";
-import BranchNameField from "@/components/reportForm/BranchNameField";
-import CollectionCenterField from "@/components/reportForm/CollectionCenter";
-import SelectGroupField from "../../reportForm/SelectGroupField";
-import OrderByField from "@/components/reportForm/OrderByFields";
-import ViewReportButton from "@/components/reportForm/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/ClearFormButton";
+import MemberLookupButton from "../../reportForm/Common/MemberLookUpButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
+import SelectGroupField from "../../reportForm/Common/SelectGroupField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
 import { MemberIdCardRequest } from "types/api/api";
 import { MemberIdCardFormValues } from "@/app/(home)/(sidebar)/reports/MemberIDCardDetail/page";
