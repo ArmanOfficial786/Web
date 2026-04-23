@@ -11,7 +11,7 @@ interface FieldRowProps {
 
 export default function FieldRow({ label, children }: FieldRowProps) {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 40 }}>
+    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
       <Typography
         sx={{
           width: 110,
@@ -19,6 +19,7 @@ export default function FieldRow({ label, children }: FieldRowProps) {
           fontSize: 13,
           fontWeight: 500,
           color: "text.secondary",
+          pt: 1,
         }}
       >
         {label}

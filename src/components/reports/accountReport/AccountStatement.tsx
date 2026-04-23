@@ -7,6 +7,7 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
   UseFormReset,
+  FormState,
 } from "react-hook-form";
 import { RefreshCw } from "lucide-react";
 import Box from "@mui/material/Box";
@@ -18,10 +19,8 @@ import Typography from "@mui/material/Typography";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import PdfSlideViewer from "@/components/reportForm/Common/PdfSlideViewer";
 //import MemberLookupButton from "@/components/reportForm/MemberLookUpButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 // import CollectionCenterField from "@/components/reportForm/CollectionCenter";
 // import SelectGroupField from "@/components/reportForm/SelectGroupField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
@@ -40,6 +39,7 @@ interface AccountStatementProps {
   onSubmit: SubmitHandler<AccountStatementRequest>;
   setValue: UseFormSetValue<AccountStatementRequest>;
   reset: UseFormReset<AccountStatementRequest>;
+  formState: FormState<AccountStatementRequest>;
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -52,6 +52,7 @@ export default function AccountStatement({
   onSubmit,
   setValue,
   reset,
+  formState,
   reportState,
   onPageChange,
   onDownload,
@@ -165,6 +166,7 @@ export default function AccountStatement({
                 setValue={setValue}
                 loading={loading}
                 onBeforeSubmit={scrollToReport}
+                formState={formState}
               />
 
               <ClearFormButton

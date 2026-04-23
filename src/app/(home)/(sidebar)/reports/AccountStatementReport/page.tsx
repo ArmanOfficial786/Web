@@ -217,32 +217,58 @@ import {
 } from "@/utilis/Constants/reportConstants";
 import { useReportForm } from "@/contexts/ReportFormContext";
 
-const schema = yup.object({
-  fromDate: yup.mixed().nullable().default(null),
-  toDate: yup
-    .mixed()
-    .nullable()
-    .default(null)
-    .test("date-order", "Till Date cannot be before From Date", function (val) {
-      const { fromDate } = this.parent as { fromDate: string | null };
-      if (!fromDate || !val) return true;
-      return String(val) >= String(fromDate);
-    }),
-  branchId: yup
-    .mixed<(number | string)[]>()
-    .default([])
-    .test(
-      "branch-required",
-      "Branch is required", // ← message shown under the dropdown
-      (val) => Array.isArray(val) && val.length > 0,
-    ),
 
-  branchSelected: yup.string().nullable().default(null),
-  branchName: yup.string().nullable().default(null),
-  reportType: yup.string().nullable().default("Summary"),
-  transactionType: yup.string().nullable().default("All"),
-  orderBy: yup.string().nullable().default(null),
-});
+
+const schema: yup.ObjectSchema<AccountStatementRequest> = yup
+  .object({
+    fromDate: yup
+      .string()
+      .required("From Date is required")
+      .nullable()
+      .optional()
+      .typeError("From Date must be a valid date"),
+    toDate: yup
+      .string()
+      .required("To Date is required")
+      .nullable()
+      .optional()
+      .typeError("To Date must be a valid date")
+      .test(
+        "date-order",
+        "Till Date cannot be before From Date",
+        function (val) {
+          const { fromDate } = this.parent as { fromDate: string | null };
+          if (!fromDate || !val) return true;
+          return String(val) >= String(fromDate);
+        },
+      ),
+    branchId: yup
+      .array()
+      .of(yup.number().required())
+      .required("Branch/Office is required")
+      .min(1, "At least one branch/office is required")
+      .typeError("Branch/Office must be an array")
+      .default([]),
+    branchSelected: yup.string().nullable().optional(),
+    branchName: yup.string().nullable().optional(),
+    sameCompanyName: yup.boolean().optional(),
+    reportType: yup
+      .string()
+      .nullable()
+      .optional()
+      .typeError("Report Type must be a string"),
+    transactionType: yup
+      .string()
+      .nullable()
+      .optional()
+      .typeError("Transaction Type must be a string"),
+    orderBy: yup
+      .string()
+      .nullable()
+      .optional()
+      .typeError("Order By must be a string"),
+  })
+  .required();
 
 export default function AccountStatementPage() {
   const [reportState, setReportState] =
@@ -272,7 +298,7 @@ export default function AccountStatementPage() {
         fromDate: form.fromDate ? String(form.fromDate) : undefined,
         toDate: form.toDate ? String(form.toDate) : undefined,
         branchId: isAll ? allBranchIds : specificIds, // number[] matches API type
-        branchSelected: isAll ? "-1" : specificIds.join(","),
+        //branchSelected: isAll ? "-1" : specificIds.join(","),
         branchName: undefined, // populated server-side
         reportType: form.reportType ? String(form.reportType) : undefined,
         transactionType: form.transactionType
@@ -284,19 +310,11 @@ export default function AccountStatementPage() {
     [branchOptions],
   );
 
-  const { control, handleSubmit, setValue, reset } =
+  const { control, handleSubmit, setValue, reset, formState } =
     useForm<AccountStatementRequest>({
-      resolver: yupResolver(schema) as any,
-      defaultValues: {
-        fromDate: null,
-        toDate: null,
-        branchId: [] as any,
-        branchSelected: null,
-        branchName: null,
-        reportType: "Summary",
-        transactionType: "All",
-        orderBy: null,
-      },
+      resolver: yupResolver(schema),
+      defaultValues: schema.getDefault(),
+      mode: "onBlur",
     });
 
   const callApi = useCallback(
@@ -407,6 +425,7 @@ export default function AccountStatementPage() {
       onPageChange={handlePageChange}
       onDownload={handleDownload}
       isDownloading={isDownloading}
+      formState={formState}
     />
   );
 }

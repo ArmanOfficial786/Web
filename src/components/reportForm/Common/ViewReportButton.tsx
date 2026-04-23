@@ -8,6 +8,7 @@ import type {
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
+  FormState,
 } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import Button from "@mui/material/Button";
@@ -18,6 +19,7 @@ interface ViewReportButtonProps<T extends FieldValues> {
   handleSubmit: UseFormHandleSubmit<T>;
   onSubmit: SubmitHandler<T>;
   setValue: UseFormSetValue<T>;
+  formState: FormState<T>;
   loading: boolean;
   onBeforeSubmit?: () => void;
 
@@ -32,6 +34,7 @@ export default function ViewReportButton<T extends FieldValues>({
   handleSubmit,
   onSubmit,
   setValue,
+  formState,
   loading,
   onBeforeSubmit,
   watchField,
@@ -49,6 +52,11 @@ export default function ViewReportButton<T extends FieldValues>({
       clearFields.forEach((field) => {
         setValue(field, "" as any);
       });
+    }
+
+    // Only scroll to report if there are no validation errors
+    if (!formState.isValid) {
+      return; // Don't scroll if form has errors
     }
 
     onBeforeSubmit?.();

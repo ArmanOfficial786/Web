@@ -14,19 +14,23 @@ export interface FormInputs {
   orderBy?: string | null;
 }
 
-const schema : yup.ObjectSchema<FormInputs> = yup.object({
-     fromDate: yup.string().default(""),
-      toDate: yup
-        .string()
-        .default("")
-        .test("date-order", "Till Date cannot be before From Date", function (val) {
-          const { fromDate } = this.parent;
-          return !fromDate || !val || val >= fromDate;
-        }),
-      branchId: yup.mixed<number | string>().default(0),
-      orderBy: yup.mixed<number | string>().default(0),
-      reportType: yup.string().default("Summary"),
-      transactionType: yup.string().default("All"),
+const schema: yup.ObjectSchema<FormInputs> = yup.object({
+  fromDate: yup.string().nullable().optional(),
+  toDate: yup
+    .string()
+    .nullable()
+    .optional()
+    .test("date-order", "Till Date cannot be before From Date", function (val) {
+      const { fromDate } = this.parent as { fromDate: string | null };
+      if (!fromDate || !val) return true;
+      return String(val) >= String(fromDate);
+    }),
+  branchSelected: yup.string().nullable().optional(),
+  branchId: yup.number().optional().min(1, "At least one branch is required"),
+  branchName: yup.string().nullable().optional(),
+  reportType: yup.string().nullable().optional().default("Summary"),
+  transactionType: yup.string().nullable().optional().default("All"),
+  orderBy: yup.string().nullable().optional(),
 });
 
 function page() {

@@ -336,7 +336,7 @@ function Page(): React.ReactElement {
 
   const { control, handleSubmit, setValue, reset } =
     useForm<MemberIdCardFormValues>({
-      resolver: yupResolver(schema) as any,
+      resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
 
