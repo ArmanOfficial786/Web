@@ -14,9 +14,9 @@ export interface AccountStatementRequest {
   fromDate?: string | null;
   toDate?: string | null;
   branchSelected?: string | null;
-  /** @format int64 */
-  branchId?: number;
+  branchId?: number[] | null;
   branchName?: string | null;
+  sameCompanyName?: boolean;
   reportType?: string | null;
   transactionType?: string | null;
   orderBy?: string | null;
@@ -419,6 +419,20 @@ export class Api<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DepositeType
+     * @name DepositeTypeGetDepositeTypeList
+     * @request GET:/api/DepositeType/getDepositeType
+     */
+    depositeTypeGetDepositeTypeList: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/DepositeType/getDepositeType`,
+        method: "GET",
         ...params,
       }),
 

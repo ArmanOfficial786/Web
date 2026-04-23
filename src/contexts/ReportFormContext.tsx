@@ -188,7 +188,11 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         id: b.branchId ?? 0,
         name: b.branchName ?? "",
       }));
-      setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setBranchOptions([
+        // { id: 0, name: "-- Select --" },
+        // { id: -1, name: "All" },
+        ...mapped,
+      ]);
     } catch {
       branchFetchedRef.current = false; // allow retry on next open if failed
     }

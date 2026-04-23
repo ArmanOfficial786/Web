@@ -25,9 +25,9 @@ export default function DateFields<T extends FieldValues>({
         </FieldRow>
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <FieldRow label="Till Date">
+        <FieldRow label="To Date">
           <DateInput
-            name={"tillDate" as Path<T>}
+            name={"toDate" as Path<T>}
             control={control}
             dateType="BS"
           />

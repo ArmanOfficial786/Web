@@ -31,6 +31,7 @@ import ReportTypeField from "@/components/reportForm/Account/ReportType";
 import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
 import { AccountStatementRequest } from "types/api/api";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 
 export type { ReportFormat };
 interface AccountStatementProps {
@@ -99,7 +100,11 @@ export default function AccountStatement({
           }}
         >
           {/* <BranchNameField control={control} /> */}
-          <BranchNameField<AccountStatementRequest>
+          {/* <BranchNameField<AccountStatementRequest>
+            control={control}
+            branchFieldName="branchId"
+          /> */}
+          <OfficeNameField<AccountStatementRequest>
             control={control}
             branchFieldName="branchId"
           />
@@ -160,14 +165,6 @@ export default function AccountStatement({
                 setValue={setValue}
                 loading={loading}
                 onBeforeSubmit={scrollToReport}
-                clearFields={[
-                  "fromDate",
-                  "toDate",
-                  "branchId",
-                  "reportType",
-                  "transactionType",
-                  "orderBy",
-                ]}
               />
 
               <ClearFormButton
