@@ -1,45 +1,18 @@
 // "use client";
 
 // import React from "react";
-// import type { Control } from "react-hook-form";
-// import Box from "@mui/material/Box";
-// import Typography from "@mui/material/Typography";
-
+// import type { Control, FieldValues, Path } from "react-hook-form";
+// import FieldRow from "@/utilis/FieldRow";
 // import DropDown from "@/components/form/DropDown";
-// import type { FormInputs } from "@/components/reports/memberReport/MemberIdCard";
-
-// // ── FieldRow ──────────────────────────────────────────────────────────────────
-// function FieldRow({
-//   label,
-//   children,
-// }: {
-//   label: string;
-//   children: React.ReactNode;
-// }) {
-//   return (
-//     <Box sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 40 }}>
-//       <Typography
-//         sx={{
-//           width: 110,
-//           flexShrink: 0,
-//           fontSize: 13,
-//           fontWeight: 500,
-//           color: "text.secondary",
-//         }}
-//       >
-//         {label}
-//       </Typography>
-//       <Box sx={{ flex: 1 }}>{children}</Box>
-//     </Box>
-//   );
-// }
 
 // // ── Props ─────────────────────────────────────────────────────────────────────
-// interface ReportTypeFieldProps {
-//   control: Control<FormInputs>;
+// interface ReportTypeFieldProps<T extends FieldValues> {
+//   control: Control<T>;
+//   name: Path<T>;
+//   label?: string;
 // }
 
-// // ── Static Options ────────────────────────────────────────────────────────────
+// // ── Static Options (can still be reused globally) ────────────────────────────
 // const reportTypeOptions = [
 //   { id: "Summary", name: "Summary" },
 //   { id: "SubLedger", name: "SubLedger" },
@@ -47,13 +20,17 @@
 // ];
 
 // // ── Component ─────────────────────────────────────────────────────────────────
-// export default function ReportTypeField({ control }: ReportTypeFieldProps) {
+// export default function ReportTypeField<T extends FieldValues>({
+//   control,
+//   name,
+//   label = "Report Type",
+// }: ReportTypeFieldProps<T>) {
 //   return (
-//     <FieldRow label="Report Type">
+//     <FieldRow label={label}>
 //       <DropDown
-//         name="reportType"
+//         name={name}
 //         control={control}
-//         label="Report Type"
+//         label={label}
 //         options={reportTypeOptions}
 //         fullWidth
 //       />
@@ -66,36 +43,40 @@
 import React from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
-import DropDown from "@/components/form/DropDown";
+import RadioInput from "@/components/form/RadioInput";
+
+// ── Static Options ────────────────────────────────────────────────────────────
+const reportTypeOptions = [
+  { value: "Summary", label: "Summary" },
+  { value: "SubLedger", label: "SubLedger" },
+  { value: "Detail", label: "Detail" },
+];
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface ReportTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label?: string;
+  row?: boolean;
+  disabled?: boolean;
 }
-
-// ── Static Options (can still be reused globally) ────────────────────────────
-const reportTypeOptions = [
-  { id: "Summary", name: "Summary" },
-  { id: "SubLedger", name: "SubLedger" },
-  { id: "Detail", name: "Detail" },
-];
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function ReportTypeField<T extends FieldValues>({
   control,
   name,
   label = "Report Type",
+  row = true,
+  disabled = false,
 }: ReportTypeFieldProps<T>) {
   return (
     <FieldRow label={label}>
-      <DropDown
+      <RadioInput
         name={name}
         control={control}
-        label={label}
-        options={reportTypeOptions}
-        fullWidth
+        radioOptions={reportTypeOptions}
+        row={row}
+        disabled={disabled}
       />
     </FieldRow>
   );

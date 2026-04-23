@@ -8,7 +8,6 @@ import type {
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
-  FormState,
 } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import Button from "@mui/material/Button";
@@ -19,7 +18,6 @@ interface ViewReportButtonProps<T extends FieldValues> {
   handleSubmit: UseFormHandleSubmit<T>;
   onSubmit: SubmitHandler<T>;
   setValue: UseFormSetValue<T>;
-  formState: FormState<T>;
   loading: boolean;
   onBeforeSubmit?: () => void;
 
@@ -34,7 +32,6 @@ export default function ViewReportButton<T extends FieldValues>({
   handleSubmit,
   onSubmit,
   setValue,
-  formState,
   loading,
   onBeforeSubmit,
   watchField,
@@ -43,24 +40,34 @@ export default function ViewReportButton<T extends FieldValues>({
   const watchedValue = useWatch({
     control,
     name: watchField as Path<T>,
-    disabled: !watchField, // ← skips subscription when undefined
+    disabled: !watchField,
   });
 
+  // const handleClick = () => {
+  //   // Clear dependent fields if condition is met
+  //   if (watchedValue && watchedValue) {
+  //     clearFields.forEach((field) => {
+  //       setValue(field, "" as any);
+  //     });
+  //   }
+  //   onBeforeSubmit?.();
+  //   handleSubmit(onSubmit)();
+  // };
+
   const handleClick = () => {
-    // Clear dependent fields if condition is met
-    if (watchedValue && watchedValue) {
-      clearFields.forEach((field) => {
-        setValue(field, "" as any);
-      });
+    if (watchedValue) {
+      clearFields.forEach((field) => setValue(field, "" as any));
     }
 
-    // Only scroll to report if there are no validation errors
-    if (!formState.isValid) {
-      return; // Don't scroll if form has errors
-    }
-
-    onBeforeSubmit?.();
-    handleSubmit(onSubmit)();
+    handleSubmit(
+      // ✅ onValid — validation passed, safe to scroll then submit
+      (data) => {
+        onBeforeSubmit?.();
+        onSubmit(data);
+      },
+      // ✅ onInvalid — validation failed, do nothing (no scroll)
+      () => {},
+    )();
   };
 
   return (

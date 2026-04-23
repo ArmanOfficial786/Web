@@ -7,7 +7,6 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
   UseFormReset,
-  FormState,
 } from "react-hook-form";
 import { RefreshCw } from "lucide-react";
 import Box from "@mui/material/Box";
@@ -39,7 +38,6 @@ interface AccountStatementProps {
   onSubmit: SubmitHandler<AccountStatementRequest>;
   setValue: UseFormSetValue<AccountStatementRequest>;
   reset: UseFormReset<AccountStatementRequest>;
-  formState: FormState<AccountStatementRequest>;
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -52,7 +50,6 @@ export default function AccountStatement({
   onSubmit,
   setValue,
   reset,
-  formState,
   reportState,
   onPageChange,
   onDownload,
@@ -166,7 +163,6 @@ export default function AccountStatement({
                 setValue={setValue}
                 loading={loading}
                 onBeforeSubmit={scrollToReport}
-                formState={formState}
               />
 
               <ClearFormButton

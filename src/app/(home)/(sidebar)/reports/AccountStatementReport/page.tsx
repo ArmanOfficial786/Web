@@ -217,8 +217,6 @@ import {
 } from "@/utilis/Constants/reportConstants";
 import { useReportForm } from "@/contexts/ReportFormContext";
 
-
-
 const schema: yup.ObjectSchema<AccountStatementRequest> = yup
   .object({
     fromDate: yup
@@ -256,12 +254,14 @@ const schema: yup.ObjectSchema<AccountStatementRequest> = yup
       .string()
       .nullable()
       .optional()
-      .typeError("Report Type must be a string"),
+      .typeError("Report Type must be a string")
+      .default("Summary"),
     transactionType: yup
       .string()
       .nullable()
       .optional()
-      .typeError("Transaction Type must be a string"),
+      .typeError("Transaction Type must be a string")
+      .default("All"),
     orderBy: yup
       .string()
       .nullable()
@@ -310,11 +310,10 @@ export default function AccountStatementPage() {
     [branchOptions],
   );
 
-  const { control, handleSubmit, setValue, reset, formState } =
+  const { control, handleSubmit, setValue, reset } =
     useForm<AccountStatementRequest>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
-      mode: "onBlur",
     });
 
   const callApi = useCallback(
@@ -425,7 +424,6 @@ export default function AccountStatementPage() {
       onPageChange={handlePageChange}
       onDownload={handleDownload}
       isDownloading={isDownloading}
-      formState={formState}
     />
   );
 }

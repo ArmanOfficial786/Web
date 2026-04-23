@@ -295,7 +295,7 @@ const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
       return !fromDate || !val || val >= fromDate;
     }),
   orderby: yup.string().nullable().optional().default(null),
-  branchId: yup.number().optional().default(0),
+  branchId: yup.number().optional().default(2),
   collectionCenterId: yup.number().optional().default(0),
   memberGroupId: yup.number().optional().default(0),
   currentPage: yup.number().optional().default(1),
