@@ -188,15 +188,18 @@ export default function AccountStatement({
 
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
         {reportLoaded && pdfData && (
-          <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
-            <iframe
-              src={`data:application/pdf;base64,${pdfData}#zoom=155`}
+          <Box
+            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
+          >
+            <embed
+              src={`data:application/pdf;base64,${pdfData}#toolbar=0&zoom=167`}
               style={{
+                position: "absolute",
+                top: "-40px",
+                left: 0,
                 width: "100%",
-                height: "1000px",
+                height: "calc(100% + 40px)",
                 border: "none",
-                display: "block",
-                margin: "0 auto",
               }}
             />
           </Box>

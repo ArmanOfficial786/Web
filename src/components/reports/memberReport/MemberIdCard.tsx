@@ -197,8 +197,8 @@ function MemberIdCard({
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
         {reportLoaded && pdfData && (
           <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
-            <iframe
-              src={`${pdfData}#zoom=155`}
+            {/* <iframe
+              src={`${pdfData}#zoom=165`}
               style={{
                 width: "100%",
                 height: "1000px",
@@ -206,7 +206,27 @@ function MemberIdCard({
                 display: "block",
                 margin: "0 auto",
               }}
-            />
+            /> */}
+
+            <Box
+              sx={{
+                position: "relative",
+                height: "1000px",
+                overflow: "hidden",
+              }}
+            >
+              <iframe
+                src={`${pdfData}#zoom=165`}
+                style={{
+                  position: "absolute",
+                  top: "-40px", // pushes the toolbar out of the visible area
+                  left: 0,
+                  width: "100%",
+                  height: "calc(100% + 40px)",
+                  border: "none",
+                }}
+              />
+            </Box>
           </Box>
         )}
       </Box>
