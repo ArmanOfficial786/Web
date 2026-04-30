@@ -19,6 +19,7 @@ const transactionTypeOptions = [
   { value: "All", label: "All" },
   { value: "Cash", label: "Cash" },
   { value: "Bank", label: "Bank" },
+  { value: "Cash/Bank", label: "Cash/Bank" },
   { value: "NoCash", label: "No Cash" },
 ];
 

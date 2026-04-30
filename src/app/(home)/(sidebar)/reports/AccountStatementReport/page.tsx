@@ -294,12 +294,19 @@ export default function AccountStatementPage() {
         .map((o) => Number(o.id))
         .filter((id) => id > 0);
 
+      // ── Derive branchName from selected IDs ───────────────────────────────
+      const resolvedIds = isAll ? allBranchIds : specificIds;
+      const branchName = branchOptions
+        .filter((o) => resolvedIds.includes(Number(o.id)))
+        .map((o) => o.name)
+        .join(",");
+
       return {
         fromDate: form.fromDate ? String(form.fromDate) : undefined,
         toDate: form.toDate ? String(form.toDate) : undefined,
         branchId: isAll ? allBranchIds : specificIds, // number[] matches API type
         //branchSelected: isAll ? "-1" : specificIds.join(","),
-        branchName: undefined, // populated server-side
+        branchName: branchName || undefined, // populated server-side
         reportType: form.reportType ? String(form.reportType) : undefined,
         transactionType: form.transactionType
           ? String(form.transactionType)
