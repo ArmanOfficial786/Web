@@ -8,7 +8,6 @@ import type {
   UseFormSetValue,
   UseFormReset,
 } from "react-hook-form";
-import { RefreshCw } from "lucide-react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -18,7 +17,6 @@ import Divider from "@mui/material/Divider";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-//import PdfSlideViewer from "../../reportForm/PdfSlideViewer";
 import MemberLookupButton from "../../reportForm/Common/MemberLookUpButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
@@ -30,6 +28,7 @@ import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
 import { MemberIdCardRequest } from "types/api/api";
 import { MemberIdCardFormValues } from "@/app/(home)/(sidebar)/reports/MemberIDCardDetail/page";
+import Preloader from "@/components/PreLoader/preloader";
 
 export type { ReportFormat };
 
@@ -62,7 +61,7 @@ function MemberIdCard({
 }: MemberIdCardProps) {
   const { loading, reportLoaded, pdfData, currentPage, totalPages } =
     reportState;
-  //Scroll up to report area when report is loaded
+
   const reportRef = useRef<HTMLDivElement>(null);
   const scrollToReport = () => {
     reportRef.current?.scrollIntoView({
@@ -72,136 +71,146 @@ function MemberIdCard({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Paper variant="outlined" sx={{ p: 1.5 }}>
-        <Typography
-          variant="h6"
-          sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
-        >
-          Create Member ID Card
-        </Typography>
-        <Divider sx={{ mb: 1.5 }} />
-        {/* Row 1 — Member ID + Name */}
-
-        <MemberLookupButton<MemberIdCardFormValues> control={control} />
-        <Divider sx={{ mb: 1.5 }} />
-        {/* Row 2 — From Date | Till Date */}
-        <Box sx={{ mb: 1 }}>
-          <DateFields control={control} />
-        </Box>
-        <Divider sx={{ mb: 1.5 }} />
-        {/* Row 3 — Branch | Collection Center */}
+    <>
+      {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
+      {loading && (
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 2,
-            mb: 1,
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.7)",
+            backdropFilter: "blur(2px)",
           }}
         >
-          <BranchNameField<MemberIdCardFormValues>
-            control={control}
-            branchFieldName="branchId"
-          />
-
-          <CollectionCenterField<MemberIdCardFormValues>
-            control={control}
-            setValue={setValue}
-            branchFieldName="branchId"
-            collectionCenterFieldName="collectionCenterId"
-          />
+          <Preloader />
         </Box>
-        <Divider sx={{ mb: 1.5 }} />
-        {/* Row 4 — Select Group | Order By */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-            gap: 2,
-            mb: 1,
-          }}
-        >
-          <SelectGroupField<MemberIdCardFormValues>
-            control={control}
-            setValue={setValue}
-            branchFieldName="branchId"
-            collectionCenterFieldName="collectionCenterId"
-            groupFieldName="memberGroupId"
-          />
-
-          <OrderByField<MemberIdCardRequest>
-            control={control}
-            name="orderby"
-            reportKey="memberIdCard"
-          />
-        </Box>
-        <Divider sx={{ mb: 1.5 }} />
-        {/* Row 5 — View Report */}
-        <Grid container spacing={1} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              gap={5}
-              width="100%"
-            >
-              <ViewReportButton
-                control={control}
-                handleSubmit={handleSubmit}
-                onSubmit={onSubmit}
-                setValue={setValue}
-                loading={loading}
-                onBeforeSubmit={scrollToReport}
-              />
-              <ClearFormButton reset={reset} setValue={setValue} />
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      {/* ── NAVIGATION ───────────────────────────────────────────────── */}
-      {reportLoaded && (
-        <ReportNavigation
-          pdfData={pdfData}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-          onDownload={onDownload}
-          isDownloading={isDownloading}
-        />
       )}
 
-      {/* ── REPORT AREA ──────────────────────────────────────────────── */}
-      <Box
-        ref={reportRef}
-        sx={{ width: "100%", overflow: "auto", height: "100vh" }}
-      >
-        {loading ? (
+      {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        {/* ── FORM ───────────────────────────────────────────────────────── */}
+        <Paper variant="outlined" sx={{ p: 1.5 }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
+          >
+            Create Member ID Card
+          </Typography>
+          <Divider sx={{ mb: 1.5 }} />
+
+          {/* Row 1 — Member Lookup */}
+          <MemberLookupButton<MemberIdCardFormValues> control={control} />
+          <Divider sx={{ mb: 1.5 }} />
+
+          {/* Row 2 — From Date | Till Date */}
+          <Box sx={{ mb: 1 }}>
+            <DateFields control={control} />
+          </Box>
+          <Divider sx={{ mb: 1.5 }} />
+
+          {/* Row 3 — Branch | Collection Center */}
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "100%",
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 1,
             }}
           >
-            <RefreshCw className="animate-spin text-blue-500" size={48} />
+            <BranchNameField<MemberIdCardFormValues>
+              control={control}
+              branchFieldName="branchId"
+            />
+            <CollectionCenterField<MemberIdCardFormValues>
+              control={control}
+              setValue={setValue}
+              branchFieldName="branchId"
+              collectionCenterFieldName="collectionCenterId"
+            />
           </Box>
-        ) : reportLoaded && pdfData ? (
-          <iframe
-            src={`${pdfData}#zoom=155`}
-            style={{
-              width: "100%",
-              height: "1000px",
-              border: "none",
-              display: "block",
-              margin: "0 auto",
+          <Divider sx={{ mb: 1.5 }} />
+
+          {/* Row 4 — Select Group | Order By */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 1,
             }}
+          >
+            <SelectGroupField<MemberIdCardFormValues>
+              control={control}
+              setValue={setValue}
+              branchFieldName="branchId"
+              collectionCenterFieldName="collectionCenterId"
+              groupFieldName="memberGroupId"
+            />
+            <OrderByField<MemberIdCardRequest>
+              control={control}
+              name="orderby"
+              reportKey="memberIdCard"
+            />
+          </Box>
+          <Divider sx={{ mb: 1.5 }} />
+
+          {/* Row 5 — View Report | Clear */}
+          <Grid container spacing={1} alignItems="center">
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                gap={5}
+                width="100%"
+              >
+                <ViewReportButton
+                  control={control}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  setValue={setValue}
+                  loading={loading}
+                  onBeforeSubmit={scrollToReport}
+                />
+                <ClearFormButton reset={reset} setValue={setValue} />
+              </Box>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
+        {reportLoaded && (
+          <ReportNavigation
+            pdfData={pdfData}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            onDownload={onDownload}
+            isDownloading={isDownloading}
           />
-        ) : null}
+        )}
+
+        {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
+        {reportLoaded && pdfData && (
+          <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
+            <iframe
+              src={`${pdfData}#zoom=155`}
+              style={{
+                width: "100%",
+                height: "1000px",
+                border: "none",
+                display: "block",
+                margin: "0 auto",
+              }}
+            />
+          </Box>
+        )}
       </Box>
-    </Box>
+    </>
   );
 }
 
