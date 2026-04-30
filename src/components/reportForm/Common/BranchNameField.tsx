@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
@@ -19,6 +19,11 @@ export default function BranchNameField<T extends FieldValues>({
   branchFieldName,
 }: BranchNameFieldProps<T>) {
   const { fetchBranches, branchOptions } = useReportForm();
+
+  // ── Fetch on mount(refresh) so branches are ready immediately on page refresh ──────
+  useEffect(() => {
+    fetchBranches();
+  }, [fetchBranches]);
 
   return (
     <FieldRow label="Branch Name">

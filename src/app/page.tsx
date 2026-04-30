@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
 import LoginForm from "@/components/auth/Login";
 import NavMarquee from "@/utilis/NavMarquee";
 
 export default function HomePage() {
-  const { t } = useLanguage();
   return (
     <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
       {/* Navbar at top */}

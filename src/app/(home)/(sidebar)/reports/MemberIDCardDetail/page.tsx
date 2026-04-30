@@ -259,7 +259,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useState, useCallback } from "react";
 import * as yup from "yup";
-import { useLanguage } from "@/contexts/LanguageContext";
 import type { MemberIdCardRequest } from "../../../../../../types/api/api";
 import MemberIdCard from "@/components/reports/memberReport/MemberIdCard";
 import memberIdCardService from "@/services/MemberIdCardService";
@@ -324,7 +323,6 @@ const toRequest = (
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function Page(): React.ReactElement {
-  const { t } = useLanguage();
   const { resetFormFields, setSelectedMember } = useReportForm();
 
   const [reportState, setReportState] =
