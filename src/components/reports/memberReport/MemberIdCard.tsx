@@ -217,7 +217,7 @@ function MemberIdCard({
               }}
             >
               <iframe
-                src={`${pdfData}#zoom=165`}
+                src={`${pdfData}#zoom=150`}
                 style={{
                   position: "absolute",
                   top: "-40px", // pushes the toolbar out of the visible area

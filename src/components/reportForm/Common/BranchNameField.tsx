@@ -32,7 +32,6 @@ export default function BranchNameField<T extends FieldValues>({
           name={branchFieldName}
           control={control}
           label="Branch Name"
-          //onOpen={fetchBra nches} //fallback if hover not work
           options={branchOptions}
           fullWidth
         />

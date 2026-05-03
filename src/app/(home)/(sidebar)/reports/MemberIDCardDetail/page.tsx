@@ -209,6 +209,7 @@ function Page(): React.ReactElement {
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       setValue={setValue}
+    
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}

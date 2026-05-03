@@ -262,11 +262,7 @@ const schema: yup.ObjectSchema<AccountStatementRequest> = yup
       .optional()
       .typeError("Transaction Type must be a string")
       .default("All"),
-    orderBy: yup
-      .string()
-      .nullable()
-      .optional()
-      .typeError("Order By must be a string"),
+    orderBy: yup.string().nullable().default("0"),
   })
   .required();
 
