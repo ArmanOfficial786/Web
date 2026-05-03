@@ -4,7 +4,10 @@ import React from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
-import { OrderByReportKey, useReportForm } from "@/contexts/ReportFormContext";
+import {
+  OrderByReportKey,
+  useReportFormContext,
+} from "@/contexts/ReportFormContext";
 import Box from "@mui/system/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -22,7 +25,7 @@ export default function OrderByField<T extends FieldValues>({
   reportKey,
   label = "Order by",
 }: OrderByFieldProps<T>) {
-  const { fetchOrderBy, orderByMap } = useReportForm();
+  const { fetchOrderBy, orderByMap } = useReportFormContext();
 
   const options = orderByMap[reportKey] ?? [];
 

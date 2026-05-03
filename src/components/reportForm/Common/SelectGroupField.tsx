@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SelectGroupFieldProps<T extends FieldValues> {
@@ -33,7 +33,7 @@ export default function SelectGroupField<T extends FieldValues>({
   groupFieldName,
   defaultGroupValue = 0,
 }: SelectGroupFieldProps<T>) {
-  const { memberGroupOptions, fetchMemberGroups } = useReportForm();
+  const { memberGroupOptions, fetchMemberGroups } = useReportFormContext();
 
   const selectedBranchId = useWatch({
     control,

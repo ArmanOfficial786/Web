@@ -47,7 +47,6 @@ export default function AccountStatement({
   handleSubmit,
   onSubmit,
   setValue,
-  reset,
   reportState,
   onPageChange,
   onDownload,
@@ -158,16 +157,9 @@ export default function AccountStatement({
                   onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
-                  reset={reset}
+                  // reset={reset}
                   setValue={setValue}
-                  clearFields={[
-                    "fromDate",
-                    "toDate",
-                    "branchId",
-                    "reportType",
-                    "transactionType",
-                    "orderBy",
-                  ]}
+                  clearFields={[]}
                 />
               </Box>
             </Grid>

@@ -10,13 +10,12 @@ import {
 } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface CollectionCenterFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
-
   branchFieldName: Path<T>;
   collectionCenterFieldName: Path<T>;
 }
@@ -28,7 +27,8 @@ export default function CollectionCenterField<T extends FieldValues>({
   branchFieldName,
   collectionCenterFieldName,
 }: CollectionCenterFieldProps<T>) {
-  const { collectionCenterOptions, fetchCollectionCenters } = useReportForm();
+  const { fetchCollectionCenters, collectionCenterOptions } =
+    useReportFormContext();
 
   // ✅ cast to unknown first, then to a safe primitive type
   const rawBranchId = useWatch({ control, name: branchFieldName });
@@ -36,9 +36,7 @@ export default function CollectionCenterField<T extends FieldValues>({
 
   useEffect(() => {
     const id = Number(selectedBranchId ?? 0); // ← guaranteed number, never NaN
-
     setValue(collectionCenterFieldName, 0 as any);
-
     if (!id || id === 0) {
       // don't bother fetching — reset is enough
       return;

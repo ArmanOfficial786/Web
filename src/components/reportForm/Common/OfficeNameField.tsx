@@ -37,7 +37,7 @@
 "use client";
 
 import DropDownMultiple from "@/components/form/DropDownMultiple";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 import FieldRow from "@/utilis/FieldRow";
 import Box from "@mui/system/Box";
 import React, { useEffect } from "react";
@@ -52,7 +52,7 @@ export default function OfficeNameField<T extends FieldValues>({
   control,
   branchFieldName,
 }: OfficeNameFieldProps<T>) {
-  const { fetchBranches, branchOptions } = useReportForm();
+  const { fetchBranches, branchOptions } = useReportFormContext();
 
   // Fetch branches eagerly on mount so defaultSelectAll fires as soon as options arrive
   useEffect(() => {

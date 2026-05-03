@@ -1,259 +1,5 @@
-// "use client";
-
-// import { useReportForm } from "@/contexts/ReportFormContext";
-// import { useForm, type SubmitHandler } from "react-hook-form";
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import { toast } from "react-toastify";
-// import { useRef, useState, useCallback } from "react";
-// import * as yup from "yup";
-// import { useLanguage } from "@/contexts/LanguageContext";
-// import type { MemberIdCardRequest } from "../../../../../../types/api/api";
-// import MemberIdCard, {
-//   type FormInputs,
-//   //type ReportState,
-// } from "@/components/reports/memberReport/MemberIdCard";
-// import {
-//   memberIdCardService,
-//   triggerDownload,
-// } from "@/services/MemberIdCardService";
-// import {
-//   ExportFormat,
-//   InitialReportState,
-//   ReportState,
-// } from "@/utilis/Constants/reportConstants";
-
-// // ── Validation schema ─────────────────────────────────────────────────────────
-
-// const schema: yup.ObjectSchema<FormInputs> = yup.object({
-//   memberId: yup.string().optional().default(""),
-//   memberName: yup.string().optional().default(""),
-//   fromDate: yup.string().optional().default(""),
-//   tillDate: yup
-//     .string()
-//     .optional()
-//     .default("")
-//     .test("bs-min", "Till Date cannot be before From Date", function (val) {
-//       const { fromDate } = this.parent;
-//       return !fromDate || !val || val >= fromDate;
-//     }),
-//   branchId: yup.mixed<number | string>().optional().default(0),
-//   collectionCenterId: yup.mixed<number | string>().optional().default(0),
-//   groupId: yup.mixed<number | string>().optional().default(0),
-//   orderBy: yup.mixed<number | string>().optional().default(0),
-// });
-
-// // ── Page ──────────────────────────────────────────────────────────────────────
-
-// function Page(): React.ReactElement {
-//   const { t } = useLanguage();
-//   const { resetFormFields, setSelectedMember } = useReportForm();
-
-//   const [reportState, setReportState] =
-//     useState<ReportState>(InitialReportState);
-//   const [isDownloading, setIsDownloading] = useState<boolean>(false);
-
-//   // Mirrors reportState into a ref — keeps useCallback deps stable
-//   const reportStateRef = useRef<ReportState>(InitialReportState);
-//   reportStateRef.current = reportState;
-
-//   // Caches the last viewed payload so export always matches viewed report
-//   const lastViewedPayload = useRef<MemberIdCardRequest | null>(null);
-
-//   const { control, handleSubmit, getValues, setValue, reset } =
-//     useForm<FormInputs>({
-//       resolver: yupResolver(schema) as any,
-//       defaultValues: {
-//         memberId: "",
-//         memberName: "",
-//         fromDate: "",
-//         tillDate: "",
-//         branchId: 0,
-//         collectionCenterId: 0,
-//         groupId: 0,
-//         orderBy: 0,
-//       },
-//     });
-
-//   // ── Build payload from form values ────────────────────────────────────────
-
-//   const buildPayload = useCallback((): MemberIdCardRequest => {
-//     const v = getValues();
-//     return {
-//       memberId: v.memberId || null,
-//       fromDate: v.fromDate || null,
-//       toDate: v.tillDate || null,
-//       branchId: Number(v.branchId) || 0,
-//       memberGroupId: Number(v.groupId) || 0,
-//       orderby: v.orderBy && v.orderBy !== 0 ? String(v.orderBy) : null,
-//     };
-//   }, [getValues]);
-
-//   // ── Clear form ────────────────────────────────────────────────────────────
-
-//   const clearForm = useCallback((): void => {
-//     reset({
-//       memberId: "",
-//       memberName: "",
-//       fromDate: "",
-//       tillDate: "",
-//       branchId: 0,
-//       collectionCenterId: 0,
-//       groupId: 0,
-//       orderBy: 0,
-//     });
-//     resetFormFields();
-//     setSelectedMember(null);
-//   }, [reset, resetFormFields, setSelectedMember]);
-
-//   // ── VIEW ──────────────────────────────────────────────────────────────────
-
-//   const viewReport = useCallback(
-//     async (
-//       page: number = reportStateRef.current.currentPage,
-//       size: number = reportStateRef.current.pageSize,
-//     ): Promise<void> => {
-//       setReportState((prev: any) => ({ ...prev, loading: true, error: "" }));
-//       try {
-//         const payload = buildPayload();
-//         const result = await memberIdCardService.view(payload, page, size);
-
-//         if (result.isView) {
-//           lastViewedPayload.current = {
-//             ...payload,
-//             currentPage: page,
-//             pageSize: size,
-//           };
-
-//           const p = result.pagination;
-//           setReportState((prev: any) => ({
-//             ...prev,
-//             reportLoaded: true,
-//             pdfData: result.pdfData ?? "",
-//             currentPage: p?.currentPage ?? page,
-//             totalPages: p?.totalPages ?? 1,
-//             totalRecord: p?.totalRecord ?? 0,
-//             pageSize: p?.pageSize ?? size,
-//           }));
-
-//           toast.success("Report generated successfully");
-//           clearForm();
-//         }
-//       } catch {
-//         // Interceptor already toasted the error
-//       } finally {
-//         setReportState((prev: any) => ({ ...prev, loading: false }));
-//       }
-//     },
-//     [buildPayload, clearForm],
-//   );
-
-//   // ── EXPORT ────────────────────────────────────────────────────────────────
-
-//   const exportReport = useCallback(async (format: string): Promise<void> => {
-//     if (!lastViewedPayload.current) {
-//       toast.warning("Please view the report before exporting.");
-//       return;
-//     }
-
-//     // ── PDF: reuse cached base64 — zero extra API call ────────────────
-//     if (format.toUpperCase() === "PDF") {
-//       const base64 = reportStateRef.current.pdfData;
-//       if (!base64) {
-//         toast.warning("No report data available.");
-//         return;
-//       }
-//       setIsDownloading(true);
-//       try {
-//         const binary = atob(base64);
-//         const buffer = new ArrayBuffer(binary.length);
-//         const bytes = new Uint8Array(buffer);
-//         for (let i = 0; i < binary.length; i++) {
-//           bytes[i] = binary.charCodeAt(i);
-//         }
-//         triggerDownload(buffer, "MemberIdCardReport.pdf");
-//         toast.success("MemberIdCardReport.pdf downloaded");
-//       } catch {
-//         toast.error("Failed to download PDF.");
-//       } finally {
-//         setIsDownloading(false);
-//       }
-//       return;
-//     }
-
-//     // ── Word / Excel / Image: hit the server ──────────────────────────
-//     setIsDownloading(true);
-//     try {
-//       const result = await memberIdCardService.export(
-//         lastViewedPayload.current,
-//         format,
-//       );
-//       if (!result.isView) {
-//         toast.success(`${result.filename} downloaded`);
-//       }
-//     } catch {
-//       // Interceptor already toasted the error
-//     } finally {
-//       setIsDownloading(false);
-//     }
-//   }, []);
-
-//   // ── Form submit — resets to page 1 ────────────────────────────────────────
-
-//   const onSubmit: SubmitHandler<FormInputs> = useCallback((): void => {
-//     lastViewedPayload.current = null;
-//     setReportState((prev: any) => ({
-//       ...prev,
-//       currentPage: 1,
-//       reportLoaded: false,
-//       pdfData: "",
-//     }));
-//     viewReport(1, reportStateRef.current.pageSize);
-//   }, [viewReport]);
-
-//   // ── Pagination ────────────────────────────────────────────────────────────
-
-//   const handlePageChange = useCallback(
-//     (newPage: number): void => {
-//       const { currentPage, totalPages } = reportStateRef.current;
-//       if (newPage >= 1 && newPage <= totalPages && newPage !== currentPage) {
-//         viewReport(newPage, reportStateRef.current.pageSize);
-//       }
-//     },
-//     [viewReport],
-//   );
-
-//   // ── Download (called from ReportNavigation) ───────────────────────────────
-
-//   const handleDownload = useCallback(
-//     (format: keyof typeof ExportFormat): void => {
-//       exportReport(ExportFormat[format]);
-//     },
-//     [exportReport],
-//   );
-
-//   // ── Render ────────────────────────────────────────────────────────────────
-
-//   return (
-//     <MemberIdCard
-//       control={control}
-//       handleSubmit={handleSubmit}
-//       onSubmit={onSubmit}
-//       setValue={setValue}
-//       reset={reset}
-//       reportState={reportState}
-//       onPageChange={handlePageChange}
-//       onDownload={handleDownload}
-//       isDownloading={isDownloading}
-//       emptyText={t("clickGenerateReport")}
-//     />
-//   );
-// }
-
-// export default Page;
-
 "use client";
 
-import { useReportForm } from "@/contexts/ReportFormContext";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
@@ -267,7 +13,7 @@ import {
   PaginationHeader,
   DefaultPagination,
   type ReportState,
-  type ReportFormat, // ← import ReportFormat
+  type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -293,7 +39,7 @@ const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
-  orderby: yup.string().nullable().optional().default(null),
+  orderby: yup.string().nullable().optional().default("0"),
   branchId: yup.number().optional().default(2),
   collectionCenterId: yup.number().optional().default(0),
   memberGroupId: yup.number().optional().default(0),
@@ -313,7 +59,7 @@ const toRequest = (
   fromDate: v.fromDate || null,
   toDate: v.toDate || null,
   branchId: Number(v.branchId) || 0,
-  //collectionCenterId: Number(v.collectionCenterId) || 0,
+  collectionCenterId: Number(v.collectionCenterId) || 0,
   memberGroupId: Number(v.memberGroupId) || 0,
   orderby: v.orderby,
   currentPage: page,
@@ -323,8 +69,6 @@ const toRequest = (
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 function Page(): React.ReactElement {
-  const { resetFormFields, setSelectedMember } = useReportForm();
-
   const [reportState, setReportState] =
     useState<ReportState>(InitialReportState);
   const [lastRequest, setLastRequest] = useState<MemberIdCardRequest | null>(
@@ -337,23 +81,6 @@ function Page(): React.ReactElement {
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
-
-  // ── Clear form ────────────────────────────────────────────────────────────
-
-  const clearForm = useCallback((): void => {
-    reset({
-      memberId: "",
-      memberName: "",
-      fromDate: "",
-      toDate: "",
-      branchId: 0,
-      collectionCenterId: 0,
-      memberGroupId: 0,
-      orderby: "",
-    });
-    resetFormFields();
-    setSelectedMember(null);
-  }, [reset, resetFormFields, setSelectedMember]);
 
   // ── Single API call shared by VIEW + EXPORT ───────────────────────────────
 
@@ -398,14 +125,17 @@ function Page(): React.ReactElement {
           pageSize: pagination?.pageSize ?? request.pageSize ?? 10,
         }));
         toast.success("Report generated successfully");
-        clearForm();
+        reset({
+          memberId: "",
+          memberName: "",
+        });
       } catch {
         // Error toast handled by the interceptor
       } finally {
         setReportState((prev) => ({ ...prev, loading: false }));
       }
     },
-    [callApi, clearForm],
+    [callApi, reset],
   );
 
   // ── EXPORT ────────────────────────────────────────────────────────────────
@@ -479,7 +209,6 @@ function Page(): React.ReactElement {
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       setValue={setValue}
-      reset={reset}
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}

@@ -12,19 +12,11 @@ import branchService from "@/services/BranchService";
 import orderByService from "@/services/OrderByService";
 import { memberLookUpService } from "@/services/MemberLookUpService";
 import { collectionCenterService } from "@/services/CollectionCenterService";
-import {
-  BranchResponse,
-  CollectionCenterRequestDtos,
-  MemberGroupRequestDtos,
-  OrderByResponse, // ← import the actual type
-} from "types/api/api";
+import { BranchResponse, OrderByResponse } from "types/api/api";
 import { memberGroupService } from "@/services/MemberGroupService";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 export type SelectOption = { id: number | string; name: string };
-
 export type OrderByReportKey = "memberIdCard" | "savingTypeWiseBalance";
-// ↑ extend this union when new reports are added
 
 export interface MemberRecord {
   memMemberRegistrationId: number;
@@ -51,8 +43,8 @@ export interface MemberLookUpSearchParams {
   OfficeName?: string;
 }
 
-// ── Context type ──────────────────────────────────────────────────────────────
 interface ReportFormContextType {
+  // Member lookup
   memberLookUp: MemberRecord[];
   totalPages: number;
   currentPage: number;
@@ -62,22 +54,24 @@ interface ReportFormContextType {
   searchmemberLookUp: (params: MemberLookUpSearchParams) => Promise<void>;
   clearResults: () => void;
   setSelectedMember: (member: MemberRecord | null) => void;
-  fetchBranches: () => Promise<void>; // when click branch dropdwon then only call api and once call it is used in another by ref
+
+  // Dropdown options – each separate
   branchOptions: SelectOption[];
-  fetchOrderBy: () => void;
-  orderByMap: Record<OrderByReportKey, SelectOption[]>;
   collectionCenterOptions: SelectOption[];
   memberGroupOptions: SelectOption[];
+  orderByMap: Record<OrderByReportKey, SelectOption[]>;
+
+  // Fetch functions
+  fetchBranches: () => Promise<void>;
   fetchCollectionCenters: (branchId: number) => Promise<void>;
   fetchMemberGroups: (
     branchId: number,
     collectionCenterId: number,
   ) => Promise<void>;
-  resetFormFields: () => void;
+  fetchOrderBy: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
-
 const DEFAULT_ORDER_BY_MAP: Record<OrderByReportKey, SelectOption[]> = {
   memberIdCard: DEFAULT_SELECT,
   savingTypeWiseBalance: DEFAULT_SELECT,
@@ -87,29 +81,26 @@ const ReportFormContext = createContext<ReportFormContextType | undefined>(
   undefined,
 );
 
-export const useReportForm = () => {
+export const useReportFormContext = () => {
   const ctx = useContext(ReportFormContext);
   if (!ctx)
-    throw new Error("useReportForm must be used within ReportFormProvider");
+    throw new Error(
+      "useReportFormContext must be used within ReportFormProvider",
+    );
   return ctx;
 };
 
-// ── Helper or OrderBy — accepts the actual API type which has null ───────────────────────
-// ✅ Fix: `null` is coerced to "" so it never reaches SelectOption as null
 function mapOptions(list: OrderByResponse[]): SelectOption[] {
   return [
-    { id: 0, name: "-- Select --" },
+    { id: "0", name: "-- Select --" },
     ...list.map(
-      (o): SelectOption => ({
-        id: o.value ?? 0,
-        name: o.displayName ?? "", // ✅ handles null | undefined | string
-      }),
+      (o): SelectOption => ({ id: o.value ?? "0", name: o.displayName ?? "" }),
     ),
   ];
 }
 
-// ── Provider ──────────────────────────────────────────────────────────────────
 export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
+  // Member lookup state
   const [memberLookUp, setMemberLookUp] = useState<MemberRecord[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +109,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [selectedMember, setSelectedMember] = useState<MemberRecord | null>(
     null,
   );
+
+  // Dropdown options (each with its own default)
   const [branchOptions, setBranchOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [collectionCenterOptions, setCollectionCenterOptions] =
@@ -127,17 +120,12 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [orderByMap, setOrderByMap] =
     useState<Record<OrderByReportKey, SelectOption[]>>(DEFAULT_ORDER_BY_MAP);
 
-  const searchGenerationRef = useRef(0);
-  // ── Guard: fetch branches only once across all reports ────────────────────
+  // Fetch guards
   const branchFetchedRef = useRef(false);
-  const orderbyFetchRef = useRef(false);
-  //reset the form field
-  const resetFormFields = useCallback(() => {
-    setCollectionCenterOptions(DEFAULT_SELECT);
-    setMemberGroupOptions(DEFAULT_SELECT);
-  }, []);
+  const orderByFetchedRef = useRef(false);
+  const searchGenerationRef = useRef(0);
 
-  // ── Member lookup ─────────────────────────────────────────────────────────
+  // ── Member lookup ─────────────────────────────────────────────
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
       const generation = ++searchGenerationRef.current;
@@ -168,59 +156,58 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         if (generation !== searchGenerationRef.current) return;
         setError(err?.message ?? "Failed to load members");
       } finally {
-        if (generation === searchGenerationRef.current) {
-          setIsLoading(false);
-        }
+        if (generation === searchGenerationRef.current) setIsLoading(false);
       }
     },
     [],
   );
 
-  // ── Branch options (lazy — called only when dropdown is opened) ───────────
-  const fetchBranches = useCallback(async () => {
-    if (branchFetchedRef.current) return; // already fetched, skip API call
-    branchFetchedRef.current = true;
+  const clearResults = useCallback(() => {
+    searchGenerationRef.current += 1;
+    setMemberLookUp([]);
+    setTotalPages(1);
+    setCurrentPage(1);
+    setError("");
+    setIsLoading(false);
+  }, []);
 
+  // ── Branches (lazy, once) ────────────────────────────────────
+  const fetchBranches = useCallback(async () => {
+    if (branchFetchedRef.current) return;
+    branchFetchedRef.current = true;
     try {
       const res: BranchResponse[] = await branchService.getAll();
-      const mapped = res.map((b: BranchResponse) => ({
+      const mapped = res.map((b) => ({
         id: b.branchId ?? 0,
         name: b.branchName ?? "",
       }));
-      setBranchOptions([
-        // { id: 0, name: "-- Select --" },
-        // { id: -1, name: "All" },
-        ...mapped,
-      ]);
+      setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
     } catch {
-      branchFetchedRef.current = false; // allow retry on next open if failed
+      branchFetchedRef.current = false; // allow retry
     }
   }, []);
 
-  // ── Collection Centers ────────────────────────────────────────────────────
+  // ── Collection Centers (no global cache – refetches when branch changes) ──
   const fetchCollectionCenters = useCallback(async (branchId: number) => {
     if (!branchId || branchId === 0) {
       setCollectionCenterOptions(DEFAULT_SELECT);
-      setMemberGroupOptions(DEFAULT_SELECT);
       return;
     }
     try {
-      const request: CollectionCenterRequestDtos = { lstOfficeId: branchId };
-      const res = await collectionCenterService.getAll(request);
-      const mapped = (res ?? []).map(
-        (c): SelectOption => ({
-          id: c.collectionCenterId ?? 0,
-          name: c.collectionCenterName ?? "",
-        }),
-      );
+      const res = await collectionCenterService.getAll({
+        lstOfficeId: branchId,
+      });
+      const mapped = (res ?? []).map((c) => ({
+        id: c.collectionCenterId ?? 0,
+        name: c.collectionCenterName ?? "",
+      }));
       setCollectionCenterOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-    } catch (err) {
-      console.error("Error fetching collection centers:", err);
+    } catch {
       setCollectionCenterOptions(DEFAULT_SELECT);
     }
   }, []);
 
-  // ── Member Groups ─────────────────────────────────────────────────────────
+  // ── Member Groups (no global cache – refetches when branch+center change) ─
   const fetchMemberGroups = useCallback(
     async (branchId: number, collectionCenterId: number) => {
       if (
@@ -233,31 +220,26 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       try {
-        const request: MemberGroupRequestDtos = {
+        const res = await memberGroupService.getAll({
           lstOfficeId: branchId,
-          collectionCenterId: collectionCenterId,
-        };
-        const res = await memberGroupService.getAll(request);
-        const mapped = (res ?? []).map(
-          (g): SelectOption => ({
-            id: g.memberGroupId ?? 0,
-            name: g.name ?? "",
-          }),
-        );
+          collectionCenterId,
+        });
+        const mapped = (res ?? []).map((g) => ({
+          id: g.memberGroupId ?? 0,
+          name: g.name ?? "",
+        }));
         setMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
-      } catch (err) {
-        console.error("Error fetching member groups:", err);
+      } catch {
         setMemberGroupOptions(DEFAULT_SELECT);
       }
     },
     [],
   );
 
-  // ── OrderBy map (lazy — called only when dropdown is opened) ──────────────
+  // ── OrderBy (lazy, once) ────────────────────────────────────
   const fetchOrderBy = useCallback(async () => {
-    if (orderbyFetchRef.current) return; // already fetched, skip
-    orderbyFetchRef.current = true;
-
+    if (orderByFetchedRef.current) return;
+    orderByFetchedRef.current = true;
     try {
       const res = await orderByService.getAll();
       setOrderByMap({
@@ -265,18 +247,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         savingTypeWiseBalance: mapOptions(res.savingTypeWiseBalance ?? []),
       });
     } catch {
-      orderbyFetchRef.current = false; // allow retry on failure
+      orderByFetchedRef.current = false;
     }
-  }, []);
-
-  // ── Clear results ─────────────────────────────────────────────────────────
-  const clearResults = useCallback(() => {
-    searchGenerationRef.current += 1;
-    setMemberLookUp([]);
-    setTotalPages(1);
-    setCurrentPage(1);
-    setError("");
-    setIsLoading(false);
   }, []);
 
   return (
@@ -291,15 +263,15 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         setSelectedMember,
         searchmemberLookUp,
         clearResults,
-        fetchBranches,
         branchOptions,
-        fetchOrderBy,
-        orderByMap,
         collectionCenterOptions,
         memberGroupOptions,
+        orderByMap,
+        fetchBranches,
         fetchCollectionCenters,
         fetchMemberGroups,
-        resetFormFields,
+        fetchOrderBy,
+        //resetFormFields,
       }}
     >
       {children}

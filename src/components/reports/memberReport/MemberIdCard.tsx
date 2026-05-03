@@ -6,7 +6,6 @@ import type {
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
-  UseFormReset,
 } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -40,7 +39,7 @@ interface MemberIdCardProps {
   handleSubmit: UseFormHandleSubmit<MemberIdCardFormValues>;
   onSubmit: SubmitHandler<MemberIdCardFormValues>;
   setValue: UseFormSetValue<MemberIdCardFormValues>;
-  reset: UseFormReset<MemberIdCardFormValues>;
+  // reset: UseFormReset<MemberIdCardFormValues>;
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -53,7 +52,6 @@ function MemberIdCard({
   handleSubmit,
   onSubmit,
   setValue,
-  reset,
   reportState,
   onPageChange,
   onDownload,
@@ -176,7 +174,10 @@ function MemberIdCard({
                   loading={loading}
                   onBeforeSubmit={scrollToReport}
                 />
-                <ClearFormButton reset={reset} setValue={setValue} />
+                <ClearFormButton
+                  setValue={setValue}
+                  clearFields={["memberId", "memberName"]}
+                />
               </Box>
             </Grid>
           </Grid>

@@ -215,7 +215,7 @@ import {
   InitialReportState,
   type ReportState,
 } from "@/utilis/Constants/reportConstants";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 const schema: yup.ObjectSchema<AccountStatementRequest> = yup
   .object({
@@ -276,7 +276,7 @@ export default function AccountStatementPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [lastRequest, setLastRequest] =
     useState<AccountStatementRequest | null>(null);
-  const { branchOptions } = useReportForm();
+  const { branchOptions } = useReportFormContext();
 
   const toRequest = useCallback(
     (form: AccountStatementRequest): AccountStatementRequest => {
@@ -407,7 +407,6 @@ export default function AccountStatementPage() {
 
   const onSubmit: SubmitHandler<AccountStatementRequest> = useCallback(
     (formData) => {
-      console.log("RAW formData:", JSON.stringify(formData, null, 2));
       fetchReport(toRequest(formData));
     },
     [fetchReport, toRequest],

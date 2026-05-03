@@ -140,7 +140,7 @@ import { useController } from "react-hook-form";
 
 import TextInput from "@/components/form/TextInput";
 import MemberLookUpModal from "@/components/reportForm/Common/MemberLookUpModal";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -159,7 +159,7 @@ export default function MemberLookupButton<T extends FieldValues>({
 }: MemberLookupButtonProps<T>) {
   const [modalOpen, setModalOpen] = useState(false);
   const { memberLookUp, setSelectedMember, searchmemberLookUp, clearResults } =
-    useReportForm();
+    useReportFormContext();
 
   const cast = control as unknown as Control<FieldValues>;
   // ✅ both fields cast the same way — memberId goes to API, memberName is UI only

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
-import { useReportForm } from "@/contexts/ReportFormContext";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 import Box from "@mui/system/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -18,7 +18,7 @@ export default function BranchNameField<T extends FieldValues>({
   control,
   branchFieldName,
 }: BranchNameFieldProps<T>) {
-  const { fetchBranches, branchOptions } = useReportForm();
+  const { fetchBranches, branchOptions } = useReportFormContext();
 
   // ── Fetch on mount(refresh) so branches are ready immediately on page refresh ──────
   useEffect(() => {
@@ -27,12 +27,12 @@ export default function BranchNameField<T extends FieldValues>({
 
   return (
     <FieldRow label="Branch Name">
-      <Box onMouseEnter={fetchBranches}>
+      <Box>
         <DropDown
           name={branchFieldName}
           control={control}
           label="Branch Name"
-          onOpen={fetchBranches} //fallback if hover not work
+          //onOpen={fetchBra nches} //fallback if hover not work
           options={branchOptions}
           fullWidth
         />
