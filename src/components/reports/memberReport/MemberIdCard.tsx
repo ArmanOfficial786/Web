@@ -26,7 +26,7 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
 import { MemberIdCardRequest } from "types/api/api";
-import { MemberIdCardFormValues } from "@/app/(home)/(sidebar)/reports/MemberIDCardDetail/page";
+import { type MemberIdCardFormValues } from "@/app/(home)/(sidebar)/reports/(Member)/MemberIDCardDetail/page";
 import Preloader from "@/components/PreLoader/preloader";
 
 export type { ReportFormat };

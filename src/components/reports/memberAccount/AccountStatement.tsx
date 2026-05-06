@@ -196,6 +196,7 @@ export default function AccountStatement({
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
         {reportLoaded && pdfData && (
           <Box
+            ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
             <embed

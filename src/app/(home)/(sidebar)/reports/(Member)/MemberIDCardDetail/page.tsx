@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { useState, useCallback } from "react";
 import * as yup from "yup";
-import type { MemberIdCardRequest } from "../../../../../../types/api/api";
+import type { MemberIdCardRequest } from "../../../../../../../types/api/api";
 import MemberIdCard from "@/components/reports/memberReport/MemberIdCard";
 import memberIdCardService from "@/services/MemberIdCardService";
 import {
@@ -209,7 +209,6 @@ function Page(): React.ReactElement {
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       setValue={setValue}
-    
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}

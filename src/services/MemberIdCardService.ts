@@ -133,7 +133,7 @@ const customRequestInterceptor = async (config: any) => {
   // This applies to BOTH view and export requests
   if (configWithAuth.params?.format) {
     const format = configWithAuth.params.format.toLowerCase();
-    if (["view", "pdf", "word", "excel", "image"].includes(format)) {
+    if (["pdf", "word", "excel", "image"].includes(format)) {
       configWithAuth.responseType = "blob";
     }
   }
