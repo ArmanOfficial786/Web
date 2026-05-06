@@ -1,6 +1,6 @@
 // utils/blobConverter.ts
 
-import { ReportFormat } from "@/components/reports/accountReport/AccountStatement";
+import { ReportFormat } from "@/components/reports/memberAccount/AccountStatement";
 import { mimeTypes } from "./reportConstants";
 
 export function responseToBlob(data: unknown, format: ReportFormat): Blob {
@@ -8,7 +8,7 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
 
   // 1. Already a Blob
   if (data instanceof Blob) {
-    console.log("Already a blob")
+    console.log("Already a blob");
     return data;
   }
 
@@ -20,7 +20,7 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
     });
   }
   if (data instanceof ArrayBuffer) {
-    console.log("Data is in ArrayByte")
+    console.log("Data is in ArrayByte");
     return new Blob([data], { type: mimeType });
   }
 
@@ -35,7 +35,7 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
       for (let i = 0; i < len; i++) {
         byteArray[i] = trimmed.charCodeAt(i) & 0xff;
       }
-      console.log("Raw pdf/binary string")
+      console.log("Raw pdf/binary string");
       // Use buffer to avoid SharedArrayBuffer type issue
       return new Blob([byteArray.buffer as ArrayBuffer], { type: mimeType });
     }

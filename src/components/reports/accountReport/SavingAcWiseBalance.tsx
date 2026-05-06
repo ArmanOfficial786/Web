@@ -1,113 +1,215 @@
 // "use client";
-// import React from "react";
-// import { Box, Paper, Typography, Divider, Grid } from "@mui/material";
+
+// import React, { useRef } from "react";
+// import type {
+//   Control,
+//   SubmitHandler,
+//   UseFormHandleSubmit,
+//   UseFormSetValue,
+// } from "react-hook-form";
+// import Box from "@mui/material/Box";
+// import Grid from "@mui/material/Grid";
+// import Paper from "@mui/material/Paper";
+// import Typography from "@mui/material/Typography";
+// import Divider from "@mui/material/Divider";
+
+// import ReportNavigation, {
+//   type ReportFormat,
+// } from "@/components/reportForm/Common/ReportNavigation";
+// import MemberLookupButton from "../../reportForm/Common/MemberLookUpButton";
 // import DateFields from "@/components/reportForm/Common/DateFiels";
 // import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-// import ReportTypeField from "@/components/reportForm/Account/ReportType";
-// import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
+// import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
+// import SelectGroupField from "../../reportForm/Common/SelectGroupField";
 // import OrderByField from "@/components/reportForm/Common/OrderByFields";
 // import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 // import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+// import type { ReportState } from "@/utilis/Constants/reportConstants";
 
-// export default function SavingAcWiseBalance() {
+// import Preloader from "@/components/PreLoader/preloader";
+
+// export type { ReportFormat };
+
+// export type SelectOption = { id: number; name: string };
+
+// // ── Props ─────────────────────────────────────────────────────────────────────
+
+// // ── Component ─────────────────────────────────────────────────────────────────
+// function SavingAcWiseBalance({
+//   control,
+//   handleSubmit,
+//   onSubmit,
+//   setValue,
+//   reportState,
+//   onPageChange,
+//   onDownload,
+//   isDownloading = false,
+// }: SavingAcWiseBalanceProps) {
+//   const { loading, reportLoaded, pdfData, currentPage, totalPages } =
+//     reportState;
+
+//   const reportRef = useRef<HTMLDivElement>(null);
+//   const scrollToReport = () => {
+//     reportRef.current?.scrollIntoView({
+//       behavior: "smooth",
+//       block: "start",
+//     });
+//   };
+
 //   return (
-//     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-//       {/* ── FORM ─────────────────────────────────────────────────────────── */}
-//       <Paper variant="outlined" sx={{ p: 1.5 }}>
-//         <Typography
-//           variant="h6"
-//           sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
-//         >
-//           Saving Account Wise Balance Report
-//         </Typography>
-//         <Divider sx={{ mb: 1.5 }} />
-
-//         <Box sx={{ mb: 1 }}>
-//           <DateFields control={control} />
-//         </Box>
-//         <Divider sx={{ mb: 1.5 }} />
-
+//     <>
+//       {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
+//       {loading && (
 //         <Box
 //           sx={{
-//             display: "grid",
-//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//             gap: 2,
-//             mb: 1,
+//             position: "fixed",
+//             inset: 0,
+//             zIndex: 9999,
+//             display: "flex",
+//             alignItems: "center",
+//             justifyContent: "center",
+//             backgroundColor: "rgba(255,255,255,0.7)",
+//             backdropFilter: "blur(2px)",
 //           }}
 //         >
-//           <BranchNameField<AccountStatementRequest>
-//             control={control}
-//             branchFieldName="branchId"
-//           />
-//           <ReportTypeField<AccountStatementRequest>
-//             control={control}
-//             name="reportType"
-//           />
+//           <Preloader />
 //         </Box>
-//         <Divider sx={{ mb: 1.5 }} />
+//       )}
 
-//         <Box
-//           sx={{
-//             display: "grid",
-//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//             gap: 2,
-//             mb: 1,
-//           }}
-//         >
-//           <TransactionTypeField<AccountStatementRequest>
-//             control={control}
-//             name="transactionType"
-//           />
-//           <OrderByField<AccountStatementRequest>
-//             control={control}
-//             name="orderBy"
-//             reportKey="savingTypeWiseBalance"
-//           />
-//         </Box>
-//         <Divider sx={{ mb: 1.5 }} />
+//       {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
+//       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+//         {/* ── FORM ───────────────────────────────────────────────────────── */}
+//         <Paper variant="outlined" sx={{ p: 1.5 }}>
+//           <Typography
+//             variant="h6"
+//             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
+//           >
+//             Create Member ID Card
+//           </Typography>
+//           <Divider sx={{ mb: 1.5 }} />
 
-//         <Grid container spacing={1} alignItems="center">
-//           <Grid size={{ xs: 12, md: 6 }}>
+//           {/* Row 1 — Member Lookup */}
+//           <MemberLookupButton<SavingAcWiseBalanceFormValues> control={control} />
+//           <Divider sx={{ mb: 1.5 }} />
+
+//           {/* Row 2 — From Date | Till Date */}
+//           <Box sx={{ mb: 1 }}>
+//             <DateFields control={control} />
+//           </Box>
+//           <Divider sx={{ mb: 1.5 }} />
+
+//           {/* Row 3 — Branch | Collection Center */}
+//           <Box
+//             sx={{
+//               display: "grid",
+//               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+//               gap: 2,
+//               mb: 1,
+//             }}
+//           >
+//             <BranchNameField<SavingAcWiseBalanceFormValues>
+//               control={control}
+//               branchFieldName="branchId"
+//             />
+//             <CollectionCenterField<SavingAcWiseBalanceFormValues>
+//               control={control}
+//               setValue={setValue}
+//               branchFieldName="branchId"
+//               collectionCenterFieldName="collectionCenterId"
+//             />
+//           </Box>
+//           <Divider sx={{ mb: 1.5 }} />
+
+//           {/* Row 4 — Select Group | Order By */}
+//           <Box
+//             sx={{
+//               display: "grid",
+//               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+//               gap: 2,
+//               mb: 1,
+//             }}
+//           >
+//             <SelectGroupField<SavingAcWiseBalanceFormValues>
+//               control={control}
+//               setValue={setValue}
+//               branchFieldName="branchId"
+//               collectionCenterFieldName="collectionCenterId"
+//               groupFieldName="memberGroupId"
+//             />
+//             <OrderByField<SavingAcWiseBalanceRequest>
+//               control={control}
+//               name="orderby"
+//               reportKey="SavingAcWiseBalance"
+//             />
+//           </Box>
+//           <Divider sx={{ mb: 1.5 }} />
+
+//           {/* Row 5 — View Report | Clear */}
+//           <Grid container spacing={1} alignItems="center">
+//             <Grid size={{ xs: 12, md: 6 }}>
+//               <Box
+//                 display="flex"
+//                 justifyContent="center"
+//                 alignItems="center"
+//                 gap={5}
+//                 width="100%"
+//               >
+//                 <ViewReportButton
+//                   control={control}
+//                   handleSubmit={handleSubmit}
+//                   onSubmit={onSubmit}
+//                   setValue={setValue}
+//                   loading={loading}
+//                   onBeforeSubmit={scrollToReport}
+//                 />
+//                 <ClearFormButton
+//                   setValue={setValue}
+//                   clearFields={["memberId", "memberName"]}
+//                 />
+//               </Box>
+//             </Grid>
+//           </Grid>
+//         </Paper>
+
+//         {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
+//         {reportLoaded && (
+//           <ReportNavigation
+//             pdfData={pdfData}
+//             currentPage={currentPage}
+//             totalPages={totalPages}
+//             onPageChange={onPageChange}
+//             onDownload={onDownload}
+//             isDownloading={isDownloading}
+//           />
+//         )}
+
+//         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
+//         {reportLoaded && pdfData && (
+//           <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
 //             <Box
-//               display="flex"
-//               justifyContent="center"
-//               alignItems="center"
-//               gap={5}
-//               width="100%"
+//               sx={{
+//                 position: "relative",
+//                 height: "1000px",
+//                 overflow: "hidden",
+//               }}
 //             >
-//               <ViewReportButton<AccountStatementRequest>
-//                 control={control}
-//                 handleSubmit={handleSubmit}
-//                 onSubmit={onSubmit}
-//                 setValue={setValue}
-//                 loading={loading}
-//                 onBeforeSubmit={scrollToReport}
-//                 clearFields={[
-//                   "fromDate",
-//                   "toDate",
-//                   "branchId",
-//                   "reportType",
-//                   "transactionType",
-//                   "orderBy",
-//                 ]}
-//               />
-
-//               <ClearFormButton
-//                 reset={reset}
-//                 setValue={setValue}
-//                 clearFields={[
-//                   "fromDate",
-//                   "toDate",
-//                   "branchId",
-//                   "reportType",
-//                   "transactionType",
-//                   "orderBy",
-//                 ]}
+//               <iframe
+//                 src={`${pdfData}#zoom=150`}
+//                 style={{
+//                   position: "absolute",
+//                   top: "-40px", // pushes the toolbar out of the visible area
+//                   left: 0,
+//                   width: "100%",
+//                   height: "calc(100% + 40px)",
+//                   border: "none",
+//                 }}
 //               />
 //             </Box>
-//           </Grid>
-//         </Grid>
-//       </Paper>
-//     </Box>
+//           </Box>
+//         )}
+//       </Box>
+//     </>
 //   );
 // }
+
+// export default SavingAcWiseBalance;

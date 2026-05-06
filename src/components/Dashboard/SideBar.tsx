@@ -35,8 +35,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   ];
 
   const subMenuItemsReports: SubMenuItem[] = [
-    { icon: "📊", label: "Student Report" },
-    { icon: "📊", label: "Member Report" },
     { icon: "📊", label: "MemberID Card Detail " },
     { icon: "📊", label: "Account Statement Report" },
     { icon: "📊", label: "SavingAcWiseBalance Report" },
@@ -75,8 +73,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
 
     // Navigate based on submenu label
     const submenuRouteMap: { [key: string]: string } = {
-      "Student Report": "/reports/studentReport",
-      "Member Report": "/reports/memberReport",
       "MemberID Card Detail ": "/reports/MemberIDCardDetail",
       "Account Statement Report": "/reports/AccountStatementReport",
       "SavingAcWiseBalance Report": "/reports/SavingAcWiseBalanceReport",

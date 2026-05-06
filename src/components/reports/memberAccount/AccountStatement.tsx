@@ -27,6 +27,7 @@ import { AccountStatementRequest } from "types/api/api";
 import type { ReportState } from "@/utilis/Constants/reportConstants";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import Preloader from "@/components/PreLoader/preloader";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 
 export type { ReportFormat };
 
@@ -122,7 +123,7 @@ export default function AccountStatement({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
               gap: 2,
               mb: 1,
             }}
@@ -131,6 +132,20 @@ export default function AccountStatement({
               control={control}
               name="transactionType"
             />
+            <SameCompanyField<AccountStatementRequest>
+              control={control}
+              labelPlacement="end"
+            />
+          </Box>
+          <Divider sx={{ mb: 1.5 }} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 1,
+            }}
+          >
             <OrderByField<AccountStatementRequest>
               control={control}
               name="orderBy"
@@ -184,7 +199,7 @@ export default function AccountStatement({
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
             <embed
-              src={`data:application/pdf;base64,${pdfData}#toolbar=0&zoom=167`}
+              src={`data:application/pdf;base64,${pdfData}#toolbar=0&zoom=155`}
               style={{
                 position: "absolute",
                 top: "-40px",

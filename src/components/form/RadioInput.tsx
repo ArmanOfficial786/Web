@@ -5,7 +5,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { Controller } from "react-hook-form";
-
+import type { SxProps, Theme } from "@mui/material/styles";
 interface RadioInputPropType {
   control: any;
   rules?: any;
@@ -18,6 +18,7 @@ interface RadioInputPropType {
   disabled?: boolean;
   error?: boolean;
   helperText?: string;
+  sx?: SxProps<Theme>;
 }
 
 function RadioInput({
@@ -29,10 +30,14 @@ function RadioInput({
   disabled = false,
   error,
   helperText,
+  sx,
 }: RadioInputPropType) {
+  const radioGroupSx = {
+    ...sx,
+  };
   if (isObjEmpty(control)) {
     return (
-      <FormControl error={error} sx={{ display: "flex" }}>
+      <FormControl error={error} sx={{ display: "flex", ...sx }}>
         <RadioGroup row={row}>
           {radioOptions.map((opt, idx) => (
             <FormControlLabel
@@ -57,7 +62,12 @@ function RadioInput({
         const { value, ...restFieldOpts } = field;
         return (
           <FormControl error={!!fieldState.error} sx={{ display: "flex" }}>
-            <RadioGroup row={row} value={value ?? ""} {...restFieldOpts}>
+            <RadioGroup
+              row={row}
+              value={value ?? ""}
+              {...restFieldOpts}
+              sx={radioGroupSx}
+            >
               {radioOptions.map((opt, idx) => (
                 <FormControlLabel
                   key={idx}

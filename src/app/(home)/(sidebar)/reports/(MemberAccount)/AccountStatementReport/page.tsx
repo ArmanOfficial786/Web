@@ -207,7 +207,7 @@ import accountStatementService from "@/services/AccountStatementService";
 import type { AccountStatementRequest } from "types/api/api";
 import AccountStatement, {
   type ReportFormat,
-} from "@/components/reports/accountReport/AccountStatement";
+} from "@/components/reports/memberAccount/AccountStatement";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { toast } from "react-toastify";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -249,7 +249,7 @@ const schema: yup.ObjectSchema<AccountStatementRequest> = yup
       .default([]),
     branchSelected: yup.string().nullable().optional(),
     branchName: yup.string().nullable().optional(),
-    sameCompanyName: yup.boolean().optional(),
+    sameCompanyName: yup.boolean().optional().default(true),
     reportType: yup
       .string()
       .nullable()
@@ -292,17 +292,21 @@ export default function AccountStatementPage() {
 
       // ── Derive branchName from selected IDs ───────────────────────────────
       const resolvedIds = isAll ? allBranchIds : specificIds;
+      // ✅ branchName: individual names always sent for report subtitle row
       const branchName = branchOptions
         .filter((o) => resolvedIds.includes(Number(o.id)))
         .map((o) => o.name)
         .join(",");
 
+      const sameCompanyName = form.sameCompanyName ?? true;
+
       return {
         fromDate: form.fromDate ? String(form.fromDate) : undefined,
         toDate: form.toDate ? String(form.toDate) : undefined,
         branchId: isAll ? allBranchIds : specificIds, // number[] matches API type
-        //branchSelected: isAll ? "-1" : specificIds.join(","),
+        branchSelected: isAll ? "-1" : specificIds.join(","), // ✅ always actual names — Razor decides display
         branchName: branchName || undefined, // populated server-side
+        sameCompanyName: sameCompanyName, // ✅ Razor uses this to switch header
         reportType: form.reportType ? String(form.reportType) : undefined,
         transactionType: form.transactionType
           ? String(form.transactionType)

@@ -71,7 +71,6 @@ export default function OfficeNameField<T extends FieldValues>({
           label="Office Name"
           options={realBranches}
           fullWidth
-          //placeholder="-- Select --"
           showSelectAll
           defaultSelectAll
           onOpen={fetchBranches}
