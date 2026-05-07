@@ -1,5 +1,5 @@
 {
-  "name": "rdlcui",
+  "name": "web",
   "version": "1.0.0",
   "description": "Next.js application for displaying RDLC Reports with pagination and export functionality",
   "main": "index.js",

@@ -8,7 +8,7 @@ import ToastProvider from "@/utilis/ToastProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RDLC Report Viewer",
+  title: "Nexgen Cosys Reports",
   description:
     "View and export RDLC Reports with pagination and download functionality",
 };
