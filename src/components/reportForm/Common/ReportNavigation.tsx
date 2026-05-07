@@ -105,7 +105,6 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
   totalPages,
   onPageChange,
   onDownload,
-  isDownloading = false,
 }) => {
   const { t, interpolate } = useLanguage();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -277,7 +276,7 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
           <span>
             <IconButton
               size="small"
-              disabled={isDownloading || !pdfData}
+              disabled={!pdfData}
               onClick={(e) => setAnchorEl(e.currentTarget)}
               aria-controls={menuOpen ? "download-menu" : undefined}
               aria-haspopup="true"
@@ -300,11 +299,7 @@ const ReportNavigation: React.FC<ReportNavigationProps> = ({
           }}
         >
           {DOWNLOAD_OPTIONS.map(({ format, icon, color, labelKey }) => (
-            <MenuItem
-              key={format}
-              onClick={() => handleDownload(format)}
-              disabled={isDownloading}
-            >
+            <MenuItem key={format} onClick={() => handleDownload(format)}>
               <ListItemIcon sx={{ color }}>{icon}</ListItemIcon>
               <ListItemText primaryTypographyProps={{ fontSize: 13 }}>
                 {t(labelKey)}

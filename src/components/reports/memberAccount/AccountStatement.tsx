@@ -40,7 +40,6 @@ interface AccountStatementProps {
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  isDownloading?: boolean;
 }
 
 export default function AccountStatement({
@@ -51,7 +50,6 @@ export default function AccountStatement({
   reportState,
   onPageChange,
   onDownload,
-  isDownloading = false,
 }: AccountStatementProps) {
   const { loading, reportLoaded, pdfData, currentPage, totalPages } =
     reportState;
@@ -171,11 +169,7 @@ export default function AccountStatement({
                   loading={loading}
                   onBeforeSubmit={scrollToReport}
                 />
-                <ClearFormButton
-                  // reset={reset}
-                  setValue={setValue}
-                  clearFields={[]}
-                />
+                <ClearFormButton setValue={setValue} clearFields={[]} />
               </Box>
             </Grid>
           </Grid>
@@ -189,7 +183,6 @@ export default function AccountStatement({
             totalPages={totalPages}
             onPageChange={onPageChange}
             onDownload={onDownload}
-            isDownloading={isDownloading}
           />
         )}
 

@@ -74,7 +74,6 @@ function Page(): React.ReactElement {
   const [lastRequest, setLastRequest] = useState<MemberIdCardRequest | null>(
     null,
   );
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const { control, handleSubmit, setValue, reset } =
     useForm<MemberIdCardFormValues>({
@@ -146,7 +145,6 @@ function Page(): React.ReactElement {
         toast.warning("Please view the report before exporting.");
         return;
       }
-      setIsDownloading(true);
       try {
         const upperFormat = format.toUpperCase() as ReportFormat; // ← cast once
         const res = await callApi(lastRequest, upperFormat);
@@ -167,8 +165,6 @@ function Page(): React.ReactElement {
         toast.success(`${link.download} downloaded`);
       } catch {
         toast.error("Failed to download file.");
-      } finally {
-        setIsDownloading(false);
       }
     },
     [callApi, lastRequest],
@@ -212,7 +208,6 @@ function Page(): React.ReactElement {
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}
-      isDownloading={isDownloading}
     />
   );
 }

@@ -70,7 +70,6 @@ const schema: yup.ObjectSchema<AccountStatementRequest> = yup
 export default function AccountStatementPage() {
   const [reportState, setReportState] =
     useState<ReportState>(InitialReportState);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [lastRequest, setLastRequest] =
     useState<AccountStatementRequest | null>(null);
   const { branchOptions } = useReportFormContext();
@@ -207,7 +206,7 @@ export default function AccountStatementPage() {
         toast.warning("Please view the report before exporting.");
         return;
       }
-      setIsDownloading(true);
+
       try {
         const res = await callApi(lastRequest, format);
         const blob = responseToBlob(res.data, format);
@@ -233,8 +232,6 @@ export default function AccountStatementPage() {
               : "Failed to download report."
           }`,
         );
-      } finally {
-        setIsDownloading(false);
       }
     },
     [callApi, lastRequest],
@@ -264,7 +261,6 @@ export default function AccountStatementPage() {
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}
-      isDownloading={isDownloading}
     />
   );
 }

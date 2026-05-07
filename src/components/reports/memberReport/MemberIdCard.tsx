@@ -43,7 +43,6 @@ interface MemberIdCardProps {
   reportState: ReportState;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  isDownloading?: boolean;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -55,7 +54,6 @@ function MemberIdCard({
   reportState,
   onPageChange,
   onDownload,
-  isDownloading = false,
 }: MemberIdCardProps) {
   const { loading, reportLoaded, pdfData, currentPage, totalPages } =
     reportState;
@@ -191,7 +189,6 @@ function MemberIdCard({
             totalPages={totalPages}
             onPageChange={onPageChange}
             onDownload={onDownload}
-            isDownloading={isDownloading}
           />
         )}
 
