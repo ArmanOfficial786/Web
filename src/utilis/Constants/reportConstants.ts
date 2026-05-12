@@ -22,6 +22,7 @@ export interface ReportState {
   currentPage: number;
   totalPages: number;
   totalRecord: number;
+  blobUrl: string;
   pageSize: number;
   loading: boolean;
   reportLoaded: boolean;
@@ -34,6 +35,7 @@ export const InitialReportState: ReportState = {
   totalPages: 1,
   totalRecord: 0,
   pageSize: 15,
+  blobUrl: "",
   loading: false,
   reportLoaded: false,
   error: "",
