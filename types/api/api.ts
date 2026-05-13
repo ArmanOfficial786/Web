@@ -14,7 +14,6 @@ export interface AccountStatementRequest {
   fromDate?: string | null;
   toDate?: string | null;
   branchSelected?: string | null;
-  branchId?: number[] | null;
   branchName?: string | null;
   sameCompanyName?: boolean;
   reportType?: string | null;
@@ -177,6 +176,24 @@ export interface ReportResponseDtosGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: ReportResponseDtos;
+}
+
+export interface SavingAcWiseBalanceRequest {
+  tillDate?: string | null;
+  /** @format int64 */
+  depositId?: number;
+  branchSelected?: string | null;
+  branchName?: string | null;
+  status?: string | null;
+  orderBy?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  enableGroup?: boolean;
+  sameCompanyName?: boolean;
 }
 
 import type {
@@ -355,7 +372,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title JsSampleReport
+ * @title NexgenCosysReport
  * @version 1.0
  */
 export class Api<
@@ -394,10 +411,17 @@ export class Api<
      * @name BranchGetAllBranchesList
      * @request GET:/api/Branch/GetAllBranches
      */
-    branchGetAllBranchesList: (params: RequestParams = {}) =>
+    branchGetAllBranchesList: (
+      query?: {
+        /** @format int64 */
+        userId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<BranchResponseListGeneralResponse, any>({
         path: `/api/Branch/GetAllBranches`,
         method: "GET",
+        query: query,
         format: "json",
         ...params,
       }),
@@ -419,6 +443,27 @@ export class Api<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Collector
+     * @name CollectorGetCollectorCreate
+     * @request POST:/api/Collector/getCollector
+     */
+    collectorGetCollectorCreate: (
+      query?: {
+        /** @format int64 */
+        userId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/Collector/getCollector`,
+        method: "POST",
+        query: query,
         ...params,
       }),
 
@@ -568,6 +613,30 @@ export class Api<
         path: `/api/OrderBy/GetAllOrderBy`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingACWiseBalanceReport
+     * @name SavingAcWiseBalanceReportSavingAcWiseBalanceReportCreate
+     * @request POST:/api/SavingACWiseBalanceReport/SavingACWiseBalanceReport
+     */
+    savingAcWiseBalanceReportSavingAcWiseBalanceReportCreate: (
+      data: SavingAcWiseBalanceRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingACWiseBalanceReport/SavingACWiseBalanceReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   };

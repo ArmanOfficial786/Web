@@ -23,7 +23,7 @@
 // import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 // import ReportTypeField from "@/components/reportForm/Account/ReportType";
 // import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
-// import { AccountStatementRequest } from "types/api/api";
+// import { AccountStatementRequestExtended } from "types/api/api";
 // import type { ReportState } from "@/utilis/Constants/reportConstants";
 // import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 // import Preloader from "@/components/PreLoader/preloader";
@@ -32,11 +32,11 @@
 // export type { ReportFormat };
 
 // interface AccountStatementProps {
-//   control: Control<AccountStatementRequest>;
-//   handleSubmit: UseFormHandleSubmit<AccountStatementRequest>;
-//   onSubmit: SubmitHandler<AccountStatementRequest>;
-//   setValue: UseFormSetValue<AccountStatementRequest>;
-//   reset: UseFormReset<AccountStatementRequest>;
+//   control: Control<AccountStatementRequestExtended>;
+//   handleSubmit: UseFormHandleSubmit<AccountStatementRequestExtended>;
+//   onSubmit: SubmitHandler<AccountStatementRequestExtended>;
+//   setValue: UseFormSetValue<AccountStatementRequestExtended>;
+//   reset: UseFormReset<AccountStatementRequestExtended>;
 //   reportState: ReportState;
 //   onPageChange: (page: number) => void;
 //   onDownload: (format: ReportFormat) => void | Promise<void>;
@@ -107,11 +107,11 @@
 //               mb: 1,
 //             }}
 //           >
-//             <OfficeNameField<AccountStatementRequest>
+//             <OfficeNameField<AccountStatementRequestExtended>
 //               control={control}
 //               branchFieldName="branchId"
 //             />
-//             <ReportTypeField<AccountStatementRequest>
+//             <ReportTypeField<AccountStatementRequestExtended>
 //               control={control}
 //               name="reportType"
 //             />
@@ -126,11 +126,11 @@
 //               mb: 1,
 //             }}
 //           >
-//             <TransactionTypeField<AccountStatementRequest>
+//             <TransactionTypeField<AccountStatementRequestExtended>
 //               control={control}
 //               name="transactionType"
 //             />
-//             <SameCompanyField<AccountStatementRequest>
+//             <SameCompanyField<AccountStatementRequestExtended>
 //               control={control}
 //               labelPlacement="end"
 //             />
@@ -144,7 +144,7 @@
 //               mb: 1,
 //             }}
 //           >
-//             <OrderByField<AccountStatementRequest>
+//             <OrderByField<AccountStatementRequestExtended>
 //               control={control}
 //               name="orderBy"
 //               reportKey="savingTypeWiseBalance"
@@ -161,7 +161,7 @@
 //                 gap={5}
 //                 width="100%"
 //               >
-//                 <ViewReportButton<AccountStatementRequest>
+//                 <ViewReportButton<AccountStatementRequestExtended>
 //                   control={control}
 //                   handleSubmit={handleSubmit}
 //                   onSubmit={onSubmit}
@@ -210,6 +210,14 @@
 //   );
 // }
 
+
+
+
+
+
+
+
+
 "use client";
 
 import React, { useRef } from "react";
@@ -235,21 +243,23 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import ReportTypeField from "@/components/reportForm/Account/ReportType";
 import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
-import { AccountStatementRequest } from "types/api/api";
-import type { ReportState } from "@/utilis/Constants/reportConstants";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import Preloader from "@/components/PreLoader/preloader";
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import type {
+  AccountStatementRequestExtended,
+  AccountStatementResponseExtended,
+} from "@/app/(home)/(sidebar)/reports/(MemberAccount)/AccountStatementReport/page";
 
 export type { ReportFormat };
 
 interface AccountStatementProps {
-  control: Control<AccountStatementRequest>;
-  handleSubmit: UseFormHandleSubmit<AccountStatementRequest>;
-  onSubmit: SubmitHandler<AccountStatementRequest>;
-  setValue: UseFormSetValue<AccountStatementRequest>;
-  reset: UseFormReset<AccountStatementRequest>;
-  reportState: ReportState;
+  control: Control<AccountStatementRequestExtended>;
+  handleSubmit: UseFormHandleSubmit<AccountStatementRequestExtended>;
+  onSubmit: SubmitHandler<AccountStatementRequestExtended>;
+  setValue: UseFormSetValue<AccountStatementRequestExtended>;
+  reset: UseFormReset<AccountStatementRequestExtended>;
+  reportState: AccountStatementResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
@@ -259,22 +269,30 @@ export default function AccountStatement({
   handleSubmit,
   onSubmit,
   setValue,
+  //reset,
   reportState,
   onPageChange,
   onDownload,
 }: AccountStatementProps) {
-  const { loading, reportLoaded, pdfData, blobUrl, currentPage, totalPages } =
-    reportState;
+  // ── Destructure from reportState ─────────────────────────────────────────
+  const { blobUrl, isLoading, pdfData, pagination } = reportState;
+
+  // ── Derived values from backend-provided pagination ──────────────────────
+  // const currentPage = pagination?.currentPage ?? 1;
+  // const totalPages = pagination?.totalPages ?? 1;
+
+  // ── Report is shown only when blobUrl exists ─────────────────────────────
+  // pdfData set → blobUrl derived → showReport true
+  const showReport = Boolean(pdfData) && Boolean(blobUrl);
 
   const reportRef = useRef<HTMLDivElement>(null);
   const scrollToReport = () =>
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  const showReport = reportLoaded && Boolean(blobUrl);
-
   return (
     <>
-      {loading && (
+      {/* ── Full-screen loader — driven by isLoading ─────────────────────── */}
+      {isLoading && (
         <Box
           sx={{
             position: "fixed",
@@ -314,11 +332,11 @@ export default function AccountStatement({
               mb: 1,
             }}
           >
-            <OfficeNameField<AccountStatementRequest>
+            <OfficeNameField<AccountStatementRequestExtended>
               control={control}
               branchFieldName="branchId"
             />
-            <ReportTypeField<AccountStatementRequest>
+            <ReportTypeField<AccountStatementRequestExtended>
               control={control}
               name="reportType"
             />
@@ -333,11 +351,11 @@ export default function AccountStatement({
               mb: 1,
             }}
           >
-            <TransactionTypeField<AccountStatementRequest>
+            <TransactionTypeField<AccountStatementRequestExtended>
               control={control}
               name="transactionType"
             />
-            <SameCompanyField<AccountStatementRequest>
+            <SameCompanyField<AccountStatementRequestExtended>
               control={control}
               labelPlacement="end"
             />
@@ -352,7 +370,7 @@ export default function AccountStatement({
               mb: 1,
             }}
           >
-            <OrderByField<AccountStatementRequest>
+            <OrderByField<AccountStatementRequestExtended>
               control={control}
               name="orderBy"
               reportKey="savingTypeWiseBalance"
@@ -369,12 +387,12 @@ export default function AccountStatement({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton<AccountStatementRequest>
+                <ViewReportButton<AccountStatementRequestExtended>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
                   setValue={setValue}
-                  loading={loading}
+                  loading={isLoading}
                   onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton setValue={setValue} clearFields={[]} />
@@ -385,25 +403,22 @@ export default function AccountStatement({
 
         {showReport && (
           <ReportNavigation
-            pdfData={pdfData}
-            currentPage={currentPage}
-            totalPages={totalPages}
+            pdfData={pdfData ?? ""}
+            currentPage={pagination?.currentPage ?? 1}
+            totalPages={pagination?.totalPages ?? 1}
             onPageChange={onPageChange}
             onDownload={onDownload}
           />
         )}
 
-        {/* ── PDF VIEWER — blob URL + #page=N = instant page nav ──────────── */}
         {showReport && (
           <Box
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
             <embed
-              // key forces iframe remount only when blobUrl changes (new report)
-              // currentPage change only updates the hash — no remount, no API call
               key={blobUrl}
-              src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=155`}
+              src={`${blobUrl}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=155`}
               style={{
                 position: "absolute",
                 top: "-40px",

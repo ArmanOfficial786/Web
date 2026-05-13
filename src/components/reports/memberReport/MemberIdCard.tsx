@@ -24,14 +24,16 @@ import SelectGroupField from "../../reportForm/Common/SelectGroupField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import type { ReportState } from "@/utilis/Constants/reportConstants";
 import { MemberIdCardRequest } from "types/api/api";
-import { type MemberIdCardFormValues } from "@/app/(home)/(sidebar)/reports/(Member)/MemberIDCardDetail/page";
+import {
+  MemberIdCardResponseExtended,
+  type MemberIdCardFormValues,
+} from "@/app/(home)/(sidebar)/reports/(Member)/MemberIDCardDetail/page";
 import Preloader from "@/components/PreLoader/preloader";
 
 export type { ReportFormat };
 
-export type SelectOption = { id: number; name: string };
+//export type SelectOption = { id: number; name: string };
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface MemberIdCardProps {
@@ -40,7 +42,7 @@ interface MemberIdCardProps {
   onSubmit: SubmitHandler<MemberIdCardFormValues>;
   setValue: UseFormSetValue<MemberIdCardFormValues>;
   // reset: UseFormReset<MemberIdCardFormValues>;
-  reportState: ReportState;
+  reportState: MemberIdCardResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
@@ -55,8 +57,8 @@ function MemberIdCard({
   onPageChange,
   onDownload,
 }: MemberIdCardProps) {
-  const { loading, reportLoaded, pdfData, currentPage, totalPages } =
-    reportState;
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
 
   const reportRef = useRef<HTMLDivElement>(null);
   const scrollToReport = () => {
@@ -69,7 +71,7 @@ function MemberIdCard({
   return (
     <>
       {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
-      {loading && (
+      {isLoading && (
         <Box
           sx={{
             position: "fixed",
@@ -169,7 +171,7 @@ function MemberIdCard({
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
                   setValue={setValue}
-                  loading={loading}
+                  loading={isLoading}
                   onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
@@ -182,18 +184,18 @@ function MemberIdCard({
         </Paper>
 
         {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
-        {reportLoaded && (
+        {showReport && (
           <ReportNavigation
-            pdfData={pdfData}
-            currentPage={currentPage}
-            totalPages={totalPages}
+            pdfData={pdfData!}
+            currentPage={pagination?.currentPage ?? 1}
+            totalPages={pagination?.totalPages ?? 1}
             onPageChange={onPageChange}
             onDownload={onDownload}
           />
         )}
 
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
-        {reportLoaded && pdfData && (
+        {showReport && (
           <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
             {/* <iframe
               src={`${pdfData}#zoom=165`}
@@ -214,7 +216,8 @@ function MemberIdCard({
               }}
             >
               <iframe
-                src={`${pdfData}#zoom=150`}
+                key={pagination?.currentPage ?? 1}
+                src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=150`}
                 style={{
                   position: "absolute",
                   top: "-40px", // pushes the toolbar out of the visible area
