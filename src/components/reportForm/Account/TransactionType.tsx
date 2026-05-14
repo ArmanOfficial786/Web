@@ -40,7 +40,17 @@ export default function TransactionTypeField<T extends FieldValues>({
         radioOptions={transactionTypeOptions}
         row={row}
         disabled={disabled}
-        //sx={{ flexWrap: "nowrap" }}
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "nowrap",
+          gap: { xs: 1, sm: 2, md: 3 },
+          minWidth: "min-content",
+          "& .MuiFormControlLabel-root": {
+            marginRight: 0,
+            flexShrink: 0,
+          },
+        }}
       />
     </FieldRow>
   );

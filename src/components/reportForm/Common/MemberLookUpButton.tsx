@@ -142,6 +142,9 @@ import TextInput from "@/components/form/TextInput";
 import MemberLookUpModal from "@/components/reportForm/Common/MemberLookUpModal";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
+import { lineHeight } from "@mui/system";
+import IconTextInput from "@/components/form/IconTextInput";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface MemberLookupButtonProps<T extends FieldValues> {
@@ -191,59 +194,39 @@ export default function MemberLookupButton<T extends FieldValues>({
   };
   return (
     <>
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      <Grid container spacing={2} sx={{ mb: 0.5, alignItems: "center" }}>
         {/* Member ID — part of request payload */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography
-            sx={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: "text.secondary",
-              mb: 0.5,
-            }}
-          >
-            Member ID
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <TextInput
+          <FieldRow label="Member ID">
+            <IconTextInput
               control={control as unknown as Control<FieldValues>}
+              size="small"
               name="memberId"
               placeholder="Enter Member ID"
               fullWidth
-            />
-            <IconButton
-              size="small"
-              onClick={handleOpen}
+              icon={<SearchIcon />}
+              onIconClick={handleOpen}
               sx={{
-                px: 2,
-                borderRadius: 1,
+                "& .MuiInputBase-root": {
+                  paddingRight: "4px",
+                },
               }}
-              title="Search for member"
-            >
-              <SearchIcon fontSize="small" />
-            </IconButton>
-          </Box>
+            />
+          </FieldRow>
         </Grid>
 
         {/* Member Name — display only, never sent to API */}
         <Grid size={{ xs: 12, md: 6 }}>
-          <Typography
-            sx={{
-              fontSize: 13,
-              fontWeight: 500,
-              color: "text.secondary",
-              mb: 0.5,
-            }}
-          >
-            Member Name
-          </Typography>
-          <TextField
-            size="small"
-            fullWidth
-            placeholder="Member name will appear here"
-            value={memberNameField.value ?? ""}
-            slotProps={{ input: { readOnly: true } }} // ✅ only set via modal
-          />
+          <FieldRow label="Member Name">
+            <TextField
+              size="small"
+              sx={{ flex: 1, minWidth: "200px" }}
+              fullWidth
+              placeholder="Member name"
+              value={memberNameField.value ?? ""}
+              slotProps={{ input: { readOnly: true } }} // ✅ only set via modal
+            />
+          </FieldRow>
         </Grid>
       </Grid>
 

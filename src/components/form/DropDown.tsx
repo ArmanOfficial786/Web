@@ -50,11 +50,11 @@ export default function DropDown({
           minWidth: "7rem",
         }}
       >
-        <InputLabel>{label}</InputLabel>
+        {/* //<InputLabel>{label}</InputLabel> */}
         <Select
           variant="outlined"
           size="small"
-          input={<OutlinedInput label={label} />}
+          // input={<OutlinedInput label={label} />}
           fullWidth={fullWidth}
           disabled={disabled}
           onOpen={onOpen ?? undefined} // ← forward here
@@ -90,11 +90,11 @@ export default function DropDown({
               display: "flex",
             }}
           >
-            <InputLabel>{label}</InputLabel>
+            {/* <InputLabel>{label}</InputLabel> */}
             <Select
               variant="outlined"
               size="small"
-              input={<OutlinedInput label={label} />}
+              // input={<OutlinedInput label={label} />}
               fullWidth={fullWidth}
               disabled={disabled}
               value={value ?? ""}

@@ -1,13 +1,5 @@
-// import { apiClient } from "./apiClient";
 
-// export const memberLookUpService = {
-//   getAllWithFilters: async (params: any) => {
-//     const response = await apiClient.api.memberLookUpSearchList(params);
-//     return response.data;
-//   },
-// };
-
-import { apiClient } from "./apiClient";
+import { apiClient } from "../apiClient";
 import type { MemberLookUpDtosPagedResult } from "types/api/api";
 
 export interface MemberLookUpSearchParams {

@@ -11,6 +11,7 @@ import {
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import { Box } from "@mui/system";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface CollectionCenterFieldProps<T extends FieldValues> {
@@ -52,13 +53,17 @@ export default function CollectionCenterField<T extends FieldValues>({
 
   return (
     <FieldRow label="Collection Center">
-      <DropDown
-        name={collectionCenterFieldName}
-        control={control}
-        label="Collection Center"
-        options={collectionCenterOptions}
-        fullWidth
-      />
+      <Box
+      // sx={{ width: 283 }}
+      >
+        <DropDown
+          name={collectionCenterFieldName}
+          control={control}
+          label="Collection Center"
+          options={collectionCenterOptions}
+          fullWidth
+        />
+      </Box>
     </FieldRow>
   );
 }

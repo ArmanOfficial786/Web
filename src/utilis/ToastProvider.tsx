@@ -29,8 +29,6 @@ export default function ToastProvider() {
       draggable
       pauseOnHover
       theme={mode === "dark" ? "dark" : "light"}
-      //   toastClassName={mode === "dark" ? "dark-toast" : "light-toast"}     //custom style for toast container
-      //   bodyClassName={mode === "dark" ? "dark-toast-body" : "light-toast-body"}
     />
   );
 }

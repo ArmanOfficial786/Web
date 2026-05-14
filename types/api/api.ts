@@ -190,7 +190,8 @@ export interface SavingAcWiseBalanceRequest {
   collectorId?: number;
   /** @format int64 */
   memberGroupId?: number;
-  collectionCenterId?: string | null;
+  /** @format int64 */
+  collectionCenterId?: number;
   enableCollectionCenter?: boolean;
   enableGroup?: boolean;
   sameCompanyName?: boolean;
@@ -620,10 +621,10 @@ export class Api<
      * No description
      *
      * @tags SavingACWiseBalanceReport
-     * @name SavingAcWiseBalanceReportSavingAcWiseBalanceReportCreate
-     * @request POST:/api/SavingACWiseBalanceReport/SavingACWiseBalanceReport
+     * @name SavingAcWiseBalanceReportCreate
+     * @request POST:/api/SavingACWiseBalanceReport
      */
-    savingAcWiseBalanceReportSavingAcWiseBalanceReportCreate: (
+    savingAcWiseBalanceReportCreate: (
       data: SavingAcWiseBalanceRequest,
       query?: {
         /** @default "VIEW" */
@@ -632,7 +633,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/SavingACWiseBalanceReport/SavingACWiseBalanceReport`,
+        path: `/api/SavingACWiseBalanceReport`,
         method: "POST",
         query: query,
         body: data,

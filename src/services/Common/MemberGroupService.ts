@@ -1,5 +1,5 @@
-import { apiClient } from "./apiClient";
-import { MemberGroupRequestDtos } from "../../types/api/api";
+import { apiClient } from "../apiClient";
+import { MemberGroupRequestDtos } from "types/api/api";
 
 export const memberGroupService = {
   getAll: async (data: MemberGroupRequestDtos) => {

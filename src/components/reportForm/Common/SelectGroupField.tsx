@@ -11,6 +11,7 @@ import {
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import Box from "node_modules/@mui/system/esm/Box/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SelectGroupFieldProps<T extends FieldValues> {
@@ -65,13 +66,15 @@ export default function SelectGroupField<T extends FieldValues>({
 
   return (
     <FieldRow label="Select Group">
-      <DropDown
-        name={groupFieldName}
-        control={control}
-        label="Select Group"
-        options={memberGroupOptions}
-        fullWidth
-      />
+      <Box>
+        <DropDown
+          name={groupFieldName}
+          control={control}
+          label="Select Group"
+          options={memberGroupOptions}
+          fullWidth
+        />
+      </Box>
     </FieldRow>
   );
 }

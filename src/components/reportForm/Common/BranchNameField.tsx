@@ -27,7 +27,9 @@ export default function BranchNameField<T extends FieldValues>({
 
   return (
     <FieldRow label="Branch Name">
-      <Box>
+      <Box
+      //  sx={{ width: 283 }}
+      >
         <DropDown
           name={branchFieldName}
           control={control}

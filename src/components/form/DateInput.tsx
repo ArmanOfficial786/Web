@@ -32,7 +32,7 @@ function DateInput({
     if (dateType === "BS") {
       return (
         <NepaliDatePicker
-          label={label}
+          //label={label}
           error={error}
           helperText={helperText}
           onChange={() => {}}
@@ -44,7 +44,7 @@ function DateInput({
       <TextField
         variant="outlined"
         size="small"
-        label={label}
+        //label={label}
         sx={{ display: "flex" }}
         error={error}
         helperText={helperText}
@@ -68,7 +68,7 @@ function DateInput({
         if (dateType === "BS") {
           return (
             <NepaliDatePicker
-              label={label}
+              //label={label}
               value={value ?? ""}
               onChange={(bsDate: string) => onChange(bsDate)}
               error={!!fieldState.error}
@@ -83,7 +83,7 @@ function DateInput({
             error={!!fieldState.error}
             helperText={fieldState.error?.message}
             type="date"
-            label={label}
+            //label={label}
             size="small"
             variant="outlined"
             InputLabelProps={{ shrink: true }}

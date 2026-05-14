@@ -91,24 +91,24 @@ function MemberIdCard({
       {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {/* ── FORM ───────────────────────────────────────────────────────── */}
-        <Paper variant="outlined" sx={{ p: 1.5 }}>
+        <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
           <Typography
             variant="h6"
-            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
+            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
             Create Member ID Card
           </Typography>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 1 — Member Lookup */}
           <MemberLookupButton<MemberIdCardFormValues> control={control} />
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 2 — From Date | Till Date */}
-          <Box sx={{ mb: 1 }}>
+          <Box sx={{ mb: 0.5 }}>
             <DateFields control={control} />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 3 — Branch | Collection Center */}
           <Box
@@ -116,7 +116,7 @@ function MemberIdCard({
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
+              mb: 0.5,
             }}
           >
             <BranchNameField<MemberIdCardFormValues>
@@ -130,7 +130,7 @@ function MemberIdCard({
               collectionCenterFieldName="collectionCenterId"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 4 — Select Group | Order By */}
           <Box
@@ -138,7 +138,7 @@ function MemberIdCard({
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
+              mb: 0.5,
             }}
           >
             <SelectGroupField<MemberIdCardFormValues>
@@ -154,7 +154,7 @@ function MemberIdCard({
               reportKey="memberIdCard"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 5 — View Report | Clear */}
           <Grid container spacing={1} alignItems="center">

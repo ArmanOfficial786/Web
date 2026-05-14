@@ -19,7 +19,7 @@ declare module "axios" {
   }
 }
 
-// ── Matches your backend GeneralResponse<T> shape ─────────────────────────────
+// ── Matches backend GeneralResponse<T> ────────────────────────────────────────
 export interface GeneralResponse<T = any> {
   isValid?: boolean;
   statusCode?: number;
@@ -37,8 +37,6 @@ interface DotnetValidationError {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
-// Reads a Blob as text and parses it as GeneralResponse
 const parseBlobAsGeneralResponse = async (
   blob: Blob,
 ): Promise<GeneralResponse | null> => {
@@ -50,9 +48,33 @@ const parseBlobAsGeneralResponse = async (
   }
 };
 
-const showGeneralResponseError = (res: GeneralResponse): void => {
-  toast.error(res.message ?? "Request failed", { position: "top-right" });
+const showError = (message: string): void => {
+  toast.error(message, { position: "top-right" });
 };
+
+const showSuccess = (message: string): void => {
+  toast.success(message, { position: "top-right" });
+};
+
+// ── Read X-Message header — backend sends it URL-encoded ──────────────────────
+// Response.Headers.Append("X-Message", Uri.EscapeDataString("Report generated successfully"))
+const readXMessage = (response: AxiosResponse): string | null => {
+  const raw = response.headers["x-message"] as string | undefined;
+  if (!raw) return null;
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    return raw; // fallback: return as-is if decoding fails
+  }
+};
+
+// ── Binary MIME types that come back as PDF/Office/image blobs ────────────────
+const BINARY_MIME_TYPES = new Set([
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/png",
+]);
 
 // ── Request interceptor ───────────────────────────────────────────────────────
 export const requestInterceptor = async (
@@ -68,38 +90,36 @@ export const successResponseInterceptor = async (
   response: AxiosResponse,
 ): Promise<AxiosResponse> => {
   const data = response.data;
+  const isSilent = response.config?.silentSuccess === true;
 
   // ── Blob response (VIEW / EXPORT binary) ──────────────────────────────
   if (data instanceof Blob) {
-    // ✅ Raw PDF/XLSX/DOCX binary — pass through silently
-    if (
-      data.type === "application/pdf" ||
-      data.type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-      data.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-      data.type === "image/png"
-    ) {
+    // ── Raw binary (PDF / XLSX / DOCX / PNG) ──────────────────────────
+    if (BINARY_MIME_TYPES.has(data.type)) {
+      // ✅ Read X-Message header — set by backend on binary responses
+      // e.g. Response.Headers.Append("X-Message", Uri.EscapeDataString("Report generated successfully"))
+      // JSON body is not available here (response IS the binary) so the
+      // header is the only channel for success messages on blob endpoints
+      if (!isSilent) {
+        const message = readXMessage(response);
+        if (message) showSuccess(message);
+      }
       return response;
     }
 
-    // JSON wrapped in blob — parse it and replace response.data
+    // ── JSON error wrapped in a blob (e.g. 400 with responseType:blob) ─
     if (data.type === "application/json") {
       const parsed = await parseBlobAsGeneralResponse(data);
       if (parsed) {
         response.data = parsed;
-
         if (parsed.isValid === false) {
-          showGeneralResponseError(parsed);
-        } else if (parsed.message && parsed.isValid === true) {
-          const isSilent = response.config?.silentSuccess === true;
-          // ✅ REMOVE the !isReportView check
-          if (!isSilent) {
-            toast.success(parsed.message);
-          }
+          showError(parsed.message ?? "Request failed");
+        } else if (parsed.message && parsed.isValid === true && !isSilent) {
+          showSuccess(parsed.message);
         }
       }
     }
+
     return response;
   }
 
@@ -108,14 +128,12 @@ export const successResponseInterceptor = async (
     const res = data as GeneralResponse;
 
     if (res.isValid === false) {
-      showGeneralResponseError(res);
+      showError(res.message ?? "Request failed");
       return response;
     }
 
-    // ✅ Show success toast unless silenced
-    const isSilent = response.config?.silentSuccess === true;
     if (res.message && !isSilent) {
-      toast.success(res.message, { position: "top-right" });
+      showSuccess(res.message);
     }
   }
 
@@ -135,28 +153,24 @@ export const errorResponseInterceptor = async (
   if (error.response) {
     const responseData = error.response.data;
 
-    // ── Blob error — server returned JSON error but responseType was blob
-    // ✅ This is the key fix: 404/500 with responseType:blob lands here as Blob
+    // ── Blob error — server returned JSON error but responseType was blob ─
     if (responseData instanceof Blob) {
       const parsed = await parseBlobAsGeneralResponse(responseData);
       if (parsed) {
-        showGeneralResponseError(parsed);
+        showError(parsed.message ?? "Request failed");
       } else {
-        toast.error("An error occurred reading the response.", {
-          position: "top-right",
-        });
+        showError("An error occurred reading the response.");
       }
       return Promise.reject(error);
     }
 
-    // ── GeneralResponse JSON error (isValid: false) ───────────────────
+    // ── GeneralResponse JSON error ────────────────────────────────────
     if (
       typeof responseData === "object" &&
       responseData !== null &&
       "isValid" in responseData
     ) {
-      const res = responseData as GeneralResponse;
-      showGeneralResponseError(res);
+      showError((responseData as GeneralResponse).message ?? "Request failed");
       return Promise.reject(error);
     }
 

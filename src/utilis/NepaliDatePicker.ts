@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import FormHelperText from "@mui/material/FormHelperText";
 
 // ── BS calendar data ──────────────────────────────────────────────────────────
@@ -76,7 +75,7 @@ export interface NepaliDatePickerProps {
   size?: "small" | "medium";
 }
 
-// ── Component (no JSX — pure React.createElement) ────────────────────────────
+// ── Component ────────────────────────────────────────────────────────────
 const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
   value = "",
   onChange,
@@ -129,40 +128,45 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     (_, i) => i + 1,
   );
 
-  // ── Year select ──────────────────────────────────────────────────────────
+  // ── Year select (without label) ──────────────────────────────────────────
   const yearSelect = React.createElement(
     FormControl,
-    { size, error, sx: { minWidth: 0 }, fullWidth: true },
-    React.createElement(InputLabel, null, "Year"),
+    { size, error, sx: { minWidth: 100 }, fullWidth: true },
     React.createElement(
       Select,
       {
-        label: "Year",
         value: year,
         disabled,
+        displayEmpty: true,
+        renderValue: (value: any) => value || "Year",
         onChange: (e: { target: { value: unknown } }) =>
           setYear(Number(e.target.value)),
       },
+      React.createElement(MenuItem, { value: "", disabled: true }, "Year"),
       ...years.map((y) =>
         React.createElement(MenuItem, { key: y, value: y }, y),
       ),
     ),
   );
 
-  // ── Month select ─────────────────────────────────────────────────────────
+  // ── Month select (without label) ─────────────────────────────────────────
   const monthSelect = React.createElement(
     FormControl,
-    { size, error, sx: { minWidth: 0 }, fullWidth: true },
-    React.createElement(InputLabel, null, "Month"),
+    { size, error, sx: { minWidth: 150 }, fullWidth: true },
     React.createElement(
       Select,
       {
-        label: "Month",
         value: month,
         disabled,
+        displayEmpty: true,
+        renderValue: (value: any) => {
+          if (!value) return "Month";
+          return `${String(value).padStart(2, "0")} – ${BS_MONTHS[value - 1]}`;
+        },
         onChange: (e: { target: { value: unknown } }) =>
           setMonth(Number(e.target.value)),
       },
+      React.createElement(MenuItem, { value: "", disabled: true }, "Month"),
       ...months.map((m) =>
         React.createElement(
           MenuItem,
@@ -173,20 +177,21 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     ),
   );
 
-  // ── Day select ───────────────────────────────────────────────────────────
+  // ── Day select (without label) ───────────────────────────────────────────
   const daySelect = React.createElement(
     FormControl,
-    { size, error, sx: { minWidth: 80 } },
-    React.createElement(InputLabel, null, "Day"),
+    { size, error, sx: { minWidth: 96 }, fullWidth: true },
     React.createElement(
       Select,
       {
-        label: "Day",
         value: day,
         disabled,
+        displayEmpty: true,
+        renderValue: (value: any) => value || "Day",
         onChange: (e: { target: { value: unknown } }) =>
           setDay(Number(e.target.value)),
       },
+      React.createElement(MenuItem, { value: "", disabled: true }, "Day"),
       ...days.map((d) =>
         React.createElement(
           MenuItem,
@@ -206,19 +211,6 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     daySelect,
   );
 
-  // ── Optional label ───────────────────────────────────────────────────────
-  const labelEl = label
-    ? React.createElement(
-        InputLabel,
-        {
-          shrink: true,
-          error,
-          sx: { position: "static", transform: "none", mb: 0.5, fontSize: 14 },
-        },
-        label,
-      )
-    : null;
-
   // ── Optional helper text ─────────────────────────────────────────────────
   const helperEl = helperText
     ? React.createElement(
@@ -229,7 +221,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     : null;
 
   // ── Root ─────────────────────────────────────────────────────────────────
-  return React.createElement(Box, null, labelEl, selectsRow, helperEl);
+  return React.createElement(Box, null, selectsRow, helperEl);
 };
 
 export default NepaliDatePicker;

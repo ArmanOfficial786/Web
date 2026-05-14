@@ -76,7 +76,7 @@ export default function ViewReportButton<T extends FieldValues>({
       size="small"
       disabled={loading}
       onClick={handleClick}
-      sx={{ whiteSpace: "nowrap", height: 36 }}
+      sx={{ whiteSpace: "nowrap", height: 30 }}
     >
       {loading ? "Loading..." : "View Report"}
     </Button>

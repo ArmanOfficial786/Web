@@ -265,9 +265,6 @@
 //   );
 // }
 
-
-
-
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -276,7 +273,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 
-import accountStatementService from "@/services/AccountStatementService";
+import accountStatementService from "@/services/memberAccount/AccountStatementService";
 import type {
   AccountStatementRequest,
   ReportResponseDtos,

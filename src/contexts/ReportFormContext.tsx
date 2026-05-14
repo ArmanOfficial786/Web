@@ -8,12 +8,12 @@ import React, {
   useRef,
   ReactNode,
 } from "react";
-import branchService from "@/services/BranchService";
-import orderByService from "@/services/OrderByService";
-import { memberLookUpService } from "@/services/MemberLookUpService";
-import { collectionCenterService } from "@/services/CollectionCenterService";
+import branchService from "@/services/Common/BranchService";
+import orderByService from "@/services/Common/OrderByService";
+import { memberLookUpService } from "@/services/Common/MemberLookUpService";
+import { collectionCenterService } from "@/services/Common/CollectionCenterService";
 import { BranchResponse, OrderByResponse } from "types/api/api";
-import { memberGroupService } from "@/services/MemberGroupService";
+import { memberGroupService } from "@/services/Common/MemberGroupService";
 
 export type SelectOption = { id: number | string; name: string };
 export type OrderByReportKey = "memberIdCard" | "savingTypeWiseBalance";
@@ -197,7 +197,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       const res = await collectionCenterService.getAll({
         lstOfficeId: branchId,
       });
-      const mapped = (res ?? []).map((c) => ({
+      const mapped = (res ?? []).map((c: any) => ({
         id: c.collectionCenterId ?? 0,
         name: c.collectionCenterName ?? "",
       }));
@@ -224,7 +224,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
           lstOfficeId: branchId,
           collectionCenterId,
         });
-        const mapped = (res ?? []).map((g) => ({
+        const mapped = (res ?? []).map((g: any) => ({
           id: g.memberGroupId ?? 0,
           name: g.name ?? "",
         }));

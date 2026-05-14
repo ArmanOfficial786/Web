@@ -105,6 +105,14 @@ import {
   createTheme,
 } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import {
+  bgcolor,
+  display,
+  fontSize,
+  gap,
+  justifyContent,
+  minWidth,
+} from "@mui/system";
 
 const theme = createTheme({
   cssVariables: {
@@ -159,6 +167,27 @@ const theme = createTheme({
         "html.light": {
           background: "#f8fafc !important",
         },
+
+        // Global styles for Select/Dropdown height
+        ".MuiSelect-select,.MuiInputBase-input": {
+          padding: "0px 10px !important", // Adjust vertical padding
+          minHeight: "30px !important",
+          display: "flex !important",
+          alignItems: "center !important",
+          lineHeight: "1 !important", // Control line height
+        },
+
+        // Control font size globally
+        ".MuiSelect-select, .MuiInputBase-input,.MuiFormControlLabel-label,.MuiButton-label, .MuiTypography-root,":
+          {
+            fontSize: "0.875rem !important", // 14px
+            lineHeight: "1.43 !important",
+          },
+        ".MuiRadio-root,.MuiRadio-root svg": {
+          fontSize: "0.875rem !important", // 14px
+          display: "flex",
+        },
+
         body: {
           margin: 0,
           padding: 0,
@@ -177,7 +206,7 @@ const theme = createTheme({
           background: "transparent !important",
         },
         // Dark mode shadows and borders
-        ".dark nav, .dark aside, .dark .card": {
+        ".dark nav, .dark aside, .dark .card,.dark .MuiPaper-root ": {
           boxShadow:
             "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2)",
           border: "1px solid rgba(255, 255, 255, 0.1)",
@@ -191,10 +220,14 @@ const theme = createTheme({
           color: "#ffffff !important",
         },
         // Light mode shadows
-        ".light nav, .light aside, .light .card": {
+        ".light nav, .light aside, .light .card,": {
           boxShadow:
             "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
           border: "none",
+        },
+        ".light .MuiPaper-root": {
+          backgroundColor: "#e0e0e0 !important", // gray.300 equivalent
+          color: "#000000 !important",
         },
         ".light nav *, .light aside *, .light button, .light h1, .light div, .light .p, .light .span,.light .card,.dark .label,":
           {

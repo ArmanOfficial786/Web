@@ -210,14 +210,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
 "use client";
 
 import React, { useRef } from "react";
@@ -310,26 +302,25 @@ export default function AccountStatement({
       )}
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Paper variant="outlined" sx={{ p: 1.5 }}>
+        <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
           <Typography
             variant="h6"
-            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
+            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
             Account Statement Report
           </Typography>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
-          <Box sx={{ mb: 1 }}>
+          <Box sx={{ mb: 0.5 }}>
             <DateFields control={control} />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
             }}
           >
             <OfficeNameField<AccountStatementRequestExtended>
@@ -341,14 +332,13 @@ export default function AccountStatement({
               name="reportType"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{}} />
 
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
               gap: 2,
-              mb: 1,
             }}
           >
             <TransactionTypeField<AccountStatementRequestExtended>
@@ -360,14 +350,13 @@ export default function AccountStatement({
               labelPlacement="end"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
             }}
           >
             <OrderByField<AccountStatementRequestExtended>
@@ -376,7 +365,7 @@ export default function AccountStatement({
               reportKey="savingTypeWiseBalance"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>

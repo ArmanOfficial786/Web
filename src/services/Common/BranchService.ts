@@ -1,10 +1,10 @@
 import { BranchResponse } from "types/api/api";
-import { apiClient } from "./apiClient";
+import { apiClient } from "../apiClient";
 
 const branchService = {
   getAll: async (): Promise<BranchResponse[]> => {
     const response = await apiClient.api.branchGetAllBranchesList({
-      silentSuccess: true,
+      //silentSuccess: true,
     });
     return response.data.data ?? [];
   },

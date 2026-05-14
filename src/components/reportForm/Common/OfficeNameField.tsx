@@ -68,7 +68,7 @@ export default function OfficeNameField<T extends FieldValues>({
         <DropDownMultiple
           name={branchFieldName}
           control={control}
-          label="Office Name"
+          label=""
           options={realBranches}
           fullWidth
           showSelectAll

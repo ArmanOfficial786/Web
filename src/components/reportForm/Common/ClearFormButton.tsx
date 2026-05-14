@@ -32,7 +32,7 @@ export default function ClearFormButton<T extends FieldValues>({
       color="secondary"
       size="small"
       onClick={handleClear}
-      sx={{ whiteSpace: "nowrap", height: 36 }}
+      sx={{ whiteSpace: "nowrap", height: 30 }}
     >
       Clear
     </Button>
