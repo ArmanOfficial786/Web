@@ -1,7 +1,7 @@
 "use client";
 
-import SavingAcWiseBalance from "@/components/reports/accountReport/SavingAcWiseBalance";
-import savingAcWiseBalanceService from "@/services/Account/SavingAcWiseBalanceService";
+import SavingAcWiseBalance from "@/components/reports/memberAccount/SavingAcWiseBalance";
+import savingAcWiseBalanceService from "@/services/memberAccount/SavingAcWiseBalanceService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { type ReportFormat } from "@/utilis/Constants/reportConstants";

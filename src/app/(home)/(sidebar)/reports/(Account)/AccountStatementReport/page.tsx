@@ -273,14 +273,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 
-import accountStatementService from "@/services/memberAccount/AccountStatementService";
+import accountStatementService from "@/services/Account/AccountStatementService";
 import type {
   AccountStatementRequest,
   ReportResponseDtos,
 } from "types/api/api";
 import AccountStatement, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/AccountStatement";
+} from "@/components/reports/accountReport/AccountStatement";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

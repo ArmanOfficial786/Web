@@ -60,6 +60,29 @@ export interface CollectionCenterResponseDto {
   collectionCenterName?: string | null;
 }
 
+export interface ConvertRequestDto {
+  direction?: string | null;
+  date?: string | null;
+}
+
+export interface ConvertResponseDto {
+  convertedDate?: string | null;
+  /** @format int32 */
+  year?: number;
+  /** @format int32 */
+  month?: number;
+  /** @format int32 */
+  day?: number;
+}
+
+export interface DaysResponseDto {
+  /** @format int32 */
+  year?: number;
+  /** @format int32 */
+  month?: number;
+  days?: number[] | null;
+}
+
 export interface MemberDetailRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -195,6 +218,10 @@ export interface SavingAcWiseBalanceRequest {
   enableCollectionCenter?: boolean;
   enableGroup?: boolean;
   sameCompanyName?: boolean;
+}
+
+export interface YearsResponseDto {
+  years?: number[] | null;
 }
 
 import type {
@@ -423,6 +450,65 @@ export class Api<
         path: `/api/Branch/GetAllBranches`,
         method: "GET",
         query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Calendar
+     * @name CalendarYearsList
+     * @request GET:/api/Calendar/years
+     */
+    calendarYearsList: (params: RequestParams = {}) =>
+      this.request<YearsResponseDto, any>({
+        path: `/api/Calendar/years`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Calendar
+     * @name CalendarDaysList
+     * @request GET:/api/Calendar/days
+     */
+    calendarDaysList: (
+      query?: {
+        /** @format int32 */
+        year?: number;
+        /** @format int32 */
+        month?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<DaysResponseDto, any>({
+        path: `/api/Calendar/days`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Calendar
+     * @name CalendarConvertCreate
+     * @request POST:/api/Calendar/convert
+     */
+    calendarConvertCreate: (
+      data: ConvertRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<ConvertResponseDto, any>({
+        path: `/api/Calendar/convert`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

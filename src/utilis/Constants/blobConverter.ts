@@ -1,6 +1,6 @@
 // utils/blobConverter.ts
 
-import { ReportFormat } from "@/components/reports/memberAccount/AccountStatement";
+import { ReportFormat } from "@/components/reports/accountReport/AccountStatement";
 import { mimeTypes } from "./reportConstants";
 
 export function responseToBlob(data: unknown, format: ReportFormat): Blob {

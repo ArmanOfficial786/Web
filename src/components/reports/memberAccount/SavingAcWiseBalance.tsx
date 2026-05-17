@@ -25,7 +25,7 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import { type SavingAcWiseBalanceRequest } from "types/api/api";
-import { type SavingAcWiseBalanceResponseExtended } from "@/app/(home)/(sidebar)/reports/(Account)/SavingAcWiseBalanceReport/page";
+import { type SavingAcWiseBalanceResponseExtended } from "@/app/(home)/(sidebar)/reports/(MemberAccount)/SavingAcWiseBalanceReport/page";
 
 export type { ReportFormat };
 

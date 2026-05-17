@@ -212,12 +212,120 @@ const theme = createTheme({
           border: "1px solid rgba(255, 255, 255, 0.1)",
           backdropFilter: "blur(10px)",
         },
-        " .dark aside *, .dark button, .dark h1, .dark div, .dark .label, .dark .span, .dark .card,.dark .select":
+        " .dark aside *, .dark button, .dark h1, .dark div, .dark .label, .dark .span, .dark .card,.dark .select,.dark ":
           {
             color: "#ffffff !important",
           },
         ".dark nav svg, .dark aside svg": {
           color: "#ffffff !important",
+        },
+        ".dark .MuiDialog-paper": {
+          backgroundColor: "#1e1e1e !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiDialogTitle-root": {
+          backgroundColor: "#1e1e1e !important",
+          color: "#ffffff !important",
+          borderBottom: "1px solid #333 !important",
+        },
+        ".dark .MuiDialogContent-root": {
+          backgroundColor: "#1e1e1e !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiTableContainer-root .MuiPaper-root": {
+          backgroundColor: "#1e1e1e !important",
+          boxShadow: "none !important",
+        },
+        ".dark .MuiTableHead-root .MuiTableCell-root": {
+          backgroundColor: "#1e3a5f !important",
+          color: "#ffffff !important",
+          borderBottom: "1px solid #333 !important",
+        },
+        ".dark .MuiTableBody-root .MuiTableRow-root .MuiTableCell-root": {
+          borderBottom: "1px solid #333 !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiTableBody-root .MuiTableRow-root:nth-of-type(even) .MuiTableCell-root":
+          {
+            backgroundColor: "#2a2a2a !important",
+          },
+        ".dark .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) .MuiTableCell-root":
+          {
+            backgroundColor: "#1e1e1e !important",
+          },
+        ".dark .MuiTableBody-root .MuiTableRow-root:hover .MuiTableCell-root": {
+          backgroundColor: "#3a3a3a !important",
+        },
+        ".dark .MuiTableRow-root.MuiTableRow-head + .MuiTableRow-root .MuiTableCell-root":
+          {
+            backgroundColor: "#252525 !important",
+          },
+        ".dark .MuiTableCell-root .MuiInputBase-root": {
+          backgroundColor: "#2a2a2a !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiTableCell-root .MuiOutlinedInput-notchedOutline": {
+          borderColor: "#555 !important",
+        },
+        ".dark .MuiChip-root": {
+          backgroundColor: "#2c4a7a !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiChip-root .MuiChip-label": {
+          color: "#ffffff !important",
+        },
+        ".dark .MuiPaginationItem-root": {
+          color: "#ffffff !important",
+        },
+        ".dark .MuiPaginationItem-root.Mui-selected": {
+          backgroundColor: "#2c4a7a !important",
+          color: "#ffffff !important",
+        },
+        ".dark .MuiIconButton-root": {
+          color: "#ffffff !important",
+        },
+        ".dark .MuiIconButton-root:hover": {
+          backgroundColor: "#3a3a3a !important",
+        },
+        ".dark .MuiBox-root:has(> .MuiPagination-root)": {
+          backgroundColor: "#2a2a2a !important",
+        },
+        ".dark .MuiBox-root:has(> .MuiTypography-caption)": {
+          backgroundColor: "#2a2a2a !important",
+        },
+        ".dark .MuiBox-root:has(> .MuiTypography-caption) .MuiTypography-caption":
+          {
+            color: "#aaaaaa !important",
+          },
+        ".dark .MuiBox-root:has(> .MuiTypography-body2)": {
+          backgroundColor: "#2a2a2a !important",
+        },
+        ".dark .MuiBox-root:has(> .MuiTypography-body2) .MuiTypography-body2": {
+          color: "#ffffff !important",
+        },
+        // For the group-by hint bar
+        ".dark .MuiBox-root:has(> .MuiTypography-caption) + .MuiBox-root": {
+          backgroundColor: "#252525 !important",
+          borderBottom: "1px solid #333 !important",
+        },
+        // For the "Select" button
+        ".dark .MuiTableCell-root .MuiBox-root": {
+          backgroundColor: "#2c6fad !important",
+          "&:hover": {
+            backgroundColor: "#1a5a96 !important",
+          },
+        },
+        // For the sticky action cell background
+        ".dark .MuiTableCell-root[style*='position: sticky']": {
+          backgroundColor: "inherit !important",
+        },
+        ".dark .MuiTableBody-root .MuiTableRow-root .MuiTableCell-root[style*='position: sticky']":
+          {
+            backgroundColor: "inherit !important",
+          },
+        // Ensure table container borders are subtle
+        ".dark .MuiTableContainer-root": {
+          borderColor: "#333 !important",
         },
         // Light mode shadows
         ".light nav, .light aside, .light .card,": {

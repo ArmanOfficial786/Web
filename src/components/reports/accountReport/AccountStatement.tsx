@@ -241,7 +241,7 @@ import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import type {
   AccountStatementRequestExtended,
   AccountStatementResponseExtended,
-} from "@/app/(home)/(sidebar)/reports/(MemberAccount)/AccountStatementReport/page";
+} from "@/app/(home)/(sidebar)/reports/(Account)/AccountStatementReport/page";
 
 export type { ReportFormat };
 
