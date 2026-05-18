@@ -30,18 +30,17 @@ export interface MemberIdCardResponseExtended {
 const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
   memberId: yup.string().nullable().optional().default(null),
   memberName: yup.string().optional().default(""),
-  fromDate: yup.string().nullable().optional().default(null),
+  fromDate: yup.string().required("From Date is required").default(""),
   toDate: yup
     .string()
-    .nullable()
-    .optional()
+    .required("To Date is required")
     .default(null)
     .test("bs-min", "Till Date cannot be before From Date", function (val) {
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
   orderby: yup.string().nullable().optional().default("0"),
-  branchId: yup.number().optional().default(2),
+  branchId: yup.number().required("Branch ID is required").default(2),
   collectionCenterId: yup.number().optional().default(0),
   memberGroupId: yup.number().optional().default(0),
   currentPage: yup.number().optional().default(1),
@@ -58,7 +57,6 @@ const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   orderby: v.orderby,
   currentPage: 1,
   pageSize: v.pageSize ?? 10,
-  // collectionCenterId & memberName are UI-only — intentionally omitted
 });
 
 // ── Default pagination fallback ────────────────────────────────────────────

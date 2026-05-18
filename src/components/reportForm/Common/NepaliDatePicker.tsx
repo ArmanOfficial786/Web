@@ -389,7 +389,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
-import FormHelperText from "@mui/material/FormHelperText";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import calendarService from "@/services/Common/ComCalendarService";
@@ -434,6 +433,15 @@ export interface NepaliDatePickerProps {
   helperText?: string;
   disabled?: boolean;
   size?: "small" | "medium";
+  /**
+   * Full upper-bound restriction (yyyy-mm-dd in BS).
+   * Hides years, months AND days beyond this date in all three dropdowns.
+   */
+  maxDate?: string;
+  /**
+   * Year-only upper-bound. Ignored when maxDate is supplied.
+   */
+  maxYear?: number;
 }
 
 const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
@@ -443,25 +451,49 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
   blankSelection = false,
   requiredValidation = false,
   error = false,
-  helperText,
   disabled = false,
   size = "small",
+  maxDate,
+  maxYear,
 }) => {
   const [years, setYears] = useState<number[]>([]);
   const [days, setDays] = useState<number[]>([]);
   const [year, setYear] = useState<number>(blankSelection ? BLANK : 0);
   const [month, setMonth] = useState<number>(blankSelection ? BLANK : 1);
   const [day, setDay] = useState<number>(blankSelection ? BLANK : 0);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   const initialValueSet = useRef(false);
 
+  const parsedMaxDate = maxDate ? parseBS(maxDate) : null;
+  const effectiveMaxYear = parsedMaxDate?.year ?? maxYear ?? null;
+
+  // ── Dropdown filtering ────────────────────────────────────────────────────
+  const visibleYears = effectiveMaxYear
+    ? years.filter((y) => y <= effectiveMaxYear)
+    : years;
+
+  const visibleMonths = (() => {
+    if (parsedMaxDate && year === parsedMaxDate.year)
+      return BS_MONTHS.filter((m) => m.value <= parsedMaxDate.month);
+    return BS_MONTHS;
+  })();
+
+  const visibleDays = (() => {
+    if (
+      parsedMaxDate &&
+      year === parsedMaxDate.year &&
+      month === parsedMaxDate.month
+    )
+      return days.filter((d) => d <= parsedMaxDate.day);
+    return days;
+  })();
+
+  // ── Emit helper ───────────────────────────────────────────────────────────
   const emitDate = (y: number, m: number, d: number) => {
-    if (y && y !== BLANK && m && m !== BLANK && d && d !== BLANK) {
+    if (y && y !== BLANK && m && m !== BLANK && d && d !== BLANK)
       onChange(`${y}-${pad2(m)}-${pad2(d)}`);
-    }
   };
 
-  // Mount: years + initial date
+  // ── Mount: load years + resolve initial date ──────────────────────────────
   useEffect(() => {
     let cancelled = false;
     const init = async () => {
@@ -492,6 +524,9 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
           }
         }
 
+        if (effectiveMaxYear && initYear > effectiveMaxYear)
+          initYear = effectiveMaxYear;
+
         if (!cancelled) {
           setYear(initYear);
           setMonth(initMonth);
@@ -504,9 +539,15 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
             const allDays = await calendarService.getDays(initYear, initMonth);
             if (!cancelled) {
               setDays(allDays);
+              const maxDayForSlot =
+                parsedMaxDate &&
+                initYear === parsedMaxDate.year &&
+                initMonth === parsedMaxDate.month
+                  ? Math.min(allDays.length, parsedMaxDate.day)
+                  : allDays.length;
               const clamped =
                 initDay > 0
-                  ? Math.min(initDay, allDays.length)
+                  ? Math.min(initDay, maxDayForSlot)
                   : blankSelection
                     ? BLANK
                     : 1;
@@ -517,9 +558,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
             setDay(blankSelection ? BLANK : 0);
           }
         }
-      } catch (e: any) {
-        if (!cancelled) setFetchError(e?.message ?? "Calendar failed to load.");
-      }
+      } catch (e: any) {}
     };
     init();
     return () => {
@@ -527,7 +566,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     };
   }, []);
 
-  // Fetch days when year/month changes
+  // ── Fetch days when year/month changes ────────────────────────────────────
   useEffect(() => {
     if (!year || year === BLANK || !month || month === BLANK) {
       setDays([]);
@@ -540,23 +579,27 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       .then((allDays) => {
         if (cancelled) return;
         setDays(allDays);
+        const maxDayForSlot =
+          parsedMaxDate &&
+          year === parsedMaxDate.year &&
+          month === parsedMaxDate.month
+            ? Math.min(allDays.length, parsedMaxDate.day)
+            : allDays.length;
         const newDay = blankSelection
           ? BLANK
-          : day && day !== BLANK && day <= allDays.length
+          : day && day !== BLANK && day <= maxDayForSlot
             ? day
             : allDays[0] || 1;
         setDay(newDay);
         emitDate(year, month, newDay);
       })
-      .catch((e) => {
-        if (!cancelled) setFetchError(e?.message ?? "Failed to load days.");
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, [year, month]);
 
-  // Emit on any valid change
+  // ── Emit on any valid change ──────────────────────────────────────────────
   useEffect(() => {
     if (
       year &&
@@ -565,12 +608,11 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       month !== BLANK &&
       day &&
       day !== BLANK
-    ) {
+    )
       emitDate(year, month, day);
-    }
   }, [year, month, day]);
 
-  // Sync when external value changes (e.g., after reset)
+  // ── Sync when external value changes (e.g. after reset) ──────────────────
   const prevValueRef = useRef<string>(value);
   useEffect(() => {
     const prev = prevValueRef.current;
@@ -586,9 +628,8 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         month !== BLANK &&
         day &&
         day !== BLANK
-      ) {
+      )
         emitDate(year, month, day);
-      }
       return;
     }
     const p = parseBS(value);
@@ -600,6 +641,29 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     }
   }, [value]);
 
+  // ── Guard: clamp selections when maxDate/maxYear prop changes ────────────
+  useEffect(() => {
+    if (!parsedMaxDate) return;
+    if (year !== BLANK && year > parsedMaxDate.year) {
+      setYear(parsedMaxDate.year);
+    } else if (year === parsedMaxDate.year) {
+      if (month !== BLANK && month > parsedMaxDate.month)
+        setMonth(parsedMaxDate.month);
+      else if (
+        month === parsedMaxDate.month &&
+        day !== BLANK &&
+        day > parsedMaxDate.day
+      )
+        setDay(parsedMaxDate.day);
+    }
+  }, [maxDate]);
+
+  useEffect(() => {
+    if (!effectiveMaxYear) return;
+    if (year !== BLANK && year > effectiveMaxYear) setYear(effectiveMaxYear);
+  }, [maxYear]);
+
+  // ── Derived error state ───────────────────────────────────────────────────
   const isInvalid =
     requiredValidation &&
     (!year ||
@@ -610,9 +674,11 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       day === BLANK);
   const hasError = error || isInvalid;
 
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Box>
       <Box sx={{ display: "flex", gap: 1 }}>
+        {/* Year */}
         <FormControl
           size={size}
           error={hasError}
@@ -637,13 +703,15 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
                 Year
               </MenuItem>
             )}
-            {years.map((y) => (
+            {visibleYears.map((y) => (
               <MenuItem key={y} value={y}>
                 {y}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+
+        {/* Month */}
         <FormControl
           size={size}
           error={hasError}
@@ -670,14 +738,15 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
                 Month
               </MenuItem>
             )}
-            {BS_MONTHS.map((m) => (
-              <MenuItem
-                key={m.value}
-                value={m.value}
-              >{`${pad2(m.value)} – ${m.label}`}</MenuItem>
+            {visibleMonths.map((m) => (
+              <MenuItem key={m.value} value={m.value}>
+                {`${pad2(m.value)} – ${m.label}`}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
+
+        {/* Day */}
         <FormControl
           size={size}
           error={hasError}
@@ -685,8 +754,8 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
           fullWidth
         >
           <Select
-            value={days.length ? day || "" : ""}
-            disabled={disabled || !days.length}
+            value={visibleDays.length ? day || "" : ""}
+            disabled={disabled || !visibleDays.length}
             displayEmpty
             renderValue={(v: any) =>
               !v || v === BLANK ? (blankSelection ? "dd" : "Day") : pad2(v)
@@ -702,7 +771,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
                 Day
               </MenuItem>
             )}
-            {days.map((d) => (
+            {visibleDays.map((d) => (
               <MenuItem key={d} value={d}>
                 {pad2(d)}
               </MenuItem>
@@ -710,21 +779,6 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
           </Select>
         </FormControl>
       </Box>
-      {isInvalid && (
-        <FormHelperText error sx={{ mx: "14px" }}>
-          *
-        </FormHelperText>
-      )}
-      {fetchError && (
-        <FormHelperText error sx={{ mx: "14px" }}>
-          {fetchError}
-        </FormHelperText>
-      )}
-      {helperText && (
-        <FormHelperText error={hasError} sx={{ mx: "14px" }}>
-          {helperText}
-        </FormHelperText>
-      )}
     </Box>
   );
 };

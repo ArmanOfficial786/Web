@@ -92,7 +92,11 @@ function SavingAcWiseBalance({
 
           {/* Row 1 — Till Date */}
           <Box sx={{ mb: 1 }}>
-            <DateFields control={control} />
+            <DateFields
+              control={control}
+              showFromDate={false}
+              toDateLabel="Till Date"
+            />
           </Box>
           <Divider sx={{ mb: 1.5 }} />
 

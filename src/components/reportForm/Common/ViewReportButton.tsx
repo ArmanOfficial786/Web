@@ -43,17 +43,6 @@ export default function ViewReportButton<T extends FieldValues>({
     disabled: !watchField,
   });
 
-  // const handleClick = () => {
-  //   // Clear dependent fields if condition is met
-  //   if (watchedValue && watchedValue) {
-  //     clearFields.forEach((field) => {
-  //       setValue(field, "" as any);
-  //     });
-  //   }
-  //   onBeforeSubmit?.();
-  //   handleSubmit(onSubmit)();
-  // };
-
   const handleClick = () => {
     if (watchedValue) {
       clearFields.forEach((field) => setValue(field, "" as any));
