@@ -194,9 +194,12 @@ export const errorResponseInterceptor = async (
   }
 
   // ── Network error / no response ───────────────────────────────────────
-  toast.error(error.message ?? "An error occurred. Please try again later.", {
-    position: "top-right",
-  });
+  if (!toast.isActive("network-error")) {
+    toast.error(error.message ?? "An error occurred. Please try again later.", {
+      position: "top-right",
+      toastId: "network-error",
+    });
+  }
 
   return Promise.reject(error);
 };

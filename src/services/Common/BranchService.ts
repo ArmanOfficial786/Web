@@ -3,9 +3,7 @@ import { apiClient } from "../apiClient";
 
 const branchService = {
   getAll: async (): Promise<BranchResponse[]> => {
-    const response = await apiClient.api.branchGetAllBranchesList({
-      //silentSuccess: true,
-    });
+    const response = await apiClient.api.branchGetAllBranchesList({});
     return response.data.data ?? [];
   },
 };

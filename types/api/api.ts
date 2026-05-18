@@ -60,6 +60,21 @@ export interface CollectionCenterResponseDto {
   collectionCenterName?: string | null;
 }
 
+export interface CollectorResponse {
+  /** @format int64 */
+  id?: number;
+  collectorName?: string | null;
+  collectorCode?: string | null;
+}
+
+export interface CollectorResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: CollectorResponse[] | null;
+}
+
 export interface ConvertRequestDto {
   direction?: string | null;
   date?: string | null;
@@ -81,6 +96,21 @@ export interface DaysResponseDto {
   /** @format int32 */
   month?: number;
   days?: number[] | null;
+}
+
+export interface DepositTypeResponse {
+  /** @format int64 */
+  depositeTypeId?: number;
+  depositeTypeName?: string | null;
+  isActive?: boolean;
+}
+
+export interface DepositTypeResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: DepositTypeResponse[] | null;
 }
 
 export interface MemberDetailRequest {
@@ -537,20 +567,21 @@ export class Api<
      * No description
      *
      * @tags Collector
-     * @name CollectorGetCollectorCreate
-     * @request POST:/api/Collector/getCollector
+     * @name CollectorGetCollectorList
+     * @request GET:/api/Collector/getCollector
      */
-    collectorGetCollectorCreate: (
+    collectorGetCollectorList: (
       query?: {
         /** @format int64 */
         userId?: number;
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<CollectorResponseListGeneralResponse, any>({
         path: `/api/Collector/getCollector`,
-        method: "POST",
+        method: "GET",
         query: query,
+        format: "json",
         ...params,
       }),
 
@@ -562,9 +593,10 @@ export class Api<
      * @request GET:/api/DepositeType/getDepositeType
      */
     depositeTypeGetDepositeTypeList: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<DepositTypeResponseListGeneralResponse, any>({
         path: `/api/DepositeType/getDepositeType`,
         method: "GET",
+        format: "json",
         ...params,
       }),
 

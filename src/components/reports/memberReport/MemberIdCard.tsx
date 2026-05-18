@@ -121,6 +121,7 @@ function MemberIdCard({
           >
             <BranchNameField<MemberIdCardFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchId"
             />
             <CollectionCenterField<MemberIdCardFormValues>

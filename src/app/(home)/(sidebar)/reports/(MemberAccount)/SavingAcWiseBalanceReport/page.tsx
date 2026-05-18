@@ -24,23 +24,23 @@ export interface SavingAcWiseBalanceResponseExtended extends ReportResponseDtos 
 
 // ── Validation schema ──────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<SavingAcWiseBalanceRequest> = yup.object({
-  // string | null  → .nullable().optional() ✅
-  tillDate: yup
-    .string()
-    .nullable()
-    .optional()
-    .required("Till Date is required"),
-  depositId: yup.number().required("Deposit Type is required"),
-  branchSelected: yup.string().nullable().optional(),
-  branchName: yup.string().nullable().optional().required("Branch is required"),
-  status: yup.string().nullable().optional().required("Status is required"),
-  collectorId: yup.number().optional(),
-  memberGroupId: yup.number().optional(),
-  collectionCenterId: yup.number().optional(),
+  // ✅ Fix 2: required fields — no .optional() mixed in
+  tillDate: yup.string().nullable(),
+
+  // ✅ Fix 2: branchName was .optional().required() — contradictory, blocked submit
+  branchName: yup.string().nullable().optional(), // not required — BranchNameField sets it internally
+
+  // purely optional fields
+  depositId: yup.number().optional().default(0),
+  branchSelected: yup.string().nullable().optional().default(""),
+  status: yup.string().nullable().optional().default("0"),
+  collectorId: yup.number().optional().default(0),
+  memberGroupId: yup.number().optional().default(0),
+  collectionCenterId: yup.number().optional().default(0),
   sameCompanyName: yup.boolean().optional().default(true),
   enableCollectionCenter: yup.boolean().optional().default(true),
   enableGroup: yup.boolean().optional().default(true),
-  orderBy: yup.string().nullable().optional(),
+  orderBy: yup.string().nullable().optional().default("0"),
 });
 
 // ── Strip / normalise before API call ─────────────────────────────────────
@@ -159,7 +159,10 @@ function Page(): React.ReactElement {
   );
 
   const onSubmit: SubmitHandler<SavingAcWiseBalanceRequest> = useCallback(
-    (formData) => fetchReport(toRequest(formData)),
+    (formData) => {
+      console.log("✅ onSubmit called with:", formData);
+      fetchReport(toRequest(formData));
+    },
     [fetchReport],
   );
 

@@ -12,8 +12,15 @@ import branchService from "@/services/Common/BranchService";
 import orderByService from "@/services/Common/OrderByService";
 import { memberLookUpService } from "@/services/Common/MemberLookUpService";
 import { collectionCenterService } from "@/services/Common/CollectionCenterService";
-import { BranchResponse, OrderByResponse } from "types/api/api";
+import {
+  BranchResponse,
+  CollectorResponse,
+  DepositTypeResponse,
+  OrderByResponse,
+} from "types/api/api";
 import { memberGroupService } from "@/services/Common/MemberGroupService";
+import depositeTypeService from "@/services/Common/DepositeType";
+import collectorService from "@/services/Common/CollectorService";
 
 export type SelectOption = { id: number | string; name: string };
 export type OrderByReportKey = "memberIdCard" | "savingTypeWiseBalance";
@@ -69,6 +76,10 @@ interface ReportFormContextType {
     collectionCenterId: number,
   ) => Promise<void>;
   fetchOrderBy: () => Promise<void>;
+  depositTypeOptions: SelectOption[];
+  fetchDepositTypes: () => Promise<void>;
+  collectorOptions: SelectOption[];
+  fetchCollectors: (userId: number) => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -119,10 +130,15 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [orderByMap, setOrderByMap] =
     useState<Record<OrderByReportKey, SelectOption[]>>(DEFAULT_ORDER_BY_MAP);
+  const [depositTypeOptions, setDepositTypeOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+  const [collectorOptions, setCollectorOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
 
   // Fetch guards
   const branchFetchedRef = useRef(false);
   const orderByFetchedRef = useRef(false);
+  const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
 
   // ── Member lookup ─────────────────────────────────────────────
@@ -183,7 +199,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       }));
       setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
     } catch {
-      branchFetchedRef.current = false; // allow retry
+      branchFetchedRef.current = false;
     }
   }, []);
 
@@ -251,6 +267,42 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const fetchDepositTypes = useCallback(async () => {
+    if (depositeTypeRef.current) return;
+    depositeTypeRef.current = true;
+    try {
+      const res: DepositTypeResponse[] = await depositeTypeService.getAll();
+      const mapped = res.map((d) => ({
+        id: d.depositeTypeId ?? 0,
+        name: d.depositeTypeName ?? "",
+      }));
+      setDepositTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch {
+      depositeTypeRef.current = false;
+    }
+  }, []);
+
+  // ── Collectors (refetches per userId, no ref guard) ───────────
+  const fetchCollectors = useCallback(async (userId: number) => {
+    if (!userId || userId === 0) {
+      setCollectorOptions(DEFAULT_SELECT);
+      return;
+    }
+    try {
+      const res: CollectorResponse[] =
+        await collectorService.getCollectors(userId);
+      const mapped = res.map((c) => ({
+        id: c.id ?? 0,
+        name: c.collectorCode
+          ? `${c.collectorCode} - ${c.collectorName?.trim() || ""}`
+          : c.collectorName?.trim() || "",
+      }));
+      setCollectorOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch {
+      setCollectorOptions(DEFAULT_SELECT);
+    }
+  }, []);
+
   return (
     <ReportFormContext.Provider
       value={{
@@ -271,7 +323,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         fetchCollectionCenters,
         fetchMemberGroups,
         fetchOrderBy,
-        //resetFormFields,
+        depositTypeOptions,
+        fetchDepositTypes,
+        collectorOptions,
+        fetchCollectors,
       }}
     >
       {children}

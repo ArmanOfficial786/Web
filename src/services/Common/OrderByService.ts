@@ -3,9 +3,7 @@ import { apiClient } from "../apiClient";
 
 const orderByService = {
   getAll: async (): Promise<AllReportOrderByResponseModel> => {
-    const response = await apiClient.api.orderByGetAllOrderByList({
-      //silentSuccess: true, // ✅ valid now that AxiosRequestConfig is augmented
-    });
+    const response = await apiClient.api.orderByGetAllOrderByList({});
     return response.data.data ?? {};
   },
 };

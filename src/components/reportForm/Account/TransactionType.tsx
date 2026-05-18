@@ -4,7 +4,6 @@ import React from "react";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
-import { flexWrap, gap } from "@mui/system";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface TransactionTypeFieldProps<T extends FieldValues> {

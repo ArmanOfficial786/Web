@@ -11,6 +11,7 @@ interface StatusProps<T extends FieldValues> {
 }
 
 const StatusOptions = [
+  { id: "0", name: "-- Select --" },
   { id: "1", name: "Opened" },
   { id: "2", name: "Closed" },
   { id: "3", name: "With Balance" },

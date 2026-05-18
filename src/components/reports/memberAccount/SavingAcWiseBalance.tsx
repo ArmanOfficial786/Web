@@ -26,6 +26,9 @@ import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import { type SavingAcWiseBalanceRequest } from "types/api/api";
 import { type SavingAcWiseBalanceResponseExtended } from "@/app/(home)/(sidebar)/reports/(MemberAccount)/SavingAcWiseBalanceReport/page";
+import DepositType from "@/components/reportForm/MemberAccount/DepositType";
+import AccountStatus from "@/components/reportForm/MemberAccount/AccountStatus";
+import Collector from "@/components/reportForm/MemberAccount/Collector";
 
 export type { ReportFormat };
 
@@ -58,6 +61,8 @@ function SavingAcWiseBalance({
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const userID = 160;
+
   return (
     <>
       {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
@@ -81,24 +86,47 @@ function SavingAcWiseBalance({
       {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {/* ── FORM ───────────────────────────────────────────────────────── */}
-        <Paper variant="outlined" sx={{ p: 1.5 }}>
+        <Paper variant="outlined" sx={{ p: 0.3 }}>
           <Typography
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
           >
             Saving A/C Wise Balance
           </Typography>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{}} />
 
           {/* Row 1 — Till Date */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <DateFields
               control={control}
               showFromDate={false}
               toDateLabel="Till Date"
+              toDateName="tillDate"
+            />
+            <DepositType control={control} depositTypeFieldName="depositId" />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <AccountStatus control={control} name="status" />
+            <Collector
+              control={control}
+              collectorFieldName="collectorId"
+              userId={userID}
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 2 — Branch | Collection Center */}
           <Box
@@ -106,11 +134,11 @@ function SavingAcWiseBalance({
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
             }}
           >
             <BranchNameField<SavingAcWiseBalanceRequest>
               control={control}
+              setValue={setValue}
               branchFieldName="branchSelected"
             />
             <CollectionCenterField<SavingAcWiseBalanceRequest>
@@ -120,7 +148,7 @@ function SavingAcWiseBalance({
               collectionCenterFieldName="collectionCenterId"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 3 — Select Group | Order By */}
           <Box
@@ -128,7 +156,6 @@ function SavingAcWiseBalance({
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 1,
             }}
           >
             <SelectGroupField<SavingAcWiseBalanceRequest>
@@ -141,10 +168,10 @@ function SavingAcWiseBalance({
             <OrderByField<SavingAcWiseBalanceRequest>
               control={control}
               name="orderBy"
-              reportKey="savingAcWiseBalance"
+              reportKey="savingTypeWiseBalance"
             />
           </Box>
-          <Divider sx={{ mb: 1.5 }} />
+          <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 4 — View Report | Clear */}
           <Grid container spacing={1} alignItems="center">
@@ -156,7 +183,7 @@ function SavingAcWiseBalance({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton
+                <ViewReportButton<SavingAcWiseBalanceRequest>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -164,10 +191,7 @@ function SavingAcWiseBalance({
                   loading={isLoading}
                   onBeforeSubmit={scrollToReport}
                 />
-                <ClearFormButton
-                  setValue={setValue}
-                  clearFields={["branchSelected", "branchName"]}
-                />
+                <ClearFormButton setValue={setValue} clearFields={[]} />
               </Box>
             </Grid>
           </Grid>
@@ -195,11 +219,11 @@ function SavingAcWiseBalance({
               }}
             >
               <iframe
-                key={pagination?.currentPage ?? 1} // remounts iframe on page change
+                key={pagination?.currentPage ?? 1}
                 src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=150`}
                 style={{
                   position: "absolute",
-                  top: "-40px", // pushes toolbar out of the visible area
+                  top: "-40px",
                   left: 0,
                   width: "100%",
                   height: "calc(100% + 40px)",
