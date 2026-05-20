@@ -357,7 +357,8 @@ export default function AccountStatementPage() {
 
     if (!raw) {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (!prev.blobUrl) return prev; // ✅ same reference = no re-render
+        URL.revokeObjectURL(prev.blobUrl);
         return { ...prev, blobUrl: "" };
       });
       return;
@@ -370,7 +371,6 @@ export default function AccountStatementPage() {
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
     } catch {
-      toast.error("Failed to render PDF.");
       return;
     }
 
@@ -510,3 +510,6 @@ export default function AccountStatementPage() {
     />
   );
 }
+
+// AccountStatementPage.displayName = "AccountStatementPage";
+// AccountStatementPage.whyDidYouRender = true;

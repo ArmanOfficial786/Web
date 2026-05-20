@@ -198,17 +198,6 @@ function MemberIdCard({
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
         {showReport && (
           <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
-            {/* <iframe
-              src={`${pdfData}#zoom=165`}
-              style={{
-                width: "100%",
-                height: "1000px",
-                border: "none",
-                display: "block",
-                margin: "0 auto",
-              }}
-            /> */}
-
             <Box
               sx={{
                 position: "relative",
@@ -218,7 +207,7 @@ function MemberIdCard({
             >
               <iframe
                 key={pagination?.currentPage ?? 1}
-                src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=150`}
+                src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
                 style={{
                   position: "absolute",
                   top: "-40px", // pushes the toolbar out of the visible area
@@ -236,4 +225,4 @@ function MemberIdCard({
   );
 }
 
-export default MemberIdCard;
+export default React.memo(MemberIdCard);

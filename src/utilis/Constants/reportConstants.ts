@@ -1,46 +1,48 @@
+import { Pagination } from "types/api/api";
+
 export const PaginationHeader = "x-pagination";
 
-export interface PaginationMeta {
-  currentPage: number;
-  totalPages: number;
-  totalRecord: number;
-  pageSize: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+// export interface PaginationMeta {
+//   currentPage: number;
+//   totalPages: number;
+//   totalRecord: number;
+//   pageSize: number;
+//   hasNextPage: boolean;
+//   hasPreviousPage: boolean;
+// }
 
-export const DefaultPagination: PaginationMeta = {
+export const DefaultPagination: Pagination = {
   currentPage: 1,
   totalPages: 1,
   totalRecord: 0,
-  pageSize: 15,
+  pageSize: 1,
   hasNextPage: false,
   hasPreviousPage: false,
 };
 
-export interface ReportState {
-  currentPage: number;
-  totalPages: number;
-  totalRecord: number;
-  blobUrl: string;
-  pageSize: number;
-  loading: boolean;
-  reportLoaded: boolean;
-  error: string;
-  pdfData: string;
-}
+// export interface ReportState {
+//   currentPage: number;
+//   totalPages: number;
+//   totalRecord: number;
+//   blobUrl: string;
+//   pageSize: number;
+//   loading: boolean;
+//   reportLoaded: boolean;
+//   error: string;
+//   pdfData: string;
+// }
 
-export const InitialReportState: ReportState = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 15,
-  blobUrl: "",
-  loading: false,
-  reportLoaded: false,
-  error: "",
-  pdfData: "",
-};
+// export const InitialReportState: ReportState = {
+//   currentPage: 1,
+//   totalPages: 1,
+//   totalRecord: 0,
+//   pageSize: 15,
+//   blobUrl: "",
+//   loading: false,
+//   reportLoaded: false,
+//   error: "",
+//   pdfData: "",
+// };
 //it is used in AccountStatementReport
 export type ReportFormat = "PDF" | "Word" | "Excel" | "Image";
 //it is used in MemberStatementReport

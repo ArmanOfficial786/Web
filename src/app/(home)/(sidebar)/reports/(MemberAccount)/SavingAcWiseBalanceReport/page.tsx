@@ -4,9 +4,12 @@ import SavingAcWiseBalance from "@/components/reports/memberAccount/SavingAcWise
 import savingAcWiseBalanceService from "@/services/memberAccount/SavingAcWiseBalanceService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import {
@@ -63,14 +66,14 @@ const toRequest = (
 });
 
 // ── Default pagination fallback ────────────────────────────────────────────
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
+// const DEFAULT_PAGINATION: Pagination = {
+//   currentPage: 1,
+//   totalPages: 1,
+//   totalRecord: 0,
+//   pageSize: 1,
+//   hasNextPage: false,
+//   hasPreviousPage: false,
+// };
 
 // ── Page ───────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
@@ -83,7 +86,7 @@ function Page(): React.ReactElement {
   const { control, handleSubmit, setValue } =
     useForm<SavingAcWiseBalanceRequest>({
       resolver: yupResolver(schema),
-      defaultValues: schema.getDefault(),
+      defaultValues: useMemo(() => schema.getDefault(), []),
     });
 
   const callApi = useCallback(
@@ -110,9 +113,9 @@ function Page(): React.ReactElement {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 
@@ -160,7 +163,6 @@ function Page(): React.ReactElement {
 
   const onSubmit: SubmitHandler<SavingAcWiseBalanceRequest> = useCallback(
     (formData) => {
-      console.log("✅ onSubmit called with:", formData);
       fetchReport(toRequest(formData));
     },
     [fetchReport],
@@ -200,5 +202,5 @@ function Page(): React.ReactElement {
     />
   );
 }
-
+Page.whyDidYouRender = true;
 export default Page;

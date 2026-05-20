@@ -1,215 +1,3 @@
-// "use client";
-
-// import React, { useRef } from "react";
-// import type {
-//   Control,
-//   SubmitHandler,
-//   UseFormHandleSubmit,
-//   UseFormSetValue,
-//   UseFormReset,
-// } from "react-hook-form";
-// import Box from "@mui/material/Box";
-// import Divider from "@mui/material/Divider";
-// import Grid from "@mui/material/Grid";
-// import Paper from "@mui/material/Paper";
-// import Typography from "@mui/material/Typography";
-
-// import ReportNavigation, {
-//   type ReportFormat,
-// } from "@/components/reportForm/Common/ReportNavigation";
-// import DateFields from "@/components/reportForm/Common/DateFiels";
-// import OrderByField from "@/components/reportForm/Common/OrderByFields";
-// import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-// import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-// import ReportTypeField from "@/components/reportForm/Account/ReportType";
-// import TransactionTypeField from "@/components/reportForm/Account/TransactionType";
-// import { AccountStatementRequestExtended } from "types/api/api";
-// import type { ReportState } from "@/utilis/Constants/reportConstants";
-// import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-// import Preloader from "@/components/PreLoader/preloader";
-// import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
-
-// export type { ReportFormat };
-
-// interface AccountStatementProps {
-//   control: Control<AccountStatementRequestExtended>;
-//   handleSubmit: UseFormHandleSubmit<AccountStatementRequestExtended>;
-//   onSubmit: SubmitHandler<AccountStatementRequestExtended>;
-//   setValue: UseFormSetValue<AccountStatementRequestExtended>;
-//   reset: UseFormReset<AccountStatementRequestExtended>;
-//   reportState: ReportState;
-//   onPageChange: (page: number) => void;
-//   onDownload: (format: ReportFormat) => void | Promise<void>;
-// }
-
-// export default function AccountStatement({
-//   control,
-//   handleSubmit,
-//   onSubmit,
-//   setValue,
-//   reportState,
-//   onPageChange,
-//   onDownload,
-// }: AccountStatementProps) {
-//   const { loading, reportLoaded, pdfData, currentPage, totalPages } =
-//     reportState;
-
-//   const reportRef = useRef<HTMLDivElement>(null);
-//   const scrollToReport = () => {
-//     reportRef.current?.scrollIntoView({
-//       behavior: "smooth",
-//       block: "start",
-//     });
-//   };
-
-//   return (
-//     <>
-//       {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
-//       {loading && (
-//         <Box
-//           sx={{
-//             position: "fixed",
-//             inset: 0,
-//             zIndex: 9999,
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "center",
-//             backgroundColor: "rgba(255,255,255,0.7)",
-//             backdropFilter: "blur(3px)",
-//           }}
-//         >
-//           <Preloader />
-//         </Box>
-//       )}
-
-//       {/* ── PAGE CONTENT ─────────────────────────────────────────────────── */}
-//       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-//         {/* ── FORM ───────────────────────────────────────────────────────── */}
-//         <Paper variant="outlined" sx={{ p: 1.5 }}>
-//           <Typography
-//             variant="h6"
-//             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16, mb: 1 }}
-//           >
-//             Account Statement Report
-//           </Typography>
-//           <Divider sx={{ mb: 1.5 }} />
-
-//           <Box sx={{ mb: 1 }}>
-//             <DateFields control={control} />
-//           </Box>
-//           <Divider sx={{ mb: 1.5 }} />
-
-//           <Box
-//             sx={{
-//               display: "grid",
-//               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//               gap: 2,
-//               mb: 1,
-//             }}
-//           >
-//             <OfficeNameField<AccountStatementRequestExtended>
-//               control={control}
-//               branchFieldName="branchId"
-//             />
-//             <ReportTypeField<AccountStatementRequestExtended>
-//               control={control}
-//               name="reportType"
-//             />
-//           </Box>
-//           <Divider sx={{ mb: 1.5 }} />
-
-//           <Box
-//             sx={{
-//               display: "grid",
-//               gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
-//               gap: 2,
-//               mb: 1,
-//             }}
-//           >
-//             <TransactionTypeField<AccountStatementRequestExtended>
-//               control={control}
-//               name="transactionType"
-//             />
-//             <SameCompanyField<AccountStatementRequestExtended>
-//               control={control}
-//               labelPlacement="end"
-//             />
-//           </Box>
-//           <Divider sx={{ mb: 1.5 }} />
-//           <Box
-//             sx={{
-//               display: "grid",
-//               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//               gap: 2,
-//               mb: 1,
-//             }}
-//           >
-//             <OrderByField<AccountStatementRequestExtended>
-//               control={control}
-//               name="orderBy"
-//               reportKey="savingTypeWiseBalance"
-//             />
-//           </Box>
-//           <Divider sx={{ mb: 1.5 }} />
-
-//           <Grid container spacing={1} alignItems="center">
-//             <Grid size={{ xs: 12, md: 6 }}>
-//               <Box
-//                 display="flex"
-//                 justifyContent="center"
-//                 alignItems="center"
-//                 gap={5}
-//                 width="100%"
-//               >
-//                 <ViewReportButton<AccountStatementRequestExtended>
-//                   control={control}
-//                   handleSubmit={handleSubmit}
-//                   onSubmit={onSubmit}
-//                   setValue={setValue}
-//                   loading={loading}
-//                   onBeforeSubmit={scrollToReport}
-//                 />
-//                 <ClearFormButton setValue={setValue} clearFields={[]} />
-//               </Box>
-//             </Grid>
-//           </Grid>
-//         </Paper>
-
-//         {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
-//         {reportLoaded && (
-//           <ReportNavigation
-//             pdfData={pdfData}
-//             currentPage={currentPage}
-//             totalPages={totalPages}
-//             onPageChange={onPageChange}
-//             onDownload={onDownload}
-//           />
-//         )}
-
-//         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
-//         {reportLoaded && pdfData && (
-//           <Box
-//             ref={reportRef}
-//             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-//           >
-//             <embed
-//               src={`data:application/pdf;base64,${pdfData}#toolbar=0&zoom=155`}
-//               style={{
-//                 position: "absolute",
-//                 top: "-40px",
-//                 left: 0,
-//                 width: "100%",
-//                 height: "calc(100% + 40px)",
-//                 border: "none",
-//               }}
-//             />
-//           </Box>
-//         )}
-//       </Box>
-//     </>
-//   );
-// }
-
 "use client";
 
 import React, { useRef } from "react";
@@ -256,27 +44,18 @@ interface AccountStatementProps {
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-export default function AccountStatement({
+function AccountStatement({
   control,
   handleSubmit,
   onSubmit,
   setValue,
-  //reset,
   reportState,
   onPageChange,
   onDownload,
 }: AccountStatementProps) {
   // ── Destructure from reportState ─────────────────────────────────────────
   const { blobUrl, isLoading, pdfData, pagination } = reportState;
-
-  // ── Derived values from backend-provided pagination ──────────────────────
-  // const currentPage = pagination?.currentPage ?? 1;
-  // const totalPages = pagination?.totalPages ?? 1;
-
-  // ── Report is shown only when blobUrl exists ─────────────────────────────
-  // pdfData set → blobUrl derived → showReport true
   const showReport = Boolean(pdfData) && Boolean(blobUrl);
-
   const reportRef = useRef<HTMLDivElement>(null);
   const scrollToReport = () =>
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -407,7 +186,7 @@ export default function AccountStatement({
           >
             <embed
               key={blobUrl}
-              src={`${blobUrl}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=155`}
+              src={`${blobUrl}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
               style={{
                 position: "absolute",
                 top: "-40px",
@@ -423,3 +202,4 @@ export default function AccountStatement({
     </>
   );
 }
+export default React.memo(AccountStatement);

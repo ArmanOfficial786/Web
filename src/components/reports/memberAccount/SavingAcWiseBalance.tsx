@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { lazy, Suspense, useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -32,6 +32,12 @@ import Collector from "@/components/reportForm/MemberAccount/Collector";
 
 export type { ReportFormat };
 
+// ── Lazy-load the heavy report section (code-split) ───────────────────────────
+const LazyReportViewer = lazy(
+  () => import("@/components/reports/common/LazyReportViewer"),
+);
+// Skeleton shown by <Suspense> while the chunk is being fetched the first time.
+import { ReportViewerSkeleton } from "@/components/reports/common/LazyReportViewer";
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SavingAcWiseBalanceProps {
   control: Control<SavingAcWiseBalanceRequest>;
@@ -198,7 +204,7 @@ function SavingAcWiseBalance({
         </Paper>
 
         {/* ── NAVIGATION ─────────────────────────────────────────────────── */}
-        {showReport && (
+        {/* {showReport && (
           <ReportNavigation
             pdfData={pdfData!}
             currentPage={pagination?.currentPage ?? 1}
@@ -209,7 +215,7 @@ function SavingAcWiseBalance({
         )}
 
         {/* ── REPORT AREA — renders immediately when data is ready ────────── */}
-        {showReport && (
+        {/* {showReport && (
           <Box ref={reportRef} sx={{ width: "100%", overflow: "auto" }}>
             <Box
               sx={{
@@ -220,7 +226,7 @@ function SavingAcWiseBalance({
             >
               <iframe
                 key={pagination?.currentPage ?? 1}
-                src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=150`}
+                src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
                 style={{
                   position: "absolute",
                   top: "-40px",
@@ -231,11 +237,32 @@ function SavingAcWiseBalance({
                 }}
               />
             </Box>
-          </Box>
-        )}
+          </Box> */}
+        {/* Lazy-loaded report viewer with built-in pagination and download handling */}
+        {/* <ReportNavigation
+          pdfData={pdfData!}
+          currentPage={pagination?.currentPage ?? 1}
+          totalPages={pagination?.totalPages ?? 1}
+          onPageChange={onPageChange}
+          onDownload={onDownload}
+        /> */}
+
+        <Box ref={reportRef}>
+          {showReport && (
+            <Suspense fallback={<ReportViewerSkeleton />}>
+              <LazyReportViewer
+                pdfData={pdfData!}
+                pagination={pagination}
+                onPageChange={onPageChange}
+                onDownload={onDownload}
+              />
+            </Suspense>
+          )}
+        </Box>
       </Box>
     </>
   );
 }
-
-export default SavingAcWiseBalance;
+// SavingAcWiseBalance.displayName = "SavingAcWiseBalance";
+// SavingAcWiseBalance.whyDidYouRender = true;
+export default React.memo(SavingAcWiseBalance);

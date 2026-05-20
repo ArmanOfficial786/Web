@@ -1,7 +1,7 @@
+import Wdyr from "@/app/wdyr";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// import { ToastContainer } from "react-toastify";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ToastProvider from "@/utilis/ToastProvider";
 
@@ -21,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="m-0 p-0">
       <body className={`${inter.className} m-0 p-0`} suppressHydrationWarning>
+        <Wdyr />
         <ToastProvider />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
