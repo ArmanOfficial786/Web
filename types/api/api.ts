@@ -758,6 +758,23 @@ export class Api<
         type: ContentType.Json,
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags SavingACWiseBalanceReport
+     * @name SavingAcWiseBalanceReportProgressiveDetail
+     * @request GET:/api/SavingACWiseBalanceReport/progressive/{jobId}
+     */
+    savingAcWiseBalanceReportProgressiveDetail: (
+      jobId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingACWiseBalanceReport/progressive/${jobId}`,
+        method: "GET",
+        ...params,
+      }),
   };
   preview = {
     /**
