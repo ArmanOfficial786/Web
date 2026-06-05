@@ -336,6 +336,7 @@ const schema: yup.ObjectSchema<AccountStatementRequestExtended> = yup
       .typeError("Transaction Type must be a string")
       .default("All"),
     orderBy: yup.string().nullable().default("0"),
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
@@ -412,6 +413,7 @@ export default function AccountStatementPage() {
         reportType: form.reportType || undefined,
         transactionType: form.transactionType || undefined,
         orderBy: form.orderBy || "-1",
+        visualReport: form.visualReport || false,
       };
     },
     [branchOptions],

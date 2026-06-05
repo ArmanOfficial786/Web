@@ -19,6 +19,7 @@ export interface AccountStatementRequest {
   reportType?: string | null;
   transactionType?: string | null;
   orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface AllReportOrderByResponseModel {

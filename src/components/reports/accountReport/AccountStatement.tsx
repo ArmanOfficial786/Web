@@ -30,6 +30,7 @@ import type {
   AccountStatementRequestExtended,
   AccountStatementResponseExtended,
 } from "@/app/(home)/(sidebar)/reports/(Account)/AccountStatementReport/page";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 
 export type { ReportFormat };
 
@@ -134,14 +135,19 @@ function AccountStatement({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
+              gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
+              gap: 8,
             }}
           >
             <OrderByField<AccountStatementRequestExtended>
               control={control}
               name="orderBy"
               reportKey="savingTypeWiseBalance"
+            />
+
+            <VisualReportSwitch<AccountStatementRequestExtended>
+              control={control}
+              name="visualReport"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
