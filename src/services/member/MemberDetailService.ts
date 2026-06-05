@@ -1,13 +1,34 @@
-import { apiClient } from "../apiClient";
-import { MemberDetailRequest } from "types/api/api";
+import { Api } from "types/api/api";
+import {
+  requestInterceptor,
+  successResponseInterceptor,
+  errorResponseInterceptor,
+} from "../Interceptor";
 
-export const memberDetailService = {
-  getReport: async (payload: MemberDetailRequest, format = "VIEW") => {
-    const response = await apiClient.api.memberDetailMemberDetailReportCreate(
-      payload,
-      { format },
-    );
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    return response.data;
-  },
+// ── API Instance ──────────────────────────────────────────────────────────────
+const memberRegistrationService = new Api({ baseURL: apiUrl });
+
+const originalRequestInterceptor = requestInterceptor;
+const customRequestInterceptor = async (config: any) => {
+  const configWithAuth = await originalRequestInterceptor(config);
+  if (configWithAuth.params?.format) {
+    const format = configWithAuth.params.format.toLowerCase();
+    if (["view", "pdf", "word", "excel", "image"].includes(format)) {
+      configWithAuth.responseType = "blob";
+    }
+  }
+
+  return configWithAuth;
 };
+
+memberRegistrationService.instance.interceptors.request.use(
+  customRequestInterceptor,
+);
+memberRegistrationService.instance.interceptors.response.use(
+  successResponseInterceptor,
+  errorResponseInterceptor,
+);
+
+export default memberRegistrationService;

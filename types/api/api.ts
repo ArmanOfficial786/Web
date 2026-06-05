@@ -117,14 +117,13 @@ export interface DepositTypeResponseListGeneralResponse {
 export interface MemberDetailRequest {
   fromDate?: string | null;
   toDate?: string | null;
+  memberId?: string | null;
   /** @format int64 */
   branchId?: number;
   /** @format int64 */
   memberGroupId?: number;
-  /** @format int32 */
-  currentPage?: number;
-  /** @format int32 */
-  pageSize?: number;
+  orderby?: string | null;
+  visualReport?: boolean;
 }
 
 export interface MemberGroupRequestDtos {
@@ -604,31 +603,6 @@ export class Api<
     /**
      * No description
      *
-     * @tags MemberDetail
-     * @name MemberDetailMemberDetailReportCreate
-     * @request POST:/api/MemberDetail/MemberDetailReport
-     */
-    memberDetailMemberDetailReportCreate: (
-      data: MemberDetailRequest,
-      query?: {
-        /** @default "VIEW" */
-        format?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
-        path: `/api/MemberDetail/MemberDetailReport`,
-        method: "POST",
-        query: query,
-        body: data,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @tags MemberGroup
      * @name MemberGroupMemberGroupsCreate
      * @request POST:/api/MemberGroup/member-groups
@@ -717,6 +691,31 @@ export class Api<
       this.request<MemberSelectedDto, any>({
         path: `/api/MemberLookUp/select/${memMemberRegistrationId}`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberRegistration
+     * @name MemberRegistrationCreate
+     * @request POST:/api/MemberRegistration
+     */
+    memberRegistrationCreate: (
+      data: MemberDetailRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/MemberRegistration`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
