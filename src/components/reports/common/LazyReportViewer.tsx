@@ -382,7 +382,7 @@ function LazyReportViewer({
         ref={sentinelRef}
         sx={{
           width: "100%",
-          height: "1000px",
+          height: "100vh",
           overflow: "hidden",
           position: "relative",
           backgroundColor: "#f5f5f5",

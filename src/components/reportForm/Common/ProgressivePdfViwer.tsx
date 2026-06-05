@@ -7,12 +7,18 @@
 //   useState,
 //   useEffect,
 //   useCallback,
+//   useLayoutEffect,
+//   memo,
 // } from "react";
 // import * as pdfjsLib from "pdfjs-dist";
 // import Box from "@mui/material/Box";
 // import CircularProgress from "@mui/material/CircularProgress";
 
-// pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// const PDFJS_VERSION = pdfjsLib.version;
+// pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`;
+
+// const CMAP_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/cmaps/`;
+// const STANDARD_FONT_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/standard_fonts/`;
 
 // export interface ProgressivePdfViewerHandle {
 //   appendPages: (blobUrl: string) => Promise<void>;
@@ -24,139 +30,201 @@
 //   onPageChange?: (page: number) => void;
 // }
 
+// async function fetchBlobAsArrayBuffer(blobUrl: string): Promise<ArrayBuffer> {
+//   const res = await fetch(blobUrl);
+//   return res.arrayBuffer();
+// }
+
+// // ─────────────────────────────────────────────────────────────────────────────
+// // PageCanvas
+// // ─────────────────────────────────────────────────────────────────────────────
+
+// interface PageCanvasProps {
+//   pageNum: number;
+//   docVersion: number;
+//   getLatestDocument: () => pdfjsLib.PDFDocumentProxy | null;
+// }
+
+// const PageCanvas = memo(
+//   ({ pageNum, docVersion, getLatestDocument }: PageCanvasProps) => {
+//     const visibleCanvasRef = useRef<HTMLCanvasElement>(null);
+//     const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
+//     const isFirstPaint = useRef(true);
+//     const [shown, setShown] = useState(false);
+
+//     useEffect(() => {
+//       const doc = getLatestDocument();
+//       if (!doc || !visibleCanvasRef.current) return;
+
+//       let cancelled = false;
+//       renderTaskRef.current?.cancel();
+//       renderTaskRef.current = null;
+
+//       const run = async () => {
+//         try {
+//           const page = await doc.getPage(pageNum);
+//           if (cancelled) return;
+
+//           // ── Scale = 1.0 at 96 dpi matches the PDF's natural CSS-pixel size.
+//           // Multiply by devicePixelRatio so the pixel buffer is sharp on HiDPI
+//           // screens, then set CSS width/height = natural size in points so it
+//           // displays at exactly the same physical size as opening the PDF in a
+//           // viewer (no stretching).
+//           const dpr = window.devicePixelRatio || 1;
+//           const naturalViewport = page.getViewport({ scale: 1 }); // 1pt = 1px at 96dpi
+//           const renderViewport = page.getViewport({ scale: dpr }); // retina buffer
+
+//           // Offscreen canvas at full retina resolution
+//           const offscreen = document.createElement("canvas");
+//           offscreen.width = renderViewport.width;
+//           offscreen.height = renderViewport.height;
+//           const offCtx = offscreen.getContext("2d", { alpha: false });
+//           if (!offCtx || cancelled) return;
+
+//           const task = page.render({
+//             canvasContext: offCtx,
+//             viewport: renderViewport,
+//           });
+//           renderTaskRef.current = task;
+//           await task.promise;
+//           if (cancelled) return;
+
+//           // Atomic blit to visible canvas
+//           const vis = visibleCanvasRef.current;
+//           if (!vis) return;
+
+//           // Canvas pixel buffer = retina size
+//           if (
+//             vis.width !== renderViewport.width ||
+//             vis.height !== renderViewport.height
+//           ) {
+//             vis.width = renderViewport.width;
+//             vis.height = renderViewport.height;
+//           }
+
+//           // CSS display size = natural PDF size in CSS pixels (no stretch)
+//           vis.style.width = `${naturalViewport.width}px`;
+//           vis.style.height = `${naturalViewport.height}px`;
+
+//           const visCtx = vis.getContext("2d", { alpha: false });
+//           if (!visCtx) return;
+
+//           visCtx.drawImage(offscreen, 0, 0); // instant blit — no blank frame
+
+//           if (isFirstPaint.current) {
+//             isFirstPaint.current = false;
+//             setShown(true);
+//           }
+//         } catch (err: any) {
+//           if (err?.name === "RenderingCancelledException") return;
+//           console.error(`Page ${pageNum} render error:`, err);
+//         } finally {
+//           renderTaskRef.current = null;
+//         }
+//       };
+
+//       run();
+
+//       return () => {
+//         cancelled = true;
+//         renderTaskRef.current?.cancel();
+//         renderTaskRef.current = null;
+//       };
+//       // eslint-disable-next-line react-hooks/exhaustive-deps
+//     }, [pageNum, docVersion]);
+
+//     return (
+//       <Box sx={{ display: "flex", justifyContent: "center", mb: "6px" }}>
+//         <canvas
+//           ref={visibleCanvasRef}
+//           data-page={pageNum}
+//           style={{
+//             display: "block",
+//             boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+//             backgroundColor: "#fff",
+//             opacity: shown ? 1 : 0,
+//             // fade-in only on the very first paint
+//             transition: shown ? "none" : "opacity 0.12s ease-in",
+//           }}
+//         />
+//       </Box>
+//     );
+//   },
+// );
+
+// PageCanvas.displayName = "PageCanvas";
+
+// // ─────────────────────────────────────────────────────────────────────────────
+// // ProgressivePdfViewer
+// // ─────────────────────────────────────────────────────────────────────────────
+
 // const ProgressivePdfViewer = forwardRef<
 //   ProgressivePdfViewerHandle,
 //   ProgressivePdfViewerProps
 // >(({ initialBlobUrl, onPageChange }, ref) => {
 //   const containerRef = useRef<HTMLDivElement>(null);
-//   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
-//   const renderedPages = useRef<Set<number>>(new Set());
-//   const currentDocRef = useRef<pdfjsLib.PDFDocumentProxy | null>(null);
+//   const latestDocRef = useRef<pdfjsLib.PDFDocumentProxy | null>(null);
+//   const scrollTopRef = useRef<number>(0);
+//   const totalPagesRef = useRef(0);
+
 //   const [pageNumbers, setPageNumbers] = useState<number[]>([]);
+//   const [docVersion, setDocVersion] = useState(0);
 //   const [loading, setLoading] = useState(false);
 
-//   // Render a single page
-//   const renderPage = useCallback(
-//     async (doc: pdfjsLib.PDFDocumentProxy, pageNum: number) => {
-//       const canvas = canvasRefs.current.get(pageNum);
-//       if (!canvas) return false;
-//       if (renderedPages.current.has(pageNum)) return true;
+//   const getLatestDocument = useCallback(() => latestDocRef.current, []);
 
-//       try {
-//         const page = await doc.getPage(pageNum);
-//         const viewport = page.getViewport({ scale: 1.5 });
-//         canvas.width = viewport.width;
-//         canvas.height = viewport.height;
-//         const ctx = canvas.getContext("2d");
-//         if (!ctx) return false;
-//         await page.render({ canvasContext: ctx, viewport }).promise;
-//         renderedPages.current.add(pageNum);
-//         console.log(`✅ Rendered page ${pageNum}`);
-//         return true;
-//       } catch (err) {
-//         console.error(`Failed to render page ${pageNum}:`, err);
-//         return false;
-//       }
-//     },
-//     [],
-//   );
+//   const loadPdf = useCallback(async (blobUrl: string, isAppend: boolean) => {
+//     if (!isAppend) setLoading(true);
+//     try {
+//       const arrayBuffer = await fetchBlobAsArrayBuffer(blobUrl);
+//       const doc = await pdfjsLib.getDocument({
+//         data: arrayBuffer,
+//         cMapUrl: CMAP_URL,
+//         cMapPacked: true,
+//         standardFontDataUrl: STANDARD_FONT_URL,
+//         useSystemFonts: true,
+//         disableAutoFetch: true,
+//         disableStream: true,
+//       }).promise;
 
-//   // Render all pages that are currently visible (with a buffer)
-//   const renderVisiblePages = useCallback(async () => {
-//     const doc = currentDocRef.current;
-//     if (!doc || !containerRef.current) return;
+//       const newTotal = doc.numPages;
+//       const oldTotal = totalPagesRef.current;
 
-//     const container = containerRef.current;
-//     const scrollTop = container.scrollTop;
-//     const viewportHeight = container.clientHeight;
+//       latestDocRef.current?.destroy();
+//       latestDocRef.current = doc;
+//       totalPagesRef.current = newTotal;
 
-//     const entries = Array.from(canvasRefs.current.entries())
-//       .map(([num, canvas]) => ({
-//         num,
-//         top: canvas.offsetTop,
-//         bottom: canvas.offsetTop + canvas.clientHeight,
-//       }))
-//       .sort((a, b) => a.top - b.top);
+//       scrollTopRef.current = containerRef.current?.scrollTop ?? 0;
 
-//     for (const { num, top, bottom } of entries) {
-//       if (
-//         bottom >= scrollTop - viewportHeight &&
-//         top <= scrollTop + viewportHeight * 2
-//       ) {
-//         await renderPage(doc, num);
-//       }
-//     }
-//   }, [renderPage]);
-
-//   // Render ALL unrendered pages (used after append)
-//   const renderAllUnrendered = useCallback(async () => {
-//     const doc = currentDocRef.current;
-//     if (!doc) return;
-//     for (let i = 1; i <= doc.numPages; i++) {
-//       if (!renderedPages.current.has(i)) {
-//         await renderPage(doc, i);
-//       }
-//     }
-//     console.log(`🎉 All ${doc.numPages} pages rendered`);
-//   }, [renderPage]);
-
-//   // Load a new document (initial load or full replacement)
-//   const loadDocument = useCallback(
-//     async (blobUrl: string, isAppend = false) => {
-//       setLoading(true);
-//       try {
-//         const loadingTask = pdfjsLib.getDocument(blobUrl);
-//         const doc = await loadingTask.promise;
-//         const newTotal = doc.numPages;
-//         const oldTotal = currentDocRef.current?.numPages ?? 0;
-
-//         if (newTotal === oldTotal && isAppend) {
-//           console.log("No new pages to append");
-//           setLoading(false);
-//           return;
-//         }
-
-//         currentDocRef.current = doc;
+//       if (!isAppend || newTotal <= oldTotal) {
 //         setPageNumbers(Array.from({ length: newTotal }, (_, i) => i + 1));
-
-//         // For append, we keep existing renderedPages; for new doc, reset
-//         if (!isAppend) {
-//           renderedPages.current.clear();
-//         }
-
-//         console.log(
-//           `📄 Document loaded: ${newTotal} pages (${isAppend ? "append" : "initial"})`,
+//       } else {
+//         const added = Array.from(
+//           { length: newTotal - oldTotal },
+//           (_, i) => oldTotal + i + 1,
 //         );
-
-//         // Wait for DOM to update with new canvas elements
-//         setTimeout(async () => {
-//           await renderAllUnrendered();
-//           // Also ensure visible pages are rendered (though renderAllUnrendered covers all)
-//           await renderVisiblePages();
-//         }, 100);
-//       } catch (err) {
-//         console.error("Failed to load PDF:", err);
-//       } finally {
-//         setLoading(false);
+//         setPageNumbers((prev) => [...prev, ...added]);
 //       }
-//     },
-//     [renderAllUnrendered, renderVisiblePages],
-//   );
 
-//   // Public method to append new pages (call this with the latest full PDF blob)
+//       setDocVersion((v) => v + 1);
+//     } catch (err) {
+//       console.error("PDF load error:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
 //   const appendPages = useCallback(
-//     async (blobUrl: string) => {
-//       await loadDocument(blobUrl, true);
-//     },
-//     [loadDocument],
+//     async (blobUrl: string) => loadPdf(blobUrl, true),
+//     [loadPdf],
 //   );
-
-//   // Scroll to a specific page
 //   const scrollToPage = useCallback(
 //     (pageNum: number) => {
-//       const canvas = canvasRefs.current.get(pageNum);
-//       if (canvas && containerRef.current) {
-//         canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+//       const el = containerRef.current?.querySelector(
+//         `[data-page="${pageNum}"]`,
+//       );
+//       if (el) {
+//         el.scrollIntoView({ behavior: "instant", block: "start" });
 //         onPageChange?.(pageNum);
 //       }
 //     },
@@ -165,90 +233,64 @@
 
 //   useImperativeHandle(ref, () => ({ appendPages, scrollToPage }));
 
-//   // Initial load
 //   useEffect(() => {
-//     if (initialBlobUrl) {
-//       loadDocument(initialBlobUrl, false);
-//     }
-//   }, [initialBlobUrl, loadDocument]);
+//     if (initialBlobUrl) loadPdf(initialBlobUrl, false);
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, []);
 
-//   // Render visible pages on scroll
-//   useEffect(() => {
-//     const container = containerRef.current;
-//     if (!container) return;
-//     const onScroll = () => renderVisiblePages();
-//     container.addEventListener("scroll", onScroll);
-//     return () => container.removeEventListener("scroll", onScroll);
-//   }, [renderVisiblePages]);
-
-//   // Re-run rendering when pageNumbers change (new pages added)
-//   useEffect(() => {
-//     if (pageNumbers.length > 0 && currentDocRef.current) {
-//       renderVisiblePages();
-//     }
-//   }, [pageNumbers, renderVisiblePages]);
+//   useLayoutEffect(() => {
+//     if (containerRef.current && scrollTopRef.current > 0)
+//       containerRef.current.scrollTop = scrollTopRef.current;
+//   }, [pageNumbers]);
 
 //   return (
 //     <Box
+//       ref={containerRef}
 //       sx={{
-//         position: "relative",
 //         height: "100%",
-//         display: "flex",
-//         flexDirection: "column",
+//         overflow: "auto",
+//         bgcolor: "#e8e8e8",
+//         p: "8px",
+//         "&::-webkit-scrollbar": { width: "8px" },
+//         "&::-webkit-scrollbar-thumb": {
+//           backgroundColor: "rgba(0,0,0,0.25)",
+//           borderRadius: "4px",
+//         },
 //       }}
 //     >
 //       {loading && (
 //         <Box
 //           sx={{
 //             position: "sticky",
-//             top: 16,
-//             left: "50%",
+//             top: 8,
 //             zIndex: 10,
-//             width: 40,
-//             mx: "auto",
+//             display: "flex",
+//             justifyContent: "center",
+//             pointerEvents: "none",
 //           }}
 //         >
-//           <CircularProgress size={30} />
+//           <CircularProgress size={28} thickness={4} />
 //         </Box>
 //       )}
-//       <Box ref={containerRef} sx={{ flex: 1, overflow: "auto" }}>
-//         {pageNumbers.map((pageNum) => (
-//           <canvas
-//             key={pageNum}
-//             ref={(el) => {
-//               if (el) canvasRefs.current.set(pageNum, el);
-//               else canvasRefs.current.delete(pageNum);
-//             }}
-//             style={{
-//               display: "block",
-//               margin: "0 auto 8px auto",
-//               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-//               backgroundColor: "#fff",
-//             }}
-//           />
-//         ))}
-//       </Box>
+
+//       {pageNumbers.map((pageNum) => (
+//         <PageCanvas
+//           key={pageNum}
+//           pageNum={pageNum}
+//           docVersion={docVersion}
+//           getLatestDocument={getLatestDocument}
+//         />
+//       ))}
 //     </Box>
 //   );
 // });
 
 // ProgressivePdfViewer.displayName = "ProgressivePdfViewer";
 // export default ProgressivePdfViewer;
-"use client";
 
-/**
- * ProgressivePdfViewer.tsx  —  flicker-free progressive PDF viewer
- *
- * Anti-flicker strategy:
- *   1. Never clear the visible canvas — paint onto an OFFSCREEN canvas first.
- *   2. Only copy to the visible canvas via drawImage() when the new frame is
- *      fully ready.  The visible canvas always shows a complete image.
- *   3. No opacity animation on re-renders — opacity:1 is set once on first
- *      paint and never touched again.
- *   4. docVersion still increments on every chunk so PageCanvas knows to
- *      re-render all pages (to pick up the updated "N of total" stamp from
- *      the backend), but the user never sees a blank/flicker between frames.
- */
+
+
+"use client";
 
 import React, {
   forwardRef,
@@ -264,7 +306,11 @@ import * as pdfjsLib from "pdfjs-dist";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+const PDFJS_VERSION = pdfjsLib.version;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`;
+
+const CMAP_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/cmaps/`;
+const STANDARD_FONT_URL = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/standard_fonts/`;
 
 export interface ProgressivePdfViewerHandle {
   appendPages: (blobUrl: string) => Promise<void>;
@@ -282,30 +328,28 @@ async function fetchBlobAsArrayBuffer(blobUrl: string): Promise<ArrayBuffer> {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PageCanvas — flicker-free single page renderer
+// PageCanvas
+// Renders at dpr resolution for sharp text, displays at 100% container width.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface PageCanvasProps {
   pageNum: number;
-  scale: number;
   docVersion: number;
   getLatestDocument: () => pdfjsLib.PDFDocumentProxy | null;
 }
 
 const PageCanvas = memo(
-  ({ pageNum, scale, docVersion, getLatestDocument }: PageCanvasProps) => {
+  ({ pageNum, docVersion, getLatestDocument }: PageCanvasProps) => {
     const visibleCanvasRef = useRef<HTMLCanvasElement>(null);
     const renderTaskRef = useRef<pdfjsLib.RenderTask | null>(null);
-    const isFirstPaintRef = useRef(true); // true until the very first frame lands
-    const [visible, setVisible] = useState(false); // opacity gate for first paint only
+    const isFirstPaint = useRef(true);
+    const [shown, setShown] = useState(false);
 
     useEffect(() => {
       const doc = getLatestDocument();
       if (!doc || !visibleCanvasRef.current) return;
 
       let cancelled = false;
-
-      // Cancel any in-flight render immediately
       renderTaskRef.current?.cancel();
       renderTaskRef.current = null;
 
@@ -314,46 +358,54 @@ const PageCanvas = memo(
           const page = await doc.getPage(pageNum);
           if (cancelled) return;
 
-          const viewport = page.getViewport({ scale });
+          const dpr = window.devicePixelRatio || 1;
 
-          // ── Paint onto an OFFSCREEN canvas ────────────────────────────────
-          // The visible canvas is untouched until the frame is complete.
-          // This is the core anti-flicker technique: the user always sees
-          // a finished image, never a blank or half-drawn canvas.
+          // DISPLAY_SCALE makes the page render wider without changing font metrics.
+          // 1.5 = 50% wider than the PDF's natural point size. Adjust freely.
+          const DISPLAY_SCALE = 1.5;
+          const renderViewport = page.getViewport({
+            scale: DISPLAY_SCALE * dpr,
+          });
+
           const offscreen = document.createElement("canvas");
-          offscreen.width = viewport.width;
-          offscreen.height = viewport.height;
+          offscreen.width = renderViewport.width;
+          offscreen.height = renderViewport.height;
           const offCtx = offscreen.getContext("2d", { alpha: false });
           if (!offCtx || cancelled) return;
 
-          const task = page.render({ canvasContext: offCtx, viewport });
+          const task = page.render({
+            canvasContext: offCtx,
+            viewport: renderViewport,
+          });
           renderTaskRef.current = task;
-          await task.promise; // ← full page is ready in offscreen memory
+          await task.promise;
+          if (cancelled) return;
 
-          if (cancelled) return; // check again after the async wait
-
-          // ── Swap into visible canvas in one synchronous step ──────────────
-          // No intermediate blank state — old pixels stay until new ones land.
           const vis = visibleCanvasRef.current;
           if (!vis) return;
 
-          // Resize the visible canvas only when dimensions actually change
-          // (avoids a clear on same-size re-renders like footer-stamp updates)
-          if (vis.width !== viewport.width || vis.height !== viewport.height) {
-            vis.width = viewport.width;
-            vis.height = viewport.height;
+          if (
+            vis.width !== renderViewport.width ||
+            vis.height !== renderViewport.height
+          ) {
+            vis.width = renderViewport.width;
+            vis.height = renderViewport.height;
           }
 
           const visCtx = vis.getContext("2d", { alpha: false });
           if (!visCtx) return;
 
-          // drawImage is synchronous — old frame → new frame with zero blank gap
-          visCtx.drawImage(offscreen, 0, 0);
+          visCtx.drawImage(offscreen, 0, 0); // atomic blit — no blank frame
 
-          // Reveal the canvas on the very first paint (opacity 0 → 1 once only)
-          if (isFirstPaintRef.current) {
-            isFirstPaintRef.current = false;
-            setVisible(true);
+          // CSS: width 100% of parent, height auto preserves aspect ratio.
+          // The parent Box below constrains the max width so pages don't
+          // stretch absurdly on ultra-wide screens.
+          vis.style.width = "100%";
+          vis.style.height = "auto";
+
+          if (isFirstPaint.current) {
+            isFirstPaint.current = false;
+            setShown(true);
           }
         } catch (err: any) {
           if (err?.name === "RenderingCancelledException") return;
@@ -370,29 +422,29 @@ const PageCanvas = memo(
         renderTaskRef.current?.cancel();
         renderTaskRef.current = null;
       };
-      // docVersion change → re-render all pages to pick up new "N of total" stamp.
-      // No flicker because we paint offscreen first.
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [pageNum, scale, docVersion]);
+    }, [pageNum, docVersion]);
 
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-        <canvas
-          ref={visibleCanvasRef}
-          data-page={pageNum}
-          style={{
-            display: "block",
-            maxWidth: "100%",
-            height: "auto",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            backgroundColor: "#fff",
-            // Fade in once on first paint only — never animated again
-            opacity: visible ? 1 : 0,
-            transition: isFirstPaintRef.current
-              ? "opacity 0.15s ease-in"
-              : "none",
-          }}
-        />
+      <Box sx={{ display: "flex", justifyContent: "center", mb: "6px" }}>
+        {/* 
+        maxWidth: 1100px keeps A4-wide reports readable without overflowing on
+        large monitors. Adjust to taste — this does NOT affect font rendering.
+      */}
+        <Box sx={{ width: "100%", maxWidth: 1100 }}>
+          <canvas
+            ref={visibleCanvasRef}
+            data-page={pageNum}
+            style={{
+              display: "block",
+              width: "100%",
+              height: "auto",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.18)",
+              opacity: shown ? 1 : 0,
+              transition: shown ? "none" : "opacity 0.12s ease-in",
+            }}
+          />
+        </Box>
       </Box>
     );
   },
@@ -419,15 +471,16 @@ const ProgressivePdfViewer = forwardRef<
 
   const getLatestDocument = useCallback(() => latestDocRef.current, []);
 
-  // ── Shared load helper ────────────────────────────────────────────────────
   const loadPdf = useCallback(async (blobUrl: string, isAppend: boolean) => {
-    // Show spinner only on initial load, not on background chunk appends
     if (!isAppend) setLoading(true);
-
     try {
       const arrayBuffer = await fetchBlobAsArrayBuffer(blobUrl);
       const doc = await pdfjsLib.getDocument({
         data: arrayBuffer,
+        cMapUrl: CMAP_URL,
+        cMapPacked: true,
+        standardFontDataUrl: STANDARD_FONT_URL,
+        useSystemFonts: true,
         disableAutoFetch: true,
         disableStream: true,
       }).promise;
@@ -435,20 +488,14 @@ const ProgressivePdfViewer = forwardRef<
       const newTotal = doc.numPages;
       const oldTotal = totalPagesRef.current;
 
-      // Free the previous document's memory
       latestDocRef.current?.destroy();
       latestDocRef.current = doc;
       totalPagesRef.current = newTotal;
-
-      // Capture scroll position before React re-renders the page list
       scrollTopRef.current = containerRef.current?.scrollTop ?? 0;
 
       if (!isAppend || newTotal <= oldTotal) {
-        // Initial load: set full page list
         setPageNumbers(Array.from({ length: newTotal }, (_, i) => i + 1));
       } else {
-        // Append: add only newly arrived pages — existing canvases stay mounted.
-        // docVersion bump below will trigger their re-render (new "N of total").
         const added = Array.from(
           { length: newTotal - oldTotal },
           (_, i) => oldTotal + i + 1,
@@ -456,8 +503,6 @@ const ProgressivePdfViewer = forwardRef<
         setPageNumbers((prev) => [...prev, ...added]);
       }
 
-      // Bump version → all mounted PageCanvas components re-render via useEffect.
-      // Because they paint offscreen first, the user sees no flicker.
       setDocVersion((v) => v + 1);
     } catch (err) {
       console.error("PDF load error:", err);
@@ -466,7 +511,6 @@ const ProgressivePdfViewer = forwardRef<
     }
   }, []);
 
-  // ── Public imperative API ─────────────────────────────────────────────────
   const appendPages = useCallback(
     async (blobUrl: string) => loadPdf(blobUrl, true),
     [loadPdf],
@@ -487,17 +531,14 @@ const ProgressivePdfViewer = forwardRef<
 
   useImperativeHandle(ref, () => ({ appendPages, scrollToPage }));
 
-  // ── Initial load (run once on mount) ─────────────────────────────────────
   useEffect(() => {
     if (initialBlobUrl) loadPdf(initialBlobUrl, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Restore scroll after page list grows ─────────────────────────────────
   useLayoutEffect(() => {
-    if (containerRef.current && scrollTopRef.current > 0) {
+    if (containerRef.current && scrollTopRef.current > 0)
       containerRef.current.scrollTop = scrollTopRef.current;
-    }
   }, [pageNumbers]);
 
   return (
@@ -506,15 +547,15 @@ const ProgressivePdfViewer = forwardRef<
       sx={{
         height: "100%",
         overflow: "auto",
-        position: "relative",
+        bgcolor: "#e8e8e8",
+        p: "8px",
         "&::-webkit-scrollbar": { width: "8px" },
         "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "rgba(0,0,0,0.2)",
+          backgroundColor: "rgba(0,0,0,0.25)",
           borderRadius: "4px",
         },
       }}
     >
-      {/* Spinner only during initial load */}
       {loading && (
         <Box
           sx={{
@@ -534,7 +575,6 @@ const ProgressivePdfViewer = forwardRef<
         <PageCanvas
           key={pageNum}
           pageNum={pageNum}
-          scale={1.5}
           docVersion={docVersion}
           getLatestDocument={getLatestDocument}
         />
