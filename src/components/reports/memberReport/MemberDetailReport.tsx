@@ -247,7 +247,7 @@ import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportS
 import type {
   MemberRegistrationFormValues,
   MemberRegistrationResponseExtended,
-} from "@/app/(home)/(sidebar)/reports/(Member)/MemberRegistrationReport/page";
+} from "@/app/(home)/(sidebar)/Member/reports/MemberRegistrationReport/page";
 
 export type { ReportFormat };
 

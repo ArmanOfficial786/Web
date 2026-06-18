@@ -294,7 +294,7 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import { type SavingAcWiseBalanceRequest } from "types/api/api";
-import { type SavingAcWiseBalanceResponseExtended } from "@/app/(home)/(sidebar)/reports/(MemberAccount)/SavingAcWiseBalanceReport/page";
+import { type SavingAcWiseBalanceResponseExtended } from "@/app/(home)/(sidebar)/MemberAc/reports/SavingAcWiseBalanceReport/page";
 import DepositType from "@/components/reportForm/MemberAccount/DepositType";
 import AccountStatus from "@/components/reportForm/MemberAccount/AccountStatus";
 import Collector from "@/components/reportForm/MemberAccount/Collector";

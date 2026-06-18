@@ -28,7 +28,7 @@ import { MemberIdCardRequest } from "types/api/api";
 import {
   MemberIdCardResponseExtended,
   type MemberIdCardFormValues,
-} from "@/app/(home)/(sidebar)/reports/(Member)/MemberIDCardDetail/page";
+} from "@/app/(home)/(sidebar)/Member/reports/MemberIDCardDetail/page";
 import Preloader from "@/components/PreLoader/preloader";
 
 export type { ReportFormat };
