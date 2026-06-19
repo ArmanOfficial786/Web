@@ -114,6 +114,19 @@ export interface DepositTypeResponseListGeneralResponse {
   data?: DepositTypeResponse[] | null;
 }
 
+export interface MemberAllDetailRequst {
+  fromDate?: string | null;
+  toDate?: string | null;
+  memberId?: string | null;
+  orderby?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
+  /** @format int64 */
+  branchId?: number;
+  visualReport?: boolean;
+  selectedColumns?: string[] | null;
+}
+
 export interface MemberDetailRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -596,6 +609,31 @@ export class Api<
       this.request<DepositTypeResponseListGeneralResponse, any>({
         path: `/api/DepositeType/getDepositeType`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberAllDetails
+     * @name MemberAllDetailsCreate
+     * @request POST:/api/MemberAllDetails
+     */
+    memberAllDetailsCreate: (
+      data: MemberAllDetailRequst,
+      query?: {
+        /** @default "View" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/MemberAllDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

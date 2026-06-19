@@ -85,7 +85,7 @@ export default function MemberLookupButton<T extends FieldValues>({
           <FieldRow label="Member Name">
             <TextField
               size="small"
-              sx={{ flex: 1, minWidth: "200px" }}
+              sx={{ flex: 1 }}
               fullWidth
               placeholder="Member name"
               value={memberNameField.value ?? ""}

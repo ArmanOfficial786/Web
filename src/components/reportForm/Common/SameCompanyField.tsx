@@ -17,7 +17,7 @@ interface SameCompanyFieldProps<T extends FieldValues> {
 export default function SameCompanyField<T extends FieldValues>({
   control,
   name = "sameCompanyName" as Path<T>,
-  label = "same Company Name",
+  label = "Same Company Name",
   labelPlacement = "start" as LabelPlacement,
   gridSize = { xs: 12, md: 6 },
 }: SameCompanyFieldProps<T>) {

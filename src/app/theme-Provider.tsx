@@ -362,6 +362,7 @@
 //     </MuiThemeProvider>
 //   );
 // }
+
 "use client";
 
 import * as React from "react";
@@ -496,22 +497,41 @@ const theme = createTheme({
 
         // Generic input/typography sizing — no color logic, safe as-is.
         ".MuiSelect-select, .MuiInputBase-input": {
-          padding: "0 10px",
-          minHeight: "30px",
-          display: "flex",
-          alignItems: "center",
-          lineHeight: 1,
+          padding: "3px 8px",
+          minHeight: "10px",
         },
         ".MuiSelect-select, .MuiInputBase-input, .MuiFormControlLabel-label, .MuiTypography-root":
           {
-            fontSize: "0.875rem",
-            lineHeight: 1.43,
+            lineHeight: 0.5,
           },
         ".MuiRadio-root, .MuiRadio-root svg": {
-          fontSize: "0.875rem",
           display: "flex",
         },
       }),
+    },
+
+    //---Golbal Input
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          minHeight: "32px", // adjust to your liking
+          "& .MuiInputBase-input": {
+            padding: "4px 10px", // reduce vertical padding
+            minHeight: "1.2em",
+            lineHeight: 1.2,
+            fontSize: "0.75rem",
+          },
+          "&::placeholder": {
+            fontSize: "0.65rem", // smaller placeholder
+            opacity: 0.7,
+          },
+          "& .MuiSelect-select": {
+            padding: "4px 10px !important", // MUI uses !important sometimes
+            minHeight: "auto",
+            lineHeight: "0.75rem",
+          },
+        },
+      },
     },
 
     // ── AppBar ────────────────────────────────────────────────────────
@@ -565,7 +585,38 @@ const theme = createTheme({
       },
     },
 
+    // ── Checkbox ────────────────────────────────────────────────────
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          "& .MuiSvgIcon-root": {
+            fontSize: "1rem", // smaller icon (default is 1.5rem)
+          },
+        },
+      },
+    },
+    // ── Radio ──────────────────────────────────────────────────────
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          padding: "4px",
+          "& .MuiSvgIcon-root": {
+            fontSize: "1.2rem",
+          },
+        },
+      },
+    },
+    // Label Text for Checkbox/Radio/Switch
+    MuiFormControlLabel: {
+      styleOverrides: {
+        label: {
+          fontSize: "0.8rem", // reduce label size
+        },
+      },
+    },
+
     // ── Dialog ──────────────────────────────────────────────────────
+
     MuiDialogTitle: {
       styleOverrides: {
         root: ({ theme: t }) => ({
@@ -584,6 +635,13 @@ const theme = createTheme({
             color: t.vars.palette.text.primary,
             fontWeight: 600,
             borderBottom: `1px solid ${t.vars.palette.divider}`,
+          },
+          // ← ADDED: sticky header cells need their own background override
+          // because MUI injects a separate rule for .MuiTableCell-stickyHeader
+          // that overrides the general .MuiTableCell-root rule above.
+          "& .MuiTableCell-stickyHeader": {
+            backgroundColor:
+              t.palette.mode === "dark" ? "#1e3a5f" : t.vars.palette.grey[100],
           },
         }),
       },
