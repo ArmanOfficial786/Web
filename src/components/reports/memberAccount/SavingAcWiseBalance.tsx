@@ -438,7 +438,7 @@ function SavingAcWiseBalance({
             <OrderByField<SavingAcWiseBalanceRequest>
               control={control}
               name="orderBy"
-              reportKey="savingTypeWiseBalance"
+              reportKey="saving-wise-balance-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

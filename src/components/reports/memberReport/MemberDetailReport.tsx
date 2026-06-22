@@ -354,8 +354,8 @@ function MemberRegistrationReport({
           >
             <OrderByField<MemberRegistrationFormValues>
               control={control}
-              name="orderBy"
-              reportKey="savingTypeWiseBalance"
+              name="orderby"
+              reportKey="member-registration"
             />
             <VisualReportSwitch<MemberRegistrationFormValues>
               control={control}

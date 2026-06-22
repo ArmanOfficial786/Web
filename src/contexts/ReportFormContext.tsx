@@ -6,6 +6,7 @@
 //   useState,
 //   useCallback,
 //   useRef,
+//   useMemo,
 //   ReactNode,
 // } from "react";
 // import branchService from "@/services/Common/BranchService";
@@ -62,7 +63,7 @@
 //   clearResults: () => void;
 //   setSelectedMember: (member: MemberRecord | null) => void;
 
-//   // Dropdown options – each separate
+//   // Dropdown options
 //   branchOptions: SelectOption[];
 //   collectionCenterOptions: SelectOption[];
 //   memberGroupOptions: SelectOption[];
@@ -83,6 +84,7 @@
 // }
 
 // const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
+
 // const DEFAULT_ORDER_BY_MAP: Record<OrderByReportKey, SelectOption[]> = {
 //   memberIdCard: DEFAULT_SELECT,
 //   savingTypeWiseBalance: DEFAULT_SELECT,
@@ -111,7 +113,7 @@
 // }
 
 // export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
-//   // Member lookup state
+//   // ── Member lookup state ───────────────────────────────────────────────────
 //   const [memberLookUp, setMemberLookUp] = useState<MemberRecord[]>([]);
 //   const [totalPages, setTotalPages] = useState(1);
 //   const [currentPage, setCurrentPage] = useState(1);
@@ -121,7 +123,7 @@
 //     null,
 //   );
 
-//   // Dropdown options (each with its own default)
+//   // ── Dropdown options ──────────────────────────────────────────────────────
 //   const [branchOptions, setBranchOptions] =
 //     useState<SelectOption[]>(DEFAULT_SELECT);
 //   const [collectionCenterOptions, setCollectionCenterOptions] =
@@ -135,13 +137,13 @@
 //   const [collectorOptions, setCollectorOptions] =
 //     useState<SelectOption[]>(DEFAULT_SELECT);
 
-//   // Fetch guards
+//   // ── Fetch guards ──────────────────────────────────────────────────────────
 //   const branchFetchedRef = useRef(false);
 //   const orderByFetchedRef = useRef(false);
 //   const depositeTypeRef = useRef(false);
 //   const searchGenerationRef = useRef(0);
 
-//   // ── Member lookup ─────────────────────────────────────────────
+//   // ── Member lookup ─────────────────────────────────────────────────────────
 //   const searchmemberLookUp = useCallback(
 //     async (params: MemberLookUpSearchParams) => {
 //       const generation = ++searchGenerationRef.current;
@@ -187,7 +189,7 @@
 //     setIsLoading(false);
 //   }, []);
 
-//   // ── Branches (lazy, once) ────────────────────────────────────
+//   // ── Branches (lazy, once) ─────────────────────────────────────────────────
 //   const fetchBranches = useCallback(async () => {
 //     if (branchFetchedRef.current) return;
 //     branchFetchedRef.current = true;
@@ -203,7 +205,7 @@
 //     }
 //   }, []);
 
-//   // ── Collection Centers (no global cache – refetches when branch changes) ──
+//   // ── Collection Centers (refetches when branch changes) ───────────────────
 //   const fetchCollectionCenters = useCallback(async (branchId: number) => {
 //     if (!branchId || branchId === 0) {
 //       setCollectionCenterOptions(DEFAULT_SELECT);
@@ -223,7 +225,7 @@
 //     }
 //   }, []);
 
-//   // ── Member Groups (no global cache – refetches when branch+center change) ─
+//   // ── Member Groups (refetches when branch + center change) ────────────────
 //   const fetchMemberGroups = useCallback(
 //     async (branchId: number, collectionCenterId: number) => {
 //       if (
@@ -252,7 +254,7 @@
 //     [],
 //   );
 
-//   // ── OrderBy (lazy, once) ────────────────────────────────────
+//   // ── OrderBy (lazy, once) ──────────────────────────────────────────────────
 //   const fetchOrderBy = useCallback(async () => {
 //     if (orderByFetchedRef.current) return;
 //     orderByFetchedRef.current = true;
@@ -267,6 +269,7 @@
 //     }
 //   }, []);
 
+//   // ── Deposit Types (lazy, once) ────────────────────────────────────────────
 //   const fetchDepositTypes = useCallback(async () => {
 //     if (depositeTypeRef.current) return;
 //     depositeTypeRef.current = true;
@@ -282,7 +285,7 @@
 //     }
 //   }, []);
 
-//   // ── Collectors (refetches per userId, no ref guard) ───────────
+//   // ── Collectors (refetches per userId) ────────────────────────────────────
 //   const fetchCollectors = useCallback(async (userId: number) => {
 //     if (!userId || userId === 0) {
 //       setCollectorOptions(DEFAULT_SELECT);
@@ -303,32 +306,57 @@
 //     }
 //   }, []);
 
+//   // ── Memoized context value — only re-creates when actual deps change ──────
+//   const contextValue = useMemo<ReportFormContextType>(
+//     () => ({
+//       memberLookUp,
+//       totalPages,
+//       currentPage,
+//       isLoading,
+//       error,
+//       selectedMember,
+//       setSelectedMember,
+//       searchmemberLookUp,
+//       clearResults,
+//       branchOptions,
+//       collectionCenterOptions,
+//       memberGroupOptions,
+//       orderByMap,
+//       fetchBranches,
+//       fetchCollectionCenters,
+//       fetchMemberGroups,
+//       fetchOrderBy,
+//       depositTypeOptions,
+//       fetchDepositTypes,
+//       collectorOptions,
+//       fetchCollectors,
+//     }),
+//     [
+//       memberLookUp,
+//       totalPages,
+//       currentPage,
+//       isLoading,
+//       error,
+//       selectedMember,
+//       searchmemberLookUp,
+//       clearResults,
+//       branchOptions,
+//       collectionCenterOptions,
+//       memberGroupOptions,
+//       orderByMap,
+//       fetchBranches,
+//       fetchCollectionCenters,
+//       fetchMemberGroups,
+//       fetchOrderBy,
+//       depositTypeOptions,
+//       fetchDepositTypes,
+//       collectorOptions,
+//       fetchCollectors,
+//     ],
+//   );
+
 //   return (
-//     <ReportFormContext.Provider
-//       value={{
-//         memberLookUp,
-//         totalPages,
-//         currentPage,
-//         isLoading,
-//         error,
-//         selectedMember,
-//         setSelectedMember,
-//         searchmemberLookUp,
-//         clearResults,
-//         branchOptions,
-//         collectionCenterOptions,
-//         memberGroupOptions,
-//         orderByMap,
-//         fetchBranches,
-//         fetchCollectionCenters,
-//         fetchMemberGroups,
-//         fetchOrderBy,
-//         depositTypeOptions,
-//         fetchDepositTypes,
-//         collectorOptions,
-//         fetchCollectors,
-//       }}
-//     >
+//     <ReportFormContext.Provider value={contextValue}>
 //       {children}
 //     </ReportFormContext.Provider>
 //   );
@@ -346,21 +374,18 @@ import React, {
   ReactNode,
 } from "react";
 import branchService from "@/services/Common/BranchService";
-import orderByService from "@/services/Common/OrderByService";
 import { memberLookUpService } from "@/services/Common/MemberLookUpService";
 import { collectionCenterService } from "@/services/Common/CollectionCenterService";
 import {
   BranchResponse,
   CollectorResponse,
   DepositTypeResponse,
-  OrderByResponse,
 } from "types/api/api";
 import { memberGroupService } from "@/services/Common/MemberGroupService";
 import depositeTypeService from "@/services/Common/DepositeType";
 import collectorService from "@/services/Common/CollectorService";
 
 export type SelectOption = { id: number | string; name: string };
-export type OrderByReportKey = "memberIdCard" | "savingTypeWiseBalance";
 
 export interface MemberRecord {
   memMemberRegistrationId: number;
@@ -403,7 +428,6 @@ interface ReportFormContextType {
   branchOptions: SelectOption[];
   collectionCenterOptions: SelectOption[];
   memberGroupOptions: SelectOption[];
-  orderByMap: Record<OrderByReportKey, SelectOption[]>;
 
   // Fetch functions
   fetchBranches: () => Promise<void>;
@@ -412,7 +436,6 @@ interface ReportFormContextType {
     branchId: number,
     collectionCenterId: number,
   ) => Promise<void>;
-  fetchOrderBy: () => Promise<void>;
   depositTypeOptions: SelectOption[];
   fetchDepositTypes: () => Promise<void>;
   collectorOptions: SelectOption[];
@@ -420,11 +443,6 @@ interface ReportFormContextType {
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
-
-const DEFAULT_ORDER_BY_MAP: Record<OrderByReportKey, SelectOption[]> = {
-  memberIdCard: DEFAULT_SELECT,
-  savingTypeWiseBalance: DEFAULT_SELECT,
-};
 
 const ReportFormContext = createContext<ReportFormContextType | undefined>(
   undefined,
@@ -438,15 +456,6 @@ export const useReportFormContext = () => {
     );
   return ctx;
 };
-
-function mapOptions(list: OrderByResponse[]): SelectOption[] {
-  return [
-    { id: "0", name: "-- Select --" },
-    ...list.map(
-      (o): SelectOption => ({ id: o.value ?? "0", name: o.displayName ?? "" }),
-    ),
-  ];
-}
 
 export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   // ── Member lookup state ───────────────────────────────────────────────────
@@ -466,8 +475,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [memberGroupOptions, setMemberGroupOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
-  const [orderByMap, setOrderByMap] =
-    useState<Record<OrderByReportKey, SelectOption[]>>(DEFAULT_ORDER_BY_MAP);
   const [depositTypeOptions, setDepositTypeOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [collectorOptions, setCollectorOptions] =
@@ -475,7 +482,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
 
   // ── Fetch guards ──────────────────────────────────────────────────────────
   const branchFetchedRef = useRef(false);
-  const orderByFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
 
@@ -590,21 +596,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // ── OrderBy (lazy, once) ──────────────────────────────────────────────────
-  const fetchOrderBy = useCallback(async () => {
-    if (orderByFetchedRef.current) return;
-    orderByFetchedRef.current = true;
-    try {
-      const res = await orderByService.getAll();
-      setOrderByMap({
-        memberIdCard: mapOptions(res.memberIdCard ?? []),
-        savingTypeWiseBalance: mapOptions(res.savingTypeWiseBalance ?? []),
-      });
-    } catch {
-      orderByFetchedRef.current = false;
-    }
-  }, []);
-
   // ── Deposit Types (lazy, once) ────────────────────────────────────────────
   const fetchDepositTypes = useCallback(async () => {
     if (depositeTypeRef.current) return;
@@ -642,7 +633,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // ── Memoized context value — only re-creates when actual deps change ──────
+  // ── Memoized context value ────────────────────────────────────────────────
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
       memberLookUp,
@@ -657,11 +648,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       branchOptions,
       collectionCenterOptions,
       memberGroupOptions,
-      orderByMap,
       fetchBranches,
       fetchCollectionCenters,
       fetchMemberGroups,
-      fetchOrderBy,
       depositTypeOptions,
       fetchDepositTypes,
       collectorOptions,
@@ -679,11 +668,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       branchOptions,
       collectionCenterOptions,
       memberGroupOptions,
-      orderByMap,
       fetchBranches,
       fetchCollectionCenters,
       fetchMemberGroups,
-      fetchOrderBy,
       depositTypeOptions,
       fetchDepositTypes,
       collectorOptions,

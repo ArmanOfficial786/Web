@@ -152,7 +152,7 @@ function MemberIdCard({
             <OrderByField<MemberIdCardRequest>
               control={control}
               name="orderby"
-              reportKey="memberIdCard"
+              reportKey="member-id-card-detail"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

@@ -39,7 +39,7 @@ const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
-  orderby: yup.string().nullable().optional().default("0"),
+  orderby: yup.string().nullable().optional().default(""),
   branchId: yup.number().required("Branch ID is required").default(2),
   collectionCenterId: yup.number().optional().default(0),
   memberGroupId: yup.number().optional().default(0),
@@ -54,7 +54,7 @@ const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   toDate: v.toDate || null,
   branchId: Number(v.branchId) || 0,
   memberGroupId: Number(v.memberGroupId) || 0,
-  orderby: v.orderby,
+  orderby: v.orderby || "",
   currentPage: 1,
   pageSize: v.pageSize ?? 10,
 });

@@ -269,7 +269,7 @@ const schema: yup.ObjectSchema<SavingAcWiseBalanceRequest> = yup.object({
   sameCompanyName: yup.boolean().optional().default(true),
   enableCollectionCenter: yup.boolean().optional().default(true),
   enableGroup: yup.boolean().optional().default(true),
-  orderBy: yup.string().nullable().optional().default("0"),
+  orderBy: yup.string().nullable().optional().default(""),
 });
 
 const toRequest = (
@@ -286,7 +286,7 @@ const toRequest = (
   sameCompanyName: v.sameCompanyName,
   enableCollectionCenter: v.enableCollectionCenter,
   enableGroup: v.enableCollectionCenter,
-  orderBy: v.orderBy,
+  orderBy: v.orderBy || "",
 });
 
 const parsePaginationHeader = (raw: string): ProgressivePagination => {

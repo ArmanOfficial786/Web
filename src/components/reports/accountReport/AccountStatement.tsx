@@ -142,7 +142,7 @@ function AccountStatement({
             <OrderByField<AccountStatementRequestExtended>
               control={control}
               name="orderBy"
-              reportKey="savingTypeWiseBalance"
+              reportKey="account-statement-report"
             />
 
             <VisualReportSwitch<AccountStatementRequestExtended>
