@@ -139,6 +139,15 @@ export interface MemberDetailRequest {
   visualReport?: boolean;
 }
 
+export interface MemberDetailsSummaryRequest {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  fromDate?: string | null;
+  toDate?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface MemberGroupRequestDtos {
   /** @format int64 */
   lstOfficeId?: number;
@@ -278,8 +287,10 @@ import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams
-  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
+export interface FullRequestParams extends Omit<
+  AxiosRequestConfig,
+  "data" | "params" | "url" | "responseType"
+> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -299,8 +310,10 @@ export type RequestParams = Omit<
   "body" | "method" | "query" | "path"
 >;
 
-export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<
+  AxiosRequestConfig,
+  "data" | "cancelToken"
+> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -635,6 +648,30 @@ export class Api<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberDetailsSummary
+     * @name MemberDetailsSummaryCreate
+     * @request POST:/api/MemberDetailsSummary
+     */
+    memberDetailsSummaryCreate: (
+      data: MemberDetailsSummaryRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberDetailsSummary`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

@@ -76,6 +76,10 @@ const MENU: MenuNode[] = [
         label: "MemberAllDetailsReport",
         route: "/Member/reports/MemberAllDetailsReport",
       },
+      {
+        label: "MemberDetailSummaryReport",
+        route: "/Member/reports/MemberDetailSummaryReport",
+      },
     ],
   },
 
