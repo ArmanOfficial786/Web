@@ -184,7 +184,7 @@ import { toast } from "react-toastify";
 import { useState, useCallback, useEffect, useRef } from "react";
 import * as yup from "yup";
 import type { MemberDetailRequest } from "types/api/api";
-import MemberRegistrationReport from "@/components/reports/memberReport/MemberDetailReport";
+import MemberRegistrationReport from "@/components/reports/memberReport/MemberRegistrationReport";
 import memberRegistrationService from "@/services/member/MemberDetailService";
 import { type ReportFormat } from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";

@@ -45,7 +45,7 @@ const schema: yup.ObjectSchema<MemberAllDetailsFormValues> = yup.object({
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
-  orderby: yup.string().nullable().optional().default("0"), // ← lowercase b
+  orderby: yup.string().nullable().optional().default(""), // ← lowercase b
   branchId: yup.number().required("Branch ID is required").default(2),
   memberGroupId: yup.number().optional().default(0),
   visualReport: yup.boolean().optional().default(false),
@@ -65,7 +65,7 @@ const toRequest = (v: MemberAllDetailsFormValues): MemberAllDetailRequst => ({
   toDate: v.toDate || null,
   branchId: Number(v.branchId) || 0,
   memberGroupId: Number(v.memberGroupId) || 0,
-  orderby: v.orderby,
+  orderby: v.orderby || "",
   visualReport: v.visualReport ?? false,
   selectedColumns: v.selectedColumns,
 });

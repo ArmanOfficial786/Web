@@ -220,7 +220,7 @@
 
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -280,8 +280,11 @@ function MemberRegistrationReport({
   const showReport = Boolean(htmlContent);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  const scrollToReport = () =>
-    reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  useEffect(() => {
+    if (htmlContent && reportRef.current) {
+      reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [htmlContent]);
 
   return (
     <>
@@ -379,7 +382,7 @@ function MemberRegistrationReport({
                   onSubmit={onSubmit}
                   setValue={setValue}
                   loading={isLoading}
-                  onBeforeSubmit={scrollToReport}
+                  //onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
                   setValue={setValue}

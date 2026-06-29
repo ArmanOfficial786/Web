@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -12,6 +12,10 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import Collapse from "@mui/material/Collapse"; // new import
+import IconButton from "@mui/material/IconButton"; // new import
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown"; // new import
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -64,9 +68,13 @@ function MemberAllDetailsReport({
   const { isLoading, htmlContent, totalPages, currentPage } = reportState;
   const showReport = Boolean(htmlContent);
   const reportRef = useRef<HTMLDivElement>(null);
+  const [columnsExpanded, setColumnsExpanded] = useState(true);
 
-  const scrollToReport = () =>
-    reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  useEffect(() => {
+    if (htmlContent && reportRef.current) {
+      reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [htmlContent]);
 
   return (
     <>
@@ -144,7 +152,7 @@ function MemberAllDetailsReport({
             <OrderByField<MemberAllDetailsFormValues>
               control={control}
               name="orderby"
-              reportKey="savingTypeWiseBalance"
+              reportKey="member-all-details"
             />
             <VisualReportSwitch<MemberAllDetailsFormValues>
               control={control}
@@ -154,7 +162,7 @@ function MemberAllDetailsReport({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Column selector ── */}
-          <Box sx={{ py: 0.5 }}>
+          {/* <Box sx={{ py: 0.5 }}>
             <MultiCheckboxInput
               name="selectedColumns"
               control={control}
@@ -162,6 +170,37 @@ function MemberAllDetailsReport({
               groupLabel="Select Columns to Display"
               columns={{ xs: 2, sm: 3, md: 4, lg: 6 }}
             />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} /> */}
+
+          <Box sx={{ py: 0.5 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                Select Columns to Display
+              </Typography>
+              <IconButton
+                onClick={() => setColumnsExpanded(!columnsExpanded)}
+                size="small"
+              >
+                {columnsExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+              </IconButton>
+            </Box>
+
+            <Collapse in={columnsExpanded}>
+              <MultiCheckboxInput
+                name="selectedColumns"
+                control={control}
+                options={COLUMN_OPTIONS}
+                groupLabel="" // ← hide internal label (empty string is falsy)
+                columns={{ xs: 2, sm: 3, md: 4, lg: 6 }}
+              />
+            </Collapse>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -181,7 +220,7 @@ function MemberAllDetailsReport({
                   onSubmit={onSubmit}
                   setValue={setValue}
                   loading={isLoading}
-                  onBeforeSubmit={scrollToReport}
+                  //onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
                   setValue={setValue}
