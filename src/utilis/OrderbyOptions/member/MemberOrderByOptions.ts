@@ -21,12 +21,20 @@ export const memberIdCardDetailOrderByOptions = defineOrderByOptions([
   { key: "birthonbs", label: "Date of Birth" },
   { key: "registrationon", label: "Registration Date" },
 ] as const);
+//Report: member-basic-details
+export const memberBasicDetailOrderByOptions = defineOrderByOptions([
+  { key: "MemberId", label: "Member ID" },
+  { key: "MemberName", label: "Member Name" },
+  { key: "NoOfYear Asc", label: "Age Asc" },
+  { key: "NoOfYear Desc", label: "Age Desc" },
+] as const);
 
 // ── Type for report keys and their options ──────────────────────────────
 export type MemberOrderByReportKey =
   | "member-all-details"
   | "member-registration"
-  | "member-id-card-detail";
+  | "member-id-card-detail"
+  | "member-basic-details";
 
 export const memberOrderByOptionsMap: Record<
   MemberOrderByReportKey,
@@ -35,4 +43,5 @@ export const memberOrderByOptionsMap: Record<
   "member-all-details": memberAllDetailOrderByOptions,
   "member-registration": memberRegistrationOrderByOptions,
   "member-id-card-detail": memberIdCardDetailOrderByOptions,
+  "member-basic-details": memberBasicDetailOrderByOptions,
 };
