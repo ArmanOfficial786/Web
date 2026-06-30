@@ -127,6 +127,35 @@ export interface MemberAllDetailRequst {
   selectedColumns?: string[] | null;
 }
 
+export interface MemberBasicDetailsRequest {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+  sameCompanyName?: boolean;
+  branchSelected?: string | null;
+  branchName?: string | null;
+}
+
+export interface MemberBloodGroupReportRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  /** @format int64 */
+  branchId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  /** @format int64 */
+  bloodGroupOption?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+  sameCompanyName?: boolean;
+  branchSelected?: string | null;
+  branchName?: string | null;
+}
+
 export interface MemberDetailRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -272,6 +301,19 @@ export interface SavingAcWiseBalanceRequest {
   sameCompanyName?: boolean;
 }
 
+export interface SoleMemberGroupRequestDtos {
+  /** @format int64 */
+  lstOfficeId?: number;
+}
+
+export interface SoleMemberGroupResponseDto {
+  /** @format int64 */
+  memberGroupId?: number;
+  /** @format int64 */
+  usmOfficeId?: number;
+  name?: string | null;
+}
+
 export interface YearsResponseDto {
   years?: number[] | null;
 }
@@ -287,10 +329,8 @@ import axios from "axios";
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams extends Omit<
-  AxiosRequestConfig,
-  "data" | "params" | "url" | "responseType"
-> {
+export interface FullRequestParams
+  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -310,10 +350,8 @@ export type RequestParams = Omit<
   "body" | "method" | "query" | "path"
 >;
 
-export interface ApiConfig<SecurityDataType = unknown> extends Omit<
-  AxiosRequestConfig,
-  "data" | "cancelToken"
-> {
+export interface ApiConfig<SecurityDataType = unknown>
+  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
@@ -654,6 +692,55 @@ export class Api<
     /**
      * No description
      *
+     * @tags MemberBasicDetails
+     * @name MemberBasicDetailsCreate
+     * @request POST:/api/MemberBasicDetails
+     */
+    memberBasicDetailsCreate: (
+      data: MemberBasicDetailsRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/MemberBasicDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberBloodGroupReport
+     * @name MemberBloodGroupReportCreate
+     * @request POST:/api/MemberBloodGroupReport
+     */
+    memberBloodGroupReportCreate: (
+      data: MemberBloodGroupReportRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberBloodGroupReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags MemberDetailsSummary
      * @name MemberDetailsSummaryCreate
      * @request POST:/api/MemberDetailsSummary
@@ -848,6 +935,26 @@ export class Api<
       this.request<void, any>({
         path: `/api/SavingACWiseBalanceReport/progressive/${jobId}`,
         method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SoleMemberGroup
+     * @name SoleMemberGroupCreate
+     * @request POST:/api/SoleMemberGroup
+     */
+    soleMemberGroupCreate: (
+      data: SoleMemberGroupRequestDtos,
+      params: RequestParams = {},
+    ) =>
+      this.request<SoleMemberGroupResponseDto[], any>({
+        path: `/api/SoleMemberGroup`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

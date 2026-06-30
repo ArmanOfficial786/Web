@@ -80,6 +80,14 @@ const MENU: MenuNode[] = [
         label: "MemberDetailSummaryReport",
         route: "/Member/reports/MemberDetailSummaryReport",
       },
+      {
+        label: "MemberBloodGroupReport",
+        route: "/Member/reports/MemberBloodGroupReport",
+      },
+      {
+        label: "MemberBasicDetailReport",
+        route: "/Member/reports/MemberBasicDetailReport",
+      },
     ],
   },
 
