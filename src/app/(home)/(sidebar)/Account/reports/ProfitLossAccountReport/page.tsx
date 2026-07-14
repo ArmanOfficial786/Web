@@ -1,0 +1,216 @@
+// app/(home)/(sidebar)/Account/reports/PLAccount/page.tsx
+"use client";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+import plAccountService from "@/services/Account/PLAccountService";
+import type { PLAccountRequest, Pagination } from "types/api/api";
+import PLAccountForm, {
+  type ReportFormat,
+} from "@/components/reports/accountReport/PLAccountForm";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+
+// ── branchId is form-only — resolved into branchIds (comma string) on submit ─
+export interface PLAccountFormValues extends Omit<
+  PLAccountRequest,
+  "branchIds"
+> {
+  branchId?: number[];
+}
+
+// ── Client-only response state (binary PDF + header pagination, like BalanceSheet) ──
+export interface PLAccountResponseExtended {
+  pdfData?: string; // blob URL created from binary PDF
+  isLoading: boolean;
+  pagination?: Pagination;
+}
+
+const schema: yup.ObjectSchema<PLAccountFormValues> = yup
+  .object({
+    fromDate: yup
+      .string()
+      .required("From Date is required")
+      .nullable()
+      .optional()
+      .typeError("From Date must be a valid date"),
+    toDate: yup
+      .string()
+      .required("To Date is required")
+      .nullable()
+      .optional()
+      .typeError("To Date must be a valid date")
+      .test("date-order", "To Date cannot be before From Date", function (val) {
+        const { fromDate } = this.parent as { fromDate: string | null };
+        if (!fromDate || !val) return true;
+        return String(val) >= String(fromDate);
+      }),
+    branchId: yup.array().of(yup.number().required()).optional().default([]),
+    branchName: yup.string().nullable().optional().default("All"),
+    reportType: yup
+      .string()
+      .nullable()
+      .optional()
+      .typeError("Report Type must be a string")
+      .default("Summary"),
+    orderBy: yup.string().nullable().optional().default(""),
+    displayType: yup
+      .string()
+      .nullable()
+      .optional()
+      .typeError("Display Type must be a string")
+      .default("Horizontal"),
+    isNepaliReport: yup.boolean().optional().default(false),
+    sameCompanyName: yup.boolean().optional().default(true),
+    visualReport: yup.boolean().optional().default(false),
+  })
+  .required();
+
+export default function PLAccountPage() {
+  const [reportState, setReportState] = useState<PLAccountResponseExtended>({
+    isLoading: false,
+  });
+  const [lastRequest, setLastRequest] = useState<PLAccountRequest | null>(null);
+  const { branchOptions } = useReportFormContext();
+
+  const { control, handleSubmit, setValue, reset } =
+    useForm<PLAccountFormValues>({
+      resolver: yupResolver(schema),
+      defaultValues: schema.getDefault(),
+    });
+
+  // ── branchId[] -> branchIds (comma string). "All" resolves to full id list ──
+  const toRequest = useCallback(
+    (form: PLAccountFormValues): PLAccountRequest => {
+      const selectedIds = (form.branchId ?? [])
+        .map(Number)
+        .filter((id) => id > 0);
+      const allIds = branchOptions
+        .map((o) => Number(o.id))
+        .filter((id) => id > 0);
+      const isAll = selectedIds.length === 0;
+      const resolvedIds = isAll ? allIds : selectedIds;
+
+      const branchName =
+        branchOptions
+          .filter((o) => resolvedIds.includes(Number(o.id)))
+          .map((o) => o.name)
+          .join(", ") || "All";
+
+      return {
+        fromDate: form.fromDate || undefined,
+        toDate: form.toDate || undefined,
+        branchIds: resolvedIds.join(","),
+        branchName,
+        reportType: form.reportType || "Summary",
+        orderBy: form.orderBy || "",
+        displayType: form.displayType || "Horizontal",
+        isNepaliReport: form.isNepaliReport ?? false,
+        sameCompanyName: form.sameCompanyName ?? true,
+        visualReport: form.visualReport ?? false,
+      };
+    },
+    [branchOptions],
+  );
+
+  const callApi = useCallback(
+    (request: PLAccountRequest, format: string) =>
+      plAccountService.api.plAccountCreate(request, { format }),
+    [],
+  );
+
+  const fetchReport = useCallback(
+    async (request: PLAccountRequest) => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
+      });
+
+      try {
+        const res = await callApi(request, "VIEW");
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
+        setLastRequest(request);
+        setReportState({ isLoading: false, pdfData, pagination });
+      } catch (err) {
+        setReportState({ isLoading: false });
+        throw err;
+      }
+    },
+    [callApi],
+  );
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setReportState((prev) => {
+      const total = prev.pagination?.totalPages ?? 1;
+      const clamped = Math.max(1, Math.min(newPage, total));
+      return {
+        ...prev,
+        pagination: { ...prev.pagination, currentPage: clamped },
+      };
+    });
+  }, []);
+
+  const handleDownload = useCallback(
+    async (format: ReportFormat) => {
+      if (!lastRequest) return;
+
+      const res = await callApi(lastRequest, format);
+      const blob = responseToBlob(res.data, format);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = extractFilenameFromResponse(res, format, "PLAccount");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    },
+    [callApi, lastRequest],
+  );
+
+  const onSubmit: SubmitHandler<PLAccountFormValues> = useCallback(
+    (formData) => fetchReport(toRequest(formData)),
+    [fetchReport, toRequest],
+  );
+
+  // ── Revoke blob URL on unmount ────────────────────────────────────────────
+  useEffect(() => {
+    return () => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return prev;
+      });
+    };
+  }, []);
+
+  return (
+    <PLAccountForm
+      control={control}
+      handleSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      setValue={setValue}
+      reset={reset}
+      reportState={reportState}
+      onPageChange={handlePageChange}
+      onDownload={handleDownload}
+    />
+  );
+}

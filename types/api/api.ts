@@ -35,6 +35,17 @@ export interface AllReportOrderByResponseModelGeneralResponse {
   data?: AllReportOrderByResponseModel;
 }
 
+export interface BalanceSheetRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  reportType?: string | null;
+  orderBy?: string | null;
+  includePreviousYearBalance?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface BranchResponse {
   /** @format int64 */
   branchId?: number;
@@ -47,6 +58,24 @@ export interface BranchResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: BranchResponse[] | null;
+}
+
+export interface CashFlowDetailsRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface CashFlowRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface CollectionCenterRequestDtos {
@@ -91,6 +120,16 @@ export interface ConvertResponseDto {
   day?: number;
 }
 
+export interface CostOfFundRequest {
+  tillDate?: string | null;
+  /** @format int64 */
+  branchId?: number;
+  branchName?: string | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface DaysResponseDto {
   /** @format int32 */
   year?: number;
@@ -112,6 +151,16 @@ export interface DepositTypeResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: DepositTypeResponse[] | null;
+}
+
+export interface DetailTrialBalanceRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface MemberAllDetailRequst {
@@ -249,10 +298,38 @@ export interface MemberSelectedDto {
   memberName?: string | null;
 }
 
+export interface MonthlyReportRequest {
+  tillDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  /** @format int32 */
+  accountTypeId?: number;
+  /** @format int32 */
+  reportType?: number;
+  isMonthWise?: boolean;
+  isNepali?: boolean;
+  showBudget?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface OrderByResponse {
   /** @format int32 */
   value?: number;
   displayName?: string | null;
+}
+
+export interface PLAccountRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  reportType?: string | null;
+  orderBy?: string | null;
+  displayType?: string | null;
+  isNepaliReport?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface Pagination {
@@ -266,6 +343,18 @@ export interface Pagination {
   totalRecord?: number | null;
   hasNextPage?: boolean | null;
   hasPreviousPage?: boolean | null;
+}
+
+export interface RatioAnalysisRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  provisionType?: string | null;
+  enable1to30Days?: boolean;
+  isTotalOnly?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface ReportResponseDtos {
@@ -312,6 +401,19 @@ export interface SoleMemberGroupResponseDto {
   /** @format int64 */
   usmOfficeId?: number;
   name?: string | null;
+}
+
+export interface SummaryTrialBalanceRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  orderBy?: string | null;
+  withClosingBalance?: boolean;
+  reportType?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+  isSubLedger?: boolean;
 }
 
 export interface YearsResponseDto {
@@ -529,6 +631,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags BalanceSheet
+     * @name BalanceSheetCreate
+     * @request POST:/api/BalanceSheet
+     */
+    balanceSheetCreate: (
+      data: BalanceSheetRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/BalanceSheet`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Branch
      * @name BranchGetAllBranchesList
      * @request GET:/api/Branch/GetAllBranches
@@ -610,6 +736,54 @@ export class Api<
     /**
      * No description
      *
+     * @tags CashFlow
+     * @name CashFlowCreate
+     * @request POST:/api/CashFlow
+     */
+    cashFlowCreate: (
+      data: CashFlowRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CashFlow`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CashFlowDetails
+     * @name CashFlowDetailsCreate
+     * @request POST:/api/CashFlowDetails
+     */
+    cashFlowDetailsCreate: (
+      data: CashFlowDetailsRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CashFlowDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags CollectionCenter
      * @name CollectionCenterCollectionCentersCreate
      * @request POST:/api/CollectionCenter/collection-centers
@@ -652,6 +826,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags CostOfFund
+     * @name CostOfFundCreate
+     * @request POST:/api/CostOfFund
+     */
+    costOfFundCreate: (
+      data: CostOfFundRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CostOfFund`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags DepositeType
      * @name DepositeTypeGetDepositeTypeList
      * @request GET:/api/DepositeType/getDepositeType
@@ -661,6 +859,30 @@ export class Api<
         path: `/api/DepositeType/getDepositeType`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DetailTrialBalance
+     * @name DetailTrialBalanceCreate
+     * @request POST:/api/DetailTrialBalance
+     */
+    detailTrialBalanceCreate: (
+      data: DetailTrialBalanceRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/DetailTrialBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -885,6 +1107,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags MonthlyReport
+     * @name MonthlyReportCreate
+     * @request POST:/api/MonthlyReport
+     */
+    monthlyReportCreate: (
+      data: MonthlyReportRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MonthlyReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags OrderBy
      * @name OrderByGetAllOrderByList
      * @request GET:/api/OrderBy/GetAllOrderBy
@@ -894,6 +1140,54 @@ export class Api<
         path: `/api/OrderBy/GetAllOrderBy`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags PLAccount
+     * @name PlAccountCreate
+     * @request POST:/api/PLAccount
+     */
+    plAccountCreate: (
+      data: PLAccountRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/PLAccount`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags RatioAnalysis
+     * @name RatioAnalysisCreate
+     * @request POST:/api/RatioAnalysis
+     */
+    ratioAnalysisCreate: (
+      data: RatioAnalysisRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RatioAnalysis`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -955,6 +1249,30 @@ export class Api<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SummaryTrialBalance
+     * @name SummaryTrialBalanceCreate
+     * @request POST:/api/SummaryTrialBalance
+     */
+    summaryTrialBalanceCreate: (
+      data: SummaryTrialBalanceRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SummaryTrialBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   };

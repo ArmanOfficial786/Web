@@ -52,9 +52,9 @@ export default function DateFields<T extends FieldValues>({
   return (
     <Grid container spacing={2} alignItems="center">
       {showFromDate && (
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12, md: 5 }}>
           <FieldRow label={fromDateLabel}>
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: "80%" }}>
               <DateInput
                 name={fromDateName}
                 control={control}
@@ -73,7 +73,7 @@ export default function DateFields<T extends FieldValues>({
       {showToDate && (
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldRow label={toDateLabel}>
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: "80%" }}>
               <DateInput
                 name={toDateName}
                 control={control}

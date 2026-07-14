@@ -115,6 +115,42 @@ const MENU: MenuNode[] = [
         label: "AccountStatementReport",
         route: "/Account/reports/AccountStatementReport",
       },
+      {
+        label: "BalanceSheetReport",
+        route: "/Account/reports/BalanceSheetReport",
+      },
+      {
+        label: "ProfitLossAccountReport",
+        route: "/Account/reports/ProfitLossAccountReport",
+      },
+      {
+        label: "SummaryTrailBalanceReport",
+        route: "/Account/reports/SummaryTrailBalanceReport",
+      },
+      {
+        label: "CashFlowDetailsReport",
+        route: "/Account/reports/CashFlowDetailsReport",
+      },
+      {
+        label: "CostOfFundAnalysis Report",
+        route: "/Account/reports/CostOfFundAnalysisReport",
+      },
+      {
+        label: "Cash Day Book Report",
+        route: "/Account/reports/CashDayBookReport",
+      },
+      {
+        label: "DetailTrailBalanceReport",
+        route: "/Account/reports/DetailTrailBalanceReport",
+      },
+      {
+        label: "MonthlyReport",
+        route: "/Account/reports/MonthlyReport",
+      },
+      {
+        label: "RatioAnalysis Report",
+        route: "/Account/reports/RatioAnalysisReport",
+      },
     ],
   },
 

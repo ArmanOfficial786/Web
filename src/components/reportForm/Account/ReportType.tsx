@@ -56,7 +56,7 @@ const reportTypeOptions = [
 interface ReportTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
-  label?: string;
+  label: string;
   row?: boolean;
   disabled?: boolean;
 }
@@ -65,7 +65,7 @@ interface ReportTypeFieldProps<T extends FieldValues> {
 export default function ReportTypeField<T extends FieldValues>({
   control,
   name,
-  label = "Report Type",
+  label,
   row = true,
   disabled = false,
 }: ReportTypeFieldProps<T>) {
