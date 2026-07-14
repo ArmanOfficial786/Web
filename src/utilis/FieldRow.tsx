@@ -11,7 +11,14 @@ interface FieldRowProps {
 
 export default function FieldRow({ label, children }: FieldRowProps) {
   return (
-    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 1,
+        flexWrap: "wrap",
+      }}
+    >
       <Typography
         sx={{
           width: 110,

@@ -677,7 +677,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Box>
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box sx={{ display: "flex", gap: 2 }}>
         {/* Year */}
         <FormControl
           size={size}
@@ -715,7 +715,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         <FormControl
           size={size}
           error={hasError}
-          sx={{ minWidth: 155 }}
+          sx={{ minWidth: 165 }}
           fullWidth
         >
           <Select
@@ -750,7 +750,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         <FormControl
           size={size}
           error={hasError}
-          sx={{ minWidth: 90 }}
+          sx={{ minWidth: 100 }}
           fullWidth
         >
           <Select

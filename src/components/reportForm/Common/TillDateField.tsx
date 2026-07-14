@@ -144,7 +144,7 @@ export default function TillDateField<T extends FieldValues>({
   mode = "BS",
   name = "tillDate" as Path<T>,
   adName = "tillDateAD" as Path<T>,
-  label = "Till Date (B.S.)",
+  label = "Till Date",
   adLabel = "Till Date (A.D.)",
   disabled = false,
   setValue,
