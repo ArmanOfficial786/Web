@@ -217,6 +217,7 @@ import type {
   CostOfFundFormValues,
   CostOfFundResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/reports/CostOfFundAnalysisReport/page";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };
 
@@ -277,19 +278,15 @@ function CostOfFundForm({
 
           {/* Row 1 — Till Date (BS) */}
           <Box sx={{ mb: 0.5 }}>
-            <Grid container spacing={2} alignItems="center">
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FieldRow label="Till Date">
-                  <Box sx={{ width: "100%" }}>
-                    <DateInput
-                      name="tillDate"
-                      control={control}
-                      dateType="BS"
-                    />
-                  </Box>
-                </FieldRow>
-              </Grid>
-            </Grid>
+            <DateFields<CostOfFundFormValues>
+              control={control}
+              setValue={setValue}
+              mode="BOTH_BS"
+              showFromDate={false}
+              toDateName="tillDate"
+              toDateLabel="Till Date"
+              toDateADLabel="Till Date (A.D.)"
+            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 

@@ -30,6 +30,7 @@ import type {
   BalanceSheetFormValues,
   BalanceSheetResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/reports/BalanceSheetReport/page";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };
 
@@ -90,12 +91,15 @@ function BalanceSheetReportForm({
 
           {/* ── Till Date (BS + AD together, AD derived read-only) ────────── */}
           <Box sx={{ mb: 0.5 }}>
-            <TillDateField<BalanceSheetFormValues>
+            <DateFields<BalanceSheetFormValues>
               control={control}
-              mode="BOTH"
-              name="tillDate"
-              adName="tillDateAD"
               setValue={setValue}
+              mode="BOTH_BS"
+              showFromDate={false}
+              toDateName="tillDate"
+              toDateADName="tillDateAD"
+              toDateLabel="Till Date"
+              toDateADLabel="Till Date (A.D.)"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -115,6 +119,7 @@ function BalanceSheetReportForm({
             <ReportTypeField<BalanceSheetFormValues>
               control={control}
               name="reportType"
+              label="Report Type"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

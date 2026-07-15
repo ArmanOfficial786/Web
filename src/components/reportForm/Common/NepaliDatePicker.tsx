@@ -679,12 +679,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     <Box>
       <Box sx={{ display: "flex", gap: 2 }}>
         {/* Year */}
-        <FormControl
-          size={size}
-          error={hasError}
-          sx={{ minWidth: 100 }}
-          fullWidth
-        >
+        <FormControl size={size} error={hasError} sx={{ minWidth: 80 }}>
           <Select
             value={year || ""}
             disabled={disabled}
@@ -712,12 +707,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         </FormControl>
 
         {/* Month */}
-        <FormControl
-          size={size}
-          error={hasError}
-          sx={{ minWidth: 165 }}
-          fullWidth
-        >
+        <FormControl size={size} error={hasError} sx={{ minWidth: 130 }}>
           <Select
             value={month || ""}
             disabled={disabled}
@@ -747,12 +737,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         </FormControl>
 
         {/* Day */}
-        <FormControl
-          size={size}
-          error={hasError}
-          sx={{ minWidth: 100 }}
-          fullWidth
-        >
+        <FormControl size={size} error={hasError} sx={{ minWidth: 80 }}>
           <Select
             value={visibleDays.length ? day || "" : ""}
             disabled={disabled || !visibleDays.length}

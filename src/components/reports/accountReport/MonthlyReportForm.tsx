@@ -18,7 +18,6 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import TillDateField from "@/components/reportForm/Common/TillDateField";
 import LedgerAccountTypeField from "@/components/reportForm/Account/LedgerAccountType";
 import ReportTypeField from "@/components/reportForm/Account/ReportType";
 import DisplayTypeField from "@/components/reportForm/Account/DisplayType";
@@ -31,6 +30,7 @@ import type {
   MonthlyReportFormValues,
   MonthlyReportResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/reports/MonthlyReport/page";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };
 
@@ -98,10 +98,12 @@ function MonthlyReportForm({
               mb: 0.5,
             }}
           >
-            <TillDateField<MonthlyReportFormValues>
+            <DateFields<MonthlyReportFormValues>
               control={control}
               mode="BS"
-              name="tillDate"
+              showFromDate={false}
+              toDateName="tillDate"
+              toDateLabel="Till Date"
             />
             <OfficeNameField<MonthlyReportFormValues>
               control={control}

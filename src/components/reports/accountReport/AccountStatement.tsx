@@ -110,6 +110,7 @@ function AccountStatement({
             <ReportTypeField<AccountStatementRequestExtended>
               control={control}
               name="reportType"
+              label="Report Type"
             />
           </Box>
           <Divider sx={{}} />

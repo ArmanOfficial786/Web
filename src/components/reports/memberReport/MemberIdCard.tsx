@@ -106,7 +106,12 @@ function MemberIdCard({
 
           {/* Row 2 — From Date | Till Date */}
           <Box sx={{ mb: 0.5 }}>
-            <DateFields control={control} />
+            <DateFields
+              control={control}
+              fromDateLabel="From Date"
+              toDateLabel="To Date"
+              mode="BS"
+            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
