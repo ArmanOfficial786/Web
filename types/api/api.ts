@@ -304,8 +304,7 @@ export interface MonthlyReportRequest {
   branchName?: string | null;
   /** @format int32 */
   accountTypeId?: number;
-  /** @format int32 */
-  reportType?: number;
+  reportType?: string | null;
   isMonthWise?: boolean;
   isNepali?: boolean;
   showBudget?: boolean;
@@ -348,7 +347,7 @@ export interface Pagination {
 export interface RatioAnalysisRequest {
   fromDate?: string | null;
   toDate?: string | null;
-  branchIds?: string | null;
+  branchId?: string | null;
   branchName?: string | null;
   provisionType?: string | null;
   enable1to30Days?: boolean;

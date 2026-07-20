@@ -45,8 +45,8 @@ const schema: yup.ObjectSchema<MonthlyReportFormValues> = yup
       .default(""),
     branchId: yup.string().nullable().optional().default("2"), // matches CostOfFund's defaultBranchId={2}
     branchName: yup.string().nullable().optional().default(""),
-    accountTypeId: yup.number().optional().default(0),
-    reportType: yup.number().optional().default(1),
+    accountTypeId: yup.number().required().default(0),
+    reportType: yup.string().optional().default("Summary"),
     isMonthWise: yup.boolean().optional().default(false),
     showBudget: yup.boolean().optional().default(false),
     sameCompanyName: yup.boolean().optional().default(true),
@@ -74,7 +74,7 @@ export default function MonthlyReportPage() {
       branchId: form.branchId ?? "2",
       branchName: form.branchName ?? "",
       accountTypeId: form.accountTypeId ?? 0,
-      reportType: form.reportType ?? 1,
+      reportType: form.reportType,
       isMonthWise: form.isMonthWise ?? false,
       isNepali: true, // Till Date is BS-only in this form
       showBudget: form.showBudget ?? false,

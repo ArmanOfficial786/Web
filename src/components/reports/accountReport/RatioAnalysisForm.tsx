@@ -1,3 +1,4 @@
+// components/reports/accountReport/RatioAnalysisForm.tsx
 "use client";
 
 import React, { useRef } from "react";
@@ -17,35 +18,34 @@ import Typography from "@mui/material/Typography";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import LedgerAccountTypeField from "@/components/reportForm/Account/LedgerAccountType";
-import ReportTypeField from "@/components/reportForm/Account/ReportType";
-import DisplayTypeField from "@/components/reportForm/Account/DisplayType";
-import CheckboxInput from "@/components/form/CheckboxInput";
-import FieldRow from "@/utilis/FieldRow";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import ProvisionTypeField from "@/components/reportForm/Account/ProvisionTypeField";
+import ViewTypeField from "@/components/reportForm/Account/ViewTypeField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
+import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
-  MonthlyReportFormValues,
-  MonthlyReportResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/MonthlyReport/page";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+  RatioAnalysisFormValues,
+  RatioAnalysisResponseExtended,
+} from "@/app/(home)/(sidebar)/Account/reports/RatioAnalysisReport/page";
+import BranchFieldName from "@/components/reportForm/Common/BranchNameField";
 
 export type { ReportFormat };
 
-interface MonthlyReportFormProps {
-  control: Control<MonthlyReportFormValues>;
-  handleSubmit: UseFormHandleSubmit<MonthlyReportFormValues>;
-  onSubmit: SubmitHandler<MonthlyReportFormValues>;
-  setValue: UseFormSetValue<MonthlyReportFormValues>;
-  reset: UseFormReset<MonthlyReportFormValues>;
-  reportState: MonthlyReportResponseExtended;
+interface RatioAnalysisFormProps {
+  control: Control<RatioAnalysisFormValues>;
+  handleSubmit: UseFormHandleSubmit<RatioAnalysisFormValues>;
+  onSubmit: SubmitHandler<RatioAnalysisFormValues>;
+  setValue: UseFormSetValue<RatioAnalysisFormValues>;
+  reset: UseFormReset<RatioAnalysisFormValues>;
+  reportState: RatioAnalysisResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-function MonthlyReportForm({
+function RatioAnalysisForm({
   control,
   handleSubmit,
   onSubmit,
@@ -53,7 +53,7 @@ function MonthlyReportForm({
   reportState,
   onPageChange,
   onDownload,
-}: MonthlyReportFormProps) {
+}: RatioAnalysisFormProps) {
   const { pdfData, isLoading, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -85,85 +85,73 @@ function MonthlyReportForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Monthly Report
+            Ratio Analysis Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Till Date (BS only) + Branch ──────────────────────────────── */}
+          {/* ── From/To Date ─────────────────────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}>
+            <DateFields control={control} />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── Branch + Same Company ────────────────────────────────────── */}
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
-              mb: 0.5,
             }}
           >
-            <DateFields<MonthlyReportFormValues>
-              control={control}
-              mode="BS"
-              showFromDate={false}
-              toDateName="tillDate"
-              toDateLabel="Till Date"
-            />
-            <BranchNameField<MonthlyReportFormValues>
+            <BranchFieldName<RatioAnalysisFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchId"
-              defaultBranchId={2}
+            />
+            <SameCompanyField<RatioAnalysisFormValues>
+              control={control}
+              labelPlacement="end"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── View Type + Ledger Account Type ──────────────────────────── */}
+          {/* ── Provision Type (Radio) + Enable 1 to 30 Days ─────────────── */}
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "1.52fr 1fr" },
               gap: 2,
+              alignItems: "center",
             }}
           >
-            <ReportTypeField<MonthlyReportFormValues>
+            <ProvisionTypeField<RatioAnalysisFormValues>
               control={control}
-              name="reportType"
-              label="Report Type"
+              name="provisionType"
+              label="Provision Type"
             />
-            <LedgerAccountTypeField<MonthlyReportFormValues>
+
+            <CheckboxInput
+              name="enable1to30Days"
               control={control}
-              name="accountTypeId"
-              label="Ledger Account Type"
+              label="Enable 1 to 30 Days"
+              labelPlacement="end"
+              size="small"
+              color="primary"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Report Type (Normal / Month Wise) ────────────────────────── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-            }}
-          >
-            <DisplayTypeField<MonthlyReportFormValues>
+          {/* ── View (Detail / Total Only) ───────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}>
+            <ViewTypeField<RatioAnalysisFormValues>
               control={control}
-              name="isMonthWise"
-              label="Display Type"
+              name="viewType"
+              label="View"
             />
-
-            <Box>
-              <FieldRow label="">
-                <CheckboxInput
-                  name="showBudget"
-                  control={control}
-                  label="Show Budget"
-                  size="small"
-                  color="primary"
-                  labelPlacement="end"
-                />
-              </FieldRow>
-            </Box>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
+          {/* ── View Report | Clear ───────────────────────────────────────── */}
           <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -173,7 +161,7 @@ function MonthlyReportForm({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton<MonthlyReportFormValues>
+                <ViewReportButton<RatioAnalysisFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -221,4 +209,4 @@ function MonthlyReportForm({
   );
 }
 
-export default React.memo(MonthlyReportForm);
+export default React.memo(RatioAnalysisForm);
