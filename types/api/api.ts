@@ -153,6 +153,21 @@ export interface DepositTypeResponseListGeneralResponse {
   data?: DepositTypeResponse[] | null;
 }
 
+export interface DepositUnverifiedRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  depositTypeId?: string | null;
+  collectorId?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface DetailTrialBalanceRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -312,6 +327,20 @@ export interface MonthlyReportRequest {
   visualReport?: boolean;
 }
 
+export interface OfficeProgressRequest {
+  tillDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  reportType?: string | null;
+  enable1to30Days?: boolean;
+  provisionType?: string | null;
+  groupByBranch?: boolean;
+  groupByCollectionCenter?: boolean;
+  viewDetail?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface OrderByResponse {
   /** @format int32 */
   value?: number;
@@ -370,6 +399,14 @@ export interface ReportResponseDtosGeneralResponse {
   data?: ReportResponseDtos;
 }
 
+export interface SMSCategoryRequest {
+  branchId?: string | null;
+  branchName?: string | null;
+  smsCategoryId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface SavingAcWiseBalanceRequest {
   tillDate?: string | null;
   /** @format int64 */
@@ -387,6 +424,46 @@ export interface SavingAcWiseBalanceRequest {
   enableCollectionCenter?: boolean;
   enableGroup?: boolean;
   sameCompanyName?: boolean;
+}
+
+export interface SavingTypeWiseBalanceRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  collectionCenterId?: string | null;
+  memberGroupId?: string | null;
+  collectorId?: string | null;
+  orderBy?: string | null;
+  isNepali?: boolean;
+  openingBalance?: boolean;
+  percentageBalance?: boolean;
+  groupByBranch?: boolean;
+  groupByCollectionCenter?: boolean;
+  groupByMemberGroup?: boolean;
+  viewCollector?: boolean;
+  viewDetail?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface SavingTypeWiseIndividualBalanceRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  collectionCenterId?: string | null;
+  memberGroupId?: string | null;
+  collectorId?: string | null;
+  orderBy?: string | null;
+  openingBalance?: boolean;
+  percentageBalance?: boolean;
+  groupByBranch?: boolean;
+  groupByCollectionCenter?: boolean;
+  groupByMemberGroup?: boolean;
+  viewDetail?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface SoleMemberGroupRequestDtos {
@@ -413,6 +490,18 @@ export interface SummaryTrialBalanceRequest {
   sameCompanyName?: boolean;
   visualReport?: boolean;
   isSubLedger?: boolean;
+}
+
+export interface ThresholdTransactionRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  branchName?: string | null;
+  transactionNumber?: string | null;
+  memberName?: string | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface YearsResponseDto {
@@ -864,6 +953,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags DepositUnverified
+     * @name DepositUnverifiedGenerateReportCreate
+     * @request POST:/api/DepositUnverified/GenerateReport
+     */
+    depositUnverifiedGenerateReportCreate: (
+      data: DepositUnverifiedRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/DepositUnverified/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags DetailTrialBalance
      * @name DetailTrialBalanceCreate
      * @request POST:/api/DetailTrialBalance
@@ -1130,6 +1243,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags OfficeProgress
+     * @name OfficeProgressGenerateReportCreate
+     * @request POST:/api/OfficeProgress/GenerateReport
+     */
+    officeProgressGenerateReportCreate: (
+      data: OfficeProgressRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/OfficeProgress/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags OrderBy
      * @name OrderByGetAllOrderByList
      * @request GET:/api/OrderBy/GetAllOrderBy
@@ -1234,6 +1371,78 @@ export class Api<
     /**
      * No description
      *
+     * @tags SavingTypeWiseBalance
+     * @name SavingTypeWiseBalanceCreate
+     * @request POST:/api/SavingTypeWiseBalance
+     */
+    savingTypeWiseBalanceCreate: (
+      data: SavingTypeWiseBalanceRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingTypeWiseBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingTypeWiseIndividualBalance
+     * @name SavingTypeWiseIndividualBalanceCreate
+     * @request POST:/api/SavingTypeWiseIndividualBalance
+     */
+    savingTypeWiseIndividualBalanceCreate: (
+      data: SavingTypeWiseIndividualBalanceRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingTypeWiseIndividualBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SMSCategory
+     * @name SmsCategoryCreate
+     * @request POST:/api/SMSCategory
+     */
+    smsCategoryCreate: (
+      data: SMSCategoryRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SMSCategory`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags SoleMemberGroup
      * @name SoleMemberGroupCreate
      * @request POST:/api/SoleMemberGroup
@@ -1268,6 +1477,30 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/SummaryTrialBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ThresholdTransaction
+     * @name ThresholdTransactionGenerateReportCreate
+     * @request POST:/api/ThresholdTransaction/GenerateReport
+     */
+    thresholdTransactionGenerateReportCreate: (
+      data: ThresholdTransactionRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ThresholdTransaction/GenerateReport`,
         method: "POST",
         query: query,
         body: data,

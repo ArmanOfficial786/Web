@@ -467,7 +467,7 @@ export default function AccountStatementPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
-        toast.warning("Please view the report before exporting.");
+       
         return;
       }
       try {
@@ -486,9 +486,7 @@ export default function AccountStatementPage() {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
       } catch (error) {
-        toast.error(
-          `Download failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-        );
+       
       }
     },
     [callApi, lastRequest],

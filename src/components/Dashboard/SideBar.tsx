@@ -103,6 +103,22 @@ const MENU: MenuNode[] = [
         label: "SavingAcWiseBalanceReport",
         route: "/MemberAc/reports/SavingAcWiseBalanceReport",
       },
+      {
+        label: "SavingTypeWiseBalanceReport",
+        route: "/MemberAc/reports/SavingTypeWiseBalance",
+      },
+      {
+        label: "SavingTypeWiseIndividualBalance",
+        route: "/MemberAc/reports/SavingTypeWiseIndividualBalance",
+      },
+      {
+        label: "SMSCategoryReport",
+        route: "/MemberAc/reports/SMSCategoryReport",
+      },
+      {
+        label: "DepositeUnverifiedReport",
+        route: "/MemberAc/reports/DepositeUnverifiedReport",
+      },
     ],
   },
 

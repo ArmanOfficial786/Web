@@ -282,9 +282,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
+import { type ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
