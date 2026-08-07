@@ -39,12 +39,22 @@ export const depositUnverifiedOrderByOptions = defineOrderByOptions([
   { key: "verifiedBy", label: "Verified By" },
 ] as const);
 
+export const memberAccountDeactiveOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member ID" },
+  { key: "memberName", label: "Member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "age", label: "Age" },
+  { key: "accountType", label: "Account Type" },
+  { key: "lastDate", label: "Last Date" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
   | "saving-type-wise-balance-report"
   | "sms-category-report"
-  | "deposit-unverified-report";
+  | "deposit-unverified-report"
+  | "member-account-deactive-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -54,4 +64,5 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
   "saving-type-wise-balance-report": savingTypeWiseBalanceOrderByOptions,
   "sms-category-report": smsCategoryOrderByOptions,
   "deposit-unverified-report": depositUnverifiedOrderByOptions,
+  "member-account-deactive-report": memberAccountDeactiveOrderByOptions,
 };

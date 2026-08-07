@@ -168,6 +168,20 @@ export interface DepositUnverifiedRequest {
   visualReport?: boolean;
 }
 
+export interface DepositWithdrawMaxAmountRangeRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int32 */
+  transactionType?: number;
+  /** @format double */
+  amount?: number;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface DetailTrialBalanceRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -175,6 +189,74 @@ export interface DetailTrialBalanceRequest {
   branchName?: string | null;
   orderBy?: string | null;
   sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LmtLoanMaseterListResponse {
+  /** @format int64 */
+  lmtLoanTypeMasterId?: number;
+  loanTypeName?: string | null;
+}
+
+export interface LmtLoanMaseterListResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: LmtLoanMaseterListResponse[] | null;
+}
+
+export interface MemberAccountDeactiveRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int32 */
+  duePeriod?: number;
+  transactionType?: string | null;
+  /** @format int64 */
+  typeId?: number;
+  isActive?: boolean;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface MemberAccountDetailNoRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int32 */
+  memberType?: number;
+  includeSaving?: boolean;
+  includeShare?: boolean;
+  includeLoan?: boolean;
+  savingTypeId?: string | null;
+  shareTypeId?: string | null;
+  loanTypeId?: string | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface MemberAccountDetailRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  depositTypeId?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  /** @format int64 */
+  memberRegistrationId?: number;
+  /** @format int32 */
+  status?: number;
+  collectorId?: string | null;
+  collectionCenterId?: string | null;
+  memberGroupId?: string | null;
+  enableCollectionCenterGroup?: boolean;
+  enableMemberGroupGroup?: boolean;
+  sameCompanyName?: boolean;
+  orderBy?: string | null;
+  selectedColumns?: string[] | null;
   visualReport?: boolean;
 }
 
@@ -308,9 +390,36 @@ export interface MemberLookUpDtosPagedResult {
   totalPages?: number;
 }
 
+export interface MemberPenaltyDepositWithdrawRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int32 */
+  transactionType?: number;
+  /** @format double */
+  amount?: number;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface MemberSelectedDto {
   memberId?: string | null;
   memberName?: string | null;
+}
+
+export interface MemberSummaryRequest {
+  tillDate?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  collectionCenterId?: string | null;
+  memberGroupId?: string | null;
+  enableCollectionCenterGroup?: boolean;
+  enableMemberGroupGroup?: boolean;
+  sameCompanyName?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface MonthlyReportRequest {
@@ -977,6 +1086,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags DepositWithdrawMaxAmountRange
+     * @name DepositWithdrawMaxAmountRangeGenerateReportCreate
+     * @request POST:/api/DepositWithdrawMaxAmountRange/GenerateReport
+     */
+    depositWithdrawMaxAmountRangeGenerateReportCreate: (
+      data: DepositWithdrawMaxAmountRangeRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/DepositWithdrawMaxAmountRange/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags DetailTrialBalance
      * @name DetailTrialBalanceCreate
      * @request POST:/api/DetailTrialBalance
@@ -991,6 +1124,93 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/DetailTrialBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LmtLoanMaseterList
+     * @name LmtLoanMaseterListList
+     * @request GET:/api/LmtLoanMaseterList
+     */
+    lmtLoanMaseterListList: (params: RequestParams = {}) =>
+      this.request<LmtLoanMaseterListResponseListGeneralResponse, any>({
+        path: `/api/LmtLoanMaseterList`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberAccountDeactive
+     * @name MemberAccountDeactiveCreate
+     * @request POST:/api/MemberAccountDeactive
+     */
+    memberAccountDeactiveCreate: (
+      data: MemberAccountDeactiveRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberAccountDeactive`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberAccountDetail
+     * @name MemberAccountDetailCreate
+     * @request POST:/api/MemberAccountDetail
+     */
+    memberAccountDetailCreate: (
+      data: MemberAccountDetailRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberAccountDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberAccountDetailNo
+     * @name MemberAccountDetailNoCreate
+     * @request POST:/api/MemberAccountDetailNo
+     */
+    memberAccountDetailNoCreate: (
+      data: MemberAccountDetailNoRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberAccountDetailNo`,
         method: "POST",
         query: query,
         body: data,
@@ -1194,6 +1414,30 @@ export class Api<
     /**
      * No description
      *
+     * @tags MemberPenaltyDepositWithdraw
+     * @name MemberPenaltyDepositWithdrawCreate
+     * @request POST:/api/MemberPenaltyDepositWithdraw
+     */
+    memberPenaltyDepositWithdrawCreate: (
+      data: MemberPenaltyDepositWithdrawRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberPenaltyDepositWithdraw`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags MemberRegistration
      * @name MemberRegistrationCreate
      * @request POST:/api/MemberRegistration
@@ -1213,6 +1457,30 @@ export class Api<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags MemberSummary
+     * @name MemberSummaryCreate
+     * @request POST:/api/MemberSummary
+     */
+    memberSummaryCreate: (
+      data: MemberSummaryRequest,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/MemberSummary`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

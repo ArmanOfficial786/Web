@@ -119,6 +119,10 @@ const MENU: MenuNode[] = [
         label: "DepositeUnverifiedReport",
         route: "/MemberAc/reports/DepositeUnverifiedReport",
       },
+      {
+        label: "MemberAccountDeactiveReport",
+        route: "/MemberAc/reports/MemberAccountDeactiveReport",
+      },
     ],
   },
 

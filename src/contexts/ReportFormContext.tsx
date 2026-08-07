@@ -708,6 +708,7 @@ import {
 } from "types/api/api";
 import depositeTypeService from "@/services/Common/DepositeType";
 import collectorService from "@/services/Common/CollectorService";
+import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
 
 export type SelectOption = { id: number | string; name: string };
 
@@ -747,6 +748,9 @@ interface ReportFormContextType {
   searchmemberLookUp: (params: MemberLookUpSearchParams) => Promise<void>;
   clearResults: () => void;
   setSelectedMember: (member: MemberRecord | null) => void;
+
+  loanMasterListOptions: SelectOption[];
+  fetchLoanMasterList: () => Promise<void>;
 
   // Dropdown options
   branchOptions: SelectOption[];
@@ -811,11 +815,14 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [collectorOptions, setCollectorOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
+  const [loanMasterListOptions, setLoanMasterListOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
 
   // ── Fetch guards ──────────────────────────────────────────────────────────
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
+  const loanMasterListFetchedRef = useRef(false);
 
   // ── Member lookup ─────────────────────────────────────────────────────────
   const searchmemberLookUp = useCallback(
@@ -987,6 +994,21 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const fetchLoanMasterList = useCallback(async () => {
+    if (loanMasterListFetchedRef.current) return;
+    loanMasterListFetchedRef.current = true;
+    try {
+      const res = await lmtLoanMasterlistService.getAll();
+      const mapped = res.map((l) => ({
+        id: l.lmtLoanTypeMasterId ?? 0, // number
+        name: l.loanTypeName ?? "",
+      }));
+      setLoanMasterListOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch {
+      loanMasterListFetchedRef.current = false;
+    }
+  }, []);
+
   // ── Memoized context value ────────────────────────────────────────────────
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -1011,6 +1033,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchDepositTypes,
       collectorOptions,
       fetchCollectors,
+      loanMasterListOptions,
+      fetchLoanMasterList,
     }),
     [
       memberLookUp,
@@ -1033,6 +1057,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchDepositTypes,
       collectorOptions,
       fetchCollectors,
+      loanMasterListOptions,
+      fetchLoanMasterList,
     ],
   );
 
