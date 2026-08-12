@@ -1,4 +1,3 @@
-// // components/reports/memberAccount/MemberAccountDetailForm.tsx
 // "use client";
 
 // import React, { useEffect, useRef, useState } from "react";
@@ -38,15 +37,16 @@
 // import DropDown from "@/components/form/DropDown";
 // import CheckboxInput from "@/components/form/CheckboxInput";
 // import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
-// import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
 // import type {
 //   MemberAccountDetailFormValues,
 //   MemberAccountDetailResponseExtended,
 // } from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page";
+// import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
 
 // export type { ReportFormat };
 
-// // ⚠️ ASSUMPTION: -1=All, 1=Active, 0=Inactive — confirm against backend
+// // ⚠️ ASSUMPTION: -1=All confirmed against backend status switch; the rest map 1:1
+// // to MemberAccountDetailController.GetStatusLabel (1..5).
 // const statusOptions = [
 //   { id: "-1", name: "-- All --" },
 //   { id: "1", name: "Opened" },
@@ -65,6 +65,8 @@
 //   reportState: MemberAccountDetailResponseExtended;
 //   onPageChange: (page: number) => void;
 //   onDownload: (format: ReportFormat) => void | Promise<void>;
+//   iframeRef: React.RefObject<HTMLIFrameElement | null>;
+//   renderKey: number;
 // }
 
 // function MemberAccountDetailForm({
@@ -75,21 +77,23 @@
 //   reportState,
 //   onPageChange,
 //   onDownload,
+//   iframeRef,
+//   renderKey,
 // }: MemberAccountDetailFormProps) {
-//   const { pdfData, isLoading, pagination } = reportState;
-//   const showReport = Boolean(pdfData);
+//   const { isLoading, htmlContent, totalPages, currentPage } = reportState;
+//   const showReport = Boolean(htmlContent);
 //   const reportRef = useRef<HTMLDivElement>(null);
 //   const [columnsExpanded, setColumnsExpanded] = useState(true);
 
 //   // ⚠️ ASSUMPTION: swap for your real auth/user hook
 //   const userId = 160;
 
-//   // ── Scroll only after the report has actually loaded, not before submit ────
+//   // ── Scroll only after the report has actually loaded ───────────────────────
 //   useEffect(() => {
-//     if (showReport && !isLoading) {
-//       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+//     if (htmlContent && reportRef.current) {
+//       reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
 //     }
-//   }, [pdfData, showReport, isLoading]);
+//   }, [htmlContent]);
 
 //   return (
 //     <>
@@ -119,6 +123,7 @@
 //             Member Account Detail Report
 //           </Typography>
 //           <Divider sx={{ mb: 0.5 }} />
+
 //           {/* ── Member Lookup (Member Id + Member Name) ──────────────────── */}
 //           <MemberLookupButton<MemberAccountDetailFormValues>
 //             control={control}
@@ -240,9 +245,7 @@
 //           </Box>
 //           <Divider sx={{ mb: 0.5 }} />
 
-//           <Divider sx={{ mb: 0.5 }} />
-
-//           {/* ── Column selector (collapsible, with Select All) ───────────── */}
+//           {/* ── Column selector (collapsible) ────────────────────────────── */}
 //           <Box sx={{ py: 0.5 }}>
 //             <Box
 //               sx={{
@@ -274,7 +277,7 @@
 //           </Box>
 //           <Divider sx={{ mb: 0.5 }} />
 
-//           {/* ── Same Company Name ─────────────────────────────────────────── */}
+//           {/* ── Same Company Name + Order By ──────────────────────────────── */}
 //           <Box
 //             sx={{
 //               display: "grid",
@@ -318,36 +321,47 @@
 //               </Box>
 //             </Grid>
 //           </Grid>
-//           <Divider sx={{ mb: 0.5 }} />
 //         </Paper>
 
-//         {showReport && (
-//           <ReportNavigation
-//             pdfData={pdfData ?? ""}
-//             currentPage={pagination?.currentPage ?? 1}
-//             totalPages={pagination?.totalPages ?? 1}
-//             onPageChange={onPageChange}
-//             onDownload={onDownload}
-//           />
-//         )}
-
+//         {/* ── Report iframe area (HTML srcDoc + client-side pagination) ───── */}
 //         {showReport && (
 //           <Box
 //             ref={reportRef}
-//             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
+//             sx={{ display: "flex", flexDirection: "column", gap: 1 }}
 //           >
-//             <embed
-//               key={pdfData}
-//               src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
-//               style={{
-//                 position: "absolute",
-//                 top: "-40px",
-//                 left: 0,
-//                 width: "100%",
-//                 height: "calc(100% + 40px)",
-//                 border: "none",
-//               }}
+//             <ReportNavigation
+//               pdfData={undefined}
+//               currentPage={currentPage}
+//               totalPages={totalPages}
+//               onPageChange={onPageChange}
+//               onDownload={onDownload}
 //             />
+
+//             <Box
+//               sx={{
+//                 width: "100%",
+//                 border: "1px solid",
+//                 borderColor: "divider",
+//                 borderRadius: 1,
+//                 overflow: "auto",
+//                 height: "100vh",
+//                 backgroundColor: "#d0d0d0",
+//               }}
+//             >
+//               <iframe
+//                 ref={iframeRef}
+//                 key={renderKey}
+//                 srcDoc={htmlContent}
+//                 style={{
+//                   width: "100%",
+//                   height: "100%",
+//                   border: "none",
+//                   display: "block",
+//                 }}
+//                 sandbox="allow-scripts allow-modals allow-same-origin"
+//                 title="Member Account Detail Report"
+//               />
+//             </Box>
 //           </Box>
 //         )}
 //       </Box>
@@ -358,6 +372,7 @@
 // export default React.memo(MemberAccountDetailForm);
 
 // components/reports/memberAccount/MemberAccountDetailForm.tsx
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -381,6 +396,7 @@ import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToUpButton";
 import MemberLookupButton from "@/components/reportForm/Common/MemberLookUpButton";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -697,8 +713,11 @@ function MemberAccountDetailForm({
               onDownload={onDownload}
             />
 
+            {/* position: relative so the floating up-arrow button can anchor
+                to this box's bottom-right corner */}
             <Box
               sx={{
+                position: "relative",
                 width: "100%",
                 border: "1px solid",
                 borderColor: "divider",
@@ -720,6 +739,21 @@ function MemberAccountDetailForm({
                 }}
                 sandbox="allow-scripts allow-modals allow-same-origin"
                 title="Member Account Detail Report"
+              />
+
+              {/* Jump to first page of the report */}
+              <ScrollToFirstPageButton
+                onClick={() => {
+                  // If on first page, go to last; otherwise go to first
+                  if (currentPage <= 1) {
+                    onPageChange(totalPages);
+                  } else {
+                    onPageChange(1);
+                  }
+                }}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                hideWhenSinglePage={true}
               />
             </Box>
           </Box>
