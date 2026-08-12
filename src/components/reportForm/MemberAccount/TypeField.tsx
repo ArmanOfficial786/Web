@@ -1,12 +1,12 @@
-// // components/reportForm/Common/TypeField.tsx
 // "use client";
 
-// import React, { useEffect } from "react";
+// import React, { useEffect, useRef } from "react";
 // import {
 //   useWatch,
 //   type Control,
 //   type FieldValues,
 //   type Path,
+//   type UseFormSetValue,
 // } from "react-hook-form";
 // import Box from "@mui/material/Box";
 // import FieldRow from "@/utilis/FieldRow";
@@ -15,13 +15,15 @@
 
 // interface TypeFieldProps<T extends FieldValues> {
 //   control: Control<T>;
-//   name: Path<T>; // the "typeId" field this dropdown writes to
+//   setValue: UseFormSetValue<T>;
+//   name: Path<T>; // the "typeId" field this dropdown writes to (number)
 //   transactionTypeName: Path<T>; // the "transactionType" field to watch ("S"/"L")
 //   label: string;
 // }
 
 // export default function TypeField<T extends FieldValues>({
 //   control,
+//   setValue,
 //   name,
 //   transactionTypeName,
 //   label,
@@ -34,16 +36,32 @@
 //     fetchLoanMasterList,
 //   } = useReportFormContext();
 
+//   const prevTransactionType = useRef(transactionType);
+
 //   useEffect(() => {
-//     if (transactionType === "S") {
+//     const isSaving = transactionType === "S" || transactionType === "Saving";
+//     const isLoan = transactionType === "L" || transactionType === "Loan";
+
+//     if (isSaving) {
 //       fetchDepositTypes();
-//     } else if (transactionType === "L") {
+//     } else if (isLoan) {
 //       fetchLoanMasterList();
 //     }
-//   }, [transactionType, fetchDepositTypes, fetchLoanMasterList]);
 
-//   const options =
-//     transactionType === "L" ? loanMasterListOptions : depositTypeOptions;
+//     // ── Reset to "-- Select --" (id 0) whenever the transaction type
+//     // actually changes — prevents a stale Saving typeId lingering when
+//     // switching to Loan, or vice versa. Skip on first mount. ──────────────
+//     if (
+//       prevTransactionType.current !== transactionType &&
+//       prevTransactionType.current !== undefined
+//     ) {
+//       setValue(name, 0 as any, { shouldDirty: false, shouldValidate: false });
+//     }
+//     prevTransactionType.current = transactionType;
+//   }, [transactionType, fetchDepositTypes, fetchLoanMasterList, setValue, name]);
+
+//   const isLoan = transactionType === "L" || transactionType === "Loan";
+//   const options = isLoan ? loanMasterListOptions : depositTypeOptions;
 
 //   return (
 //     <FieldRow label={label}>
@@ -54,6 +72,11 @@
 //           label={label}
 //           options={options}
 //           fullWidth
+//           onOpen={() => {
+//             if (isLoan && loanMasterListOptions.length <= 1) {
+//               fetchLoanMasterList();
+//             }
+//           }}
 //         />
 //       </Box>
 //     </FieldRow>
@@ -80,7 +103,7 @@ interface TypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
   name: Path<T>; // the "typeId" field this dropdown writes to (number)
-  transactionTypeName: Path<T>; // the "transactionType" field to watch ("S"/"L")
+  transactionTypeName: Path<T>; // the "transactionType" field to watch ("S"/"L"/"H")
   label: string;
 }
 
@@ -97,20 +120,28 @@ export default function TypeField<T extends FieldValues>({
     fetchDepositTypes,
     loanMasterListOptions,
     fetchLoanMasterList,
+    shareTypeOptions,
+    fetchShareType,
   } = useReportFormContext();
 
   const prevTransactionType = useRef(transactionType);
 
+  const isSaving = transactionType === "S" || transactionType === "Saving";
+  const isLoan = transactionType === "L" || transactionType === "Loan";
+  const isShare = transactionType === "H" || transactionType === "Share";
+
   useEffect(() => {
-    if (transactionType === "S") {
+    if (isSaving) {
       fetchDepositTypes();
-    } else if (transactionType === "L") {
+    } else if (isLoan) {
       fetchLoanMasterList();
+    } else if (isShare) {
+      fetchShareType();
     }
 
     // ── Reset to "-- Select --" (id 0) whenever the transaction type
-    // actually changes — prevents a stale Saving typeId lingering when
-    // switching to Loan, or vice versa. Skip on first mount. ──────────────
+    // actually changes — prevents a stale id lingering across type switches.
+    // Skip on first mount. ──────────────────────────────────────────────────
     if (
       prevTransactionType.current !== transactionType &&
       prevTransactionType.current !== undefined
@@ -118,10 +149,23 @@ export default function TypeField<T extends FieldValues>({
       setValue(name, 0 as any, { shouldDirty: false, shouldValidate: false });
     }
     prevTransactionType.current = transactionType;
-  }, [transactionType, fetchDepositTypes, fetchLoanMasterList, setValue, name]);
+  }, [
+    transactionType,
+    isSaving,
+    isLoan,
+    isShare,
+    fetchDepositTypes,
+    fetchLoanMasterList,
+    fetchShareType,
+    setValue,
+    name,
+  ]);
 
-  const options =
-    transactionType === "L" ? loanMasterListOptions : depositTypeOptions;
+  const options = isLoan
+    ? loanMasterListOptions
+    : isShare
+      ? shareTypeOptions
+      : depositTypeOptions;
 
   return (
     <FieldRow label={label}>
@@ -132,6 +176,13 @@ export default function TypeField<T extends FieldValues>({
           label={label}
           options={options}
           fullWidth
+          onOpen={() => {
+            if (isLoan && loanMasterListOptions.length <= 1) {
+              fetchLoanMasterList();
+            } else if (isShare && shareTypeOptions.length <= 1) {
+              fetchShareType();
+            }
+          }}
         />
       </Box>
     </FieldRow>

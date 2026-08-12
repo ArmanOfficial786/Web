@@ -709,6 +709,7 @@ import {
 import depositeTypeService from "@/services/Common/DepositeType";
 import collectorService from "@/services/Common/CollectorService";
 import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
+import shareTypeService from "@/services/Common/ShareTypeService";
 
 export type SelectOption = { id: number | string; name: string };
 
@@ -751,6 +752,9 @@ interface ReportFormContextType {
 
   loanMasterListOptions: SelectOption[];
   fetchLoanMasterList: () => Promise<void>;
+
+  shareTypeOptions: SelectOption[];
+  fetchShareType: () => Promise<void>;
 
   // Dropdown options
   branchOptions: SelectOption[];
@@ -817,6 +821,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [loanMasterListOptions, setLoanMasterListOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
+
+  const [shareTypeOptions, setShareTypeOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+  const shareTypeFetchedRef = useRef(false);
 
   // ── Fetch guards ──────────────────────────────────────────────────────────
   const branchFetchedRef = useRef(false);
@@ -999,13 +1007,30 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     loanMasterListFetchedRef.current = true;
     try {
       const res = await lmtLoanMasterlistService.getAll();
+      console.log("Loan Master List Response from context:", res); // Debugging log
       const mapped = res.map((l) => ({
         id: l.lmtLoanTypeMasterId ?? 0, // number
         name: l.loanTypeName ?? "",
       }));
+      console.log("Mapped Loan Master List Options:", mapped); // Debugging log
       setLoanMasterListOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
     } catch {
       loanMasterListFetchedRef.current = false;
+    }
+  }, []);
+
+  const fetchShareType = useCallback(async () => {
+    if (shareTypeFetchedRef.current) return;
+    try {
+      const res = await shareTypeService.getAll();
+      const mapped = res.map((s: any) => ({
+        id: s.shareTypeId ?? 0, // ⚠️ confirm real field name against ShareTypeResponse
+        name: s.shareTypeName ?? "", // ⚠️ confirm real field name
+      }));
+      setShareTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      if (mapped.length > 0) shareTypeFetchedRef.current = true;
+    } catch {
+      shareTypeFetchedRef.current = false;
     }
   }, []);
 
@@ -1035,6 +1060,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchCollectors,
       loanMasterListOptions,
       fetchLoanMasterList,
+      shareTypeOptions,
+      fetchShareType,
     }),
     [
       memberLookUp,
@@ -1059,6 +1086,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchCollectors,
       loanMasterListOptions,
       fetchLoanMasterList,
+      shareTypeOptions,
+      fetchShareType,
     ],
   );
 

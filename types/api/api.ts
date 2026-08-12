@@ -575,6 +575,20 @@ export interface SavingTypeWiseIndividualBalanceRequest {
   visualReport?: boolean;
 }
 
+export interface ShareTypeResponse {
+  /** @format int32 */
+  shmShareTypeId?: number;
+  shareTypeName?: string | null;
+}
+
+export interface ShareTypeResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: ShareTypeResponse[] | null;
+}
+
 export interface SoleMemberGroupRequestDtos {
   /** @format int64 */
   lstOfficeId?: number;
@@ -1681,6 +1695,21 @@ export class Api<
         query: query,
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ShareType
+     * @name ShareTypeList
+     * @request GET:/api/ShareType
+     */
+    shareTypeList: (params: RequestParams = {}) =>
+      this.request<ShareTypeResponseListGeneralResponse, any>({
+        path: `/api/ShareType`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
 

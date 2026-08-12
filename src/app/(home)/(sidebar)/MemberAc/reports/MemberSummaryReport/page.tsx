@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactive/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -6,28 +5,27 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import memberAccountDeactiveService from "@/services/memberAccount/MemberAccountDeactiveService";
-import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
-import MemberAccountDeactiveForm, {
+import memberSummaryService from "@/services/memberAccount/MemberSummaryService";
+import type { MemberSummaryRequest, Pagination } from "types/api/api";
+import MemberSummaryForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberAccountDeacitveForm";
+} from "@/components/reports/memberAccount/MemberSummaryForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 // ── branchId (multi-select array) is form-only — resolved into branchIds
-// (comma string) on submit. reportType radio ("Active"|"Inactive") maps to
-// isActive boolean; transactionType radio: "Saving" | "Loan". ──────────────
-export interface MemberAccountDeactiveFormValues extends Omit<
-  MemberAccountDeactiveRequest,
-  "branchIds" | "isActive"
+// (comma string) on submit. collectionCenterId/memberGroupId stay strings,
+// cascading off branchId via the existing shared components. ───────────────
+export interface MemberSummaryFormValues extends Omit<
+  MemberSummaryRequest,
+  "branchIds"
 > {
   branchId?: number[];
-  reportType?: "Active" | "Inactive";
 }
 
 // ── Client-only response state (raw PDF blob + header pagination) ───────────
-export interface MemberAccountDeactiveResponseExtended {
+export interface MemberSummaryResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
@@ -48,7 +46,7 @@ function normalizeBsDate(value?: string | null): string | undefined {
   return value.replace(/-/g, "/");
 }
 
-const schema: yup.ObjectSchema<MemberAccountDeactiveFormValues> = yup
+const schema: yup.ObjectSchema<MemberSummaryFormValues> = yup
   .object({
     tillDate: yup
       .string()
@@ -59,36 +57,33 @@ const schema: yup.ObjectSchema<MemberAccountDeactiveFormValues> = yup
       .default(""),
     branchId: yup.array().of(yup.number().required()).optional().default([]),
     branchName: yup.string().nullable().optional().default("All"),
-    duePeriod: yup.number().optional().default(1),
-    transactionType: yup.string().nullable().optional().default("S"),
-    typeId: yup.number().optional().default(0),
-    reportType: yup
-      .mixed<"Active" | "Inactive">()
-      .oneOf(["Active", "Inactive"])
-      .optional()
-      .default("Active"),
-    orderBy: yup.string().nullable().optional().default(""),
+    collectionCenterId: yup.string().nullable().optional().default(""),
+    memberGroupId: yup.string().nullable().optional().default(""),
+    enableCollectionCenterGroup: yup.boolean().optional().default(false),
+    enableMemberGroupGroup: yup.boolean().optional().default(false),
     sameCompanyName: yup.boolean().optional().default(true),
+    orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function MemberAccountDeactivePage() {
-  const [reportState, setReportState] =
-    useState<MemberAccountDeactiveResponseExtended>({ isLoading: false });
-  const [lastRequest, setLastRequest] =
-    useState<MemberAccountDeactiveRequest | null>(null);
+export default function MemberSummaryPage() {
+  const [reportState, setReportState] = useState<MemberSummaryResponseExtended>(
+    { isLoading: false },
+  );
+  const [lastRequest, setLastRequest] = useState<MemberSummaryRequest | null>(
+    null,
+  );
   const { branchOptions } = useReportFormContext();
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<MemberAccountDeactiveFormValues>({
+    useForm<MemberSummaryFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string); reportType -> isActive boolean ──
   const toRequest = useCallback(
-    (form: MemberAccountDeactiveFormValues): MemberAccountDeactiveRequest => {
+    (form: MemberSummaryFormValues): MemberSummaryRequest => {
       const selectedIds = (form.branchId ?? [])
         .map(Number)
         .filter((id) => id > 0);
@@ -108,12 +103,12 @@ export default function MemberAccountDeactivePage() {
         tillDate: normalizeBsDate(form.tillDate),
         branchIds: resolvedIds.join(","),
         branchName,
-        duePeriod: form.duePeriod ?? 1,
-        transactionType: form.transactionType || "Saving",
-        typeId: form.typeId || 0,
-        isActive: form.reportType === "Active",
-        orderBy: form.orderBy || "",
+        collectionCenterId: form.collectionCenterId || undefined,
+        memberGroupId: form.memberGroupId || undefined,
+        enableCollectionCenterGroup: form.enableCollectionCenterGroup ?? false,
+        enableMemberGroupGroup: form.enableMemberGroupGroup ?? false,
         sameCompanyName: form.sameCompanyName ?? true,
+        orderBy: form.orderBy || "",
         visualReport: form.visualReport ?? false,
       };
     },
@@ -121,15 +116,13 @@ export default function MemberAccountDeactivePage() {
   );
 
   const callApi = useCallback(
-    (request: MemberAccountDeactiveRequest, format: string) =>
-      memberAccountDeactiveService.api.memberAccountDeactiveCreate(request, {
-        format,
-      }),
+    (request: MemberSummaryRequest, format: string) =>
+      memberSummaryService.api.memberSummaryCreate(request, { format }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: MemberAccountDeactiveRequest) => {
+    async (request: MemberSummaryRequest) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -181,11 +174,7 @@ export default function MemberAccountDeactivePage() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = extractFilenameFromResponse(
-        res,
-        format,
-        "MemberAccountDeactive",
-      );
+      link.download = extractFilenameFromResponse(res, format, "MemberSummary");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -194,7 +183,7 @@ export default function MemberAccountDeactivePage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<MemberAccountDeactiveFormValues> = useCallback(
+  const onSubmit: SubmitHandler<MemberSummaryFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -209,7 +198,7 @@ export default function MemberAccountDeactivePage() {
   }, []);
 
   return (
-    <MemberAccountDeactiveForm
+    <MemberSummaryForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

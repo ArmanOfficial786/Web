@@ -1,4 +1,4 @@
-// components/reports/memberAccount/MemberAccountDeactiveForm.tsx
+// components/reports/memberAccount/MemberSummaryForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -11,7 +11,6 @@ import type {
 } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
@@ -19,41 +18,36 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import DuePeriodField from "@/components/reportForm/MemberAccount/DuePeriodField";
+import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
+import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
+import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
-  MemberAccountDeactiveFormValues,
-  MemberAccountDeactiveResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactiveReport/page";
+  MemberSummaryFormValues,
+  MemberSummaryResponseExtended,
+} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberSummaryReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import TransactionTypeField from "@/components/reportForm/MemberAccount/TransactionTypeField";
-import TypeField from "@/components/reportForm/MemberAccount/TypeField";
+import Grid from "node_modules/@mui/system/esm/Grid/Grid";
 
 export type { ReportFormat };
 
-// ── Report Type: Active / Inactive ───────────────────────────────────────────
-const reportTypeOptions = [
-  { value: "Active", label: "Active" },
-  { value: "Inactive", label: "Inactive" },
-];
-
-interface MemberAccountDeactiveFormProps {
-  control: Control<MemberAccountDeactiveFormValues>;
-  handleSubmit: UseFormHandleSubmit<MemberAccountDeactiveFormValues>;
-  onSubmit: SubmitHandler<MemberAccountDeactiveFormValues>;
-  setValue: UseFormSetValue<MemberAccountDeactiveFormValues>;
-  reset: UseFormReset<MemberAccountDeactiveFormValues>;
-  reportState: MemberAccountDeactiveResponseExtended;
+interface MemberSummaryFormProps {
+  control: Control<MemberSummaryFormValues>;
+  handleSubmit: UseFormHandleSubmit<MemberSummaryFormValues>;
+  onSubmit: SubmitHandler<MemberSummaryFormValues>;
+  setValue: UseFormSetValue<MemberSummaryFormValues>;
+  reset: UseFormReset<MemberSummaryFormValues>;
+  reportState: MemberSummaryResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-function MemberAccountDeactiveForm({
+function MemberSummaryForm({
   control,
   handleSubmit,
   onSubmit,
@@ -61,7 +55,7 @@ function MemberAccountDeactiveForm({
   reportState,
   onPageChange,
   onDownload,
-}: MemberAccountDeactiveFormProps) {
+}: MemberSummaryFormProps) {
   const { pdfData, isLoading, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -98,83 +92,100 @@ function MemberAccountDeactiveForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Member Account Acitve/Inactive Report
+            Member Summary Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Report Type: Active / Inactive ────────────────────────────── */}
+          {/* ── Till Date (BS) ────────────────────────────────────────────── */}
           <Box
             sx={{
-              mb: 0.5,
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
+              alignItems: "center",
             }}
           >
-            <FieldRow label="Report Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={reportTypeOptions}
-                row
-              />
-            </FieldRow>
-            <DateFields<MemberAccountDeactiveFormValues>
+            <DateFields<MemberSummaryFormValues>
               control={control}
               setValue={setValue}
               mode="BS"
-              showFromDate={false}
-              showToDate={true}
-              toDateName="tillDate"
-              toDateLabel="Till Date"
+              showFromDate={true}
+              showToDate={false}
+              fromDateName={"tillDate" as any}
+              fromDateLabel="Till Date"
             />
-          </Box>
 
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Branch Name (multi-select checkboxes) ────────────────────── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-            }}
-          >
-            <OfficeNameField<MemberAccountDeactiveFormValues>
+            <OfficeNameField<MemberSummaryFormValues>
               control={control}
               branchFieldName="branchId"
             />
-            <DuePeriodField<MemberAccountDeactiveFormValues>
-              control={control}
-              name="duePeriod"
-            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Due Transaction Period + Type ─────────────────────────────── */}
+          {/* ── Office Name (multi-select checkboxes) ────────────────────── */}
+          <Box sx={{ mb: 0.5 }}></Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── Collection Center + Group By Collection Center ───────────── */}
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
+              alignItems: "center",
             }}
           >
-            <TransactionTypeField<MemberAccountDeactiveFormValues>
-              control={control}
-              name="transactionType"
-              label="Transaction Type"
-            />
-            <TypeField<MemberAccountDeactiveFormValues>
+            <CollectionCenterField<MemberSummaryFormValues>
               control={control}
               setValue={setValue}
-              name="typeId"
-              transactionTypeName="transactionType"
-              label="Type"
+              branchFieldName="branchId"
+              collectionCenterFieldName="collectionCenterId"
             />
+            <FieldRow label="">
+              <CheckboxInput
+                name="enableCollectionCenterGroup"
+                control={control}
+                label="Group By Collection Center"
+                size="small"
+                color="primary"
+                labelPlacement="end"
+                sx={{ ml: -3 }}
+              />
+            </FieldRow>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Transaction Type: Saving / Loan + Order By ───────────────── */}
+          {/* ── Select Group + Group By Member Group ─────────────────────── */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <SelectGroupField<MemberSummaryFormValues>
+              control={control}
+              setValue={setValue}
+              branchFieldName="branchId"
+              collectionCenterFieldName="collectionCenterId"
+              groupFieldName="memberGroupId"
+            />
+            <FieldRow label="">
+              <CheckboxInput
+                name="enableMemberGroupGroup"
+                control={control}
+                label="Group By Member Group"
+                size="small"
+                color="primary"
+                labelPlacement="end"
+                sx={{ ml: -3 }}
+              />
+            </FieldRow>
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── Same Company + Order By ───────────────────────────────────── */}
           <Box
             sx={{
               display: "grid",
@@ -182,10 +193,14 @@ function MemberAccountDeactiveForm({
               gap: 2,
             }}
           >
-            <OrderByField<MemberAccountDeactiveFormValues>
+            <SameCompanyField<MemberSummaryFormValues>
+              control={control}
+              labelPlacement="end"
+            />
+            <OrderByField<MemberSummaryFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-account-deactive-report" // ⚠️ add this key to accountOrderByOptions.ts
+              reportKey="member-summary-report" // ⚠️ add this key to memberOrderByOptions.ts
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -200,7 +215,7 @@ function MemberAccountDeactiveForm({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton<MemberAccountDeactiveFormValues>
+                <ViewReportButton<MemberSummaryFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -247,4 +262,4 @@ function MemberAccountDeactiveForm({
   );
 }
 
-export default React.memo(MemberAccountDeactiveForm);
+export default React.memo(MemberSummaryForm);

@@ -48,13 +48,72 @@ export const memberAccountDeactiveOrderByOptions = defineOrderByOptions([
   { key: "lastDate", label: "Last Date" },
 ] as const);
 
+export const memberAccountDetailNoOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member ID" },
+  { key: "memberName", label: "Member Name" },
+  { key: "saving", label: "Saving" },
+  { key: "share", label: "Share" },
+  { key: "loan", label: "Loan" },
+] as const);
+
+export const depositWithdrawMaxAmountRangeOrderByOptions = defineOrderByOptions(
+  [
+    { key: "memberId", label: "Member ID" },
+    { key: "memberName", label: "Member Name" },
+    { key: "deposit", label: "Deposit" },
+    { key: "withdraw", label: "Withdraw" },
+    { key: "account", label: "Account" },
+    { key: "date", label: "Date" },
+  ] as const,
+);
+
+export const memberPenaltyDepositWithdrawOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member ID" },
+  { key: "memberName", label: "Member Name" },
+  { key: "plenty", label: "Plenty" },
+  { key: "deposit", label: "Deposit" },
+  { key: "withdraw", label: "Withdraw" },
+  { key: "balance", label: "Balance" },
+] as const);
+
+export const memberSummaryOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member ID" },
+  { key: "memberName", label: "Member Name" },
+  { key: "address", label: "Address" },
+  { key: "deposit", label: "Deposit" },
+  { key: "shareAmount", label: "Share Amount" },
+  { key: "normalSaving", label: "Normal Saving" },
+  { key: "recurringSaving", label: "Recurring Saving" },
+  { key: "fixedSaving", label: "Fixed Saving" },
+  { key: "termSaving", label: "Term Saving" },
+  { key: "regularSaving", label: "Regular Saving" },
+  { key: "totalSaving", label: "Total Saving" },
+  { key: "doubleDeposite", label: "Double Deposit" },
+  { key: "loanAmount", label: "Loan Amount" },
+] as const);
+
+export const memberAccountDetailOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member ID" },
+  { key: "memberName", label: "Member Name" },
+  { key: "account", label: "Account No" },
+  { key: "interest", label: "Interest Rate" },
+  { key: "deposit", label: "Deposit" },
+  { key: "withdraw", label: "Withdraw" },
+  { key: "balance", label: "Balance" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
   | "saving-type-wise-balance-report"
   | "sms-category-report"
   | "deposit-unverified-report"
-  | "member-account-deactive-report";
+  | "member-account-deactive-report"
+  | "member-account-detail-no-report"
+  | "deposit-withdraw-max-amount-range-report"
+  | "member-penalty-deposit-withdraw-report"
+  | "member-summary-report"
+  | "member-account-detail-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -65,4 +124,11 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
   "sms-category-report": smsCategoryOrderByOptions,
   "deposit-unverified-report": depositUnverifiedOrderByOptions,
   "member-account-deactive-report": memberAccountDeactiveOrderByOptions,
+  "member-account-detail-no-report": memberAccountDetailNoOrderByOptions,
+  "deposit-withdraw-max-amount-range-report":
+    depositWithdrawMaxAmountRangeOrderByOptions,
+  "member-penalty-deposit-withdraw-report":
+    memberPenaltyDepositWithdrawOrderByOptions,
+  "member-summary-report": memberSummaryOrderByOptions,
+  "member-account-detail-report": memberAccountDetailOrderByOptions,
 };

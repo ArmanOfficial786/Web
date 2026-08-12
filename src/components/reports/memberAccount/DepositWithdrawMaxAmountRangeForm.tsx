@@ -1,4 +1,4 @@
-// components/reports/memberAccount/MemberAccountDeactiveForm.tsx
+// components/reports/accountReport/DepositWithdrawMaxAmountRangeForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -9,17 +9,19 @@ import type {
   UseFormSetValue,
   UseFormReset,
 } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import DuePeriodField from "@/components/reportForm/MemberAccount/DuePeriodField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
@@ -27,33 +29,31 @@ import Preloader from "@/components/PreLoader/preloader";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
 import type {
-  MemberAccountDeactiveFormValues,
-  MemberAccountDeactiveResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactiveReport/page";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import TransactionTypeField from "@/components/reportForm/MemberAccount/TransactionTypeField";
-import TypeField from "@/components/reportForm/MemberAccount/TypeField";
+  DepositWithdrawMaxAmountRangeFormValues,
+  DepositWithdrawMaxAmountRangeResponseExtended,
+} from "@/app/(home)/(sidebar)/MemberAc/reports/DepositWithdrawMaximumAmountRangeReport/page";
 
 export type { ReportFormat };
 
-// ── Report Type: Active / Inactive ───────────────────────────────────────────
-const reportTypeOptions = [
-  { value: "Active", label: "Active" },
-  { value: "Inactive", label: "Inactive" },
+// ── Type: Deposit / Withdraw / Both — 1/2/3 ──────────────────────────────────
+const transactionTypeOptions = [
+  { value: "1", label: "Deposit" },
+  { value: "2", label: "Withdraw" },
+  { value: "3", label: "Both" },
 ];
 
-interface MemberAccountDeactiveFormProps {
-  control: Control<MemberAccountDeactiveFormValues>;
-  handleSubmit: UseFormHandleSubmit<MemberAccountDeactiveFormValues>;
-  onSubmit: SubmitHandler<MemberAccountDeactiveFormValues>;
-  setValue: UseFormSetValue<MemberAccountDeactiveFormValues>;
-  reset: UseFormReset<MemberAccountDeactiveFormValues>;
-  reportState: MemberAccountDeactiveResponseExtended;
+interface DepositWithdrawMaxAmountRangeFormProps {
+  control: Control<DepositWithdrawMaxAmountRangeFormValues>;
+  handleSubmit: UseFormHandleSubmit<DepositWithdrawMaxAmountRangeFormValues>;
+  onSubmit: SubmitHandler<DepositWithdrawMaxAmountRangeFormValues>;
+  setValue: UseFormSetValue<DepositWithdrawMaxAmountRangeFormValues>;
+  reset: UseFormReset<DepositWithdrawMaxAmountRangeFormValues>;
+  reportState: DepositWithdrawMaxAmountRangeResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-function MemberAccountDeactiveForm({
+function DepositWithdrawMaxAmountRangeForm({
   control,
   handleSubmit,
   onSubmit,
@@ -61,7 +61,7 @@ function MemberAccountDeactiveForm({
   reportState,
   onPageChange,
   onDownload,
-}: MemberAccountDeactiveFormProps) {
+}: DepositWithdrawMaxAmountRangeFormProps) {
   const { pdfData, isLoading, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -98,94 +98,76 @@ function MemberAccountDeactiveForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Member Account Acitve/Inactive Report
+            Deposit Withdraw Max Amount Range Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Report Type: Active / Inactive ────────────────────────────── */}
-          <Box
-            sx={{
-              mb: 0.5,
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-            }}
-          >
-            <FieldRow label="Report Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={reportTypeOptions}
-                row
-              />
-            </FieldRow>
-            <DateFields<MemberAccountDeactiveFormValues>
-              control={control}
-              setValue={setValue}
-              mode="BS"
-              showFromDate={false}
-              showToDate={true}
-              toDateName="tillDate"
-              toDateLabel="Till Date"
-            />
+          {/* ── From/To Date ─────────────────────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}>
+            <DateFields control={control} />
           </Box>
-
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Branch Name (multi-select checkboxes) ────────────────────── */}
+          {/* ── Office Name (multi-select checkboxes) ────────────────────── */}
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
               gap: 2,
             }}
           >
-            <OfficeNameField<MemberAccountDeactiveFormValues>
+            <OfficeNameField<DepositWithdrawMaxAmountRangeFormValues>
               control={control}
               branchFieldName="branchId"
             />
-            <DuePeriodField<MemberAccountDeactiveFormValues>
-              control={control}
-              name="duePeriod"
-            />
+            <FieldRow label="Type">
+              <RadioInput
+                name="transactionType"
+                control={control}
+                radioOptions={transactionTypeOptions}
+                row
+              />
+            </FieldRow>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Due Transaction Period + Type ─────────────────────────────── */}
+          {/* ── Type (Radio: Deposit/Withdraw/Both) + Amount ─────────────── */}
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "1.1fr 1fr" },
               gap: 2,
             }}
           >
-            <TransactionTypeField<MemberAccountDeactiveFormValues>
-              control={control}
-              name="transactionType"
-              label="Transaction Type"
-            />
-            <TypeField<MemberAccountDeactiveFormValues>
-              control={control}
-              setValue={setValue}
-              name="typeId"
-              transactionTypeName="transactionType"
-              label="Type"
-            />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Transaction Type: Saving / Loan + Order By ───────────────── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-            }}
-          >
-            <OrderByField<MemberAccountDeactiveFormValues>
+            <FieldRow label="Amount">
+              <Controller
+                name="amount"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    type="number"
+                    size="small"
+                    fullWidth
+                    value={field.value ?? 100000.0}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value === ""
+                          ? undefined
+                          : Number(e.target.value),
+                      )
+                    }
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    inputProps={{ step: "0.01" }}
+                  />
+                )}
+              />
+            </FieldRow>
+            <OrderByField<DepositWithdrawMaxAmountRangeFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-account-deactive-report" // ⚠️ add this key to accountOrderByOptions.ts
+              reportKey="deposit-withdraw-max-amount-range-report" // ⚠️ add this key to accountOrderByOptions.ts
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -200,7 +182,7 @@ function MemberAccountDeactiveForm({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton<MemberAccountDeactiveFormValues>
+                <ViewReportButton<DepositWithdrawMaxAmountRangeFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -247,4 +229,4 @@ function MemberAccountDeactiveForm({
   );
 }
 
-export default React.memo(MemberAccountDeactiveForm);
+export default React.memo(DepositWithdrawMaxAmountRangeForm);

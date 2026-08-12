@@ -1,4 +1,4 @@
-// app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactive/page.tsx
+// app/(home)/(sidebar)/Account/reports/MemberPenaltyDepositWithdrawReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -6,28 +6,31 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import memberAccountDeactiveService from "@/services/memberAccount/MemberAccountDeactiveService";
-import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
-import MemberAccountDeactiveForm, {
+import memberPenaltyDepositWithdrawService from "@/services/memberAccount/MemberPenaltyDepositWithdrawService";
+import type {
+  MemberPenaltyDepositWithdrawRequest,
+  Pagination,
+} from "types/api/api";
+import MemberPenaltyDepositWithdrawForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberAccountDeacitveForm";
+} from "@/components/reports/memberAccount/MemberPenaltyDepositWithdrawForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 // ── branchId (multi-select array) is form-only — resolved into branchIds
-// (comma string) on submit. reportType radio ("Active"|"Inactive") maps to
-// isActive boolean; transactionType radio: "Saving" | "Loan". ──────────────
-export interface MemberAccountDeactiveFormValues extends Omit<
-  MemberAccountDeactiveRequest,
-  "branchIds" | "isActive"
+// (comma string) on submit. transactionType is a form-only "1"|"2"|"3"|"4"
+// radio, converted to a number for the DTO's int32 in toRequest(). ─────────
+export interface MemberPenaltyDepositWithdrawFormValues extends Omit<
+  MemberPenaltyDepositWithdrawRequest,
+  "branchIds" | "transactionType"
 > {
   branchId?: number[];
-  reportType?: "Active" | "Inactive";
+  transactionType?: "1" | "2" | "3" | "4";
 }
 
 // ── Client-only response state (raw PDF blob + header pagination) ───────────
-export interface MemberAccountDeactiveResponseExtended {
+export interface MemberPenaltyDepositWithdrawResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
@@ -48,47 +51,58 @@ function normalizeBsDate(value?: string | null): string | undefined {
   return value.replace(/-/g, "/");
 }
 
-const schema: yup.ObjectSchema<MemberAccountDeactiveFormValues> = yup
+const schema: yup.ObjectSchema<MemberPenaltyDepositWithdrawFormValues> = yup
   .object({
-    tillDate: yup
+    fromDate: yup
       .string()
-      .required("Till Date is required")
+      .required("From Date is required")
       .nullable()
       .optional()
-      .typeError("Till Date must be a valid date")
-      .default(""),
+      .typeError("From Date must be a valid date"),
+    toDate: yup
+      .string()
+      .required("To Date is required")
+      .nullable()
+      .optional()
+      .typeError("To Date must be a valid date")
+      .test("date-order", "To Date cannot be before From Date", function (val) {
+        const { fromDate } = this.parent as { fromDate: string | null };
+        if (!fromDate || !val) return true;
+        return String(val) >= String(fromDate);
+      }),
     branchId: yup.array().of(yup.number().required()).optional().default([]),
     branchName: yup.string().nullable().optional().default("All"),
-    duePeriod: yup.number().optional().default(1),
-    transactionType: yup.string().nullable().optional().default("S"),
-    typeId: yup.number().optional().default(0),
-    reportType: yup
-      .mixed<"Active" | "Inactive">()
-      .oneOf(["Active", "Inactive"])
+    transactionType: yup
+      .mixed<"1" | "2" | "3" | "4">()
+      .oneOf(["1", "2", "3", "4"])
       .optional()
-      .default("Active"),
+      .default("1"), // "Penalty" as default
+    amount: yup.number().optional().default(0.0),
     orderBy: yup.string().nullable().optional().default(""),
     sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function MemberAccountDeactivePage() {
+export default function MemberPenaltyDepositWithdrawPage() {
   const [reportState, setReportState] =
-    useState<MemberAccountDeactiveResponseExtended>({ isLoading: false });
+    useState<MemberPenaltyDepositWithdrawResponseExtended>({
+      isLoading: false,
+    });
   const [lastRequest, setLastRequest] =
-    useState<MemberAccountDeactiveRequest | null>(null);
+    useState<MemberPenaltyDepositWithdrawRequest | null>(null);
   const { branchOptions } = useReportFormContext();
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<MemberAccountDeactiveFormValues>({
+    useForm<MemberPenaltyDepositWithdrawFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string); reportType -> isActive boolean ──
   const toRequest = useCallback(
-    (form: MemberAccountDeactiveFormValues): MemberAccountDeactiveRequest => {
+    (
+      form: MemberPenaltyDepositWithdrawFormValues,
+    ): MemberPenaltyDepositWithdrawRequest => {
       const selectedIds = (form.branchId ?? [])
         .map(Number)
         .filter((id) => id > 0);
@@ -105,13 +119,12 @@ export default function MemberAccountDeactivePage() {
           .join(", ") || "All";
 
       return {
-        tillDate: normalizeBsDate(form.tillDate),
+        fromDate: normalizeBsDate(form.fromDate),
+        toDate: normalizeBsDate(form.toDate),
         branchIds: resolvedIds.join(","),
         branchName,
-        duePeriod: form.duePeriod ?? 1,
-        transactionType: form.transactionType || "Saving",
-        typeId: form.typeId || 0,
-        isActive: form.reportType === "Active",
+        transactionType: Number(form.transactionType ?? "1"),
+        amount: form.amount ?? 0.0,
         orderBy: form.orderBy || "",
         sameCompanyName: form.sameCompanyName ?? true,
         visualReport: form.visualReport ?? false,
@@ -121,15 +134,16 @@ export default function MemberAccountDeactivePage() {
   );
 
   const callApi = useCallback(
-    (request: MemberAccountDeactiveRequest, format: string) =>
-      memberAccountDeactiveService.api.memberAccountDeactiveCreate(request, {
-        format,
-      }),
+    (request: MemberPenaltyDepositWithdrawRequest, format: string) =>
+      memberPenaltyDepositWithdrawService.api.memberPenaltyDepositWithdrawCreate(
+        request,
+        { format },
+      ),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: MemberAccountDeactiveRequest) => {
+    async (request: MemberPenaltyDepositWithdrawRequest) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -184,7 +198,7 @@ export default function MemberAccountDeactivePage() {
       link.download = extractFilenameFromResponse(
         res,
         format,
-        "MemberAccountDeactive",
+        "MemberPenaltyDepositWithdraw",
       );
       document.body.appendChild(link);
       link.click();
@@ -194,10 +208,11 @@ export default function MemberAccountDeactivePage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<MemberAccountDeactiveFormValues> = useCallback(
-    (formData) => fetchReport(toRequest(formData)),
-    [fetchReport, toRequest],
-  );
+  const onSubmit: SubmitHandler<MemberPenaltyDepositWithdrawFormValues> =
+    useCallback(
+      (formData) => fetchReport(toRequest(formData)),
+      [fetchReport, toRequest],
+    );
 
   useEffect(() => {
     return () => {
@@ -209,7 +224,7 @@ export default function MemberAccountDeactivePage() {
   }, []);
 
   return (
-    <MemberAccountDeactiveForm
+    <MemberPenaltyDepositWithdrawForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
