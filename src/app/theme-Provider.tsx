@@ -683,7 +683,7 @@ const theme = createTheme({
       styleOverrides: {
         root: ({ theme: t }) => ({
           ...(t.palette.mode === "dark" && {
-            backgroundColor: "#2c4a7a",
+            backgroundColor: "#2c4a8b",
             color: t.vars.palette.text.primary,
           }),
         }),

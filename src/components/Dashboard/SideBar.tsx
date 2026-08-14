@@ -511,6 +511,10 @@ const MENU: MenuNode[] = [
     label: "Member A/C",
     reports: [
       {
+        label: "DepositStatementReport",
+        route: "/MemberAc/reports/DepositStatementReport",
+      },
+      {
         label: "SavingAcWiseBalanceReport",
         route: "/MemberAc/reports/SavingAcWiseBalanceReport",
       },

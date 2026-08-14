@@ -19,7 +19,6 @@ import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import MemberLookupButton from "@/components/reportForm/Common/MemberLookUpButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
@@ -34,6 +33,8 @@ import type {
   MemberAllDetailsFormValues,
   MemberRegistrationResponseExtended,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberAllDetailsReport/page";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import { createMemberLookupConfig } from "@/config/MemberLookupConfig";
 
 export type { ReportFormat };
 
@@ -69,6 +70,10 @@ function MemberAllDetailsReport({
   const showReport = Boolean(htmlContent);
   const reportRef = useRef<HTMLDivElement>(null);
   const [columnsExpanded, setColumnsExpanded] = useState(true);
+  const memberConfig = React.useMemo(
+    () => createMemberLookupConfig<MemberAllDetailsFormValues>(),
+    [],
+  );
 
   useEffect(() => {
     if (htmlContent && reportRef.current) {
@@ -108,7 +113,11 @@ function MemberAllDetailsReport({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* Member lookup */}
-          <MemberLookupButton<MemberAllDetailsFormValues> control={control} />
+          <EntityLookupField
+            control={control}
+            setValue={setValue}
+            config={memberConfig}
+          />
           <Divider sx={{ mb: 0.5 }} />
 
           {/* Date range */}
