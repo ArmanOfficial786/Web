@@ -234,13 +234,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
 // app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailNoReport/page.tsx
 "use client";
 
@@ -248,8 +241,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import memberAccountDetailNoService from "@/services/memberAccount/MemberAccountDetailNoService";
 import type { MemberAccountDetailNoRequest, Pagination } from "types/api/api";
 import MemberAccountDetailNoForm, {
   type ReportFormat,
@@ -257,20 +248,17 @@ import MemberAccountDetailNoForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId (multi-select array) is form-only. memberType is a form-only
 // "Active"|"Inactive" radio (NOT the DTO's number) — converted to 1/0 in
 // toRequest(). savingTypeId/shareTypeId/loanTypeId are numbers here (match
 // DropDown option ids), converted to strings in toRequest(). ───────────────
-export interface MemberAccountDetailNoFormValues
-  extends Omit<
-    MemberAccountDetailNoRequest,
-    | "branchIds"
-    | "memberType"
-    | "savingTypeId"
-    | "shareTypeId"
-    | "loanTypeId"
-  > {
+export interface MemberAccountDetailNoFormValues extends Omit<
+  MemberAccountDetailNoRequest,
+  "branchIds" | "memberType" | "savingTypeId" | "shareTypeId" | "loanTypeId"
+> {
   branchId?: number[];
   memberType?: "Active" | "Inactive";
   savingTypeId?: number;
@@ -284,15 +272,6 @@ export interface MemberAccountDetailNoResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -388,7 +367,7 @@ export default function MemberAccountDetailNoPage() {
 
   const callApi = useCallback(
     (request: MemberAccountDetailNoRequest, format: string) =>
-      memberAccountDetailNoService.api.memberAccountDetailNoCreate(request, {
+      memberAccountService.api.memberAccountDetailNoCreate(request, {
         format,
       }),
     [],
@@ -408,9 +387,9 @@ export default function MemberAccountDetailNoPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

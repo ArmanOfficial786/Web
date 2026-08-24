@@ -4,14 +4,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import depositUnverifiedService from "@/services/memberAccount/DepositeUnverifiedService";
 import type { DepositUnverifiedRequest, Pagination } from "types/api/api";
 import DepositUnverifiedForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/DepositeUnverifiedForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 
 // ── branchId is a single number here (bound via BranchNameField), matching
 // CostOfFund/SavingTypeWiseBalance — not a multi-select array anymore.
@@ -109,10 +108,9 @@ export default function DepositUnverifiedPage() {
 
   const callApi = useCallback(
     (request: DepositUnverifiedRequest, format: string) =>
-      depositUnverifiedService.api.depositUnverifiedGenerateReportCreate(
-        request,
-        { format },
-      ),
+      memberAccountService.api.depositUnverifiedGenerateReportCreate(request, {
+        format,
+      }),
     [],
   );
 

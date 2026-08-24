@@ -5,8 +5,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import memberAccountDeactiveService from "@/services/memberAccount/MemberAccountDeactiveService";
 import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
 import MemberAccountDeactiveForm, {
   type ReportFormat,
@@ -14,6 +12,8 @@ import MemberAccountDeactiveForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId (multi-select array) is form-only — resolved into branchIds
 // (comma string) on submit. reportType radio ("Active"|"Inactive") maps to
@@ -32,15 +32,6 @@ export interface MemberAccountDeactiveResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -122,7 +113,7 @@ export default function MemberAccountDeactivePage() {
 
   const callApi = useCallback(
     (request: MemberAccountDeactiveRequest, format: string) =>
-      memberAccountDeactiveService.api.memberAccountDeactiveCreate(request, {
+      memberAccountService.api.memberAccountDeactiveCreate(request, {
         format,
       }),
     [],
@@ -142,9 +133,9 @@ export default function MemberAccountDeactivePage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

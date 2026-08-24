@@ -5,8 +5,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import smsCategoryService from "@/services/memberAccount/SMSCategoryService";
 import type { SMSCategoryRequest, Pagination } from "types/api/api";
 import SMSCategoryForm, {
   type ReportFormat,
@@ -14,6 +12,8 @@ import SMSCategoryForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId is form-only (multi-select array) — resolved into a comma
 // string on submit, matching the "Office Name" checkbox UI ──────────────────
@@ -30,15 +30,6 @@ export interface SMSCategoryResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 const schema: yup.ObjectSchema<SMSCategoryFormValues> = yup
   .object({
@@ -97,7 +88,7 @@ export default function SMSCategoryPage() {
 
   const callApi = useCallback(
     (request: SMSCategoryRequest, format: string) =>
-      smsCategoryService.api.smsCategoryCreate(request, { format }),
+      memberAccountService.api.smsCategoryCreate(request, { format }),
     [],
   );
 
@@ -115,9 +106,9 @@ export default function SMSCategoryPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

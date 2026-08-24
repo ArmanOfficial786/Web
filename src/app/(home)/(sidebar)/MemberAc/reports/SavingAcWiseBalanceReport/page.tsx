@@ -208,7 +208,6 @@
 "use client";
 
 import SavingAcWiseBalance from "@/components/reports/memberAccount/SavingAcWiseBalance";
-import savingAcWiseBalanceService from "@/services/memberAccount/SavingAcWiseBalanceService";
 import savingAcWiseBalanceProgressiveService from "@/services/Common/Progressivepolling";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -232,6 +231,7 @@ import {
   type SavingAcWiseBalanceRequest,
 } from "types/api/api";
 import * as yup from "yup";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 
 // ── Extended pagination ──────────────────────────────────────────────────────
 export interface ProgressivePagination extends Pagination {
@@ -338,7 +338,7 @@ function Page(): React.ReactElement {
   // ── API helper ────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: SavingAcWiseBalanceRequest, format: string) =>
-      savingAcWiseBalanceService.api.savingAcWiseBalanceReportCreate(request, {
+      memberAccountService.api.savingAcWiseBalanceReportCreate(request, {
         format,
       }),
     [],

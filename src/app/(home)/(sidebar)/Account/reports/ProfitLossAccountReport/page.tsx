@@ -6,7 +6,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import plAccountService from "@/services/Account/PLAccountService";
 import type { PLAccountRequest, Pagination } from "types/api/api";
 import PLAccountForm, {
   type ReportFormat,
@@ -15,6 +14,7 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import accountService from "@/services/Account/AccountService";
 
 // ── branchId is form-only — resolved into branchIds (comma string) on submit ─
 export interface PLAccountFormValues extends Omit<
@@ -120,7 +120,7 @@ export default function PLAccountPage() {
 
   const callApi = useCallback(
     (request: PLAccountRequest, format: string) =>
-      plAccountService.api.plAccountCreate(request, { format }),
+      accountService.api.plAccountCreate(request, { format }),
     [],
   );
 

@@ -236,16 +236,6 @@
 //   );
 // }
 
-
-
-
-
-
-
-
-
-
-
 // app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page.tsx
 "use client";
 
@@ -254,8 +244,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-
-import memberAccountDetailService from "@/services/memberAccount/MemberAccountDetailService";
 import type { MemberAccountDetailRequest } from "types/api/api";
 import MemberAccountDetailForm, {
   type ReportFormat,
@@ -264,6 +252,7 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -274,11 +263,10 @@ const ALL_COLUMN_KEYS = MemberAccountColumnOptions.map((c) => c.key);
 // branchId (multi-select array) is form-only — resolved into branchIds
 // (comma string) on submit. status is a form-only "-1"|"1"|"0" select,
 // converted to a number for the DTO's int32 in toRequest().
-export interface MemberAccountDetailFormValues
-  extends Omit<
-    MemberAccountDetailRequest,
-    "branchIds" | "status" | "memberRegistrationId"
-  > {
+export interface MemberAccountDetailFormValues extends Omit<
+  MemberAccountDetailRequest,
+  "branchIds" | "status" | "memberRegistrationId"
+> {
   branchId?: number[];
   status?: "-1" | "1" | "0";
 }
@@ -391,7 +379,8 @@ export default function MemberAccountDetailPage() {
       const allIds = branchOptions
         .map((o) => Number(o.id))
         .filter((id) => id > 0);
-      const isAll = selectedIds.length === 0 || selectedIds.length === allIds.length;
+      const isAll =
+        selectedIds.length === 0 || selectedIds.length === allIds.length;
       const resolvedIds = isAll ? allIds : selectedIds;
 
       const branchName =
@@ -425,7 +414,7 @@ export default function MemberAccountDetailPage() {
   // ── API call ──────────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberAccountDetailRequest, format: string) =>
-      memberAccountDetailService.api.memberAccountDetailCreate(request, {
+      memberAccountService.api.memberAccountDetailCreate(request, {
         format,
       }),
     [],

@@ -273,7 +273,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 
-import accountStatementService from "@/services/Account/AccountStatementService";
 import type {
   AccountStatementRequest,
   ReportResponseDtos,
@@ -284,6 +283,7 @@ import AccountStatement, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import accountService from "@/services/Account/AccountService";
 
 // ── branchId is form-only — stripped before sending to API ──────────────────
 export interface AccountStatementRequestExtended extends AccountStatementRequest {
@@ -421,10 +421,9 @@ export default function AccountStatementPage() {
 
   const callApi = useCallback(
     (request: AccountStatementRequest, format: string) =>
-      accountStatementService.api.accountStatementAccountStatementReportCreate(
-        request,
-        { format },
-      ),
+      accountService.api.accountStatementAccountStatementReportCreate(request, {
+        format,
+      }),
     [],
   );
 
@@ -467,7 +466,6 @@ export default function AccountStatementPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
-       
         return;
       }
       try {
@@ -485,9 +483,7 @@ export default function AccountStatementPage() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-      } catch (error) {
-       
-      }
+      } catch (error) {}
     },
     [callApi, lastRequest],
   );

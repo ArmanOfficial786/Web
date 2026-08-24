@@ -6,13 +6,14 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import cashFlowService from "@/services/Account/CashFlowService";
 import type { CashFlowRequest, Pagination } from "types/api/api";
 import CashFlowForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/CashFlowForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import accountService from "@/services/Account/AccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId here is already a single string on the DTO — no form-only shape needed ──
 export type CashFlowFormValues = CashFlowRequest;
@@ -23,15 +24,6 @@ export interface CashFlowResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 const schema: yup.ObjectSchema<CashFlowFormValues> = yup
   .object({
@@ -82,7 +74,7 @@ export default function CashFlowPage() {
 
   const callApi = useCallback(
     (request: CashFlowRequest, format: string) =>
-      cashFlowService.api.cashFlowCreate(request, { format }),
+      accountService.api.cashFlowCreate(request, { format }),
     [],
   );
 
@@ -100,9 +92,9 @@ export default function CashFlowPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

@@ -1,27 +1,28 @@
+// services/memberAccount/MemberAccountDeactiveService.ts
 import { Api } from "types/api/api";
 import {
   errorResponseInterceptor,
   requestInterceptor,
   successResponseInterceptor,
 } from "../Interceptor";
-import plAccountService from "./PLAccountService";
-import plAccountService from "./PLAccountService";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-const summaryTrailBalanceService = new Api({ baseURL: apiUrl });
+const memberAccountService = new Api({ baseURL: apiUrl });
 
+// GenerateReport returns a raw payload (client type is `void`) — same
+// pattern as BalanceSheet/PLAccount/DepositUnverified.
 const customRequestInterceptor = async (config: any) => {
   const configWithAuth = await requestInterceptor(config);
   configWithAuth.responseType = "blob";
   return configWithAuth;
 };
 
-summaryTrailBalanceService.instance.interceptors.request.use(
+memberAccountService.instance.interceptors.request.use(
   customRequestInterceptor,
 );
-summaryTrailBalanceService.instance.interceptors.response.use(
+memberAccountService.instance.interceptors.response.use(
   successResponseInterceptor,
   errorResponseInterceptor,
 );
 
-export default summaryTrailBalanceService;
+export default memberAccountService;

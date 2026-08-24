@@ -7,11 +7,14 @@ import { useState, useCallback, useEffect } from "react";
 import * as yup from "yup";
 import type { MemberDetailsSummaryRequest, Pagination } from "types/api/api";
 import MemberDetailsSummaryForm from "@/components/reports/memberReport/MemberDetailsSummaryForm";
-import memberDetailsSummaryService from "@/services/member/MemberDetailsSummaryService";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
+import memberService from "@/services/member/memberService";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberDetailsSummaryFormValues extends MemberDetailsSummaryRequest {
@@ -58,16 +61,6 @@ const toRequest = (
   visualReport: v.visualReport || false,
 });
 
-// ── Default pagination fallback ────────────────────────────────────────────
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
-
 // ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
@@ -92,14 +85,14 @@ function Page(): React.ReactElement {
         member.memMemberRegistrationId, // ✅ 202, not "MR-01-202"
         { shouldValidate: true },
       );
-      setValue("memberName", member.memberName);
+      setValue("memberName", member.memberName || ""); // ✅ display only
     },
     [setValue],
   );
 
   const callApi = useCallback(
     (request: MemberDetailsSummaryRequest, format: string) =>
-      memberDetailsSummaryService.api.memberDetailsSummaryCreate(request, {
+      memberService.api.memberDetailsSummaryCreate(request, {
         format,
       }),
     [],
@@ -118,9 +111,9 @@ function Page(): React.ReactElement {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

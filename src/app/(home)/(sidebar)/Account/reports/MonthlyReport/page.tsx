@@ -6,13 +6,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 
-import monthlyReportService from "@/services/Account/MonthlyReportService";
 import type { MonthlyReportRequest, Pagination } from "types/api/api";
 import MonthlyReportForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/MonthlyReportForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import accountService from "@/services/Account/AccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── Form values — matches the DTO directly (single branchId, like CostOfFund) ──
 export interface MonthlyReportFormValues extends Omit<
@@ -26,15 +27,6 @@ export interface MonthlyReportResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 const schema: yup.ObjectSchema<MonthlyReportFormValues> = yup
   .object({
@@ -86,7 +78,7 @@ export default function MonthlyReportPage() {
 
   const callApi = useCallback(
     (request: MonthlyReportRequest, format: string) =>
-      monthlyReportService.api.monthlyReportCreate(request, { format }),
+      accountService.api.monthlyReportCreate(request, { format }),
     [],
   );
 
@@ -103,9 +95,9 @@ export default function MonthlyReportPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

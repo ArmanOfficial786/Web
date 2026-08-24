@@ -5,14 +5,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import savingTypeWiseBalanceService from "@/services/memberAccount/SavingTypeWiseBalanceService";
 import type { SavingTypeWiseBalanceRequest, Pagination } from "types/api/api";
 import SavingTypeWiseBalanceForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/savingTypeWiseBalanceForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 
 // ── branchId is a single number here (matches the Branch Name dropdown in
 // the UI), not a multi-select array — the DTO's string field is derived
@@ -122,7 +121,7 @@ export default function SavingTypeWiseBalancePage() {
 
   const callApi = useCallback(
     (request: SavingTypeWiseBalanceRequest, format: string) =>
-      savingTypeWiseBalanceService.api.savingTypeWiseBalanceCreate(request, {
+      memberAccountService.api.savingTypeWiseBalanceCreate(request, {
         format,
       }),
     [],

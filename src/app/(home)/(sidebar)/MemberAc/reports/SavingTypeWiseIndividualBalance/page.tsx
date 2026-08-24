@@ -5,8 +5,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import savingTypeWiseIndividualBalanceService from "@/services/memberAccount/SavingTypeWiseIndividualService";
 import type {
   SavingTypeWiseIndividualBalanceRequest,
   Pagination,
@@ -16,6 +14,7 @@ import SavingTypeWiseIndividualBalanceForm, {
 } from "@/components/reports/memberAccount/savingTypeWiseIndividualBalance";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 
 // ── branchId is a single number here (matches the Branch Name dropdown in
 // the UI), not a multi-select array — the DTO's string field is derived
@@ -125,10 +124,9 @@ export default function SavingTypeWiseIndividualBalancePage() {
 
   const callApi = useCallback(
     (request: SavingTypeWiseIndividualBalanceRequest, format: string) =>
-      savingTypeWiseIndividualBalanceService.api.savingTypeWiseIndividualBalanceCreate(
-        request,
-        { format },
-      ),
+      memberAccountService.api.savingTypeWiseIndividualBalanceCreate(request, {
+        format,
+      }),
     [],
   );
 

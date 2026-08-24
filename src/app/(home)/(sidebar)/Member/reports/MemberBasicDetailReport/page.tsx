@@ -7,7 +7,6 @@ import { useState, useCallback, useEffect } from "react";
 import * as yup from "yup";
 import type { MemberBasicDetailsRequest, Pagination } from "types/api/api";
 import MemberBasicDetailsForm from "@/components/reports/memberReport/MemberBasicDetailsForm";
-import memberBasicDetailService from "@/services/member/MemberBasicDetailService";
 import {
   DefaultPagination,
   type ReportFormat,
@@ -15,6 +14,7 @@ import {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
+import memberService from "@/services/member/memberService";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 // branchId (number) is the UI selection; branchIds (string) is what the API
@@ -96,14 +96,14 @@ function Page(): React.ReactElement {
       setValue("memberRegistrationId", member.memMemberRegistrationId, {
         shouldValidate: true,
       });
-      setValue("memberName", member.memberName);
+      setValue("memberName", member.memberName || "");
     },
     [setValue],
   );
 
   const callApi = useCallback(
     (request: MemberBasicDetailsRequest, format: string) =>
-      memberBasicDetailService.api.memberBasicDetailsCreate(request, {
+      memberService.api.memberBasicDetailsCreate(request, {
         format,
       }),
     [],

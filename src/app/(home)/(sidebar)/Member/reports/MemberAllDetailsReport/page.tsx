@@ -11,7 +11,7 @@ import { type ReportFormat } from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
-import memberAllDetailsService from "@/services/member/MemberAllDetailsService";
+import memberService from "@/services/member/memberService";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -118,7 +118,7 @@ function Page(): React.ReactElement {
   // ── API call ──────────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberAllDetailRequst, format: string) =>
-      memberAllDetailsService.api.memberAllDetailsCreate(request, { format }),
+      memberService.api.memberAllDetailsCreate(request, { format }),
     [],
   );
 

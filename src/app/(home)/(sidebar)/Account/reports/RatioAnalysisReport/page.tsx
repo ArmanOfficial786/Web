@@ -6,13 +6,14 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import ratioAnalysisService from "@/services/Account/RatioAnalysisService";
 import type { RatioAnalysisRequest, Pagination } from "types/api/api";
 import RatioAnalysisForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/RatioAnalysisForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import accountService from "@/services/Account/AccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId is a plain string here (default "2"), same as MonthlyReport —
 // NOT a multi-select array. viewType ("D"/"T") is still form-only, resolved
@@ -30,15 +31,6 @@ export interface RatioAnalysisResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -108,7 +100,7 @@ export default function RatioAnalysisPage() {
 
   const callApi = useCallback(
     (request: RatioAnalysisRequest, format: string) =>
-      ratioAnalysisService.api.ratioAnalysisCreate(request, { format }),
+      accountService.api.ratioAnalysisCreate(request, { format }),
     [],
   );
 
@@ -126,9 +118,9 @@ export default function RatioAnalysisPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

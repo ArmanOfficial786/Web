@@ -6,13 +6,15 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import detailTrialBalanceService from "@/services/Account/DetailTrailBalanceService";
+
 import type { DetailTrialBalanceRequest, Pagination } from "types/api/api";
 import DetailTrialBalanceForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/DeatialTrailBalanceForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import accountService from "@/services/Account/AccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId here is already a single string on the DTO — no form-only shape needed ──
 export type DetailTrialBalanceFormValues = DetailTrialBalanceRequest;
@@ -23,15 +25,6 @@ export interface DetailTrialBalanceResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -90,7 +83,7 @@ export default function DetailTrialBalancePage() {
 
   const callApi = useCallback(
     (request: DetailTrialBalanceRequest, format: string) =>
-      detailTrialBalanceService.api.detailTrialBalanceCreate(request, {
+      accountService.api.detailTrialBalanceCreate(request, {
         format,
       }),
     [],
@@ -110,9 +103,9 @@ export default function DetailTrialBalancePage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

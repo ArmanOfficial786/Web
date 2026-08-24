@@ -1,181 +1,3 @@
-// "use client";
-
-// import { useForm, type SubmitHandler } from "react-hook-form";
-// import { yupResolver } from "@hookform/resolvers/yup";
-// import { toast } from "react-toastify";
-// import { useState, useCallback } from "react";
-// import * as yup from "yup";
-// import type { MemberDetailRequest, Pagination } from "types/api/api";
-// import MemberRegistrationReport from "@/components/reports/memberReport/MemberDetailReport";
-// import memberRegistrationService from "@/services/member/MemberDetailService";
-// import {
-//   DefaultPagination,
-//   type ReportFormat,
-// } from "@/utilis/Constants/reportConstants";
-// import { responseToBlob } from "@/utilis/Constants/blobConverter";
-// import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-
-// // ── UI-only fields ────────────────────────────────────────────────────────
-// export interface MemberRegistrationFormValues extends MemberDetailRequest {
-//   memberName?: string;
-// }
-
-// // ── Client state ──────────────────────────────────────────────────────────
-// export interface MemberRegistrationResponseExtended {
-//   htmlContent?: string; // raw HTML from VIEW (on-screen)
-//   isLoading: boolean;
-// }
-
-// // ── Validation ────────────────────────────────────────────────────────────
-// const schema: yup.ObjectSchema<MemberRegistrationFormValues> = yup.object({
-//   memberId: yup.string().nullable().optional().default(null),
-//   memberName: yup.string().optional().default(""),
-//   fromDate: yup.string().required("From Date is required").default(""),
-//   toDate: yup
-//     .string()
-//     .required("To Date is required")
-//     .default(null)
-//     .test("bs-min", "Till Date cannot be before From Date", function (val) {
-//       const { fromDate } = this.parent;
-//       return !fromDate || !val || val >= fromDate;
-//     }),
-//   orderby: yup.string().nullable().optional().default("0"),
-//   branchId: yup.number().required("Branch ID is required").default(2),
-//   memberGroupId: yup.number().optional().default(0),
-//   visualReport: yup.boolean().optional().default(false),
-// });
-
-// // ── Strip UI-only fields ─────────────────────────────────────────────────
-// const toRequest = (v: MemberRegistrationFormValues): MemberDetailRequest => ({
-//   memberId: v.memberId || null,
-//   fromDate: v.fromDate || null,
-//   toDate: v.toDate || null,
-//   branchId: Number(v.branchId) || 0,
-//   memberGroupId: Number(v.memberGroupId) || 0,
-//   orderby: v.orderby,
-//   visualReport: v.visualReport || false,
-// });
-
-// // ── Page ─────────────────────────────────────────────────────────────────
-// function Page(): React.ReactElement {
-//   const [reportState, setReportState] =
-//     useState<MemberRegistrationResponseExtended>({ isLoading: false });
-
-//   const [lastRequest, setLastRequest] = useState<MemberDetailRequest | null>(
-//     null,
-//   );
-
-//   const { control, handleSubmit, setValue, reset } =
-//     useForm<MemberRegistrationFormValues>({
-//       resolver: yupResolver(schema),
-//       defaultValues: schema.getDefault(),
-//     });
-
-//   // ── Raw API call ────────────────────────────────────────────────────────
-//   const callApi = useCallback(
-//     (request: MemberDetailRequest, format: string) =>
-//       memberRegistrationService.api.memberRegistrationCreate(request, {
-//         format,
-//       }),
-//     [],
-//   );
-
-//   // ── Helper: extract HTML string from response (handles Blob!) ──────────
-//   const getHtmlString = async (response: any): Promise<string> => {
-//     // If already a plain string, return it
-//     // if (typeof response.data === "string") {
-//     //   return response.data;
-//     // }
-//     // If it's a Blob (common when content-type mismatch), read as text
-//     if (response.data instanceof Blob) {
-//       return await (response.data as Blob).text();
-//     }
-//     // // If it's an ArrayBuffer (less common), decode
-//     // if (response.data instanceof ArrayBuffer) {
-//     //   const decoder = new TextDecoder("utf-8");
-//     //   return decoder.decode(response.data);
-//     // }
-//     // // Fallback: if it's an object (e.g., unexpected JSON), stringify
-//     return JSON.stringify(response.data);
-//   };
-
-//   // ── Fetch VIEW (HTML) for on-screen display ────────────────────────────
-//   const fetchReport = useCallback(
-//     async (request: MemberDetailRequest): Promise<void> => {
-//       setReportState({ isLoading: true });
-
-//       try {
-//         const response = await callApi(request, "VIEW");
-//         const htmlContent = await getHtmlString(response);
-
-//         setLastRequest(request);
-//         setReportState({ isLoading: false, htmlContent });
-
-//         // Clear member lookup fields
-//         reset({ memberId: "", memberName: "" });
-//       } catch {
-//         setReportState({ isLoading: false });
-//         toast.error("Failed to load report.");
-//       }
-//     },
-//     [callApi, reset],
-//   );
-
-//   // ── Download (PDF / Word / Excel / Image) ───────────────────────────────
-//   const handleDownload = useCallback(
-//     async (format: ReportFormat): Promise<void> => {
-//       if (!lastRequest) {
-//         toast.warning("Please view the report before exporting.");
-//         return;
-//       }
-//       try {
-//         const res = await callApi(lastRequest, format);
-//         const blob = responseToBlob(res.data, format);
-//         const url = URL.createObjectURL(blob);
-//         const link = document.createElement("a");
-//         link.href = url;
-//         link.download = extractFilenameFromResponse(
-//           res,
-//           format,
-//           "MemberRegistrationReport",
-//         );
-//         document.body.appendChild(link);
-//         link.click();
-//         document.body.removeChild(link);
-//         URL.revokeObjectURL(url);
-//       } catch {
-//         toast.error("Failed to download file.");
-//       }
-//     },
-//     [callApi, lastRequest],
-//   );
-
-//   // ── Form submit ─────────────────────────────────────────────────────────
-//   const onSubmit: SubmitHandler<MemberRegistrationFormValues> = useCallback(
-//     (formData) => fetchReport(toRequest(formData)),
-//     [fetchReport],
-//   );
-
-//   // ── Page navigation (not used for HTML, kept for interface) ────────────
-//   const handlePageChange = useCallback((newPage: number) => {
-//     // No-op for HTML view
-//   }, []);
-
-//   return (
-//     <MemberRegistrationReport
-//       control={control}
-//       handleSubmit={handleSubmit}
-//       onSubmit={onSubmit}
-//       setValue={setValue}
-//       reportState={reportState}
-//       onPageChange={handlePageChange}
-//       onDownload={handleDownload}
-//     />
-//   );
-// }
-
-// export default Page;
-
 "use client";
 
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -185,10 +7,10 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import * as yup from "yup";
 import type { MemberDetailRequest } from "types/api/api";
 import MemberRegistrationReport from "@/components/reports/memberReport/MemberRegistrationReport";
-import memberRegistrationService from "@/services/member/MemberDetailService";
 import { type ReportFormat } from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberService from "@/services/member/memberService";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 export interface MemberRegistrationFormValues extends MemberDetailRequest {
@@ -281,7 +103,7 @@ function Page(): React.ReactElement {
   // ── API call ──────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberDetailRequest, format: string) =>
-      memberRegistrationService.api.memberRegistrationCreate(request, {
+      memberService.api.memberRegistrationCreate(request, {
         format,
       }),
     [],

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -6,7 +5,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import costOfFundService from "@/services/Account/CostOfFundService";
 import type { CostOfFundRequest, Pagination } from "types/api/api";
 import CostOfFundForm, {
   type ReportFormat,
@@ -14,6 +12,7 @@ import CostOfFundForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import accountService from "@/services/Account/AccountService";
 
 // ── branchId here is already a single number on the DTO — no form-only shape needed ──
 export type CostOfFundFormValues = CostOfFundRequest;
@@ -70,7 +69,7 @@ export default function CostOfFundPage() {
 
   const callApi = useCallback(
     (request: CostOfFundRequest, format: string) =>
-      costOfFundService.api.costOfFundCreate(request, { format }),
+      accountService.api.costOfFundCreate(request, { format }),
     [],
   );
 

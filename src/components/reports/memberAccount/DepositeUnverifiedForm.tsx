@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -32,6 +32,8 @@ import type {
   DepositUnverifiedFormValues,
   DepositUnverifiedResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/reports/DepositeUnverifiedReport/page";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 
 export type { ReportFormat };
 
@@ -76,6 +78,11 @@ function DepositUnverifiedForm({
     }
   }, [pdfData, showReport, isLoading]);
 
+  const memberLookupConfig = useMemo(
+    () => MemberLookupConfig<DepositUnverifiedFormValues>(),
+    [],
+  );
+
   return (
     <>
       {isLoading && (
@@ -106,9 +113,10 @@ function DepositUnverifiedForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Member Lookup (Member ID + Member Name) ──────────────────── */}
-          <MemberLookupButton<DepositUnverifiedFormValues>
+          <EntityLookupField
             control={control}
             setValue={setValue}
+            config={memberLookupConfig}
           />
           <Divider sx={{ mb: 0.5 }} />
 

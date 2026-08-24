@@ -4,8 +4,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-import memberSummaryService from "@/services/memberAccount/MemberSummaryService";
 import type { MemberSummaryRequest, Pagination } from "types/api/api";
 import MemberSummaryForm, {
   type ReportFormat,
@@ -13,6 +11,8 @@ import MemberSummaryForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 // ── branchId (multi-select array) is form-only — resolved into branchIds
 // (comma string) on submit. collectionCenterId/memberGroupId stay strings,
@@ -30,15 +30,6 @@ export interface MemberSummaryResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -117,7 +108,7 @@ export default function MemberSummaryPage() {
 
   const callApi = useCallback(
     (request: MemberSummaryRequest, format: string) =>
-      memberSummaryService.api.memberSummaryCreate(request, { format }),
+      memberAccountService.api.memberSummaryCreate(request, { format }),
     [],
   );
 
@@ -135,9 +126,9 @@ export default function MemberSummaryPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

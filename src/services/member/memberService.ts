@@ -8,17 +8,11 @@ import {
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 // ── API Instance ──────────────────────────────────────────────────────────────
-const savingTypeWiseBalanceService = new Api({ baseURL: apiUrl });
+const memberService = new Api({ baseURL: apiUrl });
 
-// ✅ Key fix: Configure request interceptor to set responseType based on format param
-// Both VIEW and EXPORT get blob response
 const originalRequestInterceptor = requestInterceptor;
 const customRequestInterceptor = async (config: any) => {
-  // Call original interceptor for auth headers, etc.
   const configWithAuth = await originalRequestInterceptor(config);
-
-  // ✅ If format is VIEW/PDF/WORD/EXCEL/IMAGE, set responseType to blob
-  // This applies to BOTH view and export requests
   if (configWithAuth.params?.format) {
     const format = configWithAuth.params.format.toLowerCase();
     if (["view", "pdf", "word", "excel", "image"].includes(format)) {
@@ -29,12 +23,10 @@ const customRequestInterceptor = async (config: any) => {
   return configWithAuth;
 };
 
-savingTypeWiseBalanceService.instance.interceptors.request.use(
-  customRequestInterceptor,
-);
-savingTypeWiseBalanceService.instance.interceptors.response.use(
+memberService.instance.interceptors.request.use(customRequestInterceptor);
+memberService.instance.interceptors.response.use(
   successResponseInterceptor,
   errorResponseInterceptor,
 );
 
-export default savingTypeWiseBalanceService;
+export default memberService;

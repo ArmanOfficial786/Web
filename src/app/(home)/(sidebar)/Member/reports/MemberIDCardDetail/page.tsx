@@ -7,10 +7,13 @@ import { useState, useCallback, useEffect } from "react";
 import * as yup from "yup";
 import type { MemberIdCardRequest, Pagination } from "types/api/api";
 import MemberIdCard from "@/components/reports/memberReport/MemberIdCard";
-import memberIdCardService from "@/services/member/MemberIdCardService";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberService from "@/services/member/memberService";
 
 // ── UI-only fields — stripped before sending to API ────────────────────────
 export interface MemberIdCardFormValues extends MemberIdCardRequest {
@@ -59,16 +62,6 @@ const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   pageSize: v.pageSize ?? 10,
 });
 
-// ── Default pagination fallback ────────────────────────────────────────────
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
-
 // ── Page ───────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] = useState<MemberIdCardResponseExtended>({
@@ -86,7 +79,7 @@ function Page(): React.ReactElement {
 
   const callApi = useCallback(
     (request: MemberIdCardRequest, format: string) =>
-      memberIdCardService.api.memberIdCardMemberIdCardCreate(request, {
+      memberService.api.memberIdCardMemberIdCardCreate(request, {
         format,
       }),
     [],
@@ -108,9 +101,9 @@ function Page(): React.ReactElement {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

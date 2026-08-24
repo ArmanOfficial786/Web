@@ -7,10 +7,13 @@ import { useState, useCallback, useEffect } from "react";
 import * as yup from "yup";
 import type { MemberBloodGroupReportRequest, Pagination } from "types/api/api";
 import MemberBloodGroupReportForm from "@/components/reports/memberReport/MemberBloodGroupReportForm";
-import memberBloodGroupReportService from "@/services/member/MemberBloodGroupService";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import memberService from "@/services/member/memberService";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberBloodGroupReportFormValues extends MemberBloodGroupReportRequest {}
@@ -63,16 +66,6 @@ const toRequest = (
   branchName: v.branchName || "",
 });
 
-// ── Default pagination fallback ────────────────────────────────────────────
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
-
 // ── Blood group radio options — 0=All, 1=Available, 2=Unavailable ──────────
 export const BLOOD_GROUP_OPTIONS = [
   { value: 0, label: "All" },
@@ -87,7 +80,7 @@ function Page(): React.ReactElement {
   const [lastRequest, setLastRequest] =
     useState<MemberBloodGroupReportRequest | null>(null);
 
-  const { control, handleSubmit, setValue, reset } =
+  const { control, handleSubmit, setValue } =
     useForm<MemberBloodGroupReportFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
@@ -95,7 +88,7 @@ function Page(): React.ReactElement {
 
   const callApi = useCallback(
     (request: MemberBloodGroupReportRequest, format: string) =>
-      memberBloodGroupReportService.api.memberBloodGroupReportCreate(request, {
+      memberService.api.memberBloodGroupReportCreate(request, {
         format,
       }),
     [],
@@ -114,9 +107,9 @@ function Page(): React.ReactElement {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 
