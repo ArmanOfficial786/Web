@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -16,7 +16,6 @@ import Divider from "@mui/material/Divider";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import MemberLookupButton from "../../reportForm/Common/MemberLookUpButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -30,6 +29,8 @@ import {
   type MemberIdCardFormValues,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberIDCardDetail/page";
 import Preloader from "@/components/PreLoader/preloader";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 
 export type { ReportFormat };
 
@@ -68,6 +69,14 @@ function MemberIdCard({
     });
   };
 
+  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
+  // shared app-wide — if any other report already opened the member
+  // directory this session, this field reuses that data with no API call.
+  const memberLookupConfig = useMemo(
+    () => MemberLookupConfig<MemberIdCardFormValues>(),
+    [],
+  );
+
   return (
     <>
       {/* ── GLOBAL PRELOADER — true viewport center ─────────────────────── */}
@@ -101,7 +110,13 @@ function MemberIdCard({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 1 — Member Lookup */}
-          <MemberLookupButton<MemberIdCardFormValues> control={control} />
+          {/* <MemberLookupButton<MemberIdCardFormValues> control={control} /> */}
+
+          <EntityLookupField
+            control={control}
+            setValue={setValue}
+            config={memberLookupConfig}
+          />
           <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 2 — From Date | Till Date */}

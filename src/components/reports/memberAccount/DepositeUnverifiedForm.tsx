@@ -106,7 +106,10 @@ function DepositUnverifiedForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Member Lookup (Member ID + Member Name) ──────────────────── */}
-          <MemberLookupButton<DepositUnverifiedFormValues> control={control} />
+          <MemberLookupButton<DepositUnverifiedFormValues>
+            control={control}
+            setValue={setValue}
+          />
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── From/To Date ─────────────────────────────────────────────── */}

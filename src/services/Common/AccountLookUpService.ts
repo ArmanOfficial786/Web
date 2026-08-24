@@ -70,10 +70,7 @@ export const accountLookUpService = {
           items: data.data || [],
           totalPages: data.pagination.totalPages || 1,
           currentPage: data.pagination.currentPage || 1,
-          totalRecord: data.pagination.totalRecord || 0,
           pageSize: data.pagination.pageSize || 20,
-          hasNextPage: data.pagination.hasNextPage || false,
-          hasPreviousPage: data.pagination.hasPreviousPage || false,
         };
       }
 
@@ -81,10 +78,7 @@ export const accountLookUpService = {
         items: data?.data || [],
         totalPages: 1,
         currentPage: 1,
-        totalRecord: 0,
         pageSize: 20,
-        hasNextPage: false,
-        hasPreviousPage: false,
       };
     } catch (error) {
       console.error("AccountLookUp search failed:", error);

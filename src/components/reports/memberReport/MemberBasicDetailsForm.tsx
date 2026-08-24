@@ -17,7 +17,6 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import MemberLookupButton from "@/components/reportForm/Common/MemberLookUpButton";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
@@ -30,6 +29,8 @@ import {
   MemberBasicDetailsFormValues,
   MemberBasicDetailsResponseExtended,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberBasicDetailReport/page";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 
 export type { ReportFormat };
 
@@ -52,7 +53,6 @@ function MemberBasicDetailsForm({
   reportState,
   onPageChange,
   onDownload,
-  onMemberSelect,
 }: MemberBasicDetailsFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -61,6 +61,11 @@ function MemberBasicDetailsForm({
   const scrollToReport = () => {
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const memberConfig = React.useMemo(
+    () => MemberLookupConfig<MemberBasicDetailsFormValues>(),
+    [],
+  );
 
   return (
     <>
@@ -98,9 +103,10 @@ function MemberBasicDetailsForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* Row 2 — Member ID | Member Name (modal lookup) */}
-          <MemberLookupButton<MemberBasicDetailsFormValues>
+          <EntityLookupField
             control={control}
-            onMemberSelect={onMemberSelect}
+            setValue={setValue}
+            config={memberConfig}
           />
           <Divider sx={{ mb: 0.5 }} />
 

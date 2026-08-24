@@ -10,6 +10,76 @@
  * ---------------------------------------------------------------
  */
 
+export enum SortOrder {
+  Asc = "Asc",
+  Desc = "Desc",
+}
+
+export enum FilterOption {
+  StartsWith = "StartsWith",
+  EndsWith = "EndsWith",
+  Contains = "Contains",
+  DoesNotContain = "DoesNotContain",
+  IsEmpty = "IsEmpty",
+  IsNotEmpty = "IsNotEmpty",
+  IsGreaterThan = "IsGreaterThan",
+  IsGreaterThanOrEqualTo = "IsGreaterThanOrEqualTo",
+  IsLessThan = "IsLessThan",
+  IsLessThanOrEqualTo = "IsLessThanOrEqualTo",
+  IsEqualTo = "IsEqualTo",
+  IsNotEqualTo = "IsNotEqualTo",
+}
+
+export interface AccountLookUpDtos {
+  /** @format int64 */
+  mamAccountOpeningId?: number;
+  memberId?: string | null;
+  memberName?: string | null;
+  accountNo?: string | null;
+  depositType?: string | null;
+  accountType?: string | null;
+  /** @format double */
+  interestRate?: number | null;
+  openedDate?: string | null;
+  maturityDate?: string | null;
+  status?: string | null;
+  /** @format int64 */
+  usmOfficeId?: number;
+  officeName?: string | null;
+}
+
+export interface AccountLookUpDtosListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: AccountLookUpDtos[] | null;
+  pagination?: Pagination;
+}
+
+export interface AccountSelectedDto {
+  /** @format int64 */
+  mamAccountOpeningId?: number;
+  accountNo?: string | null;
+  /** @format int64 */
+  memMemberRegistrationId?: number;
+  memberId?: string | null;
+  memberName?: string | null;
+  /** @format int64 */
+  usmOfficeId?: number;
+  accountNamingOption?: boolean;
+  accountName?: string | null;
+}
+
+export interface AccountSelectedDtoGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: AccountSelectedDto;
+  pagination?: Pagination;
+}
+
 export interface AccountStatementRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -33,6 +103,7 @@ export interface AllReportOrderByResponseModelGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: AllReportOrderByResponseModel;
+  pagination?: Pagination;
 }
 
 export interface BalanceSheetRequest {
@@ -58,6 +129,7 @@ export interface BranchResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: BranchResponse[] | null;
+  pagination?: Pagination;
 }
 
 export interface CashFlowDetailsRequest {
@@ -103,6 +175,7 @@ export interface CollectorResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: CollectorResponse[] | null;
+  pagination?: Pagination;
 }
 
 export interface ConvertRequestDto {
@@ -138,6 +211,51 @@ export interface DaysResponseDto {
   days?: number[] | null;
 }
 
+export interface DepositStatementRequestDto {
+  accountNo?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  enableInterest?: boolean;
+  enableBillNumber?: boolean;
+  entryBy?: boolean;
+  valueDate?: boolean;
+  sameCompanyName?: boolean;
+  language?: string | null;
+  customNarration?: boolean;
+  visualReport?: boolean;
+  viewInterest?: boolean;
+  nepaliDate?: boolean;
+  englishDate?: boolean;
+}
+
+export interface DepositStatementVerificationDto {
+  /** @format int64 */
+  mamDepositStatementVerificationId?: number;
+  verifiedFromDateOnBs?: string | null;
+  verifiedToDateOnBs?: string | null;
+  /** @format date-time */
+  createdOn?: string;
+  verifiedDateBs?: string | null;
+  verifiedBy?: string | null;
+}
+
+export interface DepositStatementVerificationDtoListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: DepositStatementVerificationDto[] | null;
+  pagination?: Pagination;
+}
+
+export interface DepositStatementVerifyRequestDto {
+  /** @format int64 */
+  mamAccountOpeningId?: number;
+  accountNo?: string | null;
+  verifiedFromDateOnBs?: string | null;
+  verifiedToDateOnBs?: string | null;
+}
+
 export interface DepositTypeResponse {
   /** @format int64 */
   depositeTypeId?: number;
@@ -151,6 +269,7 @@ export interface DepositTypeResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: DepositTypeResponse[] | null;
+  pagination?: Pagination;
 }
 
 export interface DepositUnverifiedRequest {
@@ -192,6 +311,21 @@ export interface DetailTrialBalanceRequest {
   visualReport?: boolean;
 }
 
+export interface Filter {
+  /** @format int32 */
+  pageNumber?: number;
+  /** @format int32 */
+  pageSize?: number;
+  params?: FilterParam[] | null;
+  sort?: SortParam[] | null;
+}
+
+export interface FilterParam {
+  key?: string | null;
+  value?: string | null;
+  option?: FilterOption;
+}
+
 export interface LmtLoanMaseterListResponse {
   /** @format int64 */
   lmtLoanTypeMasterId?: number;
@@ -204,6 +338,7 @@ export interface LmtLoanMaseterListResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: LmtLoanMaseterListResponse[] | null;
+  pagination?: Pagination;
 }
 
 export interface MemberAccountDeactiveRequest {
@@ -246,7 +381,7 @@ export interface MemberAccountDetailRequest {
   memberId?: string | null;
   memberName?: string | null;
   /** @format int64 */
-  memberRegistrationId?: number;
+  memberRegistrationId?: number | null;
   /** @format int32 */
   status?: number;
   collectorId?: string | null;
@@ -378,16 +513,18 @@ export interface MemberLookUpDtos {
   totalPages?: number;
 }
 
-export interface MemberLookUpDtosPagedResult {
+export interface MemberLookUpDtosPagination {
+  /** @format int32 */
+  currentPage?: number | null;
+  /** @format int32 */
+  totalPages?: number | null;
+  /** @format int32 */
+  pageSize?: number | null;
+  /** @format int32 */
+  totalRecord?: number | null;
+  hasNextPage?: boolean | null;
+  hasPreviousPage?: boolean | null;
   items?: MemberLookUpDtos[] | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  currentPage?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
 }
 
 export interface MemberPenaltyDepositWithdrawRequest {
@@ -480,6 +617,7 @@ export interface Pagination {
   totalRecord?: number | null;
   hasNextPage?: boolean | null;
   hasPreviousPage?: boolean | null;
+  items?: any[] | null;
 }
 
 export interface RatioAnalysisRequest {
@@ -506,6 +644,7 @@ export interface ReportResponseDtosGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: ReportResponseDtos;
+  pagination?: Pagination;
 }
 
 export interface SMSCategoryRequest {
@@ -587,6 +726,7 @@ export interface ShareTypeResponseListGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: ShareTypeResponse[] | null;
+  pagination?: Pagination;
 }
 
 export interface SoleMemberGroupRequestDtos {
@@ -600,6 +740,11 @@ export interface SoleMemberGroupResponseDto {
   /** @format int64 */
   usmOfficeId?: number;
   name?: string | null;
+}
+
+export interface SortParam {
+  field?: string | null;
+  sortOrder?: SortOrder;
 }
 
 export interface SummaryTrialBalanceRequest {
@@ -625,6 +770,23 @@ export interface ThresholdTransactionRequest {
   orderBy?: string | null;
   sameCompanyName?: boolean;
   visualReport?: boolean;
+}
+
+export interface VerificationStatusDto {
+  hasVerification?: boolean;
+  verifiedTillBs?: string | null;
+  verifiedDateBs?: string | null;
+  verifiedBy?: string | null;
+  message?: string | null;
+}
+
+export interface VerificationStatusDtoGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: VerificationStatusDto;
+  pagination?: Pagination;
 }
 
 export interface YearsResponseDto {
@@ -814,6 +976,59 @@ export class Api<
   SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
   api = {
+    /**
+     * No description
+     *
+     * @tags AccountLookUp
+     * @name AccountLookUpSearchCreate
+     * @request POST:/api/AccountLookUp/search
+     */
+    accountLookUpSearchCreate: (data: Filter, params: RequestParams = {}) =>
+      this.request<AccountLookUpDtosListGeneralResponse, any>({
+        path: `/api/AccountLookUp/search`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags AccountLookUp
+     * @name AccountLookUpSelectDetail
+     * @request GET:/api/AccountLookUp/select/{mamAccountOpeningId}
+     */
+    accountLookUpSelectDetail: (
+      mamAccountOpeningId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<AccountSelectedDtoGeneralResponse, any>({
+        path: `/api/AccountLookUp/select/${mamAccountOpeningId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags AccountLookUp
+     * @name AccountLookUpValidateDetail
+     * @request GET:/api/AccountLookUp/validate/{accountNo}
+     */
+    accountLookUpValidateDetail: (
+      accountNo: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<AccountSelectedDtoGeneralResponse, any>({
+        path: `/api/AccountLookUp/validate/${accountNo}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
     /**
      * No description
      *
@@ -1069,6 +1284,86 @@ export class Api<
       this.request<DepositTypeResponseListGeneralResponse, any>({
         path: `/api/DepositeType/getDepositeType`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DepositStatement
+     * @name DepositStatementGenerateReportCreate
+     * @request POST:/api/DepositStatement/GenerateReport
+     */
+    depositStatementGenerateReportCreate: (
+      data: DepositStatementRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/DepositStatement/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DepositStatementVerify
+     * @name DepositStatementVerifyStatusDetail
+     * @request GET:/api/DepositStatementVerify/Status/{mamAccountOpeningId}
+     */
+    depositStatementVerifyStatusDetail: (
+      mamAccountOpeningId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<VerificationStatusDtoGeneralResponse, any>({
+        path: `/api/DepositStatementVerify/Status/${mamAccountOpeningId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DepositStatementVerify
+     * @name DepositStatementVerifyHistoryDetail
+     * @request GET:/api/DepositStatementVerify/History/{mamAccountOpeningId}
+     */
+    depositStatementVerifyHistoryDetail: (
+      mamAccountOpeningId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<DepositStatementVerificationDtoListGeneralResponse, any>({
+        path: `/api/DepositStatementVerify/History/${mamAccountOpeningId}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DepositStatementVerify
+     * @name DepositStatementVerifyVerifyCreate
+     * @request POST:/api/DepositStatementVerify/Verify
+     */
+    depositStatementVerifyVerifyCreate: (
+      data: DepositStatementVerifyRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<VerificationStatusDtoGeneralResponse, any>({
+        path: `/api/DepositStatementVerify/Verify`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
@@ -1399,7 +1694,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<MemberLookUpDtosPagedResult, any>({
+      this.request<MemberLookUpDtosPagination, any>({
         path: `/api/MemberLookUp/search`,
         method: "GET",
         query: query,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,  useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -34,7 +34,7 @@ import type {
   MemberRegistrationResponseExtended,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberAllDetailsReport/page";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { createMemberLookupConfig } from "@/config/MemberLookupConfig";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 
 export type { ReportFormat };
 
@@ -71,7 +71,7 @@ function MemberAllDetailsReport({
   const reportRef = useRef<HTMLDivElement>(null);
   const [columnsExpanded, setColumnsExpanded] = useState(true);
   const memberConfig = React.useMemo(
-    () => createMemberLookupConfig<MemberAllDetailsFormValues>(),
+    () => MemberLookupConfig<MemberAllDetailsFormValues>(),
     [],
   );
 

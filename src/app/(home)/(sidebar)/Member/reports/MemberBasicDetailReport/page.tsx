@@ -8,7 +8,10 @@ import * as yup from "yup";
 import type { MemberBasicDetailsRequest, Pagination } from "types/api/api";
 import MemberBasicDetailsForm from "@/components/reports/memberReport/MemberBasicDetailsForm";
 import memberBasicDetailService from "@/services/member/MemberBasicDetailService";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
@@ -74,16 +77,6 @@ const toRequest = (
   branchName: v.branchName || "",
 });
 
-// ── Default pagination fallback ────────────────────────────────────────────
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
-
 // ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
@@ -129,9 +122,9 @@ function Page(): React.ReactElement {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

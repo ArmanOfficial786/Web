@@ -16,7 +16,6 @@ import Divider from "@mui/material/Divider";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import MemberLookupButton from "@/components/reportForm/Common/MemberLookUpButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
@@ -27,6 +26,8 @@ import {
   MemberDetailsSummaryFormValues,
   MemberDetailsSummaryResponseExtended,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberDetailSummaryReport/page";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 
 export type { ReportFormat };
 
@@ -49,7 +50,6 @@ function MemberDetailsSummaryForm({
   reportState,
   onPageChange,
   onDownload,
-  onMemberSelect, // ✅ destructure
 }: MemberDetailsSummaryFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -58,6 +58,11 @@ function MemberDetailsSummaryForm({
   const scrollToReport = () => {
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const memberConfig = React.useMemo(
+    () => MemberLookupConfig<MemberDetailsSummaryFormValues>(),
+    [],
+  );
 
   return (
     <>
@@ -96,9 +101,10 @@ function MemberDetailsSummaryForm({
 
           {/* Row 2 — Member Lookup */}
           {/* ✅ onMemberSelect fires → page.tsx sets memberRegistrationId correctly */}
-          <MemberLookupButton<MemberDetailsSummaryFormValues>
+          <EntityLookupField
             control={control}
-            onMemberSelect={onMemberSelect}
+            setValue={setValue}
+            config={memberConfig}
           />
           <Divider sx={{ mb: 0.5 }} />
 

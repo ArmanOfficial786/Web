@@ -530,7 +530,6 @@
 
 // components/reportForm/Common/LookUpModal.tsx
 
-
 // components/reportForm/Common/LookUpModal.tsx
 "use client";
 
@@ -568,6 +567,8 @@ export interface LookUpModalProps<
   pageSize?: number;
   title?: string;
   isLoading?: boolean;
+  /** Optional content rendered below the table (e.g. "loading more" status). */
+  footer?: React.ReactNode;
 }
 
 export default function LookUpModal<
@@ -584,6 +585,7 @@ export default function LookUpModal<
   pageSize = 10,
   title = "Directory",
   isLoading = false,
+  footer,
 }: LookUpModalProps<T, TFilter>) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -648,6 +650,19 @@ export default function LookUpModal<
           isLoading={isLoading}
           resetKey={open} // ← resets filters/page every time the modal reopens
         />
+
+        {footer && (
+          <Box
+            sx={{
+              px: 2,
+              py: 1,
+              backgroundColor: surfaceSunken,
+              borderTop: `1px solid ${divider}`,
+            }}
+          >
+            {footer}
+          </Box>
+        )}
 
         <Box
           sx={{
