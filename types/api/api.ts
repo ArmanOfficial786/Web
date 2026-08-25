@@ -1292,10 +1292,10 @@ export class Api<
      * No description
      *
      * @tags DepositStatement
-     * @name DepositStatementGenerateReportCreate
-     * @request POST:/api/DepositStatement/GenerateReport
+     * @name DepositStatementCreate
+     * @request POST:/api/DepositStatement
      */
-    depositStatementGenerateReportCreate: (
+    depositStatementCreate: (
       data: DepositStatementRequestDto,
       query?: {
         /** @default "VIEW" */
@@ -1304,7 +1304,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/api/DepositStatement/GenerateReport`,
+        path: `/api/DepositStatement`,
         method: "POST",
         query: query,
         body: data,

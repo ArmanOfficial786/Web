@@ -1,6 +1,6 @@
 // "use client";
 
-// import React, { useMemo } from "react";
+// import React, { useMemo, useRef, useEffect } from "react";
 // import type {
 //   Control,
 //   SubmitHandler,
@@ -9,16 +9,45 @@
 //   Path,
 // } from "react-hook-form";
 // import { Grid, Box, Paper, Typography, Divider } from "@mui/material";
-// import FieldRow from "@/utilis/FieldRow";
-// import DateInput from "@/components/form/DateInput";
 // import CheckboxInput from "@/components/form/CheckboxInput";
 // import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+// import DateFieldsTwoWay from "@/components/reportForm/Common/DateFieldsTwoWay";
 // import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 // import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 // import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 // import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 // import { LanguageSwitch } from "./LanguageSwitch";
+// import ReportNavigation, {
+//   type ReportFormat,
+// } from "@/components/reportForm/Common/ReportNavigation";
+// import Preloader from "@/components/PreLoader/preloader";
 
+// import type { AccountLookUpDtos } from "types/api/api";
+// import type { DepositStatementResponseExtended } from "@/app/(home)/(sidebar)/MemberAc/reports/DepositStatementReport/page";
+
+// export type { ReportFormat };
+
+// // ── Form values ──────────────────────────────────────────────────────────
+// // NOTE: previously declared as `extends Omit<DepositStatementRequestDto, ...>`.
+// // A bracket got mismatched while editing that block, which corrupted the
+// // parser for ~200 lines below it (hence the flood of "'string' only refers
+// // to a type" / arithmetic-operator errors — TS was no longer parsing a type
+// // position at all). Declared explicitly here instead: same effective shape,
+// // but immune to that failure mode.
+// //
+// // Fields that map 1:1 onto DepositStatementRequestDto, unchanged:
+// //   entryBy, valueDate, sameCompanyName, customNarration, visualReport,
+// //   viewInterest, nepaliDate, englishDate
+// // Fields that exist on the DTO but are narrowed/renamed for the UI:
+// //   accountNo (DTO: string | null -> plain string)
+// //   language  (DTO: string | null -> "English" | "Nepali")
+// //   fromDate  (UI name for DTO's fromDateBs)
+// //   toDate    (UI name for DTO's toDateBs)
+// //   generateInterest (UI name for DTO's enableInterest)
+// //   billNumber       (UI name for DTO's enableBillNumber)
+// // Fields that are UI-only and never sent to the API:
+// //   memberId, memberName, fromDateAd, toDateAd,
+// //   statementVerifiedTill, passbookVerifiedTill
 // export interface DepositStatementFormValues {
 //   accountNo?: string;
 //   memberId?: string;
@@ -27,9 +56,14 @@
 //   toDate?: string;
 //   fromDateAd?: string;
 //   toDateAd?: string;
-//   sameCompanyName?: boolean;
+//   entryBy?: boolean;
 //   valueDate?: boolean;
+//   sameCompanyName?: boolean;
+//   customNarration?: boolean;
+//   visualReport?: boolean;
+//   viewInterest?: boolean;
 //   nepaliDate?: boolean;
+//   englishDate?: boolean;
 //   generateInterest?: boolean;
 //   billNumber?: boolean;
 //   language?: "English" | "Nepali";
@@ -42,6 +76,12 @@
 //   handleSubmit: UseFormHandleSubmit<DepositStatementFormValues>;
 //   onSubmit: SubmitHandler<DepositStatementFormValues>;
 //   setValue: UseFormSetValue<DepositStatementFormValues>;
+//   reportState: DepositStatementResponseExtended;
+//   onPageChange: (page: number) => void;
+//   onDownload: (format: ReportFormat) => void | Promise<void>;
+//   // The account lookup modal returns AccountLookUpDtos rows — memberId /
+//   // memberName live directly on that shape (no memMemberRegistrationId).
+//   onAccountSelect: (record: AccountLookUpDtos) => void;
 // }
 
 // export default function DepositStatementForm({
@@ -49,214 +89,236 @@
 //   handleSubmit,
 //   onSubmit,
 //   setValue,
+//   reportState,
+//   onPageChange,
+//   onDownload,
+//   onAccountSelect,
 // }: DepositStatementFormProps) {
+//   const { isLoading, pdfData, pagination } = reportState;
+//   const showReport = Boolean(pdfData);
+//   const reportRef = useRef<HTMLDivElement>(null);
+
+//   useEffect(() => {
+//     if (showReport && !isLoading) {
+//       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+//     }
+//   }, [pdfData, showReport, isLoading]);
+
 //   const accountConfig = useMemo(
 //     () => createAccountLookupConfig<DepositStatementFormValues>(),
 //     [],
 //   );
 
 //   return (
-//     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-//       <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
-//         <Typography
-//           variant="h6"
-//           sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
-//         >
-//           Deposit Statement Report
-//         </Typography>
-//         <Divider sx={{ mb: 1 }} />
-
-//         <Box sx={{ mb: 1 }}>
-//           <EntityLookupField
-//             control={control}
-//             setValue={setValue}
-//             config={accountConfig}
-//           />
-//         </Box>
-
-//         <Divider sx={{ mb: 1 }} />
-
+//     <>
+//       {isLoading && (
 //         <Box
 //           sx={{
-//             display: "grid",
-//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//             gap: 2,
-//             mb: 1,
-//           }}
-//         >
-//           <Box>
-//             <DateInput name="fromDate" control={control} dateType="BS" />
-//           </Box>
-//           <Box>
-//             <DateInput name="fromDateAd" control={control} dateType="AD" />
-//           </Box>
-//         </Box>
-//         <Divider sx={{ mb: 1 }} />
-
-//         <Box
-//           sx={{
-//             display: "grid",
-//             gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-//             gap: 2,
-//             mb: 1,
-//           }}
-//         >
-//           <Box>
-//             <FieldRow label="From Date (AD)">
-//               <DateInput
-//                 name={"fromDateAd" as Path<DepositStatementFormValues>}
-//                 control={control}
-//                 dateType="AD"
-//               />
-//             </FieldRow>
-//           </Box>
-//           <Box>
-//             <FieldRow label="To Date (AD)">
-//               <DateInput
-//                 name={"toDateAd" as Path<DepositStatementFormValues>}
-//                 control={control}
-//                 dateType="AD"
-//               />
-//             </FieldRow>
-//           </Box>
-//         </Box>
-//         <Divider sx={{ mb: 1 }} />
-//         <Box
-//           sx={{
+//             position: "fixed",
+//             inset: 0,
+//             zIndex: 9999,
 //             display: "flex",
-//             justifyContent: "space-around",
-//             gap: 1,
-//           }}
-//         >
-//           <Box>
-//             <CheckboxInput
-//               name="viewInterest"
-//               control={control}
-//               label="View Interest"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="entryBy"
-//               control={control}
-//               label="Entry By"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="generateInterest"
-//               control={control}
-//               label="Generate Interest"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="billNumber"
-//               control={control}
-//               label="Bill Number"
-//               size="small"
-//             />
-//           </Box>
-//         </Box>
-//         <Divider sx={{ mb: 1 }} />
-
-//         <Box
-//           sx={{
-//             display: "flex",
-//             justifyContent: "space-around",
-//             gap: 1,
-//           }}
-//         >
-//           <Box>
-//             <CheckboxInput
-//               name="sameCompanyName"
-//               control={control}
-//               label="Same Company Name"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="valueDate"
-//               control={control}
-//               label="Value Date"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="nepaliDate"
-//               control={control}
-//               label="Nepali Date"
-//               size="small"
-//             />
-//           </Box>
-//           <Box>
-//             <CheckboxInput
-//               name="englishDate"
-//               control={control}
-//               label="English Date"
-//               size="small"
-//             />
-//           </Box>
-//         </Box>
-//         <Divider sx={{ mb: 1 }} />
-
-//         <Box
-//           sx={{
-//             display: "flex",
-//             justifyContent: "space-around",
 //             alignItems: "center",
-//             gap: 2,
+//             justifyContent: "center",
+//             backgroundColor: "rgba(255,255,255,0.7)",
+//             backdropFilter: "blur(2px)",
 //           }}
 //         >
-//           <LanguageSwitch
-//             control={control}
-//             name={"language" as Path<DepositStatementFormValues>}
-//           />
-
-//           <VisualReportSwitch
-//             control={control}
-//             name={"visualReport" as Path<DepositStatementFormValues>}
-//           />
+//           <Preloader />
 //         </Box>
+//       )}
 
-//         <Divider sx={{ mb: 1 }} />
+//       <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+//         <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
+//           <Typography
+//             variant="h6"
+//             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
+//           >
+//             Deposit Statement Report
+//           </Typography>
+//           <Divider sx={{ mb: 1 }} />
 
-//         <Grid container spacing={1} alignItems="center">
-//           <Grid size={{ xs: 12, md: 6 }}>
-//             <Box
-//               display="flex"
-//               justifyContent="center"
-//               alignItems="center"
-//               gap={5}
-//               width="100%"
-//             >
-//               <ViewReportButton<DepositStatementFormValues>
+//           <Box sx={{ mb: 1 }}>
+//             <EntityLookupField
+//               control={control}
+//               setValue={setValue}
+//               config={accountConfig}
+//               onSelect={onAccountSelect}
+//             />
+//           </Box>
+
+//           <Divider sx={{ mb: 1 }} />
+
+//           {/* ── BS/AD two-way synced date fields (From + To) ──────────────────
+//               fromDate/toDate hold the BS value, fromDateAd/toDateAd hold the
+//               AD value. DateFieldsTwoWay keeps whichever side changes pushed
+//               into the other, for both From and To independently. ─────────── */}
+//           <Box sx={{ mb: 1 }}>
+//             <DateFieldsTwoWay<DepositStatementFormValues>
+//               control={control}
+//               setValue={setValue}
+//               fromDateName={"fromDate" as Path<DepositStatementFormValues>}
+//               toDateName={"toDate" as Path<DepositStatementFormValues>}
+//               fromDateADName={"fromDateAd" as Path<DepositStatementFormValues>}
+//               toDateADName={"toDateAd" as Path<DepositStatementFormValues>}
+//               fromDateLabel="From Date"
+//               toDateLabel="To Date"
+//               fromDateADLabel="From Date (AD)"
+//               toDateADLabel="To Date (AD)"
+//             />
+//           </Box>
+
+//           <Divider sx={{ mb: 1 }} />
+//           <Box sx={{ display: "flex", justifyContent: "space-around", gap: 1 }}>
+//             <Box>
+//               <CheckboxInput
+//                 name="viewInterest"
 //                 control={control}
-//                 handleSubmit={handleSubmit}
-//                 onSubmit={onSubmit}
-//                 setValue={setValue}
-//                 loading={false}
-//               />
-//               <ClearFormButton
-//                 setValue={setValue}
-//                 clearFields={["memberId", "memberName"]}
+//                 label="View Interest"
+//                 size="small"
 //               />
 //             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="entryBy"
+//                 control={control}
+//                 label="Entry By"
+//                 size="small"
+//               />
+//             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="generateInterest"
+//                 control={control}
+//                 label="Generate Interest"
+//                 size="small"
+//               />
+//             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="billNumber"
+//                 control={control}
+//                 label="Bill Number"
+//                 size="small"
+//               />
+//             </Box>
+//           </Box>
+//           <Divider sx={{ mb: 1 }} />
+
+//           <Box sx={{ display: "flex", justifyContent: "space-around", gap: 1 }}>
+//             <Box>
+//               <CheckboxInput
+//                 name="sameCompanyName"
+//                 control={control}
+//                 label="Same Company Name"
+//                 size="small"
+//               />
+//             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="valueDate"
+//                 control={control}
+//                 label="Value Date"
+//                 size="small"
+//               />
+//             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="nepaliDate"
+//                 control={control}
+//                 label="Nepali Date"
+//                 size="small"
+//               />
+//             </Box>
+//             <Box>
+//               <CheckboxInput
+//                 name="englishDate"
+//                 control={control}
+//                 label="English Date"
+//                 size="small"
+//               />
+//             </Box>
+//           </Box>
+//           <Divider sx={{ mb: 1 }} />
+
+//           <Box
+//             sx={{
+//               display: "flex",
+//               justifyContent: "space-around",
+//               alignItems: "center",
+//               gap: 2,
+//             }}
+//           >
+//             <LanguageSwitch control={control} name="language" />
+//             <VisualReportSwitch control={control} name="visualReport" />
+//           </Box>
+
+//           <Divider sx={{ mb: 1 }} />
+
+//           <Grid container spacing={1} alignItems="center">
+//             <Grid size={{ xs: 12, md: 6 }}>
+//               <Box
+//                 display="flex"
+//                 justifyContent="center"
+//                 alignItems="center"
+//                 gap={5}
+//                 width="100%"
+//               >
+//                 <ViewReportButton<DepositStatementFormValues>
+//                   control={control}
+//                   handleSubmit={handleSubmit}
+//                   onSubmit={onSubmit}
+//                   setValue={setValue}
+//                   loading={isLoading}
+//                 />
+//                 <ClearFormButton
+//                   setValue={setValue}
+//                   clearFields={["accountNo", "memberId", "memberName"]}
+//                 />
+//               </Box>
+//             </Grid>
 //           </Grid>
-//         </Grid>
-//       </Paper>
-//     </Box>
+
+//         </Paper>
+
+//         {showReport && (
+//           <ReportNavigation
+//             pdfData={pdfData ?? ""}
+//             currentPage={pagination?.currentPage ?? 1}
+//             totalPages={pagination?.totalPages ?? 1}
+//             onPageChange={onPageChange}
+//             onDownload={onDownload}
+//           />
+//         )}
+
+//         {showReport && (
+//           <Box
+//             ref={reportRef}
+//             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
+//           >
+//             <embed
+//               key={pdfData}
+//               src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
+//               style={{
+//                 position: "absolute",
+//                 top: "-40px",
+//                 left: 0,
+//                 width: "100%",
+//                 height: "calc(100% + 40px)",
+//                 border: "none",
+//               }}
+//             />
+//           </Box>
+//         )}
+//       </Box>
+//     </>
 //   );
 // }
 
+// components/reports/memberAccount/DepositStatementForm.tsx
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -273,6 +335,16 @@ import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportS
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import { LanguageSwitch } from "./LanguageSwitch";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import Preloader from "@/components/PreLoader/preloader";
+import PassbookVerificationSection from "@/components/reportForm/Common/PassbookVerificationSection";
+
+import type { AccountLookUpDtos, VerificationStatusDto } from "types/api/api";
+import type { DepositStatementResponseExtended } from "@/app/(home)/(sidebar)/MemberAc/reports/DepositStatementReport/page";
+
+export type { ReportFormat };
 
 export interface DepositStatementFormValues {
   accountNo?: string;
@@ -282,9 +354,14 @@ export interface DepositStatementFormValues {
   toDate?: string;
   fromDateAd?: string;
   toDateAd?: string;
-  sameCompanyName?: boolean;
+  entryBy?: boolean;
   valueDate?: boolean;
+  sameCompanyName?: boolean;
+  customNarration?: boolean;
+  visualReport?: boolean;
+  viewInterest?: boolean;
   nepaliDate?: boolean;
+  englishDate?: boolean;
   generateInterest?: boolean;
   billNumber?: boolean;
   language?: "English" | "Nepali";
@@ -297,6 +374,16 @@ interface DepositStatementFormProps {
   handleSubmit: UseFormHandleSubmit<DepositStatementFormValues>;
   onSubmit: SubmitHandler<DepositStatementFormValues>;
   setValue: UseFormSetValue<DepositStatementFormValues>;
+  reportState: DepositStatementResponseExtended;
+  onPageChange: (page: number) => void;
+  onDownload: (format: ReportFormat) => void | Promise<void>;
+  onAccountSelect: (record: AccountLookUpDtos) => void;
+
+  // ── Passbook verification (new) ───────────────────────────────────────
+  verificationStatus: VerificationStatusDto | null;
+  verifying: boolean;
+  verifyErrorMessage?: string;
+  onVerifyStatement: SubmitHandler<DepositStatementFormValues>;
 }
 
 export default function DepositStatementForm({
@@ -304,182 +391,240 @@ export default function DepositStatementForm({
   handleSubmit,
   onSubmit,
   setValue,
+  reportState,
+  onPageChange,
+  onDownload,
+  onAccountSelect,
+  verificationStatus,
+  verifying,
+  verifyErrorMessage,
+  onVerifyStatement,
 }: DepositStatementFormProps) {
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showReport && !isLoading) {
+      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [pdfData, showReport, isLoading]);
+
   const accountConfig = useMemo(
     () => createAccountLookupConfig<DepositStatementFormValues>(),
     [],
   );
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
-        <Typography
-          variant="h6"
-          sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
-        >
-          Deposit Statement Report
-        </Typography>
-        <Divider sx={{ mb: 1 }} />
-
-        <Box sx={{ mb: 1 }}>
-          <EntityLookupField
-            control={control}
-            setValue={setValue}
-            config={accountConfig}
-          />
-        </Box>
-
-        <Divider sx={{ mb: 1 }} />
-
-        {/* ── BS/AD two-way synced date fields (From + To) ──────────────────
-            fromDate/toDate hold the BS value, fromDateAd/toDateAd hold the
-            AD value. DateFieldsTwoWay keeps whichever side changes pushed
-            into the other, for both From and To independently. ─────────── */}
-        <Box sx={{ mb: 1 }}>
-          <DateFieldsTwoWay<DepositStatementFormValues>
-            control={control}
-            setValue={setValue}
-            fromDateName={"fromDate" as Path<DepositStatementFormValues>}
-            toDateName={"toDate" as Path<DepositStatementFormValues>}
-            fromDateADName={"fromDateAd" as Path<DepositStatementFormValues>}
-            toDateADName={"toDateAd" as Path<DepositStatementFormValues>}
-            fromDateLabel="From Date"
-            toDateLabel="To Date"
-            fromDateADLabel="From Date (AD)"
-            toDateADLabel="To Date (AD)"
-          />
-        </Box>
-
-        <Divider sx={{ mb: 1 }} />
+    <>
+      {isLoading && (
         <Box
           sx={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
             display: "flex",
-            justifyContent: "space-around",
-            gap: 1,
-          }}
-        >
-          <Box>
-            <CheckboxInput
-              name="viewInterest"
-              control={control}
-              label="View Interest"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="entryBy"
-              control={control}
-              label="Entry By"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="generateInterest"
-              control={control}
-              label="Generate Interest"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="billNumber"
-              control={control}
-              label="Bill Number"
-              size="small"
-            />
-          </Box>
-        </Box>
-        <Divider sx={{ mb: 1 }} />
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            gap: 1,
-          }}
-        >
-          <Box>
-            <CheckboxInput
-              name="sameCompanyName"
-              control={control}
-              label="Same Company Name"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="valueDate"
-              control={control}
-              label="Value Date"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="nepaliDate"
-              control={control}
-              label="Nepali Date"
-              size="small"
-            />
-          </Box>
-          <Box>
-            <CheckboxInput
-              name="englishDate"
-              control={control}
-              label="English Date"
-              size="small"
-            />
-          </Box>
-        </Box>
-        <Divider sx={{ mb: 1 }} />
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
             alignItems: "center",
-            gap: 2,
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.7)",
+            backdropFilter: "blur(2px)",
           }}
         >
-          <LanguageSwitch
-            control={control}
-            name={"language" as Path<DepositStatementFormValues>}
-          />
-
-          <VisualReportSwitch
-            control={control}
-            name={"visualReport" as Path<DepositStatementFormValues>}
-          />
+          <Preloader />
         </Box>
+      )}
 
-        <Divider sx={{ mb: 1 }} />
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <Paper variant="outlined" sx={{ px: 2, py: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
+          >
+            Deposit Statement Report
+          </Typography>
+          <Divider sx={{ mb: 1 }} />
 
-        <Grid container spacing={1} alignItems="center">
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              gap={5}
-              width="100%"
-            >
-              <ViewReportButton<DepositStatementFormValues>
+          <Box sx={{ mb: 1 }}>
+            <EntityLookupField
+              control={control}
+              setValue={setValue}
+              config={accountConfig}
+              onSelect={onAccountSelect}
+            />
+          </Box>
+
+          <Divider sx={{ mb: 1 }} />
+
+          <Box sx={{ mb: 1 }}>
+            <DateFieldsTwoWay<DepositStatementFormValues>
+              control={control}
+              setValue={setValue}
+              fromDateName={"fromDate" as Path<DepositStatementFormValues>}
+              toDateName={"toDate" as Path<DepositStatementFormValues>}
+              fromDateADName={"fromDateAd" as Path<DepositStatementFormValues>}
+              toDateADName={"toDateAd" as Path<DepositStatementFormValues>}
+              fromDateLabel="From Date"
+              toDateLabel="To Date"
+              fromDateADLabel="From Date (AD)"
+              toDateADLabel="To Date (AD)"
+            />
+          </Box>
+
+          <Divider sx={{ mb: 1 }} />
+          <Box sx={{ display: "flex", justifyContent: "space-around", gap: 1 }}>
+            <Box>
+              <CheckboxInput
+                name="viewInterest"
                 control={control}
-                handleSubmit={handleSubmit}
-                onSubmit={onSubmit}
-                setValue={setValue}
-                loading={false}
-              />
-              <ClearFormButton
-                setValue={setValue}
-                clearFields={["memberId", "memberName"]}
+                label="View Interest"
+                size="small"
               />
             </Box>
+            <Box>
+              <CheckboxInput
+                name="entryBy"
+                control={control}
+                label="Entry By"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <CheckboxInput
+                name="generateInterest"
+                control={control}
+                label="Generate Interest"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <CheckboxInput
+                name="billNumber"
+                control={control}
+                label="Bill Number"
+                size="small"
+              />
+            </Box>
+          </Box>
+          <Divider sx={{ mb: 1 }} />
+
+          <Box sx={{ display: "flex", justifyContent: "space-around", gap: 1 }}>
+            <Box>
+              <CheckboxInput
+                name="sameCompanyName"
+                control={control}
+                label="Same Company Name"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <CheckboxInput
+                name="valueDate"
+                control={control}
+                label="Value Date"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <CheckboxInput
+                name="nepaliDate"
+                control={control}
+                label="Nepali Date"
+                size="small"
+              />
+            </Box>
+            <Box>
+              <CheckboxInput
+                name="englishDate"
+                control={control}
+                label="English Date"
+                size="small"
+              />
+            </Box>
+          </Box>
+          <Divider sx={{ mb: 1 }} />
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <LanguageSwitch control={control} name="language" />
+            <VisualReportSwitch control={control} name="visualReport" />
+          </Box>
+
+          <Divider sx={{ mb: 1 }} />
+
+          <Grid container spacing={1} alignItems="center">
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                gap={5}
+                width="100%"
+              >
+                <ViewReportButton<DepositStatementFormValues>
+                  control={control}
+                  handleSubmit={handleSubmit}
+                  onSubmit={onSubmit}
+                  setValue={setValue}
+                  loading={isLoading}
+                />
+                <ClearFormButton
+                  setValue={setValue}
+                  clearFields={["accountNo", "memberId", "memberName"]}
+                />
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Paper>
-    </Box>
+
+          {/* Statement Verified Till / Passbook status — matches trStatementVerify,
+              only rendered once a report has successfully been generated. */}
+          <PassbookVerificationSection
+            control={control}
+            setValue={setValue}
+            handleSubmit={handleSubmit}
+            onVerify={onVerifyStatement}
+            visible={showReport}
+            status={verificationStatus}
+            verifying={verifying}
+            errorMessage={verifyErrorMessage}
+          />
+        </Paper>
+
+        {showReport && (
+          <ReportNavigation
+            pdfData={pdfData ?? ""}
+            currentPage={pagination?.currentPage ?? 1}
+            totalPages={pagination?.totalPages ?? 1}
+            onPageChange={onPageChange}
+            onDownload={onDownload}
+          />
+        )}
+
+        {showReport && (
+          <Box
+            ref={reportRef}
+            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
+          >
+            <embed
+              key={pdfData}
+              src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
+              style={{
+                position: "absolute",
+                top: "-40px",
+                left: 0,
+                width: "100%",
+                height: "calc(100% + 40px)",
+                border: "none",
+              }}
+            />
+          </Box>
+        )}
+      </Box>
+    </>
   );
 }

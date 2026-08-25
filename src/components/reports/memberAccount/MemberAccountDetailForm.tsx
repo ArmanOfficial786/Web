@@ -375,7 +375,7 @@
 
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -397,7 +397,6 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToUpButton";
-import MemberLookupButton from "@/components/reportForm/Common/MemberLookUpButton";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
@@ -418,6 +417,8 @@ import type {
   MemberAccountDetailResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page";
 import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 
 export type { ReportFormat };
 
@@ -471,6 +472,11 @@ function MemberAccountDetailForm({
     }
   }, [htmlContent]);
 
+  const memberLookupConfig = useMemo(
+    () => MemberLookupConfig<MemberAccountDetailFormValues>(),
+    [],
+  );
+
   return (
     <>
       {isLoading && (
@@ -501,8 +507,10 @@ function MemberAccountDetailForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Member Lookup (Member Id + Member Name) ──────────────────── */}
-          <MemberLookupButton<MemberAccountDetailFormValues>
+          <EntityLookupField
             control={control}
+            setValue={setValue}
+            config={memberLookupConfig}
           />
 
           {/* ── Till Date + Deposit Type ──────────────────────────────────── */}
