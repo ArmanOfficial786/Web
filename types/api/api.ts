@@ -341,6 +341,36 @@ export interface LmtLoanMaseterListResponseListGeneralResponse {
   pagination?: Pagination;
 }
 
+export interface LoginRequest {
+  /**
+   * @format email
+   * @minLength 1
+   */
+  email: string;
+  /** @minLength 1 */
+  password: string;
+  /** @format int32 */
+  companyId: number;
+}
+
+export interface LoginResponse {
+  token?: string | null;
+  /** @format int64 */
+  userId?: number;
+  fullName?: string | null;
+  email?: string | null;
+  /** @format int64 */
+  userTypeId?: number;
+  userTypeName?: string | null;
+  /** @format int64 */
+  genderId?: number;
+  /** @format int64 */
+  officeId?: number;
+  officeIds?: string | null;
+  companyName?: string | null;
+  systemEditionName?: string | null;
+}
+
 export interface MemberAccountDeactiveRequest {
   tillDate?: string | null;
   branchIds?: string | null;
@@ -969,8 +999,8 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title NexgenCosysReport
- * @version 1.0
+ * @title NexgenCosysReport API
+ * @version v1
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -982,12 +1012,14 @@ export class Api<
      * @tags AccountLookUp
      * @name AccountLookUpSearchCreate
      * @request POST:/api/AccountLookUp/search
+     * @secure
      */
     accountLookUpSearchCreate: (data: Filter, params: RequestParams = {}) =>
       this.request<AccountLookUpDtosListGeneralResponse, any>({
         path: `/api/AccountLookUp/search`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -999,6 +1031,7 @@ export class Api<
      * @tags AccountLookUp
      * @name AccountLookUpSelectDetail
      * @request GET:/api/AccountLookUp/select/{mamAccountOpeningId}
+     * @secure
      */
     accountLookUpSelectDetail: (
       mamAccountOpeningId: number,
@@ -1007,6 +1040,7 @@ export class Api<
       this.request<AccountSelectedDtoGeneralResponse, any>({
         path: `/api/AccountLookUp/select/${mamAccountOpeningId}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1017,6 +1051,7 @@ export class Api<
      * @tags AccountLookUp
      * @name AccountLookUpValidateDetail
      * @request GET:/api/AccountLookUp/validate/{accountNo}
+     * @secure
      */
     accountLookUpValidateDetail: (
       accountNo: string,
@@ -1025,6 +1060,7 @@ export class Api<
       this.request<AccountSelectedDtoGeneralResponse, any>({
         path: `/api/AccountLookUp/validate/${accountNo}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1035,6 +1071,7 @@ export class Api<
      * @tags AccountStatement
      * @name AccountStatementAccountStatementReportCreate
      * @request POST:/api/AccountStatement/AccountStatementReport
+     * @secure
      */
     accountStatementAccountStatementReportCreate: (
       data: AccountStatementRequest,
@@ -1049,8 +1086,44 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthLoginCreate
+     * @request POST:/api/Auth/login
+     * @secure
+     */
+    authLoginCreate: (data: LoginRequest, params: RequestParams = {}) =>
+      this.request<LoginResponse, any>({
+        path: `/api/Auth/login`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthLogoutCreate
+     * @request POST:/api/Auth/logout
+     * @secure
+     */
+    authLogoutCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/Auth/logout`,
+        method: "POST",
+        secure: true,
         ...params,
       }),
 
@@ -1060,6 +1133,7 @@ export class Api<
      * @tags BalanceSheet
      * @name BalanceSheetCreate
      * @request POST:/api/BalanceSheet
+     * @secure
      */
     balanceSheetCreate: (
       data: BalanceSheetRequest,
@@ -1074,6 +1148,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1084,6 +1159,7 @@ export class Api<
      * @tags Branch
      * @name BranchGetAllBranchesList
      * @request GET:/api/Branch/GetAllBranches
+     * @secure
      */
     branchGetAllBranchesList: (
       query?: {
@@ -1096,6 +1172,7 @@ export class Api<
         path: `/api/Branch/GetAllBranches`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1106,11 +1183,13 @@ export class Api<
      * @tags Calendar
      * @name CalendarYearsList
      * @request GET:/api/Calendar/years
+     * @secure
      */
     calendarYearsList: (params: RequestParams = {}) =>
       this.request<YearsResponseDto, any>({
         path: `/api/Calendar/years`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1121,6 +1200,7 @@ export class Api<
      * @tags Calendar
      * @name CalendarDaysList
      * @request GET:/api/Calendar/days
+     * @secure
      */
     calendarDaysList: (
       query?: {
@@ -1135,6 +1215,7 @@ export class Api<
         path: `/api/Calendar/days`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1145,6 +1226,7 @@ export class Api<
      * @tags Calendar
      * @name CalendarConvertCreate
      * @request POST:/api/Calendar/convert
+     * @secure
      */
     calendarConvertCreate: (
       data: ConvertRequestDto,
@@ -1154,6 +1236,7 @@ export class Api<
         path: `/api/Calendar/convert`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1165,6 +1248,7 @@ export class Api<
      * @tags CashFlow
      * @name CashFlowCreate
      * @request POST:/api/CashFlow
+     * @secure
      */
     cashFlowCreate: (
       data: CashFlowRequest,
@@ -1179,6 +1263,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1189,6 +1274,7 @@ export class Api<
      * @tags CashFlowDetails
      * @name CashFlowDetailsCreate
      * @request POST:/api/CashFlowDetails
+     * @secure
      */
     cashFlowDetailsCreate: (
       data: CashFlowDetailsRequest,
@@ -1203,6 +1289,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1213,6 +1300,7 @@ export class Api<
      * @tags CollectionCenter
      * @name CollectionCenterCollectionCentersCreate
      * @request POST:/api/CollectionCenter/collection-centers
+     * @secure
      */
     collectionCenterCollectionCentersCreate: (
       data: CollectionCenterRequestDtos,
@@ -1222,6 +1310,7 @@ export class Api<
         path: `/api/CollectionCenter/collection-centers`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1233,6 +1322,7 @@ export class Api<
      * @tags Collector
      * @name CollectorGetCollectorList
      * @request GET:/api/Collector/getCollector
+     * @secure
      */
     collectorGetCollectorList: (
       query?: {
@@ -1245,6 +1335,7 @@ export class Api<
         path: `/api/Collector/getCollector`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1255,6 +1346,7 @@ export class Api<
      * @tags CostOfFund
      * @name CostOfFundCreate
      * @request POST:/api/CostOfFund
+     * @secure
      */
     costOfFundCreate: (
       data: CostOfFundRequest,
@@ -1269,6 +1361,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1279,11 +1372,13 @@ export class Api<
      * @tags DepositeType
      * @name DepositeTypeGetDepositeTypeList
      * @request GET:/api/DepositeType/getDepositeType
+     * @secure
      */
     depositeTypeGetDepositeTypeList: (params: RequestParams = {}) =>
       this.request<DepositTypeResponseListGeneralResponse, any>({
         path: `/api/DepositeType/getDepositeType`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1294,6 +1389,7 @@ export class Api<
      * @tags DepositStatement
      * @name DepositStatementCreate
      * @request POST:/api/DepositStatement
+     * @secure
      */
     depositStatementCreate: (
       data: DepositStatementRequestDto,
@@ -1308,6 +1404,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1318,6 +1415,7 @@ export class Api<
      * @tags DepositStatementVerify
      * @name DepositStatementVerifyStatusDetail
      * @request GET:/api/DepositStatementVerify/Status/{mamAccountOpeningId}
+     * @secure
      */
     depositStatementVerifyStatusDetail: (
       mamAccountOpeningId: number,
@@ -1326,6 +1424,7 @@ export class Api<
       this.request<VerificationStatusDtoGeneralResponse, any>({
         path: `/api/DepositStatementVerify/Status/${mamAccountOpeningId}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1336,6 +1435,7 @@ export class Api<
      * @tags DepositStatementVerify
      * @name DepositStatementVerifyHistoryDetail
      * @request GET:/api/DepositStatementVerify/History/{mamAccountOpeningId}
+     * @secure
      */
     depositStatementVerifyHistoryDetail: (
       mamAccountOpeningId: number,
@@ -1344,6 +1444,7 @@ export class Api<
       this.request<DepositStatementVerificationDtoListGeneralResponse, any>({
         path: `/api/DepositStatementVerify/History/${mamAccountOpeningId}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1354,6 +1455,7 @@ export class Api<
      * @tags DepositStatementVerify
      * @name DepositStatementVerifyVerifyCreate
      * @request POST:/api/DepositStatementVerify/Verify
+     * @secure
      */
     depositStatementVerifyVerifyCreate: (
       data: DepositStatementVerifyRequestDto,
@@ -1363,6 +1465,7 @@ export class Api<
         path: `/api/DepositStatementVerify/Verify`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1374,6 +1477,7 @@ export class Api<
      * @tags DepositUnverified
      * @name DepositUnverifiedGenerateReportCreate
      * @request POST:/api/DepositUnverified/GenerateReport
+     * @secure
      */
     depositUnverifiedGenerateReportCreate: (
       data: DepositUnverifiedRequest,
@@ -1388,6 +1492,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1398,6 +1503,7 @@ export class Api<
      * @tags DepositWithdrawMaxAmountRange
      * @name DepositWithdrawMaxAmountRangeGenerateReportCreate
      * @request POST:/api/DepositWithdrawMaxAmountRange/GenerateReport
+     * @secure
      */
     depositWithdrawMaxAmountRangeGenerateReportCreate: (
       data: DepositWithdrawMaxAmountRangeRequest,
@@ -1412,6 +1518,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1422,6 +1529,7 @@ export class Api<
      * @tags DetailTrialBalance
      * @name DetailTrialBalanceCreate
      * @request POST:/api/DetailTrialBalance
+     * @secure
      */
     detailTrialBalanceCreate: (
       data: DetailTrialBalanceRequest,
@@ -1436,6 +1544,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1446,11 +1555,13 @@ export class Api<
      * @tags LmtLoanMaseterList
      * @name LmtLoanMaseterListList
      * @request GET:/api/LmtLoanMaseterList
+     * @secure
      */
     lmtLoanMaseterListList: (params: RequestParams = {}) =>
       this.request<LmtLoanMaseterListResponseListGeneralResponse, any>({
         path: `/api/LmtLoanMaseterList`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1461,6 +1572,7 @@ export class Api<
      * @tags MemberAccountDeactive
      * @name MemberAccountDeactiveCreate
      * @request POST:/api/MemberAccountDeactive
+     * @secure
      */
     memberAccountDeactiveCreate: (
       data: MemberAccountDeactiveRequest,
@@ -1475,6 +1587,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1485,6 +1598,7 @@ export class Api<
      * @tags MemberAccountDetail
      * @name MemberAccountDetailCreate
      * @request POST:/api/MemberAccountDetail
+     * @secure
      */
     memberAccountDetailCreate: (
       data: MemberAccountDetailRequest,
@@ -1499,6 +1613,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1509,6 +1624,7 @@ export class Api<
      * @tags MemberAccountDetailNo
      * @name MemberAccountDetailNoCreate
      * @request POST:/api/MemberAccountDetailNo
+     * @secure
      */
     memberAccountDetailNoCreate: (
       data: MemberAccountDetailNoRequest,
@@ -1523,6 +1639,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1533,6 +1650,7 @@ export class Api<
      * @tags MemberAllDetails
      * @name MemberAllDetailsCreate
      * @request POST:/api/MemberAllDetails
+     * @secure
      */
     memberAllDetailsCreate: (
       data: MemberAllDetailRequst,
@@ -1547,6 +1665,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1558,6 +1677,7 @@ export class Api<
      * @tags MemberBasicDetails
      * @name MemberBasicDetailsCreate
      * @request POST:/api/MemberBasicDetails
+     * @secure
      */
     memberBasicDetailsCreate: (
       data: MemberBasicDetailsRequest,
@@ -1572,6 +1692,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1583,6 +1704,7 @@ export class Api<
      * @tags MemberBloodGroupReport
      * @name MemberBloodGroupReportCreate
      * @request POST:/api/MemberBloodGroupReport
+     * @secure
      */
     memberBloodGroupReportCreate: (
       data: MemberBloodGroupReportRequest,
@@ -1597,6 +1719,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1607,6 +1730,7 @@ export class Api<
      * @tags MemberDetailsSummary
      * @name MemberDetailsSummaryCreate
      * @request POST:/api/MemberDetailsSummary
+     * @secure
      */
     memberDetailsSummaryCreate: (
       data: MemberDetailsSummaryRequest,
@@ -1621,6 +1745,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1631,6 +1756,7 @@ export class Api<
      * @tags MemberGroup
      * @name MemberGroupMemberGroupsCreate
      * @request POST:/api/MemberGroup/member-groups
+     * @secure
      */
     memberGroupMemberGroupsCreate: (
       data: MemberGroupRequestDtos,
@@ -1640,6 +1766,7 @@ export class Api<
         path: `/api/MemberGroup/member-groups`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1651,6 +1778,7 @@ export class Api<
      * @tags MemberIdCard
      * @name MemberIdCardMemberIdCardCreate
      * @request POST:/api/MemberIdCard/MemberIdCard
+     * @secure
      */
     memberIdCardMemberIdCardCreate: (
       data: MemberIdCardRequest,
@@ -1665,6 +1793,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1675,6 +1804,7 @@ export class Api<
      * @tags MemberLookUp
      * @name MemberLookUpSearchList
      * @request GET:/api/MemberLookUp/search
+     * @secure
      */
     memberLookUpSearchList: (
       query?: {
@@ -1698,6 +1828,7 @@ export class Api<
         path: `/api/MemberLookUp/search`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1708,6 +1839,7 @@ export class Api<
      * @tags MemberLookUp
      * @name MemberLookUpSelectDetail
      * @request GET:/api/MemberLookUp/select/{memMemberRegistrationId}
+     * @secure
      */
     memberLookUpSelectDetail: (
       memMemberRegistrationId: number,
@@ -1716,6 +1848,7 @@ export class Api<
       this.request<MemberSelectedDto, any>({
         path: `/api/MemberLookUp/select/${memMemberRegistrationId}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1726,6 +1859,7 @@ export class Api<
      * @tags MemberPenaltyDepositWithdraw
      * @name MemberPenaltyDepositWithdrawCreate
      * @request POST:/api/MemberPenaltyDepositWithdraw
+     * @secure
      */
     memberPenaltyDepositWithdrawCreate: (
       data: MemberPenaltyDepositWithdrawRequest,
@@ -1740,6 +1874,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1750,6 +1885,7 @@ export class Api<
      * @tags MemberRegistration
      * @name MemberRegistrationCreate
      * @request POST:/api/MemberRegistration
+     * @secure
      */
     memberRegistrationCreate: (
       data: MemberDetailRequest,
@@ -1764,6 +1900,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -1775,6 +1912,7 @@ export class Api<
      * @tags MemberSummary
      * @name MemberSummaryCreate
      * @request POST:/api/MemberSummary
+     * @secure
      */
     memberSummaryCreate: (
       data: MemberSummaryRequest,
@@ -1789,6 +1927,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1799,6 +1938,7 @@ export class Api<
      * @tags MonthlyReport
      * @name MonthlyReportCreate
      * @request POST:/api/MonthlyReport
+     * @secure
      */
     monthlyReportCreate: (
       data: MonthlyReportRequest,
@@ -1813,6 +1953,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1823,6 +1964,7 @@ export class Api<
      * @tags OfficeProgress
      * @name OfficeProgressGenerateReportCreate
      * @request POST:/api/OfficeProgress/GenerateReport
+     * @secure
      */
     officeProgressGenerateReportCreate: (
       data: OfficeProgressRequest,
@@ -1837,6 +1979,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1847,11 +1990,13 @@ export class Api<
      * @tags OrderBy
      * @name OrderByGetAllOrderByList
      * @request GET:/api/OrderBy/GetAllOrderBy
+     * @secure
      */
     orderByGetAllOrderByList: (params: RequestParams = {}) =>
       this.request<AllReportOrderByResponseModelGeneralResponse, any>({
         path: `/api/OrderBy/GetAllOrderBy`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1862,6 +2007,7 @@ export class Api<
      * @tags PLAccount
      * @name PlAccountCreate
      * @request POST:/api/PLAccount
+     * @secure
      */
     plAccountCreate: (
       data: PLAccountRequest,
@@ -1876,6 +2022,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1886,6 +2033,7 @@ export class Api<
      * @tags RatioAnalysis
      * @name RatioAnalysisCreate
      * @request POST:/api/RatioAnalysis
+     * @secure
      */
     ratioAnalysisCreate: (
       data: RatioAnalysisRequest,
@@ -1900,6 +2048,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1910,6 +2059,7 @@ export class Api<
      * @tags SavingACWiseBalanceReport
      * @name SavingAcWiseBalanceReportCreate
      * @request POST:/api/SavingACWiseBalanceReport
+     * @secure
      */
     savingAcWiseBalanceReportCreate: (
       data: SavingAcWiseBalanceRequest,
@@ -1924,6 +2074,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1934,6 +2085,7 @@ export class Api<
      * @tags SavingACWiseBalanceReport
      * @name SavingAcWiseBalanceReportProgressiveDetail
      * @request GET:/api/SavingACWiseBalanceReport/progressive/{jobId}
+     * @secure
      */
     savingAcWiseBalanceReportProgressiveDetail: (
       jobId: string,
@@ -1942,6 +2094,7 @@ export class Api<
       this.request<void, any>({
         path: `/api/SavingACWiseBalanceReport/progressive/${jobId}`,
         method: "GET",
+        secure: true,
         ...params,
       }),
 
@@ -1951,6 +2104,7 @@ export class Api<
      * @tags SavingTypeWiseBalance
      * @name SavingTypeWiseBalanceCreate
      * @request POST:/api/SavingTypeWiseBalance
+     * @secure
      */
     savingTypeWiseBalanceCreate: (
       data: SavingTypeWiseBalanceRequest,
@@ -1965,6 +2119,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1975,6 +2130,7 @@ export class Api<
      * @tags SavingTypeWiseIndividualBalance
      * @name SavingTypeWiseIndividualBalanceCreate
      * @request POST:/api/SavingTypeWiseIndividualBalance
+     * @secure
      */
     savingTypeWiseIndividualBalanceCreate: (
       data: SavingTypeWiseIndividualBalanceRequest,
@@ -1989,6 +2145,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -1999,11 +2156,13 @@ export class Api<
      * @tags ShareType
      * @name ShareTypeList
      * @request GET:/api/ShareType
+     * @secure
      */
     shareTypeList: (params: RequestParams = {}) =>
       this.request<ShareTypeResponseListGeneralResponse, any>({
         path: `/api/ShareType`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -2014,6 +2173,7 @@ export class Api<
      * @tags SMSCategory
      * @name SmsCategoryCreate
      * @request POST:/api/SMSCategory
+     * @secure
      */
     smsCategoryCreate: (
       data: SMSCategoryRequest,
@@ -2028,6 +2188,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -2038,6 +2199,7 @@ export class Api<
      * @tags SoleMemberGroup
      * @name SoleMemberGroupCreate
      * @request POST:/api/SoleMemberGroup
+     * @secure
      */
     soleMemberGroupCreate: (
       data: SoleMemberGroupRequestDtos,
@@ -2047,6 +2209,7 @@ export class Api<
         path: `/api/SoleMemberGroup`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -2058,6 +2221,7 @@ export class Api<
      * @tags SummaryTrialBalance
      * @name SummaryTrialBalanceCreate
      * @request POST:/api/SummaryTrialBalance
+     * @secure
      */
     summaryTrialBalanceCreate: (
       data: SummaryTrialBalanceRequest,
@@ -2072,6 +2236,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -2082,6 +2247,7 @@ export class Api<
      * @tags ThresholdTransaction
      * @name ThresholdTransactionGenerateReportCreate
      * @request POST:/api/ThresholdTransaction/GenerateReport
+     * @secure
      */
     thresholdTransactionGenerateReportCreate: (
       data: ThresholdTransactionRequest,
@@ -2096,6 +2262,7 @@ export class Api<
         method: "POST",
         query: query,
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -2107,11 +2274,13 @@ export class Api<
      * @tags Home
      * @name MemberReportList
      * @request GET:/preview/member-report
+     * @secure
      */
     memberReportList: (params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/preview/member-report`,
         method: "GET",
+        secure: true,
         ...params,
       }),
   };

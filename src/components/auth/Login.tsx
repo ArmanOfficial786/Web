@@ -1,17 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  Link,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import BusinessIcon from "@mui/icons-material/Business";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import PersonIcon from "@mui/icons-material/Person";
-import LockIcon from "@mui/icons-material/Lock";
-import BusinessIcon from "@mui/icons-material/Business";
+import DropDown from "@/components/form/DropDown";
+import IconTextInput from "@/components/form/IconTextInput";
+import TextInput from "@/components/form/TextInput";
+import branchService from "@/services/Common/BranchService";
 
 interface Branch {
   id: number;
@@ -19,52 +31,79 @@ interface Branch {
 }
 
 interface LoginFormInputs {
-  username: string;
+  email: string;
   password: string;
-  branchId: string;
+  companyId: string;
 }
 
 const loginSchema = yup.object({
-  username: yup
+  email: yup
     .string()
-    .required("Username is required")
-    .min(3, "Username must be at least 3 characters")
-    .max(50, "Username must not exceed 50 characters"),
+    .required("Email is required")
+    .email("Enter a valid email address"),
   password: yup
     .string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password must not exceed 100 characters"),
-  branchId: yup
+  companyId: yup
     .string()
-    .required("Branch is required")
+    .required("Company is required")
     .test("not-empty", "Please select a branch", (value) => {
       return value !== "" && value !== "0";
     }),
 });
 
+const defaultBranchOption: Branch = { id: 0, name: "-- Select --" };
+
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [branches, setBranches] = useState<Branch[]>([defaultBranchOption]);
+  const [branchesLoading, setBranchesLoading] = useState(false);
 
-  const branches: Branch[] = [
-    { id: 1, name: "Main Branch" },
-    { id: 2, name: "Kathmandu Branch" },
-    { id: 3, name: "Pokhara Branch" },
-    { id: 4, name: "Biratnagar Branch" },
-  ];
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBranches = async () => {
+      setBranchesLoading(true);
+      try {
+        const response = await branchService.getAll();
+        if (!isMounted) return;
+
+        const branchOptions = response
+          .filter((branch) => branch.branchId)
+          .map((branch) => ({
+            id: branch.branchId as number,
+            name: branch.branchName ?? "",
+          }));
+
+        setBranches([defaultBranchOption, ...branchOptions]);
+      } catch (error) {
+        console.error("Failed to load branches:", error);
+        if (isMounted) setBranches([defaultBranchOption]);
+      } finally {
+        if (isMounted) setBranchesLoading(false);
+      }
+    };
+
+    loadBranches();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
-      branchId: "",
+      companyId: "",
     },
   });
 
@@ -75,9 +114,9 @@ const LoginForm: React.FC = () => {
     try {
       // Use NextAuth signIn
       const result = await signIn("credentials", {
-        username: data.username,
+        email: data.email,
         password: data.password,
-        branchId: data.branchId,
+        companyId: Number(data.companyId),
         redirect: false,
       });
 
@@ -107,194 +146,133 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center w-[500px] rounded-lg shadow-xl bg-white p-6 mt-[3rem]">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full">
-        {/* Header */}
-        <div className="flex flex-col items-center mb-6">
-          <h2 className="text-gray-900 font-semibold text-2xl ">
-            Please login to your account
-          </h2>
-        </div>
+    <Paper
+      elevation={12}
+      sx={{
+        width: "min(100%, 500px)",
+        p: { xs: 3, sm: 5 },
+        borderRadius: 3,
+        bgcolor: "background.paper",
+      }}
+    >
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Stack spacing={3}>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: 700 }}
+              color="text.primary"
+            >
+              Please login to your account
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Enter your credentials to continue
+            </Typography>
+          </Box>
 
-        {/* Username Field */}
-        <div className="flex flex-col mb-6">
-          <label className="block text-sm text-black font-semibold mb-2">
-            Username <span className="text-red-500">*</span>
-          </label>
-          <div className="flex items-center relative">
-            <div className="absolute left-0 pl-3 flex items-center pointer-events-none">
-              <PersonIcon sx={{ fontSize: 20 }} className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              {...register("username")}
-              placeholder="Enter your username"
-              className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                errors.username
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-200 dark:border-gray-600"
-              } bg-transparent`}
-            />
-          </div>
-          {errors.username && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.username.message}
-            </p>
-          )}
-        </div>
+          {errors.root && <Alert severity="error">{errors.root.message}</Alert>}
 
-        {/* Password Field */}
-        <div className="flex flex-col mb-6">
-          <label className="block text-sm text-black font-semibold mb-2">
-            Password <span className="text-red-500">*</span>
-          </label>
-          <div className="flex items-center relative">
-            <div className="absolute left-0 pl-3 flex items-center pointer-events-none">
-              <LockIcon sx={{ fontSize: 20 }} className="text-gray-400" />
-            </div>
-            <input
-              type={showPassword ? "text" : "password"}
-              {...register("password")}
-              placeholder="Enter your password"
-              className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                errors.password
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-200 dark:border-gray-600"
-              } bg-transparent`}
+          <TextInput
+            name="email"
+            control={control}
+            type="email"
+            label="Email"
+            placeholder="Enter your email"
+            fullWidth
+            autoComplete="email"
+          />
+
+          <IconTextInput
+            name="password"
+            control={control}
+            type={showPassword ? "text" : "password"}
+            label="Password"
+            placeholder="Enter your password"
+            fullWidth
+            autoComplete="current-password"
+            icon={showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+            onIconClick={togglePasswordVisibility}
+          />
+
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+                mb: 1,
+              }}
+            >
+              <BusinessIcon color="action" fontSize="small" />
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                Branch
+              </Typography>
+            </Box>
+            <DropDown
+              name="companyId"
+              control={control}
+              label="Branch"
+              fullWidth
+              disabled={branchesLoading}
+              options={branches}
             />
-            <button
+          </Box>
+
+          <Box sx={{ textAlign: "right", mt: -1 }}>
+            <Link
+              component="button"
               type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-0 pr-3 flex items-center"
+              underline="hover"
+              color="primary"
+              onClick={() => console.log("Forgot password clicked")}
             >
-              {showPassword ? (
-                <VisibilityOffIcon
-                  sx={{ fontSize: 20 }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                />
-              ) : (
-                <VisibilityIcon
-                  sx={{ fontSize: 20 }}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                />
-              )}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+              Forgot Password?
+            </Link>
+          </Box>
 
-        {/* Branch Dropdown */}
-        <div className="flex flex-col mb-4">
-          <label className="block text-sm text-black font-semibold mb-2">
-            Branch <span className="text-red-500">*</span>
-          </label>
-          <div className="flex items-center relative">
-            <div className="absolute  left-0 pl-3 flex items-center pointer-events-none">
-              <BusinessIcon sx={{ fontSize: 20 }} style={{ color: "black" }} />
-            </div>
-            <select
-              {...register("branchId")}
-              className={`w-full pl-10 pr-4 py-3 text-black border rounded-lg focus:outline-none focus:ring-2 transition-colors appearance-none ${
-                errors.branchId
-                  ? "border-red-500 focus:border-red-500 focus:ring-red-200"
-                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-200 dark:border-gray-600"
-              } bg-transparent cursor-pointer`}
-            >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-0 pr-3 flex items-center pointer-events-none">
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </div>
-          </div>
-          {errors.branchId && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.branchId.message}
-            </p>
-          )}
-        </div>
-
-        {/* Forgot Password Link */}
-        <div className="flex justify-end mb-6">
-          <button
-            type="button"
-            className="text-sm text-black  hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            onClick={() => console.log("Forgot password clicked")}
+          <Button
+            type="submit"
+            variant="contained"
+            size="large"
+            disabled={loading}
+            fullWidth
+            sx={{ py: 1.5, fontWeight: 700, borderRadius: 2 }}
           >
-            <span className="text-blue-600"> Forgot Password?</span>
-          </button>
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 px-4 bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white font-semibold rounded-lg shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] mb-4"
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5 text-black"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+            {loading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              Logging in...
-            </span>
-          ) : (
-            "Login"
-          )}
-        </button>
+                <CircularProgress size={20} color="inherit" />
+                <span>Logging in...</span>
+              </Box>
+            ) : (
+              "Login"
+            )}
+          </Button>
 
-        {/* Register Link */}
-        <div className="flex justify-center">
-          <p className="text-sm text-black">
-            {"Don't have an account? "}
-            <button
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ textAlign: "center" }}
+          >
+            Don&apos;t have an account?{" "}
+            <Link
+              component="button"
               type="button"
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-semibold"
+              underline="hover"
+              sx={{ fontWeight: 700 }}
               onClick={() => router.push("/register")}
             >
-              <span className="text-blue-600">Register here</span>
-            </button>
-          </p>
-        </div>
-      </form>
-    </div>
+              Register here
+            </Link>
+          </Typography>
+        </Stack>
+      </Box>
+    </Paper>
   );
 };
 

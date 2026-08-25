@@ -1,7 +1,7 @@
 import React from "react";
 
 import NextAuth, { DefaultSession } from "next-auth";
- 
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -28,6 +28,7 @@ declare module "next-auth" {
 
   interface Session {
     user: {
+      id: string;
       name?: string | null;
       userName?: string;
       email?: string | null;
@@ -40,6 +41,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
     user?: {
+      id: string;
       name?: string | null;
       userName?: string;
       email?: string | null;

@@ -48,25 +48,27 @@ export default function IconTextInput({
     label: label,
     fullWidth: fullWidth,
     sx: textFieldSx,
-    InputProps: icon
+    slotProps: icon
       ? {
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={onIconClick}
-                edge="end"
-                size="small"
-                sx={{
-                  padding: "4px",
-                  "&:hover": {
-                    bgcolor: "action.hover",
-                  },
-                }}
-              >
-                {icon}
-              </IconButton>
-            </InputAdornment>
-          ),
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={onIconClick}
+                  edge="end"
+                  size="small"
+                  sx={{
+                    padding: "4px",
+                    "&:hover": {
+                      bgcolor: "action.hover",
+                    },
+                  }}
+                >
+                  {icon}
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
         }
       : undefined,
   };
@@ -89,7 +91,10 @@ export default function IconTextInput({
             {...commonProps}
             error={!!fieldState.error}
             helperText={fieldState.error?.message}
-            InputLabelProps={{ shrink: !!value }}
+            slotProps={{
+              ...commonProps.slotProps,
+              inputLabel: { shrink: !!value },
+            }}
             rows={props.multiline ? 4 : 0}
             value={value ?? ""}
             onChange={onChange}

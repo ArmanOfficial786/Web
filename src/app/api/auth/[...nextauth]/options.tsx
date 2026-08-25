@@ -1,23 +1,11 @@
-import axios from "axios";
 import type { AuthOptions, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { Api } from "../../../../../types/api/api";
+import type { LoginRequest } from "../../../../../types/api/api";
 
-// Mock user data
-const mockUser = {
-  success: true,
-  user: {
-    username: "arman@gmail.com",
-    password: "malik@123",
-    name: "Arman Malik",
-    email: "arman@gmail.com",
-    officeName: "Kathmandu",
-  },
-  token: "vtfk]OuYi1VrcXXIvar]M:$uZ&K0&h",
-  message: "Successfully Logged in",
-};
-
-const authApiUrl = process.env.NEXT_PUBLIC_AUTH_API_URL;
-const useMockAuth = process.env.NEXT_PUBLIC_USE_MOCK_AUTH === "true";
+const authApiUrl =
+  process.env.NEXT_PUBLIC_AUTH_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+const authApi = new Api({ baseURL: authApiUrl });
 
 export const authOptions: AuthOptions = {
   callbacks: {
@@ -27,10 +15,20 @@ export const authOptions: AuthOptions = {
       }
       return true;
     },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      return `${baseUrl}/dashboard`;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.token;
         token.user = {
+          id: user.id,
           name: user.name,
           userName: user.userName,
           email: user.email,
@@ -49,99 +47,52 @@ export const authOptions: AuthOptions = {
       name: "Welcome Back",
       type: "credentials",
       credentials: {
-        username: {
-          label: "Username",
-          type: "text",
-          placeholder: "Enter your username",
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "Enter your email",
         },
         password: {
           label: "Password",
           type: "password",
         },
-        branchId: {
-          label: "Branch",
-          type: "text",
+        companyId: {
+          label: "Company ID",
+          type: "number",
         },
       },
-      async authorize(credentials: any) {
+      async authorize(credentials) {
         try {
-          console.log("Auth Mode:", useMockAuth ? "MOCK" : "REAL API");
-
-          // MOCK AUTHENTICATION
-          if (useMockAuth) {
-            console.log("Using Mock Authentication");
-
-            // Simulate network delay
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            // Check credentials against mock user
-            if (
-              credentials.username === mockUser.user.username &&
-              credentials.password === mockUser.user.password
-            ) {
-              console.log("Mock login successful");
-
-              return {
-                id: mockUser.user.username,
-                name: mockUser.user.name,
-                email: mockUser.user.email,
-                userName: mockUser.user.username,
-                password: credentials.password,
-                token: mockUser.token,
-                success: mockUser.success,
-                message: mockUser.message,
-                officeName: mockUser.user.officeName,
-              } as User;
-            }
-
-            console.log("Mock login failed - invalid credentials");
+          if (
+            !credentials?.email ||
+            !credentials.password ||
+            !credentials.companyId
+          ) {
             return null;
           }
 
-          // REAL API AUTHENTICATION
-          else {
-            console.log("Using Real API Authentication");
+          const loginPayload: LoginRequest = {
+            email: credentials.email.trim(),
+            password: credentials.password,
+            companyId: Number(credentials.companyId),
+          };
+          const response = await authApi.api.authLoginCreate(loginPayload);
+          const loginResponse = response.data;
 
-            const axiosRes = await axios.post(
-              `${authApiUrl}/security/auth/login`,
-              {
-                username: credentials.username,
-                password: credentials.password,
-                branchId: credentials.branchId,
-              },
-            );
-
-            console.log("API Response:", axiosRes.data);
-
-            const res = axiosRes.data;
-
-            if (res.success) {
-              console.log("API login successful");
-
-              return {
-                id: res.user?.userName || res.user?.username,
-                name: res.user?.name,
-                email: res.user?.email,
-                userName: res.user?.userName || res.user?.username,
-                password: credentials.password,
-                token: res.token,
-                success: res.success,
-                message: res.message,
-                officeName: res.user?.officeName,
-              } as User;
-            }
-
-            console.log("API login failed");
+          if (!loginResponse.token || !loginResponse.userId) {
             return null;
           }
+
+          return {
+            id: String(loginResponse.userId),
+            name: loginResponse.fullName,
+            email: loginResponse.email ?? loginPayload.email,
+            userName: loginResponse.email ?? loginPayload.email,
+            token: loginResponse.token,
+            companyName: loginResponse.companyName,
+          } as User;
         } catch (err) {
           console.error("Authorization error:", err);
-
-          // If using real API and it fails, optionally fallback to mock
-          if (!useMockAuth) {
-            console.error("Real API authentication failed");
-          }
-
           return null;
         }
       },

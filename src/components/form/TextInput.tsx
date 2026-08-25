@@ -40,7 +40,7 @@ export default function TextInput({
             label={label}
             error={!!fieldState.error}
             helperText={fieldState.error?.message}
-            InputLabelProps={{ shrink: !!field.value }}
+            slotProps={{ inputLabel: { shrink: !!field.value } }}
             rows={props.multiline ? 4 : 0}
             sx={{ display: "flex" }}
             value={value ?? ""}
