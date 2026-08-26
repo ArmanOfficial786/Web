@@ -91,8 +91,15 @@ export const authOptions: AuthOptions = {
             token: loginResponse.token,
             companyName: loginResponse.companyName,
           } as User;
-        } catch (err) {
-          console.error("Authorization error:", err);
+        } catch (err: any) {
+          // Surface the real backend rejection instead of the generic
+          // Axios error object — this is what tells you WHY authorize()
+          // returned null (e.g. "session already active", invalid
+          // credentials, locked account, etc).
+          console.error(
+            "Authorization error:",
+            err?.response?.data ?? err?.message ?? err,
+          );
           return null;
         }
       },
@@ -130,7 +137,7 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 60 seconds * 60 minutes * 24 hours * 30 days
+    maxAge: 30 * 60, // 30 minutes
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

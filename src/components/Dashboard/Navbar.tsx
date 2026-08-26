@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useColorScheme } from "@mui/material/styles";
 import { toast } from "react-toastify";
@@ -28,6 +27,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LanguageIcon from "@mui/icons-material/Language";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useLogout } from "@/components/hooks/useLogout";
 
 // Import the MENU from sidebar (make sure the path is correct)
 import { MENU } from "./SideBar"; // adjust path if needed
@@ -89,6 +89,7 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
   const [mounted, setMounted] = useState(false);
   const [langAnchor, setLangAnchor] = useState<null | HTMLElement>(null);
   const [userAnchor, setUserAnchor] = useState<null | HTMLElement>(null);
+  const { logout, loggingOut } = useLogout();
 
   useEffect(() => {
     setMounted(true);
@@ -102,7 +103,11 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
   const handleLogout = async () => {
     setUserAnchor(null);
     try {
-      await signOut({ callbackUrl: "/", redirect: true });
+      // Calls the backend /api/Auth/logout endpoint to release the
+      // active-session lock, THEN clears the NextAuth client session.
+      // Using plain signOut() here was the root cause of "CredentialsSignin"
+      // failures on the next login attempt.
+      await logout("/");
       toast.success("Logged out successfully");
     } catch (error) {
       console.error("Error during logout:", error);
@@ -135,9 +140,8 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
           </Tooltip>
           <Typography
             variant="h6"
-            fontWeight={700}
             noWrap
-            sx={{ letterSpacing: 0 }}
+            sx={{ letterSpacing: 0, fontWeight: 700 }}
           >
             NexgenCosys Report
           </Typography>
@@ -178,8 +182,10 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
                 <Typography
                   key={idx}
                   color={isLast ? "text.primary" : "text.secondary"}
-                  fontWeight={isLast ? 500 : 400}
-                  fontSize="11px"
+                  sx={{
+                    fontWeight: isLast ? 500 : 400,
+                    fontSize: "11px",
+                  }}
                 >
                   {crumb.label}
                 </Typography>
@@ -266,11 +272,13 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
               },
             }}
           >
-            <MenuItem onClick={handleLogout}>
+            <MenuItem onClick={handleLogout} disabled={loggingOut}>
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />
               </ListItemIcon>
-              <ListItemText>Logout</ListItemText>
+              <ListItemText>
+                {loggingOut ? "Logging out..." : "Logout"}
+              </ListItemText>
             </MenuItem>
           </Menu>
         </Box>
