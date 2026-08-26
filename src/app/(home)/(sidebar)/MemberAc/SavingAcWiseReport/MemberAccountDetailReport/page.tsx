@@ -1,4 +1,4 @@
-// // app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page.tsx
+// // app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailReport/page.tsx
 // "use client";
 
 // import React, { useCallback, useEffect, useState } from "react";
@@ -236,7 +236,7 @@
 //   );
 // }
 
-// app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page.tsx
+// app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";

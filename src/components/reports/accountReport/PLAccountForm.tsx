@@ -30,7 +30,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   PLAccountFormValues,
   PLAccountResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/ProfitLossAccountReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/ProfitLossAccountReport/page";
 import NepaliReportField from "@/components/reportForm/Common/NepaliReportField";
 
 export type { ReportFormat };

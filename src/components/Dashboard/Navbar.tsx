@@ -28,9 +28,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import LanguageIcon from "@mui/icons-material/Language";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useLogout } from "@/components/hooks/useLogout";
-
-// Import the MENU from sidebar (make sure the path is correct)
-import { MENU } from "./SideBar"; // adjust path if needed
+import { getFolderSegment, MENU } from "./SidebarMenu";
 
 interface NavBarProps {
   toggleSidebar: () => void;
@@ -47,14 +45,17 @@ function getBreadcrumbsFromMenu(
     }
   }
 
-  // 2. Try to match a report leaf (inside a parent-reports node)
+  // 2. Try to match a report leaf (inside a parent-reports node).
+  //    The folder crumb is derived from the leaf's own route via
+  //    getFolderSegment — no hardcoded parent/folder mapping, so any new
+  //    folder added under any parent shows up automatically.
   for (const item of MENU) {
     if (item.type === "parent-reports") {
       for (const report of item.reports) {
         if (pathname === report.route) {
           return [
             { label: item.label }, // parent, non‑clickable
-            { label: "Reports" }, // folder, non‑clickable
+            { label: getFolderSegment(report.route) }, // folder, non-clickable
             { label: report.label, href: report.route }, // leaf, clickable
           ];
         }

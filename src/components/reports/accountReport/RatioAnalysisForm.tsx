@@ -29,7 +29,7 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
   RatioAnalysisFormValues,
   RatioAnalysisResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/RatioAnalysisReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/RatioAnalysisReport/page";
 import BranchFieldName from "@/components/reportForm/Common/BranchNameField";
 
 export type { ReportFormat };

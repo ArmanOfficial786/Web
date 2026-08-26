@@ -30,7 +30,7 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
   MemberSummaryFormValues,
   MemberSummaryResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberSummaryReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberSummaryReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import Grid from "@mui/material/Grid";
 

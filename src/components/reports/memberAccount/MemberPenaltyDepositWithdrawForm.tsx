@@ -31,7 +31,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   MemberPenaltyDepositWithdrawFormValues,
   MemberPenaltyDepositWithdrawResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberPenaltyDepositWithdrawReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberPenaltyDepositWithdrawReport/page";
 
 export type { ReportFormat };
 

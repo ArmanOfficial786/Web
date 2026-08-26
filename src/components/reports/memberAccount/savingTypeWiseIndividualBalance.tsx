@@ -27,7 +27,7 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
   SavingTypeWiseIndividualBalanceFormValues,
   SavingTypeWiseIndividualBalanceResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/SavingTypeWiseIndividualBalance/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/SavingTypeWiseIndividualBalance/page";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 

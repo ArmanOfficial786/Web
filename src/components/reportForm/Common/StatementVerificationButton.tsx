@@ -1,4 +1,3 @@
-// components/reportForm/Common/StatementVerifyButton.tsx
 "use client";
 
 import React from "react";
@@ -10,7 +9,8 @@ import type {
   UseFormHandleSubmit,
 } from "react-hook-form";
 import { useWatch } from "react-hook-form";
-import Button from "@mui/material/Button";
+import type { SxProps, Theme } from "@mui/material/styles";
+import SubmitButton from "@/components/form/SubmitButton";
 
 // ── Props ─────────────────────────────────────────────────────────────────
 interface StatementVerifyButtonProps<T extends FieldValues> {
@@ -19,20 +19,16 @@ interface StatementVerifyButtonProps<T extends FieldValues> {
   onVerify: SubmitHandler<T>;
   verifiedTillFieldName: Path<T>;
   loading?: boolean;
+  sx?: SxProps<Theme>;
 }
 
-// ── Component ────────────────────────────────────────────────────────────
-// Deliberately built like ViewReportButton: reuses the SAME react-hook-form
-// handleSubmit() so the payload always reflects the live form state
-// (accountNo, fromDate, statementVerifiedTill) — no separate state to fall
-// out of sync. Disabled while statementVerifiedTill is empty, matching the
-// WebForm's ncpVerifiedDateTill RequiredValidation.
 export default function StatementVerifyButton<T extends FieldValues>({
   control,
   handleSubmit,
   onVerify,
   verifiedTillFieldName,
   loading = false,
+  sx,
 }: StatementVerifyButtonProps<T>) {
   const verifiedTillBs = useWatch({
     control,
@@ -42,20 +38,22 @@ export default function StatementVerifyButton<T extends FieldValues>({
   const handleClick = () => {
     handleSubmit(
       (data) => onVerify(data),
-      () => {}, // invalid — do nothing, same as ViewReportButton
+      () => {},
     )();
   };
 
   return (
-    <Button
+    <SubmitButton
+      type="button"
       variant="contained"
       size="small"
       color="primary"
-      disabled={loading || !verifiedTillBs}
+      loading={loading}
+      disabled={!verifiedTillBs}
       onClick={handleClick}
-      sx={{ whiteSpace: "nowrap", height: 30 }}
+      sx={{ whiteSpace: "nowrap", height: 30, width: 150, ...sx }}
     >
-      {loading ? "Updating..." : "Statement Verified Update"}
-    </Button>
+      {loading ? "Updating..." : "Statement Verified"}
+    </SubmitButton>
   );
 }

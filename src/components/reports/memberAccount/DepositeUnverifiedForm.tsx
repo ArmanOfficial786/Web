@@ -30,7 +30,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   DepositUnverifiedFormValues,
   DepositUnverifiedResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/DepositeUnverifiedReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/DepositeUnverifiedReport/page";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 

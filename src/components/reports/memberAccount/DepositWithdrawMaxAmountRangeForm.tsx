@@ -31,7 +31,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   DepositWithdrawMaxAmountRangeFormValues,
   DepositWithdrawMaxAmountRangeResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/DepositWithdrawMaximumAmountRangeReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/DepositWithdrawMaximumAmountRangeReport/page";
 
 export type { ReportFormat };
 

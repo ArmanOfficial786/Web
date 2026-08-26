@@ -26,7 +26,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import type {
   SMSCategoryFormValues,
   SMSCategoryResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/SMSCategoryReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/SMSCategoryReport/page";
 
 export type { ReportFormat };
 

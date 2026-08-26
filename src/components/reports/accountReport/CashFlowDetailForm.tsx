@@ -26,7 +26,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import type {
   CashFlowDetailsFormValues,
   CashFlowDetailsResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/CashFlowDetailsReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/CashFlowDetailsReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };

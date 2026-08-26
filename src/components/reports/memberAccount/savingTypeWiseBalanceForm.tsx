@@ -30,7 +30,7 @@ import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import {
   SavingTypeWiseIndividualBalanceFormValues,
   SavingTypeWiseIndividualBalanceResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/SavingTypeWiseIndividualBalance/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/SavingTypeWiseIndividualBalance/page";
 
 export type { ReportFormat };
 

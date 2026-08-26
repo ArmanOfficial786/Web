@@ -28,7 +28,7 @@ import DateInput from "@/components/form/DateInput";
 import type {
   CashFlowFormValues,
   CashFlowResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/CashDayBookReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/CashDayBookReport/page";
 
 export type { ReportFormat };
 

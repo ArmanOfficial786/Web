@@ -28,7 +28,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import type {
   MonthlyReportFormValues,
   MonthlyReportResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/MonthlyReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/MonthlyReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 

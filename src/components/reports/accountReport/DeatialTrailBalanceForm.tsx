@@ -31,7 +31,7 @@ import DateInput from "@/components/form/DateInput";
 import type {
   DetailTrialBalanceFormValues,
   DetailTrialBalanceResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/DetailTrailBalanceReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/DetailTrailBalanceReport/page";
 
 export type { ReportFormat };
 

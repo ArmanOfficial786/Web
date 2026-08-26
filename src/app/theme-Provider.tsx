@@ -718,11 +718,12 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: ({ theme: t }) => ({
-          "&:hover": { backgroundColor: t.vars.palette.action.hover },
+          ...(t.palette.mode === "dark" && {
+            "&:hover": { backgroundColor: t.vars.palette.action.hover },
+          }),
         }),
       },
     },
-
     // ── ListItemButton (Sidebar links) ─────────────────────────────
     MuiListItemButton: {
       styleOverrides: {

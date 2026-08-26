@@ -29,7 +29,7 @@ import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import type {
   AccountStatementRequestExtended,
   AccountStatementResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/AccountStatementReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/AccountStatementReport/page";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 
 export type { ReportFormat };

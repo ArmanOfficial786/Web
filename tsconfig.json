@@ -2,39 +2,50 @@
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
+
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
     "skipLibCheck": true,
-    /* Bundler mode */
+
+    "module": "esnext",
     "moduleResolution": "bundler",
+
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+
     "jsx": "preserve",
-    /* Linting */
+
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
+
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@types/*": ["./types/*"],
+      "types/*": ["./types/*"]
     },
+
     "allowJs": true,
     "incremental": true,
-    "module": "esnext",
     "esModuleInterop": true,
+
     "plugins": [
       {
         "name": "next"
       }
     ]
   },
-  "include": ["src", ".next/types/**/*.ts", "types/next-auth.d.ts"],
+
+  "include": ["src", ".next/types/**/*.ts", "types/**/*.d.ts"],
+
   "references": [
     {
       "path": "./tsconfig.node.json"
     }
   ],
+
   "exclude": ["node_modules"]
 }

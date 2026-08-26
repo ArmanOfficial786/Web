@@ -28,7 +28,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import type {
   BalanceSheetFormValues,
   BalanceSheetResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/BalanceSheetReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/BalanceSheetReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };

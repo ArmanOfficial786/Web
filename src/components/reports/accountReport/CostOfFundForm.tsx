@@ -214,7 +214,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import type {
   CostOfFundFormValues,
   CostOfFundResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/CostOfFundAnalysisReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/CostOfFundAnalysisReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 
 export type { ReportFormat };

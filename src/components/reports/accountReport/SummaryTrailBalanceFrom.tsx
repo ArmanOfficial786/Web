@@ -30,7 +30,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   SummaryTrialBalanceFormValues,
   SummaryTrialBalanceResponseExtended,
-} from "@/app/(home)/(sidebar)/Account/reports/SummaryTrailBalanceReport/page";
+} from "@/app/(home)/(sidebar)/Account/AccountReports/SummaryTrailBalanceReport/page";
 
 export type { ReportFormat };
 

@@ -29,7 +29,7 @@ import RadioInput from "@/components/form/RadioInput";
 import type {
   MemberAccountDeactiveFormValues,
   MemberAccountDeactiveResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactiveReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDeactiveReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import TransactionTypeField from "@/components/reportForm/MemberAccount/TransactionTypeField";
 import TypeField from "@/components/reportForm/MemberAccount/TypeField";

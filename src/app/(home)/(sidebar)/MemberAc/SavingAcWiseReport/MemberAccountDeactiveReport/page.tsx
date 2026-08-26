@@ -1,4 +1,4 @@
-// app/(home)/(sidebar)/MemberAc/reports/MemberAccountDeactive/page.tsx
+// app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDeactiveReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";

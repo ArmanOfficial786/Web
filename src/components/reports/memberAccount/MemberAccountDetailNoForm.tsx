@@ -34,7 +34,7 @@
 // import type {
 //   MemberAccountDetailNoFormValues,
 //   MemberAccountDetailNoResponseExtended,
-// } from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailNoReport/page";
+// } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailNoReport/page";
 
 // export type { ReportFormat };
 
@@ -387,7 +387,7 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import type {
   MemberAccountDetailNoFormValues,
   MemberAccountDetailNoResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailNoReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailNoReport/page";
 
 export type { ReportFormat };
 

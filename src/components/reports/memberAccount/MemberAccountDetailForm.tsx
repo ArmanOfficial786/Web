@@ -40,7 +40,7 @@
 // import type {
 //   MemberAccountDetailFormValues,
 //   MemberAccountDetailResponseExtended,
-// } from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page";
+// } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailReport/page";
 // import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
 
 // export type { ReportFormat };
@@ -415,7 +415,7 @@ import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
 import type {
   MemberAccountDetailFormValues,
   MemberAccountDetailResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/reports/MemberAccountDetailReport/page";
+} from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailReport/page";
 import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
