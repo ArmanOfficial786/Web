@@ -192,7 +192,7 @@ export default function DateFieldsTwoWay<T extends FieldValues>({
   const colSize = isSolo ? { xs: 12, md: 12 } : { xs: 12, md: 6 };
 
   return (
-    <Grid container spacing={3} alignItems="flex-start">
+    <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
       {showFromDate && (
         <TwoWayDatePair
           control={control}

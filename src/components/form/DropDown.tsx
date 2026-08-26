@@ -118,9 +118,7 @@
 import isObjEmpty from "@/utilis/isObjEmpty";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import { Controller } from "react-hook-form";
 
@@ -144,7 +142,6 @@ export default function DropDown({
   name,
   control,
   rules,
-  label,
   fullWidth = false,
   disabled = false,
   options,

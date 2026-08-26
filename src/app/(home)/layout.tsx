@@ -6,7 +6,7 @@ import Sidebar from "@/components/Dashboard/SideBar";
 import ThemeProvider from "@/app/theme-Provider";
 import ToastProvider from "@/utilis/ToastProvider";
 import { ReportFormProvider } from "@/contexts/ReportFormContext";
-import Box from "node_modules/@mui/system/esm/Box/Box";
+import Box from "@mui/material/Box";
 
 export default function DashboardLayout({
   children,

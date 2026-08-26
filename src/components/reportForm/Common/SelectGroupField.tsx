@@ -11,7 +11,7 @@ import {
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
-import Box from "node_modules/@mui/system/esm/Box/Box";
+import Box from "@mui/material/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SelectGroupFieldProps<T extends FieldValues> {

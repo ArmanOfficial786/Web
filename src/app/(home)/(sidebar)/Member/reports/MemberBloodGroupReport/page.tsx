@@ -66,13 +66,6 @@ const toRequest = (
   branchName: v.branchName || "",
 });
 
-// ── Blood group radio options — 0=All, 1=Available, 2=Unavailable ──────────
-export const BLOOD_GROUP_OPTIONS = [
-  { value: 0, label: "All" },
-  { value: 1, label: "Available" },
-  { value: 2, label: "Unavailable" },
-];
-
 // ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =

@@ -216,6 +216,7 @@
 import isObjEmpty from "@/utilis/isObjEmpty";
 import TextField, { type TextFieldProps } from "@mui/material/TextField";
 import { Controller } from "react-hook-form";
+import type { InputHTMLAttributes } from "react";
 import NepaliDatePicker from "@/components/reportForm/Common/NepaliDatePicker";
 
 // ── Today's AD date in "yyyy-MM-dd" ──────────────────────────────────────────
@@ -241,6 +242,8 @@ type TextInputPropType = {
    * Only hides years beyond this value; months/days within the year are free.
    */
   maxYear?: number;
+  InputLabelProps?: { shrink?: boolean };
+  inputProps?: InputHTMLAttributes<HTMLInputElement>;
 } & TextFieldProps;
 
 function DateInput({
@@ -253,6 +256,9 @@ function DateInput({
   dateType = "AD",
   maxDate,
   maxYear,
+  InputLabelProps: _inputLabelProps,
+  inputProps: legacyInputProps,
+  slotProps: providedSlotProps,
   ...props
 }: TextInputPropType) {
   // ── Uncontrolled ───────────────────────────────────────────────────────────
@@ -277,7 +283,11 @@ function DateInput({
         error={error}
         helperText={helperText}
         type="date"
-        InputLabelProps={{ shrink: true }}
+        slotProps={{
+          ...providedSlotProps,
+          inputLabel: { ...providedSlotProps?.inputLabel, shrink: true },
+          htmlInput: { ...providedSlotProps?.htmlInput, ...legacyInputProps },
+        }}
         defaultValue={getTodayAD()}
         {...props}
       />
@@ -317,12 +327,19 @@ function DateInput({
             type="date"
             size="small"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
             sx={{ display: "flex" }}
             value={value ?? ""}
             onChange={onChange}
             {...restFieldOpts}
             {...props}
+            slotProps={{
+              ...providedSlotProps,
+              inputLabel: { ...providedSlotProps?.inputLabel, shrink: true },
+              htmlInput: {
+                ...providedSlotProps?.htmlInput,
+                ...legacyInputProps,
+              },
+            }}
           />
         );
       }}

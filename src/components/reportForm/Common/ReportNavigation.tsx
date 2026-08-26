@@ -339,7 +339,7 @@ import {
   PictureAsPdf,
   Article,
   TableChart,
-  Image,
+  Image as ImageIcon,
 } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { useLanguage, type Translations } from "@/contexts/LanguageContext";
@@ -376,7 +376,7 @@ const DOWNLOAD_OPTIONS: DownloadOption[] = [
   },
   {
     format: "Image",
-    icon: <Image fontSize="small" />,
+    icon: <ImageIcon fontSize="small" />,
     color: "secondary.main",
     labelKey: "image",
   },

@@ -523,6 +523,7 @@ export default function TableWithFilter<
   });
   const filters = useWatch({ control });
   const [page, setPage] = React.useState(1);
+  const filterKey = JSON.stringify(filters);
 
   useEffect(() => {
     reset(filterDefaults as any);
@@ -532,7 +533,7 @@ export default function TableWithFilter<
 
   useEffect(() => {
     setPage(1);
-  }, [JSON.stringify(filters)]);
+  }, [filterKey]);
 
   const filterKeys = Object.keys(filterDefaults as object);
 

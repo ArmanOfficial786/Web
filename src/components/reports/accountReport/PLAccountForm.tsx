@@ -117,6 +117,7 @@ function PLAccountForm({
             <ReportTypeField<PLAccountFormValues>
               control={control}
               name="reportType"
+              label="Report Type"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

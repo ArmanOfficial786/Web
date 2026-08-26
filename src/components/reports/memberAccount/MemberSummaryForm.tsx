@@ -32,7 +32,7 @@ import type {
   MemberSummaryResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/reports/MemberSummaryReport/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import Grid from "node_modules/@mui/system/esm/Grid/Grid";
+import Grid from "@mui/material/Grid";
 
 export type { ReportFormat };
 

@@ -557,14 +557,16 @@ export default function DepositStatementForm({
 
           <Divider sx={{ mb: 1 }} />
 
-          <Grid container spacing={1} alignItems="center">
+          <Grid container spacing={1} sx={{ alignItems: "center" }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                gap={5}
-                width="100%"
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 5,
+                  width: "100%",
+                }}
               >
                 <ViewReportButton<DepositStatementFormValues>
                   control={control}

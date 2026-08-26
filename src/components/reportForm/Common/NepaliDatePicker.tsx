@@ -178,6 +178,8 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     return () => {
       cancelled = true;
     };
+    // This initialization intentionally runs once with the initial field state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Fetch days when year/month changes ────────────────────────────────────
@@ -211,6 +213,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month]);
 
   // ── Emit on any valid change ──────────────────────────────────────────────
@@ -224,6 +227,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       day !== BLANK
     )
       emitDate(year, month, day);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month, day]);
 
   // ── Sync when external value changes (e.g. after reset) ──────────────────
@@ -253,6 +257,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       setMonth(p.month);
       setDay(p.day);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   // ── Guard: clamp selections when maxDate/maxYear prop changes ────────────
@@ -270,11 +275,13 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
       )
         setDay(parsedMaxDate.day);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxDate]);
 
   useEffect(() => {
     if (!effectiveMaxYear) return;
     if (year !== BLANK && year > effectiveMaxYear) setYear(effectiveMaxYear);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxYear]);
 
   // ── Derived error state ───────────────────────────────────────────────────

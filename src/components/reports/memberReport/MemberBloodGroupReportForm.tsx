@@ -28,10 +28,15 @@ import FieldRow from "@/utilis/FieldRow";
 import {
   MemberBloodGroupReportFormValues,
   MemberBloodGroupReportResponseExtended,
-  BLOOD_GROUP_OPTIONS,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberBloodGroupReport/page";
 
 export type { ReportFormat };
+
+const BLOOD_GROUP_OPTIONS = [
+  { value: 0, label: "All" },
+  { value: 1, label: "Available" },
+  { value: 2, label: "Unavailable" },
+];
 
 interface MemberBloodGroupReportFormProps {
   control: Control<MemberBloodGroupReportFormValues>;

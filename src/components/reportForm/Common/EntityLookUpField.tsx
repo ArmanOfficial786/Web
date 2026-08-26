@@ -228,7 +228,11 @@ export default function EntityLookupField<
       <Grid container spacing={2} sx={{ mb: 0.5, alignItems: "center" }}>
         <Grid size={{ xs: 12, md: mdWidth }}>
           <FieldRow label={config.searchField.label}>
-            <Grid container spacing={0.5} alignItems="center" wrap="nowrap">
+            <Grid
+              container
+              spacing={0.5}
+              sx={{ alignItems: "center", flexWrap: "nowrap" }}
+            >
               <Grid size="grow">
                 <IconTextInput
                   control={control as any}
