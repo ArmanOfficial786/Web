@@ -135,6 +135,10 @@ export const MENU: MenuNode[] = [
         label: "Teller Wise Expense Report",
         route: "/MemberAc/OtherReports/TellerWiseExpenseReport",
       },
+      {
+        label: "Data Edited Report",
+        route: "/MemberAc/OtherReports/DataEditedReport",
+      },
     ],
   },
 

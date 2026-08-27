@@ -295,10 +295,7 @@ export default function TellerWiseCollectionPage() {
 
   const callApi = useCallback(
     (request: TellerWiseCollectionRequestDto, format: string) =>
-      memberAccountService.api.tellerWiseCollectionGenerateReportCreate(
-        request,
-        { format },
-      ),
+      memberAccountService.api.tellerWiseCollectionCreate(request, { format }),
     [],
   );
 

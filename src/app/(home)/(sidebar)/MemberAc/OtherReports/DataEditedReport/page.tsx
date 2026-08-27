@@ -1,29 +1,42 @@
-// src/app/(home)/(sidebar)/MemberAc/OtherReports/TellerWiseExpenseReport/page.tsx
+// src/app/(home)/(sidebar)/MemberAc/OtherReports/DataEditedReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import type { TellerWiseExpenseRequestDto, Pagination } from "types/api/api";
-import TellerWiseExpenseForm, {
+import type { DataEditedReportRequestDto, Pagination } from "types/api/api";
+import DataEditedReportForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/OthersReport/TellerWiseExpenseFrom";
+} from "@/components/reports/memberAccount/OthersReport/DataEditedReportForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 
-// ── tellerId is a number here (matches TellerExpenseField's DropDown option
-// ids), converted to the DTO's int64|null in toRequest(). ────────────────────
-export interface TellerWiseExpenseFormValues extends Omit<
-  TellerWiseExpenseRequestDto,
-  "tellerId"
+// ── Form-only shape ──────────────────────────────────────────────────────────
+// branchId: array of selected office ids from the checkbox list (joined into
+//           the DTO's comma-separated branchIds string in toRequest()).
+// memberId / memberName / memberRegistrationId: populated by the Member
+//           Directory lookup (EntityLookupField + MemberLookupConfig), same
+//           pattern used on the MemberIdCard page.
+// NOTE: memberId/memberName are typed `string | null` (not `| undefined`) to
+// match the `.nullable()` yup fields below — yup's inferred output type for
+// `.nullable()` is `T | null`, so the interface must agree or ObjectSchema<T>
+// fails to type-check.
+export interface DataEditedReportFormValues extends Omit<
+  DataEditedReportRequestDto,
+  "branchIds" | "entryBy" | "editedBy" | "memberRegistrationId"
 > {
-  tellerId?: number;
+  branchId?: number[];
+  entryBy?: number;
+  editedBy?: number;
+  memberRegistrationId?: number;
+  memberId?: string | null;
+  memberName?: string | null;
 }
 
 // ── Client-only response state (raw PDF blob URL + header pagination) ──────
-export interface TellerWiseExpenseResponseExtended {
+export interface DataEditedReportResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
@@ -38,10 +51,10 @@ const DEFAULT_PAGINATION: Pagination = {
   hasPreviousPage: false,
 };
 
-const DATE_REQUIRED_MESSAGE = "Please select date to get Teller Name";
-const TELLER_REQUIRED_MESSAGE = "Select Date for TellerName";
+const BRANCH_REQUIRED_MESSAGE = "Please select Office Name";
+const DATE_REQUIRED_MESSAGE = "Please select date";
 
-const schema: yup.ObjectSchema<TellerWiseExpenseFormValues> = yup
+const schema: yup.ObjectSchema<DataEditedReportFormValues> = yup
   .object({
     fromDateBs: yup
       .string()
@@ -58,27 +71,32 @@ const schema: yup.ObjectSchema<TellerWiseExpenseFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    tellerId: yup
-      .number()
+    branchId: yup
+      .array()
+      .of(yup.number().required())
       .optional()
-      .required(TELLER_REQUIRED_MESSAGE)
+      .default([])
       .test(
-        "teller-selected",
-        TELLER_REQUIRED_MESSAGE,
-        (val) => typeof val === "number" && val >= 0,
-      )
-      .default(-1),
+        "branch-required",
+        BRANCH_REQUIRED_MESSAGE,
+        (val) => !!val && val.length > 0,
+      ),
+    entryBy: yup.number().optional().default(-1),
+    editedBy: yup.number().optional().default(-1),
+    memberRegistrationId: yup.number().optional().default(-1),
+    memberId: yup.string().nullable().optional().default(""),
+    memberName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
     sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function TellerWiseExpensePage() {
+export default function DataEditedReportPage() {
   const [reportState, setReportState] =
-    useState<TellerWiseExpenseResponseExtended>({ isLoading: false });
+    useState<DataEditedReportResponseExtended>({ isLoading: false });
   const [lastRequest, setLastRequest] =
-    useState<TellerWiseExpenseRequestDto | null>(null);
+    useState<DataEditedReportRequestDto | null>(null);
 
   const {
     control,
@@ -86,17 +104,27 @@ export default function TellerWiseExpensePage() {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<TellerWiseExpenseFormValues>({
+  } = useForm<DataEditedReportFormValues>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
     mode: "onSubmit",
   });
 
   const toRequest = useCallback(
-    (form: TellerWiseExpenseFormValues): TellerWiseExpenseRequestDto => ({
+    (form: DataEditedReportFormValues): DataEditedReportRequestDto => ({
       fromDateBs: form.fromDateBs || undefined,
       toDateBs: form.toDateBs || undefined,
-      tellerId: form.tellerId || undefined,
+      branchIds:
+        form.branchId && form.branchId.length > 0
+          ? form.branchId.join(",")
+          : undefined,
+      entryBy: form.entryBy && form.entryBy !== -1 ? form.entryBy : undefined,
+      editedBy:
+        form.editedBy && form.editedBy !== -1 ? form.editedBy : undefined,
+      memberRegistrationId:
+        form.memberRegistrationId && form.memberRegistrationId !== -1
+          ? form.memberRegistrationId
+          : undefined,
       orderBy: form.orderBy || "",
       sameCompanyName: form.sameCompanyName ?? true,
       visualReport: form.visualReport ?? false,
@@ -105,13 +133,13 @@ export default function TellerWiseExpensePage() {
   );
 
   const callApi = useCallback(
-    (request: TellerWiseExpenseRequestDto, format: string) =>
-      memberAccountService.api.tellerWiseExpenseCreate(request, { format }),
+    (request: DataEditedReportRequestDto, format: string) =>
+      memberAccountService.api.dataEditedReportCreate(request, { format }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: TellerWiseExpenseRequestDto) => {
+    async (request: DataEditedReportRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -166,7 +194,7 @@ export default function TellerWiseExpensePage() {
       link.download = extractFilenameFromResponse(
         res,
         format,
-        "TellerWiseExpense",
+        "DataEditedReport",
       );
       document.body.appendChild(link);
       link.click();
@@ -176,7 +204,7 @@ export default function TellerWiseExpensePage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<TellerWiseExpenseFormValues> = useCallback(
+  const onSubmit: SubmitHandler<DataEditedReportFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -191,7 +219,7 @@ export default function TellerWiseExpensePage() {
   }, []);
 
   return (
-    <TellerWiseExpenseForm
+    <DataEditedReportForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

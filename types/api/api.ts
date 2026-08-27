@@ -203,6 +203,21 @@ export interface CostOfFundRequest {
   visualReport?: boolean;
 }
 
+export interface DataEditedReportRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  entryBy?: number | null;
+  /** @format int64 */
+  editedBy?: number | null;
+  /** @format int64 */
+  memberRegistrationId?: number | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface DaysResponseDto {
   /** @format int32 */
   year?: number;
@@ -796,16 +811,17 @@ export interface TellerLookupResponse {
   name?: string | null;
 }
 
-export interface TellerLookupResponseListGeneralResponse {
-  isValid?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  data?: TellerLookupResponse[] | null;
-  pagination?: Pagination;
+export interface TellerWiseCollectionRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  tellerId?: number | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
-export interface TellerWiseCollectionRequestDto {
+export interface TellerWiseExpenseRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   /** @format int64 */
@@ -825,6 +841,12 @@ export interface ThresholdTransactionRequest {
   orderBy?: string | null;
   sameCompanyName?: boolean;
   visualReport?: boolean;
+}
+
+export interface UserLookupResponse {
+  /** @format int64 */
+  id?: number;
+  fullName?: string | null;
 }
 
 export interface VerificationStatusDto {
@@ -1388,6 +1410,33 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DataEditedReport
+     * @name DataEditedReportCreate
+     * @request POST:/api/DataEditedReport
+     * @secure
+     */
+    dataEditedReportCreate: (
+      data: DataEditedReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/DataEditedReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -2270,19 +2319,43 @@ export class Api<
      * No description
      *
      * @tags Teller
-     * @name TellerTellersList
-     * @request GET:/api/Teller/Tellers
+     * @name TellerList
+     * @request GET:/api/Teller
      * @secure
      */
-    tellerTellersList: (
+    tellerList: (
       query?: {
         fromDateBs?: string;
         toDateBs?: string;
       },
       params: RequestParams = {},
     ) =>
-      this.request<TellerLookupResponseListGeneralResponse, any>({
-        path: `/api/Teller/Tellers`,
+      this.request<TellerLookupResponse[], any>({
+        path: `/api/Teller`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerExpenseList
+     * @name TellerExpenseListList
+     * @request GET:/api/TellerExpenseList
+     * @secure
+     */
+    tellerExpenseListList: (
+      query?: {
+        fromDateBs?: string;
+        toDateBs?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<TellerLookupResponse[], any>({
+        path: `/api/TellerExpenseList`,
         method: "GET",
         query: query,
         secure: true,
@@ -2294,11 +2367,11 @@ export class Api<
      * No description
      *
      * @tags TellerWiseCollection
-     * @name TellerWiseCollectionGenerateReportCreate
-     * @request POST:/api/TellerWiseCollection/GenerateReport
+     * @name TellerWiseCollectionCreate
+     * @request POST:/api/TellerWiseCollection
      * @secure
      */
-    tellerWiseCollectionGenerateReportCreate: (
+    tellerWiseCollectionCreate: (
       data: TellerWiseCollectionRequestDto,
       query?: {
         /** @default "VIEW" */
@@ -2307,7 +2380,34 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ReportResponseDtosGeneralResponse, any>({
-        path: `/api/TellerWiseCollection/GenerateReport`,
+        path: `/api/TellerWiseCollection`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerWiseExpense
+     * @name TellerWiseExpenseCreate
+     * @request POST:/api/TellerWiseExpense
+     * @secure
+     */
+    tellerWiseExpenseCreate: (
+      data: TellerWiseExpenseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/TellerWiseExpense`,
         method: "POST",
         query: query,
         body: data,
@@ -2340,6 +2440,23 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserLookup
+     * @name UserLookupList
+     * @request GET:/api/UserLookup
+     * @secure
+     */
+    userLookupList: (params: RequestParams = {}) =>
+      this.request<UserLookupResponse[], any>({
+        path: `/api/UserLookup`,
+        method: "GET",
+        secure: true,
+        format: "json",
         ...params,
       }),
   };
