@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -58,6 +58,7 @@ const defaultBranchOption: Branch = { id: 0, name: "-- Select --" };
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
+  const loginInFlight = useRef(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [branches, setBranches] = useState<Branch[]>([defaultBranchOption]);
@@ -69,7 +70,7 @@ const LoginForm: React.FC = () => {
     const loadBranches = async () => {
       setBranchesLoading(true);
       try {
-        const response = await branchService.getAll();
+        const response = await branchService.getAll({ skipAuth: true });
         if (!isMounted) return;
 
         const branchOptions = response
@@ -108,23 +109,26 @@ const LoginForm: React.FC = () => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
+    if (loginInFlight.current) return;
+
+    loginInFlight.current = true;
     setLoading(true);
-    console.log("Login Form Data:", data);
 
     try {
-      // Use NextAuth signIn
       const result = await signIn("credentials", {
-        email: data.email,
+        email: data.email.trim(),
         password: data.password,
         companyId: Number(data.companyId),
         redirect: false,
       });
 
-      console.log("SignIn Result:", result);
-
       if (result?.error) {
-        toast.error("Invalid credentials. Please try again.");
         console.error("Login error:", result.error);
+        toast.error(
+          result.error === "CredentialsSignin"
+            ? "Login was rejected. Check your credentials or active session."
+            : result.error,
+        );
       } else if (result?.ok) {
         toast.success("Login successful!");
         // Redirect to dashboard or home page
@@ -137,6 +141,7 @@ const LoginForm: React.FC = () => {
       console.error("Login error:", error);
       toast.error("Login failed. Please try again.");
     } finally {
+      loginInFlight.current = false;
       setLoading(false);
     }
   };

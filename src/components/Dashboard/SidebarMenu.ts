@@ -74,6 +74,7 @@ export const MENU: MenuNode[] = [
     icon: MemberAcIcon,
     label: "Member A/C",
     reports: [
+      // ========== SavingAcWiseReport Section==============
       {
         label: "DepositStatementReport",
         route: "/MemberAc/SavingAcWiseReport/DepositStatementReport",
@@ -123,6 +124,16 @@ export const MENU: MenuNode[] = [
       {
         label: "MemberAccountDetailReport",
         route: "/MemberAc/SavingAcWiseReport/MemberAccountDetailReport",
+      },
+
+      //===============Other Reports Section================
+      {
+        label: "Teller Wise Collection Report",
+        route: "/MemberAc/OtherReports/TellerWiseCollectionReport",
+      },
+      {
+        label: "Teller Wise Expense Report",
+        route: "/MemberAc/OtherReports/TellerWiseExpenseReport",
       },
     ],
   },

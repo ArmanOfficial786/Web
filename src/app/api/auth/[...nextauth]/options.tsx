@@ -76,7 +76,9 @@ export const authOptions: AuthOptions = {
             password: credentials.password,
             companyId: Number(credentials.companyId),
           };
-          const response = await authApi.api.authLoginCreate(loginPayload);
+          const response = await authApi.api.authLoginCreate(loginPayload, {
+            secure: false,
+          });
           const loginResponse = response.data;
 
           if (!loginResponse.token || !loginResponse.userId) {
@@ -91,16 +93,22 @@ export const authOptions: AuthOptions = {
             token: loginResponse.token,
             companyName: loginResponse.companyName,
           } as User;
-        } catch (err: any) {
-          // Surface the real backend rejection instead of the generic
-          // Axios error object — this is what tells you WHY authorize()
-          // returned null (e.g. "session already active", invalid
-          // credentials, locked account, etc).
+        } catch (err: unknown) {
+          const error = err as {
+            response?: { data?: { message?: string; title?: string } };
+            message?: string;
+          };
+          const message =
+            error.response?.data?.message ??
+            error.response?.data?.title ??
+            error.message ??
+            "Authentication request failed";
+
           console.error(
             "Authorization error:",
-            err?.response?.data ?? err?.message ?? err,
+            error.response?.data ?? error.message ?? err,
           );
-          return null;
+          throw new Error(message);
         }
       },
     }),

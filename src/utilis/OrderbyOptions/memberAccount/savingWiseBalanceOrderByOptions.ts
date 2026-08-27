@@ -102,6 +102,14 @@ export const memberAccountDetailOrderByOptions = defineOrderByOptions([
   { key: "balance", label: "Balance" },
 ] as const);
 
+export const tellerWiseCollectionOrderByOptions = defineOrderByOptions([
+  { key: "accountNo", label: "Account No" },
+  { key: "billNo", label: "Bill No" },
+  { key: "savingsWidthrawl", label: "Savings Withdrawl" },
+  { key: "shareReturn", label: "Share Return" },
+  { key: "loanIssue", label: "Loan Issue" },
+  { key: "misscellaneousAtm", label: "Miscellaneous ATM" },
+] as const);
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
@@ -113,7 +121,8 @@ export type SavingWiseBalanceOrderByReportKey =
   | "deposit-withdraw-max-amount-range-report"
   | "member-penalty-deposit-withdraw-report"
   | "member-summary-report"
-  | "member-account-detail-report";
+  | "member-account-detail-report"
+  | "teller-wise-collection-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -131,4 +140,5 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
     memberPenaltyDepositWithdrawOrderByOptions,
   "member-summary-report": memberSummaryOrderByOptions,
   "member-account-detail-report": memberAccountDetailOrderByOptions,
+  "teller-wise-collection-report": tellerWiseCollectionOrderByOptions,
 };

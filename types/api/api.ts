@@ -790,6 +790,31 @@ export interface SummaryTrialBalanceRequest {
   isSubLedger?: boolean;
 }
 
+export interface TellerLookupResponse {
+  /** @format int64 */
+  id?: number;
+  name?: string | null;
+}
+
+export interface TellerLookupResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: TellerLookupResponse[] | null;
+  pagination?: Pagination;
+}
+
+export interface TellerWiseCollectionRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  tellerId?: number | null;
+  orderBy?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
 export interface ThresholdTransactionRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -2244,6 +2269,57 @@ export class Api<
     /**
      * No description
      *
+     * @tags Teller
+     * @name TellerTellersList
+     * @request GET:/api/Teller/Tellers
+     * @secure
+     */
+    tellerTellersList: (
+      query?: {
+        fromDateBs?: string;
+        toDateBs?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<TellerLookupResponseListGeneralResponse, any>({
+        path: `/api/Teller/Tellers`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerWiseCollection
+     * @name TellerWiseCollectionGenerateReportCreate
+     * @request POST:/api/TellerWiseCollection/GenerateReport
+     * @secure
+     */
+    tellerWiseCollectionGenerateReportCreate: (
+      data: TellerWiseCollectionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/TellerWiseCollection/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags ThresholdTransaction
      * @name ThresholdTransactionGenerateReportCreate
      * @request POST:/api/ThresholdTransaction/GenerateReport
@@ -2264,23 +2340,6 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
-        ...params,
-      }),
-  };
-  preview = {
-    /**
-     * No description
-     *
-     * @tags Home
-     * @name MemberReportList
-     * @request GET:/preview/member-report
-     * @secure
-     */
-    memberReportList: (params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/preview/member-report`,
-        method: "GET",
-        secure: true,
         ...params,
       }),
   };

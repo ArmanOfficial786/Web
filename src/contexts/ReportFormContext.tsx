@@ -19,11 +19,13 @@ import {
   CollectorResponse,
   DepositTypeResponse,
   MemberLookUpDtos,
+  TellerLookupResponse,
 } from "types/api/api";
 import depositeTypeService from "@/services/Common/DepositeType";
 import collectorService from "@/services/Common/CollectorService";
 import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
 import shareTypeService from "@/services/Common/ShareTypeService";
+import tellerService from "@/services/Common/TellerService";
 
 export type SelectOption = { id: number | string; name: string };
 
@@ -79,6 +81,10 @@ interface ReportFormContextType {
   fetchDepositTypes: () => Promise<void>;
   collectorOptions: SelectOption[];
   fetchCollectors: (userId: number) => Promise<void>;
+
+  //  Add to ReportFormContextType interface
+  tellerOptions: SelectOption[];
+  fetchTellers: (fromDateBs?: string, toDateBs?: string) => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -129,11 +135,16 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const shareTypeFetchedRef = useRef(false);
 
+  // 3. Add state, alongside collectorOptions
+  const [tellerOptions, setTellerOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
   // ── Fetch guards ──────────────────────────────────────────────────────────
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
   const loanMasterListFetchedRef = useRef(false);
+  //const tellerFetchedRef = useRef(false);
 
   // ── Member lookup ─────────────────────────────────────────────────────────
   const searchmemberLookUp = useCallback(
@@ -336,7 +347,31 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       shareTypeFetchedRef.current = false;
     }
   }, []);
+  //==========Teller================
+  const fetchTellers = useCallback(
+    async (fromDateBs?: string, toDateBs?: string) => {
+      try {
+        const res: TellerLookupResponse[] = await tellerService.getAll({
+          fromDateBs,
+          toDateBs,
+        });
 
+        const mapped = res
+          .filter(
+            (t): t is TellerLookupResponse & { id: number } => t.id != null,
+          )
+          .map((t) => ({
+            id: t.id,
+            name: t.name ?? "",
+          }));
+
+        setTellerOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
+      } catch {
+        setTellerOptions(DEFAULT_SELECT);
+      }
+    },
+    [],
+  );
   // ── Memoized context value ────────────────────────────────────────────────
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -365,6 +400,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchLoanMasterList,
       shareTypeOptions,
       fetchShareType,
+      tellerOptions,
+      fetchTellers,
     }),
     [
       memberLookUp,
@@ -391,6 +428,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchLoanMasterList,
       shareTypeOptions,
       fetchShareType,
+      tellerOptions,
+      fetchTellers,
     ],
   );
 

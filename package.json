@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "gen:api": "swagger-typescript-api generate --axios -p http://localhost:5106/swagger/v1/swagger.json -o ./types/api -n api.ts"
+    "gen:api": "swagger-typescript-api generate --axios --clean-output -p http://localhost:5106/swagger/v1/swagger.json -o ./types/api -n api.ts"
   },
   "keywords": [
     "next.js",
