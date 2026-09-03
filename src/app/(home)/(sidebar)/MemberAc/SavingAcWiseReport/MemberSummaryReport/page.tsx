@@ -7,7 +7,7 @@ import * as yup from "yup";
 import type { MemberSummaryRequest, Pagination } from "types/api/api";
 import MemberSummaryForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberSummaryForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberSummaryForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

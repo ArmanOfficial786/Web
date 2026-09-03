@@ -64,25 +64,14 @@ function ScrollToFirstPageButton({
         aria-label={ariaLabel}
         size="medium"
         sx={(t) => {
-          // t.vars is typed optional on Theme, but this app's
-          // ThemeProvider always uses cssVariables, so it's populated
-          // at runtime. `t.vars ?? t` satisfies TS without changing
-          // behavior.
           const vars = t.vars ?? t;
-
-          // primary.main is identical across both color schemes in
-          // this theme file, so reading it off t.palette (not t.vars)
-          // for alpha() math is safe here — same reasoning as
-          // t.palette.mode being a plain, non-frozen value.
           const hoverAlpha = t.palette.mode === "dark" ? 0.28 : 0.14;
 
           return {
-            position: "absolute",
-            bottom: 16,
-            right: 16,
-            zIndex: 20,
-            // Matches the sidebar's selected-item tint (action.selected)
-            // instead of a solid fill — updates live with .light/.dark.
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+            zIndex: 2147483647,
             bgcolor: vars.palette.action.selected,
             color: vars.palette.primary.light,
             borderRadius: "50%",

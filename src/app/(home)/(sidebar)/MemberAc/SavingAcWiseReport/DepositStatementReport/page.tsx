@@ -223,15 +223,18 @@ import type {
   Pagination,
   VerificationStatusDto,
 } from "types/api/api";
-import DepositStatementForm, {
-  type DepositStatementFormValues,
-  type ReportFormat,
-} from "@/components/reports/memberAccount/DepositStatementForm";
+
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import depositStatementVerifyService from "@/services/Common/DepositStatementVerificationService";
+import DepositStatementForm, {
+  DepositStatementFormValues,
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/DepositStatementForm";
 
 // ── Client-only response state (PDF blob + pagination) ──────────────────────
 export interface DepositStatementResponseExtended {

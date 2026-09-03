@@ -244,7 +244,7 @@ import * as yup from "yup";
 import type { MemberAccountDetailNoRequest, Pagination } from "types/api/api";
 import MemberAccountDetailNoForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberAccountDetailNoForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberAccountDetailNoForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

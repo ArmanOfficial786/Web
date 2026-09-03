@@ -247,7 +247,7 @@ import * as yup from "yup";
 import type { MemberAccountDetailRequest } from "types/api/api";
 import MemberAccountDetailForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberAccountDetailForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberAccountDetailForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

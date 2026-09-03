@@ -258,7 +258,6 @@ const schema: yup.ObjectSchema<TellerWiseCollectionFormValues> = yup
       )
       .default(-1),
     orderBy: yup.string().nullable().optional().default(""),
-    sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
@@ -287,7 +286,6 @@ export default function TellerWiseCollectionPage() {
       toDateBs: form.toDateBs || undefined,
       tellerId: form.tellerId || undefined,
       orderBy: form.orderBy || "",
-      sameCompanyName: form.sameCompanyName ?? true,
       visualReport: form.visualReport ?? false,
     }),
     [],

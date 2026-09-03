@@ -139,6 +139,62 @@ export const MENU: MenuNode[] = [
         label: "Data Edited Report",
         route: "/MemberAc/OtherReports/DataEditedReport",
       },
+      {
+        label: "BranchToBranch Collection Report",
+        route: "/MemberAc/OtherReports/BranchToBranchCollectionReport",
+      },
+      {
+        label: "BranchToBranch Expense Report",
+        route: "/MemberAc/OtherReports/BranchToBranchExpenseReport",
+      },
+      {
+        label: "Saving Transfer Report",
+        route: "/MemberAc/OtherReports/SavingTransferReport",
+      },
+      {
+        label: "Loan Payment Through Saving Report",
+        route: "/MemberAc/OtherReports/LoanPaymentThroughSavingReport",
+      },
+      {
+        label: "Miscellaneous Income Report",
+        route: "/MemberAc/OtherReports/MiscellaneousIncomeReport",
+      },
+      {
+        label: "Deposit/Withdrawal Member Wise Report",
+        route: "/MemberAc/OtherReports/SavingDepositAmountMemberReport",
+      },
+      {
+        label: "Depoiste/Widhdrawl Date Wise Report",
+        route: "/MemberAc/OtherReports/SavingDepositAmountDateReport",
+      },
+      {
+        label: "Salary Transaction Report",
+        route: "/MemberAc/OtherReports/SalaryTransactionReport",
+      },
+      {
+        label: "Saving Account Renewed Report",
+        route: "/MemberAc/OtherReports/SavingAccountRenewedReport",
+      },
+      {
+        label: "Saving Account Deleted Report",
+        route: "/MemberAc/OtherReports/SavingAccountDeletedReport",
+      },
+      {
+        label: "Saving Issue Report",
+        route: "/MemberAc/OtherReports/SavingAccountIssueReport",
+      },
+      {
+        label: "Saving Account Closed Report",
+        route: "/MemberAc/OtherReports/SavingAccountClosedReport",
+      },
+      {
+        label: "Cheque Clearance Report",
+        route: "/MemberAc/OtherReports/ChequeClearanceReport",
+      },
+      {
+        label: "Saving Interest Log Report",
+        route: "/MemberAc/OtherReports/SavingInterestLogReport",
+      },
     ],
   },
 

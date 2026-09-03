@@ -20,6 +20,7 @@ import Typography from "@mui/material/Typography";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import UserLookupField from "@/components/reportForm/Common/UserLookUpField";
@@ -34,6 +35,7 @@ import type {
   DataEditedReportFormValues,
   DataEditedReportResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/OtherReports/DataEditedReport/page";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 
 export type { ReportFormat };
 
@@ -60,6 +62,8 @@ function DataEditedReportForm({
   errors,
 }: DataEditedReportFormProps) {
   const { pdfData, isLoading, pagination } = reportState;
+  const currentPage = pagination?.currentPage ?? 1;
+  const totalPages = pagination?.totalPages ?? 1;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
@@ -111,6 +115,18 @@ function DataEditedReportForm({
             Data Edited Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
+
+          <Box
+            sx={{
+              mb: 0.5,
+            }}
+          >
+            <EntityLookupField
+              control={control}
+              setValue={setValue}
+              config={memberLookupConfig}
+            />
+          </Box>
 
           {/* ── From/To Date ─────────────────────────────────────────────── */}
           <Box sx={{ mb: 0.5 }}>
@@ -194,15 +210,14 @@ function DataEditedReportForm({
               alignItems: "start",
             }}
           >
-            <EntityLookupField
-              control={control}
-              setValue={setValue}
-              config={memberLookupConfig}
-            />
             <OrderByField<DataEditedReportFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-registration"
+              reportKey="data-edited-report"
+            />
+            <VisualReportSwitch<DataEditedReportFormValues>
+              control={control}
+              name="visualReport"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -240,8 +255,8 @@ function DataEditedReportForm({
         {showReport && (
           <ReportNavigation
             pdfData={pdfData ?? ""}
-            currentPage={pagination?.currentPage ?? 1}
-            totalPages={pagination?.totalPages ?? 1}
+            currentPage={currentPage}
+            totalPages={totalPages}
             onPageChange={onPageChange}
             onDownload={onDownload}
           />
@@ -252,9 +267,9 @@ function DataEditedReportForm({
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
-            <embed
+            <iframe
               key={pdfData}
-              src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
+              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
               style={{
                 position: "absolute",
                 top: "-40px",
@@ -263,6 +278,18 @@ function DataEditedReportForm({
                 height: "calc(100% + 40px)",
                 border: "none",
               }}
+            />
+            <ScrollToFirstPageButton
+              onClick={() => {
+                if (currentPage <= 1) {
+                  onPageChange(totalPages);
+                } else {
+                  onPageChange(1);
+                }
+              }}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              hideWhenSinglePage={true}
             />
           </Box>
         )}

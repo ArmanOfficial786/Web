@@ -396,7 +396,7 @@ import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToUpButton";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";

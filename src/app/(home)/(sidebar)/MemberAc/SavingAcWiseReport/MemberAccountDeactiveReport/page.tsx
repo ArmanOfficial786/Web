@@ -8,7 +8,7 @@ import * as yup from "yup";
 import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
 import MemberAccountDeactiveForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberAccountDeacitveForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberAccountDeacitveForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

@@ -12,7 +12,7 @@ import { Box, Divider, Stack, Typography } from "@mui/material";
 import DateInput from "@/components/form/DateInput";
 import StatementVerifyButton from "@/components/reportForm/Common/StatementVerificationButton";
 import calendarService from "@/services/Common/ComCalendarService";
-import type { DepositStatementFormValues } from "@/components/reports/memberAccount/DepositStatementForm";
+import type { DepositStatementFormValues } from "@/components/reports/memberAccount/SavingAccountWiseReports/DepositStatementForm";
 import { VerificationStatusDto } from "../../../../types/api/api";
 
 function pad2(n: number) {

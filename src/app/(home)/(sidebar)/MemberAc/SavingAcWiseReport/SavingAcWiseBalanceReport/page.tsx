@@ -207,7 +207,7 @@
 
 "use client";
 
-import SavingAcWiseBalance from "@/components/reports/memberAccount/SavingAcWiseBalance";
+import SavingAcWiseBalance from "@/components/reports/memberAccount/SavingAccountWiseReports/SavingAcWiseBalance";
 import savingAcWiseBalanceProgressiveService from "@/services/Common/Progressivepolling";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";

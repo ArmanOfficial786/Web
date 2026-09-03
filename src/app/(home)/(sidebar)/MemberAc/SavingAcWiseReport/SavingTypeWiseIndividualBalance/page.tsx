@@ -11,7 +11,7 @@ import type {
 } from "types/api/api";
 import SavingTypeWiseIndividualBalanceForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/savingTypeWiseIndividualBalance";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/savingTypeWiseIndividualBalance";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";

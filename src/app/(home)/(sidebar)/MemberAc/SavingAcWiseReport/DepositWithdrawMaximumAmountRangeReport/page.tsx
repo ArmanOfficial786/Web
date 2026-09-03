@@ -11,7 +11,7 @@ import type {
 } from "types/api/api";
 import DepositWithdrawMaxAmountRangeForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/DepositWithdrawMaxAmountRangeForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/DepositWithdrawMaxAmountRangeForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

@@ -11,7 +11,7 @@ import type {
 } from "types/api/api";
 import MemberPenaltyDepositWithdrawForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/MemberPenaltyDepositWithdrawForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberPenaltyDepositWithdrawForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

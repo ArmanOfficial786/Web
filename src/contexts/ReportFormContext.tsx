@@ -578,6 +578,10 @@ interface ReportFormContextType {
     key: string,
     fetcher: () => Promise<SelectOption[]>,
   ) => Promise<void>;
+
+  collectionBranchOptions: SelectOption[];
+  collectionBranchLoading: boolean;
+  fetchCollectionBranches: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -637,12 +641,17 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [userLookupLoading, setUserLookupLoading] = useState<
     Record<string, boolean>
   >({});
+  const [collectionBranchOptions, setCollectionBranchOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+  const [collectionBranchLoading, setCollectionBranchLoading] = useState(false);
+
   //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
   const loanMasterListFetchedRef = useRef(false);
   const userLookupFetchedRef = useRef<Record<string, boolean>>({});
+  const collectionBranchFetchedRef = useRef(false);
 
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
@@ -885,30 +894,48 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
+  const fetchUserLookupOnce = useCallback(
+    async (key: string, fetcher: () => Promise<SelectOption[]>) => {
+      if (userLookupFetchedRef.current[key]) return; // already fetched or in flight
+      userLookupFetchedRef.current[key] = true;
 
-const fetchUserLookupOnce = useCallback(
-  async (key: string, fetcher: () => Promise<SelectOption[]>) => {
-    if (userLookupFetchedRef.current[key]) return; // already fetched or in flight
-    userLookupFetchedRef.current[key] = true;
+      setUserLookupLoading((prev) => ({ ...prev, [key]: true }));
+      try {
+        const res = await fetcher();
+        setUserLookupOptionsMap((prev) => ({
+          ...prev,
+          [key]: [{ id: -1, name: "-- Select --" }, ...res],
+        }));
+      } catch {
+        // allow a future retry on failure instead of caching a permanent miss
+        userLookupFetchedRef.current[key] = false;
+        setUserLookupOptionsMap((prev) => ({ ...prev, [key]: DEFAULT_SELECT }));
+      } finally {
+        setUserLookupLoading((prev) => ({ ...prev, [key]: false }));
+      }
+    },
+    [],
+  );
 
-    setUserLookupLoading((prev) => ({ ...prev, [key]: true }));
+  // fetchBranches — add loading toggling (only change: setBranchLoading calls)
+  // ✅ NEW — Collection Branches (lazy, once)
+  const fetchCollectionBranches = useCallback(async () => {
+    if (collectionBranchFetchedRef.current) return;
+    collectionBranchFetchedRef.current = true;
+    setCollectionBranchLoading(true);
     try {
-      const res = await fetcher();
-      setUserLookupOptionsMap((prev) => ({
-        ...prev,
-        [key]: [{ id: 0, name: "-- Select --" }, ...res],
+      const res: BranchResponse[] = await branchService.getCollectionBranches();
+      const mapped = res.map((b) => ({
+        id: b.branchId ?? 0,
+        name: b.branchName ?? "",
       }));
+      setCollectionBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
     } catch {
-      // allow a future retry on failure instead of caching a permanent miss
-      userLookupFetchedRef.current[key] = false;
-      setUserLookupOptionsMap((prev) => ({ ...prev, [key]: DEFAULT_SELECT }));
+      collectionBranchFetchedRef.current = false;
     } finally {
-      setUserLookupLoading((prev) => ({ ...prev, [key]: false }));
+      setCollectionBranchLoading(false);
     }
-  },
-  [],
-);
-
+  }, []);
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
       memberLookUp,
@@ -944,6 +971,9 @@ const fetchUserLookupOnce = useCallback(
       userLookupOptionsMap,
       userLookupLoading,
       fetchUserLookupOnce,
+      collectionBranchOptions,
+      collectionBranchLoading,
+      fetchCollectionBranches,
     }),
     [
       memberLookUp,
@@ -978,6 +1008,9 @@ const fetchUserLookupOnce = useCallback(
       userLookupOptionsMap,
       userLookupLoading,
       fetchUserLookupOnce,
+      collectionBranchOptions,
+      collectionBranchLoading,
+      fetchCollectionBranches,
     ],
   );
 

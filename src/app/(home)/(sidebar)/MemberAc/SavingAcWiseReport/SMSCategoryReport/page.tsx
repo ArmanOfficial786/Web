@@ -8,7 +8,7 @@ import * as yup from "yup";
 import type { SMSCategoryRequest, Pagination } from "types/api/api";
 import SMSCategoryForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/SMSCategoryForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/SMSCategoryForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

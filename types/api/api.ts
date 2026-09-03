@@ -132,6 +132,34 @@ export interface BranchResponseListGeneralResponse {
   pagination?: Pagination;
 }
 
+export interface BranchToBranchCollectionRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  branchFromId?: number;
+  /** @format int64 */
+  branchToId?: number;
+  /** @format int64 */
+  collectorId?: number | null;
+  reportType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface BranchToBranchExpenseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  branchFromId?: number;
+  /** @format int64 */
+  branchToId?: number;
+  /** @format int64 */
+  collectorId?: number | null;
+  reportType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface CashFlowDetailsRequest {
   tillDate?: string | null;
   branchIds?: string | null;
@@ -147,6 +175,20 @@ export interface CashFlowRequest {
   branchName?: string | null;
   orderBy?: string | null;
   sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface ChequeBookIssueRequestDto {
+  /** @format int64 */
+  memberId?: number;
+  memberIdText?: string | null;
+  memberName?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  orderBy?: string | null;
+  reportView?: string | null;
   visualReport?: boolean;
 }
 
@@ -176,6 +218,59 @@ export interface CollectorResponseListGeneralResponse {
   message?: string | null;
   data?: CollectorResponse[] | null;
   pagination?: Pagination;
+}
+
+export interface CollectorWiseAccountCloseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  orderBy?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  collectorName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CollectorWiseCommissionRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  orderBy?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  collectorName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CollectorWiseCommissionSummaryRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CollectorWiseVisitRequestDto {
+  month?: string | null;
+  year?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  collectorName?: string | null;
+  visitType?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  amountType?: string | null;
+  generateBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CollectorWiseWithdrawalRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  orderBy?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  collectorName?: string | null;
+  visualReport?: boolean;
 }
 
 export interface ConvertRequestDto {
@@ -341,6 +436,85 @@ export interface FilterParam {
   option?: FilterOption;
 }
 
+export interface FixedDepositAccountListDto {
+  /** @format int64 */
+  mamAccountOpeningId?: number;
+  memberId?: string | null;
+  memberName?: string | null;
+  accountNo?: string | null;
+  depositType?: string | null;
+  status?: string | null;
+}
+
+export interface FixedDepositAccountListDtoListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: FixedDepositAccountListDto[] | null;
+  pagination?: Pagination;
+}
+
+export interface FixedDepositCertificateScheduleRequestDto {
+  /** @format int64 */
+  accountId?: number;
+  accountNo?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  showHeader?: boolean;
+  reportType?: string | null;
+}
+
+export interface FixedDepositInterestTransferRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface InterestAndTaxDetailRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  /** @format int64 */
+  memberRegistrationId?: number;
+  memberId?: string | null;
+  memberName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface InterestAndTaxPostedRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface InterestAndTaxTypeWiseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  reportView?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface InterestPayableRequestDto {
+  tillDateBs?: string | null;
+  officeId?: string | null;
+  orderBy?: string | null;
+  officeName?: string | null;
+  reportView?: string | null;
+  visualReport?: boolean;
+}
+
 export interface LmtLoanMaseterListResponse {
   /** @format int64 */
   lmtLoanTypeMasterId?: number;
@@ -354,6 +528,15 @@ export interface LmtLoanMaseterListResponseListGeneralResponse {
   message?: string | null;
   data?: LmtLoanMaseterListResponse[] | null;
   pagination?: Pagination;
+}
+
+export interface LoanPaymentThroughSavingRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  reportView?: string | null;
+  visualReport?: boolean;
 }
 
 export interface LoginRequest {
@@ -535,6 +718,22 @@ export interface MemberIdCardRequest {
   pageSize?: number;
 }
 
+export interface MemberInfoDto {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  memberId?: string | null;
+  fullName?: string | null;
+}
+
+export interface MemberInfoDtoGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: MemberInfoDto;
+  pagination?: Pagination;
+}
+
 export interface MemberLookUpDtos {
   /** @format int64 */
   memMemberRegistrationId?: number;
@@ -604,6 +803,18 @@ export interface MemberSummaryRequest {
   visualReport?: boolean;
 }
 
+export interface MiscellaneousIncomeRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  branchName?: string | null;
+  /** @format int64 */
+  memberId?: number | null;
+  visualReport?: boolean;
+}
+
 export interface MonthlyReportRequest {
   tillDate?: string | null;
   branchId?: string | null;
@@ -665,6 +876,15 @@ export interface Pagination {
   items?: any[] | null;
 }
 
+export interface PayableInterestTransferredRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
 export interface RatioAnalysisRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -700,6 +920,21 @@ export interface SMSCategoryRequest {
   visualReport?: boolean;
 }
 
+export interface SalaryTransactionRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  /** @format int32 */
+  reportType?: number;
+  transferOn?: string | null;
+  staffSelection?: string | null;
+  /** @format int64 */
+  staffId?: number | null;
+}
+
 export interface SavingAcWiseBalanceRequest {
   tillDate?: string | null;
   /** @format int64 */
@@ -717,6 +952,110 @@ export interface SavingAcWiseBalanceRequest {
   enableCollectionCenter?: boolean;
   enableGroup?: boolean;
   sameCompanyName?: boolean;
+}
+
+export interface SavingAccountClosedRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  /** @format int64 */
+  memberId?: number | null;
+  reportMode?: string | null;
+}
+
+export interface SavingAccountDeletedRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface SavingAccountRenewedRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  /** @format int64 */
+  memberId?: number | null;
+  reportMode?: string | null;
+}
+
+export interface SavingDepositDateWiseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  transactionType?: string | null;
+  /** @format int64 */
+  memberId?: number | null;
+  /** @format int64 */
+  savingTypeId?: number | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  reportMode?: string | null;
+  /** @format int32 */
+  chequeDetail?: number;
+}
+
+export interface SavingDepositMemberWiseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  transactionType?: string | null;
+  /** @format int64 */
+  memberId?: number | null;
+  /** @format int64 */
+  savingTypeId?: number | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  reportMode?: string | null;
+}
+
+export interface SavingInterestChangeLogRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  reportType?: string | null;
+  accountNo?: string | null;
+  /** @format int64 */
+  accountOpeningId?: number | null;
+  /** @format int64 */
+  depositTypeId?: number | null;
+  /** @format int64 */
+  officeId?: number | null;
+  officeName?: string | null;
+  visualReport?: boolean;
+}
+
+export interface SavingIssueRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  branchName?: string | null;
+  visualReport?: boolean;
+  /** @format int64 */
+  depositTypeId?: number | null;
+  /** @format int64 */
+  collectorId?: number | null;
+  /** @format int64 */
+  memberGroupId?: number | null;
+  reportMode?: string | null;
+}
+
+export interface SavingTransferRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface SavingTypeWiseBalanceRequest {
@@ -756,6 +1095,28 @@ export interface SavingTypeWiseIndividualBalanceRequest {
   groupByMemberGroup?: boolean;
   viewDetail?: boolean;
   sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface SavingsAccountInterestTransferRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int64 */
+  depositTypeId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface SavingsAccountMaturityRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  /** @format int64 */
+  depositTypeId?: number;
+  orderBy?: string | null;
   visualReport?: boolean;
 }
 
@@ -817,7 +1178,6 @@ export interface TellerWiseCollectionRequestDto {
   /** @format int64 */
   tellerId?: number | null;
   orderBy?: string | null;
-  sameCompanyName?: boolean;
   visualReport?: boolean;
 }
 
@@ -827,7 +1187,6 @@ export interface TellerWiseExpenseRequestDto {
   /** @format int64 */
   tellerId?: number | null;
   orderBy?: string | null;
-  sameCompanyName?: boolean;
   visualReport?: boolean;
 }
 
@@ -1227,6 +1586,82 @@ export class Api<
     /**
      * No description
      *
+     * @tags Branch
+     * @name BranchGetCollectionBranchList
+     * @request GET:/api/Branch/GetCollectionBranch
+     * @secure
+     */
+    branchGetCollectionBranchList: (
+      query?: {
+        /** @format int64 */
+        userId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<BranchResponseListGeneralResponse, any>({
+        path: `/api/Branch/GetCollectionBranch`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags BranchToBranchCollection
+     * @name BranchToBranchCollectionCreate
+     * @request POST:/api/BranchToBranchCollection
+     * @secure
+     */
+    branchToBranchCollectionCreate: (
+      data: BranchToBranchCollectionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/BranchToBranchCollection`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags BranchToBranchExpense
+     * @name BranchToBranchExpenseCreate
+     * @request POST:/api/BranchToBranchExpense
+     * @secure
+     */
+    branchToBranchExpenseCreate: (
+      data: BranchToBranchExpenseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/BranchToBranchExpense`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Calendar
      * @name CalendarYearsList
      * @request GET:/api/Calendar/years
@@ -1344,6 +1779,56 @@ export class Api<
     /**
      * No description
      *
+     * @tags ChequeBookIssue
+     * @name ChequeBookIssueGetMemberList
+     * @request GET:/api/ChequeBookIssue/GetMember
+     * @secure
+     */
+    chequeBookIssueGetMemberList: (
+      query?: {
+        memberId?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<MemberInfoDtoGeneralResponse, any>({
+        path: `/api/ChequeBookIssue/GetMember`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ChequeBookIssue
+     * @name ChequeBookIssueCreate
+     * @request POST:/api/ChequeBookIssue
+     * @secure
+     */
+    chequeBookIssueCreate: (
+      data: ChequeBookIssueRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/ChequeBookIssue`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags CollectionCenter
      * @name CollectionCenterCollectionCentersCreate
      * @request POST:/api/CollectionCenter/collection-centers
@@ -1390,6 +1875,141 @@ export class Api<
     /**
      * No description
      *
+     * @tags CollectorWiseAccountClose
+     * @name CollectorWiseAccountCloseCreate
+     * @request POST:/api/CollectorWiseAccountClose
+     * @secure
+     */
+    collectorWiseAccountCloseCreate: (
+      data: CollectorWiseAccountCloseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/CollectorWiseAccountClose`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CollectorWiseCommission
+     * @name CollectorWiseCommissionCreate
+     * @request POST:/api/CollectorWiseCommission
+     * @secure
+     */
+    collectorWiseCommissionCreate: (
+      data: CollectorWiseCommissionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/CollectorWiseCommission`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CollectorWiseCommissionSummary
+     * @name CollectorWiseCommissionSummaryCreate
+     * @request POST:/api/CollectorWiseCommissionSummary
+     * @secure
+     */
+    collectorWiseCommissionSummaryCreate: (
+      data: CollectorWiseCommissionSummaryRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/CollectorWiseCommissionSummary`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CollectorWiseVisit
+     * @name CollectorWiseVisitCreate
+     * @request POST:/api/CollectorWiseVisit
+     * @secure
+     */
+    collectorWiseVisitCreate: (
+      data: CollectorWiseVisitRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/CollectorWiseVisit`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CollectorWiseWithdrawal
+     * @name CollectorWiseWithdrawalCreate
+     * @request POST:/api/CollectorWiseWithdrawal
+     * @secure
+     */
+    collectorWiseWithdrawalCreate: (
+      data: CollectorWiseWithdrawalRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/CollectorWiseWithdrawal`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags CostOfFund
      * @name CostOfFundCreate
      * @request POST:/api/CostOfFund
@@ -1429,14 +2049,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/DataEditedReport`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -1626,6 +2245,185 @@ export class Api<
     /**
      * No description
      *
+     * @tags FixedDepositCertificateSchedule
+     * @name FixedDepositCertificateScheduleList
+     * @request GET:/api/FixedDepositCertificateSchedule
+     * @secure
+     */
+    fixedDepositCertificateScheduleList: (params: RequestParams = {}) =>
+      this.request<FixedDepositAccountListDtoListGeneralResponse, any>({
+        path: `/api/FixedDepositCertificateSchedule`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags FixedDepositCertificateSchedule
+     * @name FixedDepositCertificateScheduleGenerateReportCreate
+     * @request POST:/api/FixedDepositCertificateSchedule/GenerateReport
+     * @secure
+     */
+    fixedDepositCertificateScheduleGenerateReportCreate: (
+      data: FixedDepositCertificateScheduleRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/FixedDepositCertificateSchedule/GenerateReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags FixedDepositInterestTransfer
+     * @name FixedDepositInterestTransferCreate
+     * @request POST:/api/FixedDepositInterestTransfer
+     * @secure
+     */
+    fixedDepositInterestTransferCreate: (
+      data: FixedDepositInterestTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/FixedDepositInterestTransfer`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags InterestAndTaxDetail
+     * @name InterestAndTaxDetailCreate
+     * @request POST:/api/InterestAndTaxDetail
+     * @secure
+     */
+    interestAndTaxDetailCreate: (
+      data: InterestAndTaxDetailRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/InterestAndTaxDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags InterestAndTaxPosted
+     * @name InterestAndTaxPostedCreate
+     * @request POST:/api/InterestAndTaxPosted
+     * @secure
+     */
+    interestAndTaxPostedCreate: (
+      data: InterestAndTaxPostedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/InterestAndTaxPosted`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags InterestAndTaxTypeWise
+     * @name InterestAndTaxTypeWiseCreate
+     * @request POST:/api/InterestAndTaxTypeWise
+     * @secure
+     */
+    interestAndTaxTypeWiseCreate: (
+      data: InterestAndTaxTypeWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/InterestAndTaxTypeWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags InterestPayable
+     * @name InterestPayableCreate
+     * @request POST:/api/InterestPayable
+     * @secure
+     */
+    interestPayableCreate: (
+      data: InterestPayableRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/InterestPayable`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags LmtLoanMaseterList
      * @name LmtLoanMaseterListList
      * @request GET:/api/LmtLoanMaseterList
@@ -1637,6 +2435,32 @@ export class Api<
         method: "GET",
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LoanPaymentThroughSaving
+     * @name LoanPaymentThroughSavingCreate
+     * @request POST:/api/LoanPaymentThroughSaving
+     * @secure
+     */
+    loanPaymentThroughSavingCreate: (
+      data: LoanPaymentThroughSavingRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanPaymentThroughSaving`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -2009,6 +2833,33 @@ export class Api<
     /**
      * No description
      *
+     * @tags MiscellaneousIncome
+     * @name MiscellaneousIncomeCreate
+     * @request POST:/api/MiscellaneousIncome
+     * @secure
+     */
+    miscellaneousIncomeCreate: (
+      data: MiscellaneousIncomeRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/MiscellaneousIncome`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags MonthlyReport
      * @name MonthlyReportCreate
      * @request POST:/api/MonthlyReport
@@ -2078,6 +2929,33 @@ export class Api<
     /**
      * No description
      *
+     * @tags PayableInterestTransferred
+     * @name PayableInterestTransferredCreate
+     * @request POST:/api/PayableInterestTransferred
+     * @secure
+     */
+    payableInterestTransferredCreate: (
+      data: PayableInterestTransferredRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/PayableInterestTransferred`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags PLAccount
      * @name PlAccountCreate
      * @request POST:/api/PLAccount
@@ -2130,6 +3008,114 @@ export class Api<
     /**
      * No description
      *
+     * @tags SalaryTransaction
+     * @name SalaryTransactionCreate
+     * @request POST:/api/SalaryTransaction
+     * @secure
+     */
+    salaryTransactionCreate: (
+      data: SalaryTransactionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SalaryTransaction`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingAccountClosed
+     * @name SavingAccountClosedCreate
+     * @request POST:/api/SavingAccountClosed
+     * @secure
+     */
+    savingAccountClosedCreate: (
+      data: SavingAccountClosedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingAccountClosed`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingAccountDeleted
+     * @name SavingAccountDeletedCreate
+     * @request POST:/api/SavingAccountDeleted
+     * @secure
+     */
+    savingAccountDeletedCreate: (
+      data: SavingAccountDeletedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingAccountDeleted`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingAccountRenewed
+     * @name SavingAccountRenewedCreate
+     * @request POST:/api/SavingAccountRenewed
+     * @secure
+     */
+    savingAccountRenewedCreate: (
+      data: SavingAccountRenewedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingAccountRenewed`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags SavingACWiseBalanceReport
      * @name SavingAcWiseBalanceReportCreate
      * @request POST:/api/SavingACWiseBalanceReport
@@ -2169,6 +3155,194 @@ export class Api<
         path: `/api/SavingACWiseBalanceReport/progressive/${jobId}`,
         method: "GET",
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingDepositAmountDateWise
+     * @name SavingDepositAmountDateWiseCreate
+     * @request POST:/api/SavingDepositAmountDateWise
+     * @secure
+     */
+    savingDepositAmountDateWiseCreate: (
+      data: SavingDepositDateWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingDepositAmountDateWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingDepositAmountMemberWise
+     * @name SavingDepositAmountMemberWiseCreate
+     * @request POST:/api/SavingDepositAmountMemberWise
+     * @secure
+     */
+    savingDepositAmountMemberWiseCreate: (
+      data: SavingDepositMemberWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingDepositAmountMemberWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingInterestChangeLog
+     * @name SavingInterestChangeLogCreate
+     * @request POST:/api/SavingInterestChangeLog
+     * @secure
+     */
+    savingInterestChangeLogCreate: (
+      data: SavingInterestChangeLogRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingInterestChangeLog`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingIssue
+     * @name SavingIssueCreate
+     * @request POST:/api/SavingIssue
+     * @secure
+     */
+    savingIssueCreate: (
+      data: SavingIssueRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingIssue`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingsAccountInterestTransfer
+     * @name SavingsAccountInterestTransferCreate
+     * @request POST:/api/SavingsAccountInterestTransfer
+     * @secure
+     */
+    savingsAccountInterestTransferCreate: (
+      data: SavingsAccountInterestTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingsAccountInterestTransfer`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingsAccountMaturity
+     * @name SavingsAccountMaturityCreate
+     * @request POST:/api/SavingsAccountMaturity
+     * @secure
+     */
+    savingsAccountMaturityCreate: (
+      data: SavingsAccountMaturityRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReportResponseDtosGeneralResponse, any>({
+        path: `/api/SavingsAccountMaturity`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingTransfer
+     * @name SavingTransferCreate
+     * @request POST:/api/SavingTransfer
+     * @secure
+     */
+    savingTransferCreate: (
+      data: SavingTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingTransfer`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -2406,14 +3580,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/TellerWiseExpense`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 

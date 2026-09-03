@@ -45,7 +45,9 @@ export default function SoleSelectGroupField<T extends FieldValues>({
   const isFirstRun = useRef(true);
 
   useEffect(() => {
-    const branchId = Number(selectedBranchId);
+    const branchId = Number(
+      Array.isArray(selectedBranchId) ? selectedBranchId[0] : selectedBranchId,
+    );
 
     // ✅ Always fetch on mount/reload — even before user touches branch field
     if (isFirstRun.current) {

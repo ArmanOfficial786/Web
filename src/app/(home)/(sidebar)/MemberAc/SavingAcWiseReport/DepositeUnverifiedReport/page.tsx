@@ -7,7 +7,7 @@ import * as yup from "yup";
 import type { DepositUnverifiedRequest, Pagination } from "types/api/api";
 import DepositUnverifiedForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/DepositeUnverifiedForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/DepositeUnverifiedForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";

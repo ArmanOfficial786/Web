@@ -69,7 +69,6 @@ const schema: yup.ObjectSchema<TellerWiseExpenseFormValues> = yup
       )
       .default(-1),
     orderBy: yup.string().nullable().optional().default(""),
-    sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
@@ -98,7 +97,6 @@ export default function TellerWiseExpensePage() {
       toDateBs: form.toDateBs || undefined,
       tellerId: form.tellerId || undefined,
       orderBy: form.orderBy || "",
-      sameCompanyName: form.sameCompanyName ?? true,
       visualReport: form.visualReport ?? false,
     }),
     [],

@@ -8,7 +8,7 @@ import * as yup from "yup";
 import type { SavingTypeWiseBalanceRequest, Pagination } from "types/api/api";
 import SavingTypeWiseBalanceForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/savingTypeWiseBalanceForm";
+} from "@/components/reports/memberAccount/SavingAccountWiseReports/savingTypeWiseBalanceForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";

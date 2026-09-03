@@ -110,6 +110,102 @@ export const tellerWiseCollectionOrderByOptions = defineOrderByOptions([
   { key: "loanIssue", label: "Loan Issue" },
   { key: "misscellaneousAtm", label: "Miscellaneous ATM" },
 ] as const);
+
+export const dataEditedOrderByOptions = defineOrderByOptions([
+  { key: "accountNo", label: "Account No" },
+  { key: "memberId", label: "Member Id" },
+  { key: "description", label: "Description" },
+  { key: "actualAmount", label: "Actual Amount" },
+  { key: "editedDate", label: "Edited Date" },
+  { key: "editedBy", label: "Edited By" },
+] as const);
+
+export const branchToBranchCollectionOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "Amount", label: "Amount" },
+] as const);
+
+export const savingTransferOrderByOptions = defineOrderByOptions([
+  { key: "accountNo", label: "Account No" },
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "type", label: "Type" },
+  { key: "Amount", label: "Amount" },
+  { key: "Date", label: "Date" },
+  { key: "operator", label: "Operator" },
+] as const);
+
+export const miscellaneousIncomeOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "particulars", label: "Particulars" },
+  { key: "Amount", label: "Amount" },
+  { key: "Date", label: "Date" },
+] as const);
+
+export const savingDepositAmountMemberOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "Amount", label: "Amount" },
+  { key: "Date", label: "Date" },
+] as const);
+
+export const savingDepositAmountDateOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "Amount", label: "Amount" },
+] as const);
+
+export const salaryTransactionOrderByOptions = defineOrderByOptions([
+  { key: "staffname", label: "Staff Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "salaryAmount", label: "Salary Amount" },
+  { key: "overtimeSalary", label: "Overtime Salary" },
+  { key: "tdsAmount", label: "Tds Amount" },
+  { key: "allowanceAmount", label: "Allowance Amount" },
+  { key: "providentFundFromOffice", label: "Provident Fund From Office" },
+  { key: "providentFundFromSalary", label: "Provident Fund From Salary" },
+  { key: "leaveDeduction", label: "Leave Deduction" },
+  { key: "advanceDeduction", label: "Advance Deduction" },
+  { key: "netAmount", label: "Net Amount" },
+] as const);
+
+export const savingAccountRewenedOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "a/cOpenedDate", label: "A/C Opened Date" },
+  { key: "a/cRenewedDate", label: "A/C Rewened Date" },
+] as const);
+
+export const savingAccountDeletedOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "a/cOpenedDate", label: "A/C Opened Date" },
+] as const);
+
+export const savingIssueOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "a/cOpenedDate", label: "A/C Opened Date" },
+  { key: "interestRate", label: "Interest Rate" },
+  { key: "smsCategory", label: "SMS Category" },
+] as const);
+
+export const savingAccountClosedOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "a/cOpenedDate", label: "A/C Opened Date" },
+  { key: "closeAmount", label: "Close Amount" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
@@ -122,7 +218,18 @@ export type SavingWiseBalanceOrderByReportKey =
   | "member-penalty-deposit-withdraw-report"
   | "member-summary-report"
   | "member-account-detail-report"
-  | "teller-wise-collection-report";
+  | "teller-wise-collection-report"
+  | "branch-to-branch-collection-report"
+  | "data-edited-report"
+  | "saving-transfer-report"
+  | "miscellaneous-income-report"
+  | "saving-deposit-member-wise-report"
+  | "saving-deposit-date-wise-report"
+  | "salary-transfer-report"
+  | "saving-account-renewed-report"
+  | "saving-account-deleted-report"
+  | "saving-issue-report"
+  | "saving-account-closed-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -141,4 +248,15 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
   "member-summary-report": memberSummaryOrderByOptions,
   "member-account-detail-report": memberAccountDetailOrderByOptions,
   "teller-wise-collection-report": tellerWiseCollectionOrderByOptions,
+  "branch-to-branch-collection-report": branchToBranchCollectionOrderByOptions,
+  "data-edited-report": dataEditedOrderByOptions,
+  "saving-transfer-report": savingTransferOrderByOptions,
+  "miscellaneous-income-report": miscellaneousIncomeOrderByOptions,
+  "saving-deposit-member-wise-report": savingDepositAmountMemberOrderByOptions,
+  "saving-deposit-date-wise-report": savingDepositAmountDateOrderByOptions,
+  "salary-transfer-report": salaryTransactionOrderByOptions,
+  "saving-account-renewed-report": savingAccountRewenedOrderByOptions,
+  "saving-account-deleted-report": savingAccountDeletedOrderByOptions,
+  "saving-issue-report": savingIssueOrderByOptions,
+  "saving-account-closed-report": savingAccountClosedOrderByOptions,
 };
