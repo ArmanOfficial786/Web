@@ -206,6 +206,46 @@ export const savingAccountClosedOrderByOptions = defineOrderByOptions([
   { key: "closeAmount", label: "Close Amount" },
 ] as const);
 
+// ── Interest Expense Reports ──────────────────────────────────────────
+
+export const fixedDepositInterestTransferOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "interestDate", label: "Interest Date" },
+  { key: "interest", label: "Interest" },
+  { key: "tax", label: "Tax" },
+  { key: "remarks", label: "Remarks" },
+] as const);
+
+export const interestAndTaxTypeWiseOrderByOptions = defineOrderByOptions([
+  { key: "date", label: "Date" },
+  { key: "interest", label: "Interest" },
+  { key: "tax", label: "Tax" },
+  { key: "percentTax", label: "Percent Tax" },
+] as const);
+
+export const interestAndTaxDetailOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "particulars", label: "Particulars" },
+  { key: "interest", label: "Interest" },
+  { key: "tax", label: "Tax" },
+  { key: "date", label: "Date" },
+] as const);
+
+export const interestAndTaxPostedOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "interestDate", label: "Interest Date" },
+  { key: "interestRate", label: "Interest Rate" },
+  { key: "interest", label: "Interest" },
+  { key: "tax", label: "Tax" },
+  { key: "netBalance", label: "Net Balance" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
@@ -229,7 +269,11 @@ export type SavingWiseBalanceOrderByReportKey =
   | "saving-account-renewed-report"
   | "saving-account-deleted-report"
   | "saving-issue-report"
-  | "saving-account-closed-report";
+  | "saving-account-closed-report"
+  | "fixed-deposit-interest-transfer-report"
+  | "interest-and-tax-type-wise-report"
+  | "interest-and-tax-detail-report"
+  | "interest-and-tax-posted-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -259,4 +303,9 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
   "saving-account-deleted-report": savingAccountDeletedOrderByOptions,
   "saving-issue-report": savingIssueOrderByOptions,
   "saving-account-closed-report": savingAccountClosedOrderByOptions,
+  "fixed-deposit-interest-transfer-report":
+    fixedDepositInterestTransferOrderByOptions,
+  "interest-and-tax-type-wise-report": interestAndTaxTypeWiseOrderByOptions,
+  "interest-and-tax-detail-report": interestAndTaxDetailOrderByOptions,
+  "interest-and-tax-posted-report": interestAndTaxPostedOrderByOptions,
 };

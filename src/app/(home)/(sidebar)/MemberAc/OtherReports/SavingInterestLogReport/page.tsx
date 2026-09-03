@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingInterestChangeLogReport/page.tsx
 "use client";
 
 import React, { useCallback, useState } from "react";
@@ -59,7 +58,6 @@ const schema: yup.ObjectSchema<SavingInterestChangeLogFormValues> = yup
       .optional()
       .default("AccountNo"),
     accountNo: yup.string().nullable().optional().default(""),
-    accountOpeningId: yup.number().nullable().optional().default(null), // not shown in UI — confirm if backend requires a value
     depositTypeId: yup.number().nullable().optional().default(null),
     visualReport: yup.boolean().optional().default(false), // ⚠️ not in your field list — declared for type-completeness only, not rendered
     memberId: yup.string().nullable().optional().default(""), // UI-only, not on DTO
@@ -84,7 +82,6 @@ export default function SavingInterestChangeLogPage() {
       setValue("accountNo", record.accountNo ?? "", { shouldValidate: true });
       setValue("memberId", record.memberId ?? "");
       setValue("memberName", record.memberName ?? "");
-      setValue("accountOpeningId", record.mamAccountOpeningId ?? null);
     },
     [setValue],
   );
@@ -106,7 +103,6 @@ export default function SavingInterestChangeLogPage() {
         form.reportType === "DepositType"
           ? (form.depositTypeId ?? undefined)
           : undefined,
-      accountOpeningId: form.accountOpeningId ?? undefined,
       visualReport: form.visualReport ?? false,
       // memberId / memberName intentionally omitted — not part of this DTO
     }),

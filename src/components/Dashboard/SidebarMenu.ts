@@ -195,6 +195,31 @@ export const MENU: MenuNode[] = [
         label: "Saving Interest Log Report",
         route: "/MemberAc/OtherReports/SavingInterestLogReport",
       },
+
+      //===============Interest Expense Reports Section================
+
+      {
+        label: "Fixed Deposit Interest Transfer Report",
+        route:
+          "/MemberAc/InterestExpenseReport/FixedDepositInterestTransferReport",
+      },
+      {
+        label: "Interest & Tax Type Wise Report",
+        route: "/MemberAc/InterestExpenseReport/InterestAndTaxTypeWiseReport",
+      },
+      {
+        label: "Interest & Tax Detail Report",
+        route: "/MemberAc/InterestExpenseReport/InterestAndTaxDetailReport",
+      },
+      {
+        label: "Interest & Tax Posted Report",
+        route: "/MemberAc/InterestExpenseReport/InterestAndTaxPostedReport",
+      },
+      {
+        label: "Saving Interest Transfer Payable Report",
+        route:
+          "/MemberAc/InterestExpenseReport/PayableInterestTransferredReport",
+      },
     ],
   },
 

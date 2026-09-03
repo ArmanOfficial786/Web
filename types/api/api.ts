@@ -718,22 +718,6 @@ export interface MemberIdCardRequest {
   pageSize?: number;
 }
 
-export interface MemberInfoDto {
-  /** @format int64 */
-  memberRegistrationId?: number;
-  memberId?: string | null;
-  fullName?: string | null;
-}
-
-export interface MemberInfoDtoGeneralResponse {
-  isValid?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  data?: MemberInfoDto;
-  pagination?: Pagination;
-}
-
 export interface MemberLookUpDtos {
   /** @format int64 */
   memMemberRegistrationId?: number;
@@ -807,9 +791,9 @@ export interface MiscellaneousIncomeRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
+  branchName?: string | null;
   orderBy?: string | null;
   reportType?: string | null;
-  branchName?: string | null;
   /** @format int64 */
   memberId?: number | null;
   visualReport?: boolean;
@@ -1024,8 +1008,6 @@ export interface SavingInterestChangeLogRequestDto {
   toDateBs?: string | null;
   reportType?: string | null;
   accountNo?: string | null;
-  /** @format int64 */
-  accountOpeningId?: number | null;
   /** @format int64 */
   depositTypeId?: number | null;
   /** @format int64 */
@@ -1790,12 +1772,11 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<MemberInfoDtoGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/ChequeBookIssue/GetMember`,
         method: "GET",
         query: query,
         secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -1888,14 +1869,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/CollectorWiseAccountClose`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -1915,14 +1895,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/CollectorWiseCommission`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -1942,14 +1921,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/CollectorWiseCommissionSummary`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -1969,14 +1947,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/CollectorWiseVisit`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -1996,14 +1973,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/CollectorWiseWithdrawal`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2263,11 +2239,11 @@ export class Api<
      * No description
      *
      * @tags FixedDepositCertificateSchedule
-     * @name FixedDepositCertificateScheduleGenerateReportCreate
-     * @request POST:/api/FixedDepositCertificateSchedule/GenerateReport
+     * @name FixedDepositCertificateScheduleCreate
+     * @request POST:/api/FixedDepositCertificateSchedule
      * @secure
      */
-    fixedDepositCertificateScheduleGenerateReportCreate: (
+    fixedDepositCertificateScheduleCreate: (
       data: FixedDepositCertificateScheduleRequestDto,
       query?: {
         /** @default "VIEW" */
@@ -2275,14 +2251,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
-        path: `/api/FixedDepositCertificateSchedule/GenerateReport`,
+      this.request<void, any>({
+        path: `/api/FixedDepositCertificateSchedule`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2302,14 +2277,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/FixedDepositInterestTransfer`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2329,14 +2303,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/InterestAndTaxDetail`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2356,14 +2329,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/InterestAndTaxPosted`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2383,14 +2355,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/InterestAndTaxTypeWise`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2410,14 +2381,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/InterestPayable`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2846,14 +2816,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/MiscellaneousIncome`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -2942,14 +2911,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/PayableInterestTransferred`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3048,14 +3016,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingAccountClosed`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3075,14 +3042,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingAccountDeleted`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3102,14 +3068,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingAccountRenewed`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3174,14 +3139,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingDepositAmountDateWise`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3201,14 +3165,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingDepositAmountMemberWise`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3228,14 +3191,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingInterestChangeLog`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3255,14 +3217,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingIssue`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3282,14 +3243,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingsAccountInterestTransfer`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -3309,14 +3269,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/SavingsAccountMaturity`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
