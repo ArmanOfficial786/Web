@@ -192,6 +192,37 @@ export interface ChequeBookIssueRequestDto {
   visualReport?: boolean;
 }
 
+export interface ChequeBookLostRequestDto {
+  /** @format int64 */
+  memberId?: number;
+  memberIdText?: string | null;
+  memberName?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  branchName?: string | null;
+  orderBy?: string | null;
+  reportView?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ChequeBookWithdrawalRequestDto {
+  /** @format int64 */
+  accountId?: number;
+  accountNo?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ChequeClearanceRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  chequeType?: string | null;
+  visualReport?: boolean;
+}
+
 export interface CollectionCenterRequestDtos {
   /** @format int64 */
   lstOfficeId?: number;
@@ -436,25 +467,6 @@ export interface FilterParam {
   option?: FilterOption;
 }
 
-export interface FixedDepositAccountListDto {
-  /** @format int64 */
-  mamAccountOpeningId?: number;
-  memberId?: string | null;
-  memberName?: string | null;
-  accountNo?: string | null;
-  depositType?: string | null;
-  status?: string | null;
-}
-
-export interface FixedDepositAccountListDtoListGeneralResponse {
-  isValid?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  data?: FixedDepositAccountListDto[] | null;
-  pagination?: Pagination;
-}
-
 export interface FixedDepositCertificateScheduleRequestDto {
   /** @format int64 */
   accountId?: number;
@@ -508,9 +520,9 @@ export interface InterestAndTaxTypeWiseRequestDto {
 
 export interface InterestPayableRequestDto {
   tillDateBs?: string | null;
-  officeId?: string | null;
+  branchIds?: string | null;
   orderBy?: string | null;
-  officeName?: string | null;
+  branchName?: string | null;
   reportView?: string | null;
   visualReport?: boolean;
 }
@@ -1100,6 +1112,7 @@ export interface SavingsAccountMaturityRequestDto {
   depositTypeId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
+  format?: string | null;
 }
 
 export interface ShareTypeResponse {
@@ -1762,28 +1775,6 @@ export class Api<
      * No description
      *
      * @tags ChequeBookIssue
-     * @name ChequeBookIssueGetMemberList
-     * @request GET:/api/ChequeBookIssue/GetMember
-     * @secure
-     */
-    chequeBookIssueGetMemberList: (
-      query?: {
-        memberId?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/ChequeBookIssue/GetMember`,
-        method: "GET",
-        query: query,
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags ChequeBookIssue
      * @name ChequeBookIssueCreate
      * @request POST:/api/ChequeBookIssue
      * @secure
@@ -1796,14 +1787,91 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReportResponseDtosGeneralResponse, any>({
+      this.request<void, any>({
         path: `/api/ChequeBookIssue`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ChequeBookLost
+     * @name ChequeBookLostCreate
+     * @request POST:/api/ChequeBookLost
+     * @secure
+     */
+    chequeBookLostCreate: (
+      data: ChequeBookLostRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ChequeBookLost`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ChequeBookWithdrawal
+     * @name ChequeBookWithdrawalCreate
+     * @request POST:/api/ChequeBookWithdrawal
+     * @secure
+     */
+    chequeBookWithdrawalCreate: (
+      data: ChequeBookWithdrawalRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ChequeBookWithdrawal`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ChequeClearance
+     * @name ChequeClearanceCreate
+     * @request POST:/api/ChequeClearance
+     * @secure
+     */
+    chequeClearanceCreate: (
+      data: ChequeClearanceRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ChequeClearance`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -2215,23 +2283,6 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags FixedDepositCertificateSchedule
-     * @name FixedDepositCertificateScheduleList
-     * @request GET:/api/FixedDepositCertificateSchedule
-     * @secure
-     */
-    fixedDepositCertificateScheduleList: (params: RequestParams = {}) =>
-      this.request<FixedDepositAccountListDtoListGeneralResponse, any>({
-        path: `/api/FixedDepositCertificateSchedule`,
-        method: "GET",
-        secure: true,
-        format: "json",
         ...params,
       }),
 
@@ -3230,32 +3281,6 @@ export class Api<
     /**
      * No description
      *
-     * @tags SavingsAccountInterestTransfer
-     * @name SavingsAccountInterestTransferCreate
-     * @request POST:/api/SavingsAccountInterestTransfer
-     * @secure
-     */
-    savingsAccountInterestTransferCreate: (
-      data: SavingsAccountInterestTransferRequestDto,
-      query?: {
-        /** @default "VIEW" */
-        format?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/SavingsAccountInterestTransfer`,
-        method: "POST",
-        query: query,
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @tags SavingsAccountMaturity
      * @name SavingsAccountMaturityCreate
      * @request POST:/api/SavingsAccountMaturity
@@ -3271,6 +3296,32 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/SavingsAccountMaturity`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SavingsAccountNextInterestTransfer
+     * @name SavingsAccountNextInterestTransferCreate
+     * @request POST:/api/SavingsAccountNextInterestTransfer
+     * @secure
+     */
+    savingsAccountNextInterestTransferCreate: (
+      data: SavingsAccountInterestTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SavingsAccountNextInterestTransfer`,
         method: "POST",
         query: query,
         body: data,

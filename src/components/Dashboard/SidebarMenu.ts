@@ -220,6 +220,71 @@ export const MENU: MenuNode[] = [
         route:
           "/MemberAc/InterestExpenseReport/PayableInterestTransferredReport",
       },
+
+      //===============Interest Payable Reports Section================
+      {
+        label: "Saving Interest Payable Report",
+        route: "/MemberAc/InterestPayableReport/SavingInterestPayableReport",
+      },
+      {
+        label: "Saving Account Maturity Report",
+        route: "/MemberAc/InterestPayableReport/SavingAccountMaturityReport",
+      },
+      {
+        label: "Saving Account Next Interest Transfer Report",
+        route:
+          "/MemberAc/InterestPayableReport/SavingsAccountNextInterestTransferReport",
+      },
+      {
+        label: "PayableTransactionTransfer Report",
+        route:
+          "/MemberAc/InterestPayableReport/PayableTransactionTransferReport",
+      },
+      {
+        label: "FixedDepositCertificateAndScheduleReport",
+        route:
+          "/MemberAc/InterestPayableReport/FixedDepositCertificateAndScheduleReport",
+      },
+
+      //===============Collector Detail Reports Section================
+      {
+        label: "CollectorWiseCommission Report",
+        route: "/MemberAc/CollectorDetailReport/CollectorWiseCommissionReport",
+      },
+      {
+        label: "CollectorWiseWithdrawl Report",
+        route: "/MemberAc/CollectorDetailReport/CollectorWiseWithdrawlReport",
+      },
+      {
+        label: "CollectorWiseAccountCloseReport",
+        route:
+          "/MemberAc/CollectorDetailReport/CollectorWiseAccountCloseReport",
+      },
+
+      {
+        label: "CollectorWiseCommissionSummaryReport",
+        route:
+          "/MemberAc/CollectorDetailReport/CollectorWiseCommissionSummaryReport",
+      },
+      {
+        label: "CollectorWiseVisitReport",
+        route: "/MemberAc/CollectorDetailReport/CollectorWiseVisitReport",
+      },
+
+      //===============Cheque Book Reports Section================
+
+      {
+        label: "ChequeBookIssueReport",
+        route: "/MemberAc/ChequeBookReport/ChequeBookIssueReport",
+      },
+      {
+        label: "ChequeBookLostReport",
+        route: "/MemberAc/ChequeBookReport/ChequeBookLostReport",
+      },
+      {
+        label: "ChequeBookWithdrawalReport",
+        route: "/MemberAc/ChequeBookReport/ChequeBookWithdrawalReport",
+      },
     ],
   },
 

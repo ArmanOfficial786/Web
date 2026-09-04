@@ -218,6 +218,17 @@ export const fixedDepositInterestTransferOrderByOptions = defineOrderByOptions([
   { key: "remarks", label: "Remarks" },
 ] as const);
 
+export const savingsAccountInterestTransferOrderByOptions =
+  defineOrderByOptions([
+    { key: "memberId", label: "Member Id" },
+    { key: "memberName", label: "member Name" },
+    { key: "accountNo", label: "Account No" },
+    { key: "interestDate", label: "Interest Date" },
+    { key: "interest", label: "Interest" },
+    { key: "tax", label: "Tax" },
+    { key: "remarks", label: "Remarks" },
+  ] as const);
+
 export const interestAndTaxTypeWiseOrderByOptions = defineOrderByOptions([
   { key: "date", label: "Date" },
   { key: "interest", label: "Interest" },
@@ -246,6 +257,76 @@ export const interestAndTaxPostedOrderByOptions = defineOrderByOptions([
   { key: "netBalance", label: "Net Balance" },
 ] as const);
 
+// ── Report: collector-wise-Commission ──────────────────────────────────────────
+
+export const collectorWiseCommissionOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "type", label: "Type" },
+  { key: "accountNo", label: "Account No" },
+  { key: "collectedAmount", label: "Collected Amount" },
+  { key: "commissionAmount", label: "Commission Amount" },
+  { key: "Date", label: "Date" },
+] as const);
+
+export const collectorWiseWithdrawalOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "amount", label: " Amount" },
+  { key: "Date", label: "Date" },
+] as const);
+
+export const collectorWiseAccountCloseOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "a/cOpenedDate", label: "A/C Opened Date" },
+  { key: "a/cClosedDate", label: "A/C Closed Date" },
+  { key: "closeAmount", label: " Close Amount" },
+] as const);
+
+export const collectorWiseCommissionSummaryOrderByOptions =
+  defineOrderByOptions([
+    { key: "collectorId", label: "Collector Id" },
+    { key: "collectorName", label: "Collector Name" },
+    { key: "commissionAmount", label: "Commission Amount" },
+  ] as const);
+
+export const collectorWiseVisitOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "visitCount", label: "Visit Count" },
+  { key: "amount", label: "Amount" },
+] as const);
+
+export const chequeBookIssueOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "chequeIssueDate", label: "Cheque Issue Date" },
+  { key: "chequeNoFrom", label: "Cheque No From" },
+] as const);
+
+export const chequeBookLostOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "accountNo", label: "Account No" },
+  { key: "chequeNo", label: "Cheque No" },
+  { key: "issueDate", label: "Issue Date" },
+  { key: "operator", label: "Operator" },
+  { key: "lostDate", label: "Lost Date" },
+] as const);
+
+export const chequeBookWithdrawalOrderByOptions = defineOrderByOptions([
+  { key: "chequeNo", label: "Cheque No" },
+  { key: "date", label: "Date" },
+  { key: "status", label: "Status" },
+] as const);
+
+// ── Cheque Book Report ──────────────────────────────
+
 // ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
@@ -271,9 +352,18 @@ export type SavingWiseBalanceOrderByReportKey =
   | "saving-issue-report"
   | "saving-account-closed-report"
   | "fixed-deposit-interest-transfer-report"
+  | "savings-account-interest-transfer-report"
   | "interest-and-tax-type-wise-report"
   | "interest-and-tax-detail-report"
-  | "interest-and-tax-posted-report";
+  | "interest-and-tax-posted-report"
+  | "collector-wise-commission-report"
+  | "collector-wise-withdrawal-report"
+  | "collector-wise-account-close-report"
+  | "collector-wise-commission-summary-report"
+  | "collector-wise-visit-report"
+  | "cheque-book-issue-report"
+  | "cheque-book-lost-report"
+  | "cheque-book-withdrawal-report";
 
 export const savingWiseBalanceOrderByOptionsMap: Record<
   SavingWiseBalanceOrderByReportKey,
@@ -305,7 +395,19 @@ export const savingWiseBalanceOrderByOptionsMap: Record<
   "saving-account-closed-report": savingAccountClosedOrderByOptions,
   "fixed-deposit-interest-transfer-report":
     fixedDepositInterestTransferOrderByOptions,
+  "savings-account-interest-transfer-report":
+    savingsAccountInterestTransferOrderByOptions,
   "interest-and-tax-type-wise-report": interestAndTaxTypeWiseOrderByOptions,
   "interest-and-tax-detail-report": interestAndTaxDetailOrderByOptions,
   "interest-and-tax-posted-report": interestAndTaxPostedOrderByOptions,
+  "collector-wise-commission-report": collectorWiseCommissionOrderByOptions,
+  "collector-wise-withdrawal-report": collectorWiseWithdrawalOrderByOptions,
+  "collector-wise-account-close-report":
+    collectorWiseAccountCloseOrderByOptions,
+  "collector-wise-commission-summary-report":
+    collectorWiseCommissionSummaryOrderByOptions,
+  "collector-wise-visit-report": collectorWiseVisitOrderByOptions,
+  "cheque-book-issue-report": chequeBookIssueOrderByOptions,
+  "cheque-book-lost-report": chequeBookLostOrderByOptions,
+  "cheque-book-withdrawal-report": chequeBookWithdrawalOrderByOptions,
 };
