@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import type {
   CollectorWiseCommissionSummaryRequestDto,
+  Pagination,
   ReportResponseDtos,
 } from "types/api/api";
 import CollectorWiseCommissionSummaryForm, {
@@ -16,9 +17,15 @@ import CollectorWiseCommissionSummaryForm, {
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
 
-export type CollectorWiseCommissionSummaryFormValues =
-  CollectorWiseCommissionSummaryRequestDto;
+export type CollectorWiseCommissionSummaryFormValues = Omit<
+  CollectorWiseCommissionSummaryRequestDto,
+  "branchIds"
+> & {
+  branchIds?: string[];
+};
 
 export interface CollectorWiseCommissionSummaryResponseExtended extends ReportResponseDtos {
   blobUrl: string;
@@ -44,7 +51,7 @@ const schema: yup.ObjectSchema<CollectorWiseCommissionSummaryFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.string().nullable().optional().default(""),
+    branchIds: yup.array().of(yup.string().required()).optional().default([]),
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not in your field list — kept for schema completeness only, not rendered
@@ -59,6 +66,7 @@ export default function CollectorWiseCommissionSummaryPage() {
     });
   const [lastRequest, setLastRequest] =
     useState<CollectorWiseCommissionSummaryRequestDto | null>(null);
+  const { branchOptions } = useReportFormContext();
 
   const { control, handleSubmit, setValue, reset } =
     useForm<CollectorWiseCommissionSummaryFormValues>({
@@ -69,15 +77,29 @@ export default function CollectorWiseCommissionSummaryPage() {
   const toRequest = useCallback(
     (
       form: CollectorWiseCommissionSummaryFormValues,
-    ): CollectorWiseCommissionSummaryRequestDto => ({
-      fromDateBs: form.fromDateBs || undefined,
-      toDateBs: form.toDateBs || undefined,
-      branchIds: form.branchIds || undefined,
-      branchName: form.branchName || undefined,
-      orderBy: form.orderBy || "",
-      visualReport: form.visualReport ?? false,
-    }),
-    [],
+    ): CollectorWiseCommissionSummaryRequestDto => {
+      const selectedIds = (form.branchIds ?? []).map(String).filter(Boolean);
+      const allIds = branchOptions
+        .map((option) => String(option.id))
+        .filter((id) => Number(id) > 0);
+      const isAll =
+        selectedIds.length === 0 || selectedIds.length === allIds.length;
+      const resolvedIds = isAll ? allIds : selectedIds;
+      const branchName = branchOptions
+        .filter((option) => resolvedIds.includes(String(option.id)))
+        .map((option) => option.name)
+        .join(", ");
+
+      return {
+        fromDateBs: form.fromDateBs || undefined,
+        toDateBs: form.toDateBs || undefined,
+        branchIds: isAll ? "-1" : selectedIds.join(","),
+        branchName: branchName || undefined,
+        orderBy: form.orderBy || "",
+        visualReport: form.visualReport ?? false,
+      };
+    },
+    [branchOptions],
   );
 
   const callApi = useCallback(
@@ -90,20 +112,31 @@ export default function CollectorWiseCommissionSummaryPage() {
 
   const fetchReport = useCallback(
     async (request: CollectorWiseCommissionSummaryRequestDto) => {
-      setReportState((prev) => ({ ...prev, isLoading: true }));
+      setReportState((prev) => {
+        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        return { isLoading: true, blobUrl: "" };
+      });
       try {
         const res = await callApi(request, "VIEW");
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
         const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState((prev) => ({
-          ...prev,
+        setReportState({
+          isLoading: false,
           blobUrl,
           pdfData: blobUrl,
-          isLoading: false,
-        }));
-      } catch (error) {
-        console.error("Report generation error:", error);
-        toast.error("Failed to generate report");
+          pagination,
+        });
+      } catch {
+        toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

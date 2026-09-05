@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import type {
   CollectorWiseAccountCloseRequestDto,
+  Pagination,
   ReportResponseDtos,
 } from "types/api/api";
 import CollectorWiseAccountCloseForm from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseAccountCloseForm";
@@ -15,6 +16,7 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 export type CollectorWiseAccountCloseFormValues =
   CollectorWiseAccountCloseRequestDto;
@@ -44,7 +46,11 @@ const schema: yup.ObjectSchema<CollectorWiseAccountCloseFormValues> = yup
         return String(val) >= String(fromDateBs);
       }),
     orderBy: yup.string().nullable().optional().default(""),
-    collectorId: yup.number().required("Collector is required").default(0),
+    collectorId: yup
+      .number()
+      .required("Collector is required")
+      .moreThan(0, "Collector is required")
+      .default(0),
     collectorName: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -95,17 +101,29 @@ export default function CollectorWiseAccountClosePage() {
 
   const fetchReport = useCallback(
     async (request: CollectorWiseAccountCloseRequestDto) => {
-      setReportState((prev) => ({ ...prev, isLoading: true }));
+      setReportState((prev) => {
+        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        return { isLoading: true, blobUrl: "" };
+      });
       try {
         const res = await callApi(request, "VIEW");
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
         const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState((prev) => ({
-          ...prev,
+        setReportState({
+          isLoading: false,
           blobUrl,
           pdfData: blobUrl,
-          isLoading: false,
-        }));
+          pagination,
+        });
       } catch (error) {
         console.error("Report generation error:", error);
         toast.error("Failed to generate report");

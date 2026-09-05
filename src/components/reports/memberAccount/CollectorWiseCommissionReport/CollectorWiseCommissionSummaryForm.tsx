@@ -163,35 +163,42 @@ function CollectorWiseCommissionSummaryForm({
         )}
 
         {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={blobUrl}
-              src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
+          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
+            <Box
+              ref={reportRef}
+              sx={{
+                position: "relative",
+                height: "1000px",
+                overflow: "hidden",
               }}
-            />
+            >
+              <embed
+                key={blobUrl}
+                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
+                style={{
+                  position: "absolute",
+                  top: "-40px",
+                  left: 0,
+                  width: "100%",
+                  height: "calc(100% + 40px)",
+                  border: "none",
+                  zIndex: 0,
+                }}
+              />
 
-            <ScrollToFirstPageButton
-              onClick={() => {
-                if (currentPage <= 1) {
-                  onPageChange(totalPages);
-                } else {
-                  onPageChange(1);
-                }
-              }}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              hideWhenSinglePage={true}
-            />
+              <ScrollToFirstPageButton
+                onClick={() => {
+                  if (currentPage <= 1) {
+                    onPageChange(totalPages);
+                  } else {
+                    onPageChange(1);
+                  }
+                }}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                hideWhenSinglePage={true}
+              />
+            </Box>
           </Box>
         )}
       </Box>
