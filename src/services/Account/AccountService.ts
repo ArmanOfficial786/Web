@@ -15,10 +15,15 @@ const customRequestInterceptor = async (config: any) => {
   // Call original interceptor for auth headers, etc.
   const configWithAuth = await originalRequestInterceptor(config);
 
-  // ✅ If format is PDF/EXCEL/WORD, set responseType to blob
+  // Report display and export responses are binary, except AccountStatement VIEW.
   if (configWithAuth.params?.format) {
     const format = configWithAuth.params.format.toLowerCase();
-    if (["pdf", "excel", "word", "image"].includes(format)) {
+    const isAccountStatement =
+      configWithAuth.url?.includes("/AccountStatement/");
+    if (
+      ["view", "pdf", "excel", "word", "image"].includes(format) &&
+      !(format === "view" && isAccountStatement)
+    ) {
       configWithAuth.responseType = "blob";
     }
   }

@@ -27,9 +27,9 @@ import Preloader from "@/components/PreLoader/preloader";
 
 import type { AccountLookUpDtos } from "types/api/api";
 import {
-  FixedDepositCertificateScheduleFormValues,
-  FixedDepositCertificateScheduleResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/InterestPayableReport/FixedDepositCertificateAndScheduleReport/page";
+  type FixedDepositCertificateScheduleFormValues,
+  type FixedDepositCertificateScheduleResponseExtended,
+} from "@/components/reports/memberAccount/InterestPayableReport/fixedDepositCertificateSchedule.types";
 
 export type { ReportFormat };
 

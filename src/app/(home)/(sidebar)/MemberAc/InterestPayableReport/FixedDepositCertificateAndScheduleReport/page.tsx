@@ -19,27 +19,15 @@ import {
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 import memberAccountService from "@/services/memberAccount/memberAccountService"; // ⚠️ confirm this exposes fixedDepositCertificateScheduleCreate
+import {
+  REPORT_TYPE_CERTIFICATE,
+  REPORT_TYPE_SCHEDULE,
+  type FixedDepositCertificateScheduleFormValues,
+  type FixedDepositCertificateScheduleResponseExtended,
+  type ViewKind,
+} from "@/components/reports/memberAccount/InterestPayableReport/fixedDepositCertificateSchedule.types";
 
 // ⚠️ Guessed wire values — confirm against backend
-export const REPORT_TYPE_SCHEDULE = "Schedule";
-export const REPORT_TYPE_CERTIFICATE = "Certificate";
-type ViewKind = "schedule" | "certificate";
-
-export interface FixedDepositCertificateScheduleFormValues {
-  accountNo?: string;
-  memberId?: string;
-  memberName?: string;
-  accountId?: number;
-  showHeader?: boolean;
-}
-
-export interface FixedDepositCertificateScheduleResponseExtended {
-  blobUrl?: string;
-  isLoading: boolean;
-  loadingKind?: ViewKind; // which button triggered the in-flight request
-  pagination?: Pagination;
-}
-
 const schema: yup.ObjectSchema<FixedDepositCertificateScheduleFormValues> = yup
   .object({
     accountNo: yup.string().optional().default(""),
