@@ -279,7 +279,7 @@ import type {
 } from "types/api/api";
 import AccountStatement, {
   type ReportFormat,
-} from "@/components/reports/accountReport/AccountStatement";
+} from "@/components/reports/accountReport/AccountingReports/AccountStatement";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

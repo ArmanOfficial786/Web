@@ -8,7 +8,7 @@ import * as yup from "yup";
 import type { CashFlowDetailsRequest, Pagination } from "types/api/api";
 import CashFlowDetailsForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/CashFlowDetailForm";
+} from "@/components/reports/accountReport/AccountingReports/CashFlowDetailForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

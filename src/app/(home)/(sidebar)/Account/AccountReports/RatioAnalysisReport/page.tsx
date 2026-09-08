@@ -9,7 +9,7 @@ import * as yup from "yup";
 import type { RatioAnalysisRequest, Pagination } from "types/api/api";
 import RatioAnalysisForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/RatioAnalysisForm";
+} from "@/components/reports/accountReport/AccountingReports/RatioAnalysisForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import accountService from "@/services/Account/AccountService";

@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import type { BalanceSheetRequest, Pagination } from "types/api/api";
 import BalanceSheetReportForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/BalanceSheetReportForm";
+} from "@/components/reports/accountReport/AccountingReports/BalanceSheetReportForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

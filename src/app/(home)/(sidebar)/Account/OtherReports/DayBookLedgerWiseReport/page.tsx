@@ -1,85 +1,86 @@
-// app/(home)/(sidebar)/Account/reports/CashFlow/page.tsx
+// app/(home)/(sidebar)/Account/OtherReports/DayBookLedgerWiseReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { toast } from "react-toastify";
 import * as yup from "yup";
-
-import type { CashFlowRequest, Pagination } from "types/api/api";
-import CashFlowForm, {
+import type { DayBookLedgerWiseRequestDto, Pagination } from "types/api/api";
+import DayBookLedgerWiseForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/AccountingReports/CashFlowForm";
+} from "@/components/reports/accountReport/OtherReports/DayBookLedgerWiseForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import accountService from "@/services/Account/AccountService";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId here is already a single string on the DTO — no form-only shape needed ──
-export type CashFlowFormValues = CashFlowRequest;
+export type DayBookLedgerWiseFormValues = DayBookLedgerWiseRequestDto;
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
-export interface CashFlowResponseExtended {
+export interface DayBookLedgerWiseResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const schema: yup.ObjectSchema<CashFlowFormValues> = yup
+const DATE_REQUIRED_MESSAGE = "Please select date";
+
+const schema: yup.ObjectSchema<DayBookLedgerWiseFormValues> = yup
   .object({
     fromDate: yup
       .string()
       .nullable()
-      .required("From Date is required")
-      .typeError("From Date must be a valid date")
-      .default(""),
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE),
     toDate: yup
       .string()
       .nullable()
-      .required("To Date is required")
-      .typeError("To Date must be a valid date")
-      .default(""),
-    branchId: yup.string().nullable().optional().default("2"),
-    branchName: yup.string().nullable().optional().default("All"),
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE)
+      .test("date-order", "To Date cannot be before From Date", function (val) {
+        const { fromDate } = this.parent as { fromDate: string | null };
+        if (!fromDate || !val) return true;
+        return String(val) >= String(fromDate);
+      }),
+    branchId: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
-    sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function CashFlowPage() {
-  const [reportState, setReportState] = useState<CashFlowResponseExtended>({
-    isLoading: false,
-  });
-  const [lastRequest, setLastRequest] = useState<CashFlowRequest | null>(null);
+export default function DayBookLedgerWisePage() {
+  const [reportState, setReportState] =
+    useState<DayBookLedgerWiseResponseExtended>({ isLoading: false });
+  const [lastRequest, setLastRequest] =
+    useState<DayBookLedgerWiseRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<CashFlowFormValues>({
+    useForm<DayBookLedgerWiseFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
+      mode: "onSubmit",
     });
 
   const toRequest = useCallback(
-    (form: CashFlowFormValues): CashFlowRequest => ({
-      fromDate: form.fromDate,
-      toDate: form.toDate,
+    (form: DayBookLedgerWiseFormValues): DayBookLedgerWiseRequestDto => ({
+      fromDate: form.fromDate || undefined,
+      toDate: form.toDate || undefined,
       branchId: form.branchId || undefined,
-      branchName: form.branchName || undefined,
       orderBy: form.orderBy || "",
-      sameCompanyName: form.sameCompanyName ?? true,
-      visualReport: form.visualReport ?? false,
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: CashFlowRequest, format: string) =>
-      accountService.api.cashFlowCreate(request, { format }),
+    (request: DayBookLedgerWiseRequestDto, format: string) =>
+      memberAccountService.api.accountDayBookLedgerWiseCreate(request, {
+        format,
+      }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: CashFlowRequest) => {
+    async (request: DayBookLedgerWiseRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -103,10 +104,9 @@ export default function CashFlowPage() {
 
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
-      } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
-        setReportState({ isLoading: false });
-        throw err;
+      } catch {
+        toast.error("Failed to generate report.");
+        setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
     [callApi],
@@ -125,23 +125,33 @@ export default function CashFlowPage() {
 
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
-      if (!lastRequest) return;
-
-      const res = await callApi(lastRequest, format);
-      const blob = responseToBlob(res.data, format);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = extractFilenameFromResponse(res, format, "CashFlow");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      if (!lastRequest) {
+        toast.warning("Please view the report before exporting.");
+        return;
+      }
+      try {
+        const res = await callApi(lastRequest, format);
+        const blob = responseToBlob(res.data, format);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = extractFilenameFromResponse(
+          res,
+          format,
+          "DayBookLedgerWiseReport",
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch {
+        toast.error("Failed to download file.");
+      }
     },
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<CashFlowFormValues> = useCallback(
+  const onSubmit: SubmitHandler<DayBookLedgerWiseFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -156,7 +166,7 @@ export default function CashFlowPage() {
   }, []);
 
   return (
-    <CashFlowForm
+    <DayBookLedgerWiseForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

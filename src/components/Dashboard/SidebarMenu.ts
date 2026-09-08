@@ -333,6 +333,52 @@ export const MENU: MenuNode[] = [
         label: "RatioAnalysis Report",
         route: "/Account/AccountReports/RatioAnalysisReport",
       },
+
+      //===============Other Reports Section================
+      {
+        label: "TellerToTellerCashTransferReport",
+        route: "/Account/OtherReports/TellerToTellerCashTransferReport",
+      },
+      {
+        label: "PEARLSAnalysisReport",
+        route: "/Account/OtherReports/PEARLSAnalysisReport",
+      },
+      {
+        label: "AccountDayOpenAndCloseReport",
+        route: "/Account/OtherReports/AccountDayOpenAndCloseReport",
+      },
+      {
+        label: "TellerCashVaultReport",
+        route: "/Account/OtherReports/TellerCashVaultReport",
+      },
+      {
+        label: "DayBookLedgerWiseReport",
+        route: "/Account/OtherReports/DayBookLedgerWiseReport",
+      },
+      {
+        label: "DayBookVoucherWiseReport",
+        route: "/Account/OtherReports/DayBookVoucherWiseReport",
+      },
+      {
+        label: "AccountYearClosingReport",
+        route: "/Account/OtherReports/AccountYearClosingReport",
+      },
+      {
+        label: "VoucherDetailReport",
+        route: "/Account/OtherReports/VoucherDetailReport",
+      },
+      {
+        label: "DailyIncomeReport",
+        route: "/Account/OtherReports/DailyIncomeReport",
+      },
+      {
+        label: "DailyExpenseReport",
+        route: "/Account/OtherReports/DailyExpenseReport",
+      },
+      {
+        label: "ReserveMasterReport",
+        route: "/Account/OtherReports/ReserveMasterReport",
+      },
     ],
   },
 

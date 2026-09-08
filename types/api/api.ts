@@ -30,6 +30,15 @@ export enum FilterOption {
   IsNotEqualTo = "IsNotEqualTo",
 }
 
+export interface AccountDayOpenAndCloseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  userId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface AccountLookUpDtos {
   /** @format int64 */
   mamAccountOpeningId?: number;
@@ -88,6 +97,12 @@ export interface AccountStatementRequest {
   sameCompanyName?: boolean;
   reportType?: string | null;
   transactionType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface AccountYearClosingRequestDto {
+  branchId?: string | null;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -329,6 +344,22 @@ export interface CostOfFundRequest {
   visualReport?: boolean;
 }
 
+export interface DailyExpenseRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface DailyIncomeRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface DataEditedReportRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
@@ -341,6 +372,22 @@ export interface DataEditedReportRequestDto {
   memberRegistrationId?: number | null;
   orderBy?: string | null;
   sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface DayBookLedgerWiseRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface DayBookVoucherWiseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
   visualReport?: boolean;
 }
 
@@ -845,6 +892,13 @@ export interface OrderByResponse {
   displayName?: string | null;
 }
 
+export interface PEARLSAnalysisRequestDto {
+  tillDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface PLAccountRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -906,6 +960,14 @@ export interface ReportResponseDtosGeneralResponse {
   message?: string | null;
   data?: ReportResponseDtos;
   pagination?: Pagination;
+}
+
+export interface ReserveMasterRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface SMSCategoryRequest {
@@ -1161,10 +1223,44 @@ export interface SummaryTrialBalanceRequest {
   isSubLedger?: boolean;
 }
 
+export interface TellerCashBalanceRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  nepaliReport?: boolean;
+  visualReport?: boolean;
+}
+
+export interface TellerCashDetailRequestDto {
+  transactionDateBs?: string | null;
+  branchId?: string | null;
+  tellerId?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+}
+
+export interface TellerCashVaultRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  sameCompanyName?: boolean;
+  orderBy?: string | null;
+  type?: boolean;
+}
+
 export interface TellerLookupResponse {
   /** @format int64 */
   id?: number;
   name?: string | null;
+}
+
+export interface TellerToTellerCashTransferRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface TellerWiseCollectionRequestDto {
@@ -1217,6 +1313,38 @@ export interface VerificationStatusDtoGeneralResponse {
   statusCode?: number;
   message?: string | null;
   data?: VerificationStatusDto;
+  pagination?: Pagination;
+}
+
+export interface VoucherDetailsRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  voucherId?: number | null;
+  orderBy?: string | null;
+  viewType?: string | null;
+  visualReport?: boolean;
+}
+
+export interface VoucherListRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: number[] | null;
+}
+
+export interface VoucherOptionResponse {
+  /** @format int64 */
+  acoVoucherId?: number;
+  voucherNo?: string | null;
+}
+
+export interface VoucherOptionResponseListGeneralResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: VoucherOptionResponse[] | null;
   pagination?: Pagination;
 }
 
@@ -1410,6 +1538,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags AccountDayOpenAndClose
+     * @name AccountDayOpenAndCloseCreate
+     * @request POST:/api/AccountDayOpenAndClose
+     * @secure
+     */
+    accountDayOpenAndCloseCreate: (
+      data: AccountDayOpenAndCloseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/AccountDayOpenAndClose`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags AccountLookUp
      * @name AccountLookUpSearchCreate
      * @request POST:/api/AccountLookUp/search
@@ -1490,6 +1644,32 @@ export class Api<
         secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags AccountYearClosing
+     * @name AccountAccountYearClosingCreate
+     * @request POST:/api/account/AccountYearClosing
+     * @secure
+     */
+    accountAccountYearClosingCreate: (
+      data: AccountYearClosingRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/AccountYearClosing`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -2080,6 +2260,58 @@ export class Api<
     /**
      * No description
      *
+     * @tags DailyExpense
+     * @name AccountDailyExpenseCreate
+     * @request POST:/api/account/DailyExpense
+     * @secure
+     */
+    accountDailyExpenseCreate: (
+      data: DailyExpenseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/DailyExpense`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DailyIncome
+     * @name AccountDailyIncomeCreate
+     * @request POST:/api/account/DailyIncome
+     * @secure
+     */
+    accountDailyIncomeCreate: (
+      data: DailyIncomeRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/DailyIncome`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags DataEditedReport
      * @name DataEditedReportCreate
      * @request POST:/api/DataEditedReport
@@ -2095,6 +2327,58 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/DataEditedReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DayBookLedgerWise
+     * @name AccountDayBookLedgerWiseCreate
+     * @request POST:/api/account/DayBookLedgerWise
+     * @secure
+     */
+    accountDayBookLedgerWiseCreate: (
+      data: DayBookLedgerWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/DayBookLedgerWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags DayBookVoucherWise
+     * @name DayBookVoucherWiseCreate
+     * @request POST:/api/DayBookVoucherWise
+     * @secure
+     */
+    dayBookVoucherWiseCreate: (
+      data: DayBookVoucherWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/DayBookVoucherWise`,
         method: "POST",
         query: query,
         body: data,
@@ -2975,6 +3259,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags PEARLSAnalysis
+     * @name PearlsAnalysisCreate
+     * @request POST:/api/PEARLSAnalysis
+     * @secure
+     */
+    pearlsAnalysisCreate: (
+      data: PEARLSAnalysisRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/PEARLSAnalysis`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags PLAccount
      * @name PlAccountCreate
      * @request POST:/api/PLAccount
@@ -3016,6 +3326,32 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/RatioAnalysis`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ReserveMaster
+     * @name AccountReserveMasterCreate
+     * @request POST:/api/account/ReserveMaster
+     * @secure
+     */
+    accountReserveMasterCreate: (
+      data: ReserveMasterRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/ReserveMaster`,
         method: "POST",
         query: query,
         body: data,
@@ -3526,6 +3862,84 @@ export class Api<
     /**
      * No description
      *
+     * @tags TellerCashBalance
+     * @name TellerCashBalanceCreate
+     * @request POST:/api/TellerCashBalance
+     * @secure
+     */
+    tellerCashBalanceCreate: (
+      data: TellerCashBalanceRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/TellerCashBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerCashDetail
+     * @name TellerCashDetailCreate
+     * @request POST:/api/TellerCashDetail
+     * @secure
+     */
+    tellerCashDetailCreate: (
+      data: TellerCashDetailRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/TellerCashDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerCashVault
+     * @name TellerCashVaultCreate
+     * @request POST:/api/TellerCashVault
+     * @secure
+     */
+    tellerCashVaultCreate: (
+      data: TellerCashVaultRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/TellerCashVault`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags TellerExpenseList
      * @name TellerExpenseListList
      * @request GET:/api/TellerExpenseList
@@ -3544,6 +3958,32 @@ export class Api<
         query: query,
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags TellerToTellerCashTransfer
+     * @name TellerToTellerCashTransferCreate
+     * @request POST:/api/TellerToTellerCashTransfer
+     * @secure
+     */
+    tellerToTellerCashTransferCreate: (
+      data: TellerToTellerCashTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/TellerToTellerCashTransfer`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -3640,6 +4080,74 @@ export class Api<
         method: "GET",
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Voucher
+     * @name VoucherListCreate
+     * @request POST:/api/Voucher/list
+     * @secure
+     */
+    voucherListCreate: (data: VoucherListRequest, params: RequestParams = {}) =>
+      this.request<VoucherOptionResponseListGeneralResponse, any>({
+        path: `/api/Voucher/list`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Voucher
+     * @name VoucherByNumberList
+     * @request GET:/api/Voucher/by-number
+     * @secure
+     */
+    voucherByNumberList: (
+      query?: {
+        voucherNo?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<VoucherOptionResponse, any>({
+        path: `/api/Voucher/by-number`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags VoucherDetails
+     * @name AccountVoucherDetailsCreate
+     * @request POST:/api/account/VoucherDetails
+     * @secure
+     */
+    accountVoucherDetailsCreate: (
+      data: VoucherDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/VoucherDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };

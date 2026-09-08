@@ -8,7 +8,7 @@ import * as yup from "yup";
 import type { CostOfFundRequest, Pagination } from "types/api/api";
 import CostOfFundForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/CostOfFundForm";
+} from "@/components/reports/accountReport/AccountingReports/CostOfFundForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";

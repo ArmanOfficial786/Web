@@ -9,7 +9,7 @@ import * as yup from "yup";
 import type { SummaryTrialBalanceRequest, Pagination } from "types/api/api";
 import SummaryTrialBalanceForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/SummaryTrailBalanceFrom";
+} from "@/components/reports/accountReport/AccountingReports/SummaryTrailBalanceFrom";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

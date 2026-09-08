@@ -1,93 +1,113 @@
+// app/(home)/(sidebar)/Account/OtherReports/VoucherDetailReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { toast } from "react-toastify";
-
-import type { MonthlyReportRequest, Pagination } from "types/api/api";
-import MonthlyReportForm, {
+import * as yup from "yup";
+import type { VoucherDetailsRequestDto, Pagination } from "types/api/api";
+import VoucherDetailsForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/AccountingReports/MonthlyReportForm";
+} from "@/components/reports/accountReport/OtherReports/VoucherDetailsForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import accountService from "@/services/Account/AccountService";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── Form values — matches the DTO directly (single branchId, like CostOfFund) ──
-export interface MonthlyReportFormValues extends Omit<
-  MonthlyReportRequest,
-  "isNepali"
-> {}
+// ── branchIds is a string on the DTO ("-1" = all, else comma-separated ids),
+// but OfficeNameField binds/writes a string[]. Same collapse pattern as
+// InterestAndTaxDetail / SavingsAccountMaturity.
+export type VoucherDetailsFormValues = Omit<
+  VoucherDetailsRequestDto,
+  "branchIds"
+> & {
+  branchIds?: string[];
+};
 
-// ── Client-only response state (binary PDF + header pagination) ─────────────
-export interface MonthlyReportResponseExtended {
+export interface VoucherDetailsResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const schema: yup.ObjectSchema<MonthlyReportFormValues> = yup
+const DATE_REQUIRED_MESSAGE = "Please select date";
+
+const schema: yup.ObjectSchema<VoucherDetailsFormValues> = yup
   .object({
-    tillDate: yup
+    fromDate: yup
       .string()
-      .required("Till Date is required")
-      .typeError("Till Date must be a valid date")
-      .default(""),
-    branchId: yup.string().nullable().optional().default("2"), // matches CostOfFund's defaultBranchId={2}
-    branchName: yup.string().nullable().optional().default(""),
-    accountTypeId: yup.number().required().default(0),
-    reportType: yup.string().optional().default("Summary"),
-    isMonthWise: yup.boolean().optional().default(false),
-    showBudget: yup.boolean().optional().default(false),
-    sameCompanyName: yup.boolean().optional().default(true),
+      .nullable()
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE),
+    toDate: yup
+      .string()
+      .nullable()
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE)
+      .test("date-order", "To Date cannot be before From Date", function (val) {
+        const { fromDate } = this.parent as { fromDate: string | null };
+        if (!fromDate || !val) return true;
+        return String(val) >= String(fromDate);
+      }),
+    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    voucherId: yup.number().nullable().optional().default(0),
+    orderBy: yup.string().nullable().optional().default(""),
+    viewType: yup
+      .string()
+      .oneOf(["None", "Grouping"]) // ⚠️ confirm exact backend codes
+      .nullable()
+      .optional()
+      .default("None"),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function MonthlyReportPage() {
-  const [reportState, setReportState] = useState<MonthlyReportResponseExtended>(
-    { isLoading: false },
-  );
-  const [lastRequest, setLastRequest] = useState<MonthlyReportRequest | null>(
-    null,
-  );
+export default function VoucherDetailsPage() {
+  const [reportState, setReportState] =
+    useState<VoucherDetailsResponseExtended>({ isLoading: false });
+  const [lastRequest, setLastRequest] =
+    useState<VoucherDetailsRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<MonthlyReportFormValues>({
+    useForm<VoucherDetailsFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
+      mode: "onSubmit",
     });
 
   const toRequest = useCallback(
-    (form: MonthlyReportFormValues): MonthlyReportRequest => ({
-      tillDate: form.tillDate,
-      branchId: form.branchId ?? "2",
-      branchName: form.branchName ?? "",
-      accountTypeId: form.accountTypeId ?? 0,
-      reportType: form.reportType,
-      isMonthWise: form.isMonthWise ?? false,
-      isNepali: true, // Till Date is BS-only in this form
-      showBudget: form.showBudget ?? false,
-      sameCompanyName: form.sameCompanyName ?? true,
-      visualReport: false,
-    }),
+    (form: VoucherDetailsFormValues): VoucherDetailsRequestDto => {
+      const selectedIds = (form.branchIds ?? []).map(String).filter(Boolean);
+      const isAll = selectedIds.length === 0;
+
+      return {
+        fromDate: form.fromDate || undefined,
+        toDate: form.toDate || undefined,
+        branchIds: isAll ? "-1" : selectedIds.join(","),
+        voucherId: form.voucherId ?? undefined,
+        orderBy: form.orderBy || "",
+        viewType: form.viewType || "None",
+      };
+    },
     [],
   );
 
   const callApi = useCallback(
-    (request: MonthlyReportRequest, format: string) =>
-      accountService.api.monthlyReportCreate(request, { format }),
+    (request: VoucherDetailsRequestDto, format: string) =>
+      memberAccountService.api.accountVoucherDetailsCreate(request, {
+        format,
+      }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: MonthlyReportRequest) => {
+    async (request: VoucherDetailsRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
+
       try {
         const res = await callApi(request, "VIEW");
 
@@ -107,6 +127,7 @@ export default function MonthlyReportPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
+        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
@@ -139,27 +160,24 @@ export default function MonthlyReportPage() {
         link.download = extractFilenameFromResponse(
           res,
           format,
-          "MonthlyReport",
+          "VoucherDetailsReport",
         );
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-      } catch (error) {
-        toast.error(
-          `Download failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-        );
+      } catch {
+        toast.error("Failed to download file.");
       }
     },
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<MonthlyReportFormValues> = useCallback(
+  const onSubmit: SubmitHandler<VoucherDetailsFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {
@@ -170,7 +188,7 @@ export default function MonthlyReportPage() {
   }, []);
 
   return (
-    <MonthlyReportForm
+    <VoucherDetailsForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

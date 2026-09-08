@@ -9,7 +9,7 @@ import * as yup from "yup";
 import type { PLAccountRequest, Pagination } from "types/api/api";
 import PLAccountForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/PLAccountForm";
+} from "@/components/reports/accountReport/AccountingReports/PLAccountForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";

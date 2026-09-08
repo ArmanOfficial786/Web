@@ -3,91 +3,100 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { toast } from "react-toastify";
-
-import type { MonthlyReportRequest, Pagination } from "types/api/api";
-import MonthlyReportForm, {
+import * as yup from "yup";
+import type {
+  AccountDayOpenAndCloseRequestDto,
+  Pagination,
+} from "types/api/api";
+import AccountDayOpenCloseForm, {
   type ReportFormat,
-} from "@/components/reports/accountReport/AccountingReports/MonthlyReportForm";
+} from "@/components/reports/accountReport/OtherReports/AccountDayOpenCloseForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import accountService from "@/services/Account/AccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import accountService from "@/services/Account/AccountService";
 
-// ── Form values — matches the DTO directly (single branchId, like CostOfFund) ──
-export interface MonthlyReportFormValues extends Omit<
-  MonthlyReportRequest,
-  "isNepali"
-> {}
+// ── userName is UI-only (not on the DTO), kept so UserLookupField has a
+// display value to show; userId itself is a string on the real DTO.
+export type AccountDayOpenCloseFormValues = AccountDayOpenAndCloseRequestDto & {
+  userName?: string | null;
+};
 
-// ── Client-only response state (binary PDF + header pagination) ─────────────
-export interface MonthlyReportResponseExtended {
+export interface AccountDayOpenCloseResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const schema: yup.ObjectSchema<MonthlyReportFormValues> = yup
+const DATE_REQUIRED_MESSAGE = "Please select date";
+
+const schema: yup.ObjectSchema<AccountDayOpenCloseFormValues> = yup
   .object({
-    tillDate: yup
+    fromDateBs: yup
       .string()
-      .required("Till Date is required")
-      .typeError("Till Date must be a valid date")
-      .default(""),
-    branchId: yup.string().nullable().optional().default("2"), // matches CostOfFund's defaultBranchId={2}
-    branchName: yup.string().nullable().optional().default(""),
-    accountTypeId: yup.number().required().default(0),
-    reportType: yup.string().optional().default("Summary"),
-    isMonthWise: yup.boolean().optional().default(false),
-    showBudget: yup.boolean().optional().default(false),
-    sameCompanyName: yup.boolean().optional().default(true),
-    visualReport: yup.boolean().optional().default(false),
+      .nullable()
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE),
+    toDateBs: yup
+      .string()
+      .nullable()
+      .optional()
+      .required(DATE_REQUIRED_MESSAGE)
+      .test("date-order", "To Date cannot be before From Date", function (val) {
+        const { fromDateBs } = this.parent as { fromDateBs: string | null };
+        if (!fromDateBs || !val) return true;
+        return String(val) >= String(fromDateBs);
+      }),
+    branchId: yup.string().nullable().optional().default(""),
+    userId: yup.string().nullable().optional().default("0"),
+    userName: yup.string().nullable().optional().default(""),
+    orderBy: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false), // on DTO, not requested for UI — kept for schema completeness only
   })
   .required();
 
-export default function MonthlyReportPage() {
-  const [reportState, setReportState] = useState<MonthlyReportResponseExtended>(
-    { isLoading: false },
-  );
-  const [lastRequest, setLastRequest] = useState<MonthlyReportRequest | null>(
-    null,
-  );
+export default function AccountDayOpenClosePage() {
+  const [reportState, setReportState] =
+    useState<AccountDayOpenCloseResponseExtended>({ isLoading: false });
+  const [lastRequest, setLastRequest] =
+    useState<AccountDayOpenAndCloseRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<MonthlyReportFormValues>({
+    useForm<AccountDayOpenCloseFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
+      mode: "onSubmit",
     });
 
   const toRequest = useCallback(
-    (form: MonthlyReportFormValues): MonthlyReportRequest => ({
-      tillDate: form.tillDate,
-      branchId: form.branchId ?? "2",
-      branchName: form.branchName ?? "",
-      accountTypeId: form.accountTypeId ?? 0,
-      reportType: form.reportType,
-      isMonthWise: form.isMonthWise ?? false,
-      isNepali: true, // Till Date is BS-only in this form
-      showBudget: form.showBudget ?? false,
-      sameCompanyName: form.sameCompanyName ?? true,
-      visualReport: false,
+    (
+      form: AccountDayOpenCloseFormValues,
+    ): AccountDayOpenAndCloseRequestDto => ({
+      fromDateBs: form.fromDateBs || undefined,
+      toDateBs: form.toDateBs || undefined,
+      branchId: form.branchId || undefined,
+      userId: form.userId || undefined,
+      orderBy: form.orderBy || "",
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: MonthlyReportRequest, format: string) =>
-      accountService.api.monthlyReportCreate(request, { format }),
+    (request: AccountDayOpenAndCloseRequestDto, format: string) =>
+      accountService.api.accountDayOpenAndCloseCreate(request, {
+        format,
+      }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: MonthlyReportRequest) => {
+    async (request: AccountDayOpenAndCloseRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
+
       try {
         const res = await callApi(request, "VIEW");
 
@@ -107,6 +116,7 @@ export default function MonthlyReportPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
+        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
@@ -139,27 +149,24 @@ export default function MonthlyReportPage() {
         link.download = extractFilenameFromResponse(
           res,
           format,
-          "MonthlyReport",
+          "AccountDayOpenCloseReport",
         );
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-      } catch (error) {
-        toast.error(
-          `Download failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-        );
+      } catch {
+        toast.error("Failed to download file.");
       }
     },
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<MonthlyReportFormValues> = useCallback(
+  const onSubmit: SubmitHandler<AccountDayOpenCloseFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {
@@ -170,7 +177,7 @@ export default function MonthlyReportPage() {
   }, []);
 
   return (
-    <MonthlyReportForm
+    <AccountDayOpenCloseForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
