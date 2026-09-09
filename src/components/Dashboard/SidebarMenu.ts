@@ -379,6 +379,27 @@ export const MENU: MenuNode[] = [
         label: "ReserveMasterReport",
         route: "/Account/OtherReports/ReserveMasterReport",
       },
+      {
+        label: "Cash And BankBalance Report",
+        route: "/Account/OtherReports/CashAndBankBalanceReport",
+      },
+      {
+        label: "Teller Cash Balance Report",
+        route: "/Account/OtherReports/TellerCashBalanceReport",
+      },
+      {
+        label: "Teller Cash Detail Report",
+        route: "/Account/OtherReports/TellerCashDetailReport",
+      },
+      {
+        label: "Bank Received Payment Report",
+        route: "/Account/OtherReports/BankReceivedPaymentReport",
+      },
+
+      {
+        label: "Payment Through Saving Report",
+        route: "/Account/OtherReports/PaymentThroughSavingReport",
+      },
     ],
   },
 

@@ -16,36 +16,43 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
+import { Controller } from "react-hook-form";
 
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
 import TellerField from "@/components/reportForm/Common/TellerField";
+import BranchField from "@/components/reportForm/Common/BranchNameField";
+import DateInput from "@/components/form/DateInput";
+import FieldRow from "@/utilis/FieldRow";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import type {
-  TellerWiseCollectionFormValues,
-  TellerWiseCollectionResponseExtended,
-} from "@/app/(home)/(sidebar)/MemberAc/OtherReports/TellerWiseCollectionReport/page";
+  TellerCashDetailFormValues,
+  TellerCashDetailResponseExtended,
+} from "@/app/(home)/(sidebar)/Account/OtherReports/TellerCashDetailReport/page";
 
 export type { ReportFormat };
 
-interface TellerWiseCollectionFormProps {
-  control: Control<TellerWiseCollectionFormValues>;
-  handleSubmit: UseFormHandleSubmit<TellerWiseCollectionFormValues>;
-  onSubmit: SubmitHandler<TellerWiseCollectionFormValues>;
-  setValue: UseFormSetValue<TellerWiseCollectionFormValues>;
-  reset: UseFormReset<TellerWiseCollectionFormValues>;
-  reportState: TellerWiseCollectionResponseExtended;
+interface TellerCashDetailFormProps {
+  control: Control<TellerCashDetailFormValues>;
+  handleSubmit: UseFormHandleSubmit<TellerCashDetailFormValues>;
+  onSubmit: SubmitHandler<TellerCashDetailFormValues>;
+  setValue: UseFormSetValue<TellerCashDetailFormValues>;
+  reset: UseFormReset<TellerCashDetailFormValues>;
+  reportState: TellerCashDetailResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  errors: FieldErrors<TellerWiseCollectionFormValues>;
+  errors: FieldErrors<TellerCashDetailFormValues>;
 }
 
-function TellerWiseCollectionForm({
+function TellerCashDetailForm({
   control,
   handleSubmit,
   onSubmit,
@@ -54,24 +61,19 @@ function TellerWiseCollectionForm({
   onPageChange,
   onDownload,
   errors,
-}: TellerWiseCollectionFormProps) {
+}: TellerCashDetailFormProps) {
   const { pdfData, isLoading, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Teller options narrow to the selected date range ──────────────────────
-  const fromDateBs = useWatch({ control, name: "fromDateBs" }) as
-    | string
-    | undefined;
-  const toDateBs = useWatch({ control, name: "toDateBs" }) as
+  // Teller options narrow to the selected till date — same day used for
+  // both fromDateBs/toDateBs since TellerField expects a range.
+  const tillDateBs = useWatch({ control, name: "tillDateBs" }) as
     | string
     | undefined;
 
-  // ── Date validation message: required (either field) or bad order ─────────
-  const dateError =
-    errors.fromDateBs?.message ?? errors.toDateBs?.message ?? undefined;
+  const dateError = errors.tillDateBs?.message ?? undefined;
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -103,18 +105,15 @@ function TellerWiseCollectionForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Teller Wise Collection Report
+            Teller Cash Detail Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── From/To Date ─────────────────────────────────────────────── */}
+          {/* ── Transaction Date (Till Date) ─────────────────────────────── */}
           <Box sx={{ mb: 0.5 }}>
-            <DateFields<TellerWiseCollectionFormValues>
-              control={control}
-              fromDateName="fromDateBs"
-              toDateName="toDateBs"
-              mode="BS"
-            />
+            <FieldRow label="Till Date">
+              <DateInput name="tillDateBs" control={control} dateType="BS" />
+            </FieldRow>
           </Box>
 
           {dateError && (
@@ -125,29 +124,74 @@ function TellerWiseCollectionForm({
 
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Teller Name + Order By ────────────────────────────────────── */}
+          {/* ── Branch Name + Teller Name ────────────────────────────────── */}
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
+              mb: 0.5,
             }}
           >
-            <TellerField<TellerWiseCollectionFormValues>
+            <BranchField<TellerCashDetailFormValues>
+              control={control}
+              branchFieldName="branchId"
+              setValue={setValue}
+            />
+            <TellerField<TellerCashDetailFormValues>
               control={control}
               tellerFieldName="tellerId"
-              fromDateBs={fromDateBs}
-              toDateBs={toDateBs}
-            />
-            <OrderByField<TellerWiseCollectionFormValues>
-              control={control}
-              name="orderBy"
-              reportKey="teller-wise-collection-report" // ⚠️ add this key to memberOrderByOptions.ts
+              fromDateBs={tillDateBs}
+              toDateBs={tillDateBs}
             />
           </Box>
+
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── View Report | Clear ───────────────────────────────────────── */}
+          {/* ── Report Type + Order By ───────────────────────────────────── */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              alignItems: "center",
+              mb: 0.5,
+            }}
+          >
+            <Box>
+              <FormLabel sx={{ fontSize: 14, mb: 0.5, display: "block" }}>
+                Report Type
+              </FormLabel>
+              <Controller
+                name="reportType"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup {...field} row>
+                    <FormControlLabel
+                      value="Detail"
+                      control={<Radio size="small" />}
+                      label="Detail"
+                    />
+                    <FormControlLabel
+                      value="Summary"
+                      control={<Radio size="small" />}
+                      label="Summary"
+                    />
+                  </RadioGroup>
+                )}
+              />
+            </Box>
+
+            <OrderByField<TellerCashDetailFormValues>
+              control={control}
+              name="orderBy"
+              reportKey="teller-cash-detail-report" // ⚠️ add this key to memberOrderByOptions.ts
+            />
+          </Box>
+
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── View Report | Clear ──────────────────────────────────────── */}
           <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -157,7 +201,7 @@ function TellerWiseCollectionForm({
                 gap={5}
                 width="100%"
               >
-                <ViewReportButton<TellerWiseCollectionFormValues>
+                <ViewReportButton<TellerCashDetailFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -204,4 +248,4 @@ function TellerWiseCollectionForm({
   );
 }
 
-export default React.memo(TellerWiseCollectionForm);
+export default React.memo(TellerCashDetailForm);

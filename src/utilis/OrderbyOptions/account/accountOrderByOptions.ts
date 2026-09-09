@@ -110,6 +110,21 @@ export const voucherDetailOrderByOptions = defineOrderByOptions([
   { key: "creditAmount", label: "Credit Amount" },
 ] as const);
 
+export const tellerCashBalanceOrderByOptions = defineOrderByOptions([
+  { key: "tellerName", label: "Teller Name" },
+  { key: "date", label: "Date" },
+] as const);
+
+export const tellerCashDetaileOrderByOptions = defineOrderByOptions([
+  { key: "tellerName", label: "Teller Name" },
+  { key: "date", label: "Date" },
+] as const);
+
+export const bankReceivedPaymentOrderByOptions = defineOrderByOptions([
+  { key: "transactionDate", label: "Transaction Date" },
+  { key: "memberId", label: "Member ID" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type AccountOrderByReportKey =
   | "account-statement-report"
@@ -126,7 +141,10 @@ export type AccountOrderByReportKey =
   | "account-year-closing-report"
   | "daily-income-report"
   | "reserve-master-report"
-  | "voucher-details-report";
+  | "voucher-details-report"
+  | "teller-cash-balance-report"
+  | "teller-cash-detail-report"
+  | "bank-received-payment-report";
 
 export const accountOrderByOptionsMap: Record<
   AccountOrderByReportKey,
@@ -148,4 +166,7 @@ export const accountOrderByOptionsMap: Record<
   "daily-income-report": dailyIncomeOrderByOptions,
   "reserve-master-report": reserveMasterOrderByOptions,
   "voucher-details-report": voucherDetailOrderByOptions,
+  "teller-cash-balance-report": tellerCashBalanceOrderByOptions,
+  "teller-cash-detail-report": tellerCashDetaileOrderByOptions,
+  "bank-received-payment-report": bankReceivedPaymentOrderByOptions,
 };

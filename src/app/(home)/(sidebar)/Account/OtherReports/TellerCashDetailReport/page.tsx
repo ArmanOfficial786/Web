@@ -4,27 +4,25 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import type { TellerWiseCollectionRequestDto, Pagination } from "types/api/api";
-import TellerWiseCollectionForm, {
+import type { TellerCashDetailRequestDto, Pagination } from "types/api/api";
+import TellerCashDetailForm, {
   type ReportFormat,
-} from "@/components/reports/memberAccount/OthersReport/TellerWiseCollectionForm";
+} from "@/components/reports/accountReport/OtherReports/TellerCashDetailForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
+import accountService from "@/services/Account/AccountService";
 
-// ── tellerId is a number here (matches TellerField's DropDown option ids),
-// converted to the DTO's int64|null in toRequest(). ──────────────────────────
-export interface TellerWiseCollectionFormValues extends Omit<
-  TellerWiseCollectionRequestDto,
-  "tellerId"
+export interface TellerCashDetailFormValues extends Omit<
+  TellerCashDetailRequestDto,
+  "transactionDateBs" | "tellerId" | "branchId"
 > {
+  tillDateBs?: string | null;
   tellerId?: number;
+  branchId?: number;
+  reportType: "Detail" | "Summary";
 }
 
-// ── Client-only response state (raw PDF blob URL + header pagination) ──────
-// Same shape as DepositUnverifiedResponseExtended — pdfData is ALWAYS a blob
-// URL created via URL.createObjectURL, never a raw base64 string.
-export interface TellerWiseCollectionResponseExtended {
+export interface TellerCashDetailResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
@@ -39,26 +37,17 @@ const DEFAULT_PAGINATION: Pagination = {
   hasPreviousPage: false,
 };
 
-const DATE_REQUIRED_MESSAGE = "Please select date to get Teller Name";
+const DATE_REQUIRED_MESSAGE = "Please select the transaction date";
 const TELLER_REQUIRED_MESSAGE = "Select Date for TellerName";
 
-const schema: yup.ObjectSchema<TellerWiseCollectionFormValues> = yup
+const schema: yup.ObjectSchema<TellerCashDetailFormValues> = yup
   .object({
-    fromDateBs: yup
+    tillDateBs: yup
       .string()
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    toDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE)
-      .test("date-order", "To Date cannot be before From Date", function (val) {
-        const { fromDateBs } = this.parent as { fromDateBs: string | null };
-        if (!fromDateBs || !val) return true;
-        return String(val) >= String(fromDateBs);
-      }),
+    branchId: yup.number().optional().default(-1),
     tellerId: yup
       .number()
       .optional()
@@ -69,16 +58,21 @@ const schema: yup.ObjectSchema<TellerWiseCollectionFormValues> = yup
         (val) => typeof val === "number" && val >= 0,
       )
       .default(-1),
+    reportType: yup
+      .string()
+      .oneOf(["Detail", "Summary"])
+      .required()
+      .default("Detail"),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function TellerWiseCollectionPage() {
+export default function TellerCashDetailReportPage() {
   const [reportState, setReportState] =
-    useState<TellerWiseCollectionResponseExtended>({ isLoading: false });
+    useState<TellerCashDetailResponseExtended>({ isLoading: false });
   const [lastRequest, setLastRequest] =
-    useState<TellerWiseCollectionRequestDto | null>(null);
+    useState<TellerCashDetailRequestDto | null>(null);
 
   const {
     control,
@@ -86,31 +80,30 @@ export default function TellerWiseCollectionPage() {
     setValue,
     reset,
     formState: { errors },
-  } = useForm<TellerWiseCollectionFormValues>({
+  } = useForm<TellerCashDetailFormValues>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
     mode: "onSubmit",
   });
 
   const toRequest = useCallback(
-    (form: TellerWiseCollectionFormValues): TellerWiseCollectionRequestDto => ({
-      fromDateBs: form.fromDateBs || undefined,
-      toDateBs: form.toDateBs || undefined,
-      tellerId: form.tellerId || undefined,
+    (form: TellerCashDetailFormValues): TellerCashDetailRequestDto => ({
+      transactionDateBs: form.tillDateBs || undefined,
+      branchId: form.branchId === undefined ? undefined : String(form.branchId),
+      tellerId: form.tellerId === undefined ? undefined : String(form.tellerId),
       orderBy: form.orderBy || "",
-      visualReport: form.visualReport ?? false,
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: TellerWiseCollectionRequestDto, format: string) =>
-      memberAccountService.api.tellerWiseCollectionCreate(request, { format }),
+    (request: TellerCashDetailRequestDto, format: string) =>
+      accountService.api.tellerCashDetailCreate(request, { format }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: TellerWiseCollectionRequestDto) => {
+    async (request: TellerCashDetailRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -165,7 +158,7 @@ export default function TellerWiseCollectionPage() {
       link.download = extractFilenameFromResponse(
         res,
         format,
-        "TellerWiseCollection",
+        "TellerCashDetail",
       );
       document.body.appendChild(link);
       link.click();
@@ -175,7 +168,7 @@ export default function TellerWiseCollectionPage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<TellerWiseCollectionFormValues> = useCallback(
+  const onSubmit: SubmitHandler<TellerCashDetailFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -190,7 +183,7 @@ export default function TellerWiseCollectionPage() {
   }, []);
 
   return (
-    <TellerWiseCollectionForm
+    <TellerCashDetailForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

@@ -132,6 +132,16 @@ export interface BalanceSheetRequest {
   visualReport?: boolean;
 }
 
+export interface BankReceivedPaymentRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  sameCompanyName?: boolean;
+  paymentType?: string | null;
+  transactionType?: string | null;
+  orderBy?: string | null;
+}
+
 export interface BranchResponse {
   /** @format int64 */
   branchId?: number;
@@ -173,6 +183,13 @@ export interface BranchToBranchExpenseRequestDto {
   reportType?: string | null;
   orderBy?: string | null;
   visualReport?: boolean;
+}
+
+export interface CashAndBankBalanceRequestDto {
+  tillDateBs?: string | null;
+  branchId?: string | null;
+  orderBy?: string | null;
+  nepaliReport?: boolean;
 }
 
 export interface CashFlowDetailsRequest {
@@ -514,6 +531,21 @@ export interface FilterParam {
   option?: FilterOption;
 }
 
+export interface FirstLedgerDetailsRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  /** @format int32 */
+  ledgerHeadId?: number;
+  ledgerName?: string | null;
+  subLedgerName?: string | null;
+  voucherType?: string | null;
+  reportType?: string | null;
+  showOpeningBalance?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface FixedDepositCertificateScheduleRequestDto {
   /** @format int64 */
   accountId?: number;
@@ -572,6 +604,20 @@ export interface InterestPayableRequestDto {
   branchName?: string | null;
   reportView?: string | null;
   visualReport?: boolean;
+}
+
+export interface LedgerDetailsReqResponse {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  voucherType?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  ledgerHead?: string[] | null;
+  /** @format int64 */
+  selectedAccountType?: number;
+  showOpeningBalance?: boolean;
+  isSummary?: boolean;
 }
 
 export interface LmtLoanMaseterListResponse {
@@ -935,6 +981,15 @@ export interface PayableInterestTransferredRequestDto {
   visualReport?: boolean;
 }
 
+export interface PaymentThroughSavingRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  sameCompanyName?: boolean;
+  transactionType?: string | null;
+  orderBy?: string | null;
+}
+
 export interface RatioAnalysisRequest {
   fromDate?: string | null;
   toDate?: string | null;
@@ -1177,6 +1232,22 @@ export interface SavingsAccountMaturityRequestDto {
   format?: string | null;
 }
 
+export interface SecondLedgerDetailsRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  /** @format int32 */
+  ledgerHeadId?: number;
+  ledgerName?: string | null;
+  subLedgerName?: string | null;
+  secondSubLedgerName?: string | null;
+  voucherType?: string | null;
+  reportType?: string | null;
+  showOpeningBalance?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface ShareTypeResponse {
   /** @format int32 */
   shmShareTypeId?: number;
@@ -1208,6 +1279,20 @@ export interface SoleMemberGroupResponseDto {
 export interface SortParam {
   field?: string | null;
   sortOrder?: SortOrder;
+}
+
+export interface SubLedgerDetailsRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  voucherType?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  ledgerHead?: string[] | null;
+  /** @format int64 */
+  selectedAccountType?: number;
+  showOpeningBalance?: boolean;
+  isSummary?: boolean;
 }
 
 export interface SummaryTrialBalanceRequest {
@@ -1277,6 +1362,23 @@ export interface TellerWiseExpenseRequestDto {
   toDateBs?: string | null;
   /** @format int64 */
   tellerId?: number | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ThirdLedgerDetailsRequestDto {
+  fromDate?: string | null;
+  toDate?: string | null;
+  branchIds?: string | null;
+  /** @format int32 */
+  ledgerHeadId?: number;
+  ledgerName?: string | null;
+  subLedgerName?: string | null;
+  secondSubLedgerName?: string | null;
+  thirdSubLedgerName?: string | null;
+  voucherType?: string | null;
+  reportType?: string | null;
+  showOpeningBalance?: boolean;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -1737,6 +1839,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags BankReceivedPayment
+     * @name BankReceivedPaymentCreate
+     * @request POST:/api/BankReceivedPayment
+     * @secure
+     */
+    bankReceivedPaymentCreate: (
+      data: BankReceivedPaymentRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/BankReceivedPayment`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Branch
      * @name BranchGetAllBranchesList
      * @request GET:/api/Branch/GetAllBranches
@@ -1896,6 +2024,32 @@ export class Api<
         secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags CashAndBankBalance
+     * @name CashAndBankBalanceCreate
+     * @request POST:/api/CashAndBankBalance
+     * @secure
+     */
+    cashAndBankBalanceCreate: (
+      data: CashAndBankBalanceRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CashAndBankBalance`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -2573,6 +2727,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags FirstLedgerDetails
+     * @name AccountFirstLedgerDetailsCreate
+     * @request POST:/api/account/FirstLedgerDetails
+     * @secure
+     */
+    accountFirstLedgerDetailsCreate: (
+      data: FirstLedgerDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/FirstLedgerDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags FixedDepositCertificateSchedule
      * @name FixedDepositCertificateScheduleCreate
      * @request POST:/api/FixedDepositCertificateSchedule
@@ -2718,6 +2898,32 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/InterestPayable`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerDetails
+     * @name LedgerDetailsCreate
+     * @request POST:/api/LedgerDetails
+     * @secure
+     */
+    ledgerDetailsCreate: (
+      data: LedgerDetailsReqResponse,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerDetails`,
         method: "POST",
         query: query,
         body: data,
@@ -3259,6 +3465,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags PaymentThroughSaving
+     * @name PaymentThroughSavingCreate
+     * @request POST:/api/PaymentThroughSaving
+     * @secure
+     */
+    paymentThroughSavingCreate: (
+      data: PaymentThroughSavingRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/PaymentThroughSaving`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags PEARLSAnalysis
      * @name PearlsAnalysisCreate
      * @request POST:/api/PEARLSAnalysis
@@ -3747,6 +3979,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags SecondLedgerDetails
+     * @name AccountSecondLedgerDetailsCreate
+     * @request POST:/api/account/SecondLedgerDetails
+     * @secure
+     */
+    accountSecondLedgerDetailsCreate: (
+      data: SecondLedgerDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/SecondLedgerDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags ShareType
      * @name ShareTypeList
      * @request GET:/api/ShareType
@@ -3806,6 +4064,32 @@ export class Api<
         secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags SubLedgerDetails
+     * @name SubLedgerDetailsCreate
+     * @request POST:/api/SubLedgerDetails
+     * @secure
+     */
+    subLedgerDetailsCreate: (
+      data: SubLedgerDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SubLedgerDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -4032,6 +4316,32 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/TellerWiseExpense`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags ThirdLedgerDetails
+     * @name AccountThirdLedgerDetailsCreate
+     * @request POST:/api/account/ThirdLedgerDetails
+     * @secure
+     */
+    accountThirdLedgerDetailsCreate: (
+      data: ThirdLedgerDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/account/ThirdLedgerDetails`,
         method: "POST",
         query: query,
         body: data,
