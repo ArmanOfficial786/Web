@@ -535,14 +535,14 @@ export interface FirstLedgerDetailsRequestDto {
   fromDate?: string | null;
   toDate?: string | null;
   branchIds?: string | null;
-  /** @format int32 */
+  voucherType?: string | null;
+  /** @format int64 */
   ledgerHeadId?: number;
   ledgerName?: string | null;
   subLedgerName?: string | null;
-  voucherType?: string | null;
-  reportType?: string | null;
-  showOpeningBalance?: boolean;
   orderBy?: string | null;
+  showOpeningBalance?: boolean;
+  reportType?: string | null;
   visualReport?: boolean;
 }
 
@@ -1288,10 +1288,13 @@ export interface SubLedgerDetailsRequestDto {
   voucherType?: string | null;
   orderBy?: string | null;
   reportType?: string | null;
-  ledgerHead?: string[] | null;
   /** @format int64 */
-  selectedAccountType?: number;
+  ledgerHeadId?: number;
+  ledgerName?: string | null;
   showOpeningBalance?: boolean;
+  /** @format int32 */
+  selectedAccountType?: number;
+  ledgerHead?: string[] | null;
   isSummary?: boolean;
 }
 
@@ -2805,6 +2808,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags FourthLedgerDetails
+     * @name FourthLedgerDetailsCreate
+     * @request POST:/api/FourthLedgerDetails
+     * @secure
+     */
+    fourthLedgerDetailsCreate: (
+      data: LedgerDetailsReqResponse,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/FourthLedgerDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags InterestAndTaxDetail
      * @name InterestAndTaxDetailCreate
      * @request POST:/api/InterestAndTaxDetail
@@ -2915,7 +2944,7 @@ export class Api<
      * @secure
      */
     ledgerDetailsCreate: (
-      data: LedgerDetailsReqResponse,
+      data: SubLedgerDetailsRequestDto,
       query?: {
         /** @default "VIEW" */
         format?: string;
@@ -2929,6 +2958,156 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupLedgerHeadList
+     * @request GET:/api/LedgerLookup/LedgerHead
+     * @secure
+     */
+    ledgerLookupLedgerHeadList: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/LedgerHead`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupLedgerNameList
+     * @request GET:/api/LedgerLookup/LedgerName
+     * @secure
+     */
+    ledgerLookupLedgerNameList: (
+      query?: {
+        FromDate?: string;
+        ToDate?: string;
+        BranchId?: string;
+        /** @format int32 */
+        AccountTypeId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/LedgerName`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupSubLedgerNameList
+     * @request GET:/api/LedgerLookup/SubLedgerName
+     * @secure
+     */
+    ledgerLookupSubLedgerNameList: (
+      query?: {
+        FromDate?: string;
+        ToDate?: string;
+        BranchId?: string;
+        /** @format int32 */
+        AccountTypeId?: number;
+        MainLedger?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/SubLedgerName`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupSecondSubLedgerNameList
+     * @request GET:/api/LedgerLookup/SecondSubLedgerName
+     * @secure
+     */
+    ledgerLookupSecondSubLedgerNameList: (
+      query?: {
+        FromDate?: string;
+        ToDate?: string;
+        BranchId?: string;
+        /** @format int32 */
+        AccountTypeId?: number;
+        SubLedger1?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/SecondSubLedgerName`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupThirdSubLedgerNameList
+     * @request GET:/api/LedgerLookup/ThirdSubLedgerName
+     * @secure
+     */
+    ledgerLookupThirdSubLedgerNameList: (
+      query?: {
+        FromDate?: string;
+        ToDate?: string;
+        BranchId?: string;
+        /** @format int32 */
+        AccountTypeId?: number;
+        SubLedger2?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/ThirdSubLedgerName`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags LedgerLookup
+     * @name LedgerLookupFourthSubLedgerNameList
+     * @request GET:/api/LedgerLookup/FourthSubLedgerName
+     * @secure
+     */
+    ledgerLookupFourthSubLedgerNameList: (
+      query?: {
+        FromDate?: string;
+        ToDate?: string;
+        BranchId?: string;
+        /** @format int32 */
+        AccountTypeId?: number;
+        SubLedger3?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LedgerLookup/FourthSubLedgerName`,
+        method: "GET",
+        query: query,
+        secure: true,
         ...params,
       }),
 
@@ -4064,32 +4243,6 @@ export class Api<
         secure: true,
         type: ContentType.Json,
         format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags SubLedgerDetails
-     * @name SubLedgerDetailsCreate
-     * @request POST:/api/SubLedgerDetails
-     * @secure
-     */
-    subLedgerDetailsCreate: (
-      data: SubLedgerDetailsRequestDto,
-      query?: {
-        /** @default "VIEW" */
-        format?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/SubLedgerDetails`,
-        method: "POST",
-        query: query,
-        body: data,
-        secure: true,
-        type: ContentType.Json,
         ...params,
       }),
 

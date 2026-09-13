@@ -400,6 +400,28 @@ export const MENU: MenuNode[] = [
         label: "Payment Through Saving Report",
         route: "/Account/OtherReports/PaymentThroughSavingReport",
       },
+
+      //==========Maini ledger Reports Section================
+      {
+        label: "Ledger Details Report",
+        route: "/Account/MainLedger/LedgerDetailsReport",
+      },
+      {
+        label: "1st Ledger Details Report",
+        route: "/Account/MainLedger/1stLedgerDetailsReport",
+      },
+      {
+        label: "2nd Ledger Details Report",
+        route: "/Account/MainLedger/2ndLedgerDetailsReport",
+      },
+      {
+        label: "3rd Ledger Details Report",
+        route: "/Account/MainLedger/3rdLedgerDetailsReport",
+      },
+      {
+        label: "4th Ledger Details Report",
+        route: "/Account/MainLedger/4thLedgerDetailsReport",
+      },
     ],
   },
 
