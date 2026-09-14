@@ -117,7 +117,7 @@ export default function FirstLedgerDetailsPage() {
 
   const callApi = useCallback(
     (request: FirstLedgerDetailsRequestWithLevels, format: string) =>
-      accountService.api.accountFirstLedgerDetailsCreate(request, { format }),
+      accountService.api.firstLedgerDetailsCreate(request, { format }),
     [],
   );
 

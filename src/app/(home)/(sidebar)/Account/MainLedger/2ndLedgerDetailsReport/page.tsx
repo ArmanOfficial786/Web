@@ -105,7 +105,7 @@ export default function SecondLedgerDetailsPage() {
 
   const callApi = useCallback(
     (request: SecondLedgerDetailsRequestDto, format: string) =>
-      accountService.api.accountSecondLedgerDetailsCreate(request, {
+      accountService.api.secondLedgerDetailsCreate(request, {
         format,
       }),
     [],

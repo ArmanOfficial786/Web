@@ -105,7 +105,7 @@ export default function ThirdLedgerDetailsPage() {
 
   const callApi = useCallback(
     (request: ThirdLedgerDetailsRequestDto, format: string) =>
-      accountService.api.accountThirdLedgerDetailsCreate(request, {
+      accountService.api.thirdLedgerDetailsCreate(request, {
         format,
       }),
     [],

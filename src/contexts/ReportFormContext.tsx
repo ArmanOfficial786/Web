@@ -192,7 +192,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         const data = await memberLookUpService.getAllWithFilters(params);
         if (generation !== searchGenerationRef.current) return;
         const mappedItems = (data?.items ?? []).map(
-          (item): MemberRecord => ({
+          (item: MemberLookUpDtos): MemberRecord => ({
             memMemberRegistrationId: item.memMemberRegistrationId ?? 0,
             memberId: item.memberId ?? "",
             memberName: item.memberName ?? "",

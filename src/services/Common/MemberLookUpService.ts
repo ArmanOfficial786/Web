@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import type { MemberLookUpDtosPagination } from "types/api/api";
+import type { PaginationOfMemberLookUpDtos } from "types/api/api";
 
 export interface MemberLookUpSearchParams {
   Page?: number;
@@ -19,7 +19,7 @@ export interface MemberLookUpSearchParams {
 export const memberLookUpService = {
   getAllWithFilters: async (
     params: MemberLookUpSearchParams,
-  ): Promise<MemberLookUpDtosPagination> => {
+  ): Promise<PaginationOfMemberLookUpDtos> => {
     const response = await apiClient.api.memberLookUpSearchList(params);
     return response.data;
   },
