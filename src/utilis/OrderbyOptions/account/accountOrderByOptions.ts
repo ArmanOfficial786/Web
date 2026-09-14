@@ -1,5 +1,5 @@
-import { defineOrderByOptions } from "../DefineOrderByOptions";
 import type { OrderByOption } from "../DefineOrderByOptions";
+import { defineOrderByOptions } from "../DefineOrderByOptions";
 
 // ── Report: member-all-details ──────────────────────────────────────────
 export const accountStatementOrderByOptions = defineOrderByOptions([
@@ -125,6 +125,12 @@ export const bankReceivedPaymentOrderByOptions = defineOrderByOptions([
   { key: "memberId", label: "Member ID" },
 ] as const);
 
+//=============IBT Transaction Report OrderBy Options========================
+export const ibtTransactionOrderByOptions = defineOrderByOptions([
+  { key: "memberName", label: "Member Name" },
+  { key: "branchName", label: "Branch Name" },
+] as const);
+
 // ── Type for report keys and their options ──────────────────────────────
 export type AccountOrderByReportKey =
   | "account-statement-report"
@@ -144,7 +150,8 @@ export type AccountOrderByReportKey =
   | "voucher-details-report"
   | "teller-cash-balance-report"
   | "teller-cash-detail-report"
-  | "bank-received-payment-report";
+  | "bank-received-payment-report"
+  | "ibt-transaction-report"; // ⚠️ add new report keys here as needed
 
 export const accountOrderByOptionsMap: Record<
   AccountOrderByReportKey,
@@ -169,4 +176,5 @@ export const accountOrderByOptionsMap: Record<
   "teller-cash-balance-report": tellerCashBalanceOrderByOptions,
   "teller-cash-detail-report": tellerCashDetaileOrderByOptions,
   "bank-received-payment-report": bankReceivedPaymentOrderByOptions,
+  "ibt-transaction-report": ibtTransactionOrderByOptions,
 };

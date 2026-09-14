@@ -1,14 +1,14 @@
 // components/layout/sidebar-menu.ts
+import type { SvgIconComponent } from "@mui/icons-material";
 import {
-  Dashboard as DashboardIcon,
-  Assignment as MasterIcon,
-  CreditCard as MemberIcon,
-  AccountBalanceWallet as MemberAcIcon,
   AccountBalance as AccountIcon,
+  Dashboard as DashboardIcon,
   RequestQuote as LoanIcon,
+  Assignment as MasterIcon,
+  AccountBalanceWallet as MemberAcIcon,
+  CreditCard as MemberIcon,
   PieChart as ShareIcon,
 } from "@mui/icons-material";
-import type { SvgIconComponent } from "@mui/icons-material";
 
 const DEFAULT_FOLDER_LABEL = "Reports"; // fallback when a route has no folder segment
 
@@ -421,6 +421,16 @@ export const MENU: MenuNode[] = [
       {
         label: "4th Ledger Details Report",
         route: "/Account/MainLedger/4thLedgerDetailsReport",
+      },
+
+      //==============Main Ledger Reports Section================
+      {
+        label: "IBT Transaction Report",
+        route: "/Account/IBTReport/IBTTransactionReport",
+      },
+      {
+        label: "IBT Statement Branchwise",
+        route: "/Account/IBTReport/IBTStatementBranchwiseReport",
       },
     ],
   },

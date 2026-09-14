@@ -1,6 +1,6 @@
 import React from "react";
 
-import NextAuth, { DefaultSession } from "next-auth";
+import "next-auth";
 
 declare global {
   namespace JSX {
@@ -24,6 +24,8 @@ declare module "next-auth" {
     success?: boolean;
     message?: string;
     officeName?: string;
+    officeId?: number;
+    branchName?: string | null;
   }
 
   interface Session {
@@ -32,6 +34,8 @@ declare module "next-auth" {
       name?: string | null;
       userName?: string;
       email?: string | null;
+      officeId?: number;
+      branchName?: string | null;
     };
     accessToken?: string;
   }
@@ -45,6 +49,8 @@ declare module "next-auth/jwt" {
       name?: string | null;
       userName?: string;
       email?: string | null;
+      officeId?: number;
+      branchName?: string | null;
     };
   }
 }

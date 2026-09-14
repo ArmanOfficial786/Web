@@ -1,20 +1,23 @@
 "use client";
 
+import DropDown from "@/components/form/DropDown";
 import DropDownMultiple from "@/components/form/DropDownMultiple";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import FieldRow from "@/utilis/FieldRow";
 import Box from "@mui/system/Box";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
 
 interface OfficeNameFieldProps<T extends FieldValues> {
   control: Control<T>;
   branchFieldName: Path<T>;
+  multiple?: boolean;
 }
 
 export default function OfficeNameField<T extends FieldValues>({
   control,
   branchFieldName,
+  multiple = true,
 }: OfficeNameFieldProps<T>) {
   const { fetchBranches, branchOptions } = useReportFormContext();
 
@@ -29,16 +32,27 @@ export default function OfficeNameField<T extends FieldValues>({
   return (
     <FieldRow label="Office Name">
       <Box sx={{ width: "100%" }}>
-        <DropDownMultiple
-          name={branchFieldName}
-          control={control}
-          label=""
-          options={realBranches}
-          fullWidth
-          showSelectAll
-          defaultSelectAll
-          onOpen={fetchBranches}
-        />
+        {multiple ? (
+          <DropDownMultiple
+            name={branchFieldName}
+            control={control}
+            label=""
+            options={realBranches}
+            fullWidth
+            showSelectAll
+            defaultSelectAll
+            onOpen={fetchBranches}
+          />
+        ) : (
+          <DropDown
+            name={branchFieldName}
+            control={control}
+            label=""
+            options={realBranches}
+            fullWidth
+            onOpen={fetchBranches}
+          />
+        )}
       </Box>
     </FieldRow>
   );

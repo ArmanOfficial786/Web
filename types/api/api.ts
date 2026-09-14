@@ -871,6 +871,7 @@ export interface LoginResponse {
   genderId?: number;
   /** @format int64 */
   officeId?: number;
+  branchName?: string | null;
   officeIds?: string | null;
   companyName?: string | null;
   systemEditionName?: string | null;

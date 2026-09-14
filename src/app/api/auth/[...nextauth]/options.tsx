@@ -1,7 +1,7 @@
 import type { AuthOptions, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { Api } from "../../../../../types/api/api";
 import type { LoginRequest } from "../../../../../types/api/api";
+import { Api } from "../../../../../types/api/api";
 
 const authApiUrl =
   process.env.NEXT_PUBLIC_AUTH_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
@@ -32,6 +32,8 @@ export const authOptions: AuthOptions = {
           name: user.name,
           userName: user.userName,
           email: user.email,
+          officeId: user.officeId,
+          branchName: user.branchName,
         };
       }
       return token;
@@ -91,7 +93,8 @@ export const authOptions: AuthOptions = {
             email: loginResponse.email ?? loginPayload.email,
             userName: loginResponse.email ?? loginPayload.email,
             token: loginResponse.token,
-            companyName: loginResponse.companyName,
+            officeId: loginResponse.officeId,
+            branchName: loginResponse.branchName,
           } as User;
         } catch (err: unknown) {
           const error = err as {
