@@ -435,7 +435,82 @@ export const MENU: MenuNode[] = [
     ],
   },
 
-  { type: "link", icon: LoanIcon, label: "Loan", route: "/loan" },
+  {
+    type: "parent-reports",
+    icon: LoanIcon,
+    label: "Loan",
+    reports: [
+      {
+        label: "Loan Follow Up Report",
+        route: "/Loan/OtherReports/LoanFollowUpReport",
+      },
+      {
+        label: "Loan Penalty Discount Report",
+        route: "/Loan/OtherReports/LoanPenaltyDiscountReport",
+      },
+      {
+        label: "Loan Defaulter Due Summary Report",
+        route: "/Loan/OtherReports/LoanDefaulterDueSummaryReport",
+      },
+      {
+        label: "Loan Due Installment Report",
+        route: "/Loan/OtherReports/LoanDueInstallmentReport",
+      },
+      {
+        label: "Miscellaneous Income Report",
+        route: "/Loan/OtherReports/MiscellaneousIncomeReport",
+      },
+      {
+        label: "Matured Loan Report",
+        route: "/Loan/OtherReports/MaturedLoanReport",
+      },
+      {
+        label: "Loan Account Closed Report",
+        route: "/Loan/OtherReports/LoanAccountClosedReport",
+      },
+      {
+        label: "Loan Summary Report",
+        route: "/Loan/OtherReports/LoanSummaryReport",
+      },
+      {
+        label: "Loan ReSchedule Report",
+        route: "/Loan/OtherReports/LoanReScheduleReport",
+      },
+      {
+        label: "Loan Payment Report",
+        route: "/Loan/OtherReports/LoanPaymentReport",
+      },
+      {
+        label: "Loan Appraisal Report",
+        route: "/Loan/OtherReports/LoanAppraisalReport",
+      },
+      {
+        label: "Loan Guaranteer Report",
+        route: "/Loan/OtherReports/LoanGuaranteerReport",
+      },
+      {
+        label: "Loan Commission Report",
+        route: "/Loan/OtherReports/LoanCommissionReport",
+      },
+      {
+        label: "Loan Interest Receivable Year Report",
+        route: "/Loan/OtherReports/LoanInterestReceivableYear",
+      },
+      {
+        label: "Loan Interest Receivable Monthly Report",
+        route: "/Loan/OtherReports/LoanInterestReceivableMonthly",
+      },
+      {
+        label: "Loan Interest DiscountReport Report",
+        route: "/Loan/OtherReports/LoanInterestDiscountReport",
+      },
+      {
+        label: "Loan Repayment Report",
+        route: "/Loan/OtherReports/LoanRepaymentReport",
+      },
+    ],
+  },
+
   { type: "link", icon: ShareIcon, label: "Share", route: "/share" },
 ];
 

@@ -1,19 +1,29 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useRef,
-  useMemo,
-  ReactNode,
-} from "react";
 import branchService from "@/services/Common/BranchService";
-import { memberLookUpService } from "@/services/Common/MemberLookUpService";
 import { collectionCenterService } from "@/services/Common/CollectionCenterService";
+import collectorService from "@/services/Common/CollectorService";
+import depositeTypeService from "@/services/Common/DepositeType";
+import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
 import { memberGroupService } from "@/services/Common/MemberGroupService";
+import { memberLookUpService } from "@/services/Common/MemberLookUpService";
+import paymentDurationTypeService from "@/services/Common/PaymentDurationType";
+import shareTypeService from "@/services/Common/ShareTypeService";
 import { soleMemberGroupService } from "@/services/Common/SoleMemberGroupService";
+import tellerExpenseService from "@/services/Common/TellerExpenseService";
+import tellerService from "@/services/Common/TellerService";
+import voucherService, {
+  VoucherLookupResponse,
+} from "@/services/Common/VoucherService";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   BranchResponse,
   CollectorResponse,
@@ -21,15 +31,6 @@ import {
   MemberLookUpDtos,
   TellerLookupResponse,
 } from "types/api/api";
-import depositeTypeService from "@/services/Common/DepositeType";
-import collectorService from "@/services/Common/CollectorService";
-import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
-import shareTypeService from "@/services/Common/ShareTypeService";
-import tellerService from "@/services/Common/TellerService";
-import tellerExpenseService from "@/services/Common/TellerExpenseService";
-import voucherService, {
-  VoucherLookupResponse,
-} from "@/services/Common/VoucherService";
 
 export type SelectOption = { id: number | string; name: string };
 export type MemberRecord = MemberLookUpDtos;
@@ -108,6 +109,9 @@ interface ReportFormContextType {
     toDate: string,
     branchIds?: number[],
   ) => Promise<void>;
+
+  paymentDurationTypeOptions: SelectOption[];
+  fetchPaymentDurationTypes: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -175,6 +179,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [voucherLoading, setVoucherLoading] = useState(false);
 
+  const [paymentDurationTypeOptions, setPaymentDurationTypeOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
   //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
@@ -182,6 +189,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const loanMasterListFetchedRef = useRef(false);
   const userLookupFetchedRef = useRef<Record<string, boolean>>({});
   const collectionBranchFetchedRef = useRef(false);
+  const paymentDurationTypeFetchedRef = useRef(false);
 
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
@@ -500,6 +508,22 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
+  // ── Payment Duration Type — lazy, fetched once per app session, then
+  const fetchPaymentDurationTypes = useCallback(async () => {
+    if (paymentDurationTypeFetchedRef.current) return;
+    paymentDurationTypeFetchedRef.current = true;
+    try {
+      const res = await paymentDurationTypeService.getAll();
+      const mapped = res.map((p) => ({
+        id: p.lmtPaymentDurationTypeId ?? 0,
+        name: p.paymentDurationType ?? "",
+      }));
+      setPaymentDurationTypeOptions([{ id: 0, name: "-- All --" }, ...mapped]);
+    } catch {
+      paymentDurationTypeFetchedRef.current = false; // allow retry on failure
+    }
+  }, []);
+
   //======end call api logic========================
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -542,6 +566,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       voucherOptions,
       voucherLoading,
       fetchVouchers,
+      paymentDurationTypeOptions,
+      fetchPaymentDurationTypes,
     }),
     [
       memberLookUp,
@@ -582,6 +608,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       voucherOptions,
       voucherLoading,
       fetchVouchers,
+      paymentDurationTypeOptions,
+      fetchPaymentDurationTypes,
     ],
   );
 

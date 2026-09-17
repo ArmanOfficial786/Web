@@ -740,7 +740,8 @@ export interface LoanFollowUpRequestDto {
   memberId?: string | null;
   fromDateBs?: string | null;
   toDateBs?: string | null;
-  branchIds?: string | null;
+  branchId?: string | null;
+  visualReport?: boolean;
   orderBy?: string | null;
 }
 
@@ -819,6 +820,7 @@ export interface LoanPenaltyDiscountRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
+  visualReport?: boolean;
   orderBy?: string | null;
 }
 
@@ -1192,6 +1194,12 @@ export interface PayableInterestTransferredRequestDto {
   orderBy?: string | null;
   branchName?: string | null;
   visualReport?: boolean;
+}
+
+export interface PaymentDurationTypeResponse {
+  /** @format int32 */
+  lmtPaymentDurationTypeId?: number;
+  paymentDurationType?: string | null;
 }
 
 export interface PaymentThroughSavingRequestDto {
@@ -3317,6 +3325,23 @@ export class Api<
     orderByGetAllOrderByList: (params: RequestParams = {}) =>
       this.request<GeneralResponseOfAllReportOrderByResponseModel, any>({
         path: `/api/OrderBy/GetAllOrderBy`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name PaymentDurationTypeList
+     * @request GET:/api/PaymentDurationType
+     * @secure
+     */
+    paymentDurationTypeList: (params: RequestParams = {}) =>
+      this.request<PaymentDurationTypeResponse[], any>({
+        path: `/api/PaymentDurationType`,
         method: "GET",
         secure: true,
         format: "json",
