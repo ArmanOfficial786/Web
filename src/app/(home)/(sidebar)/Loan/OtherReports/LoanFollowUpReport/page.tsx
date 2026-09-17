@@ -5,11 +5,12 @@ import LoanFollowUpForm from "@/components/reports/loanReport/otherReports/LoanF
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanFollowUpRequestDto } from "types/api/api";
+import type { LoanFollowUpRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanFollowUpFormValues = LoanFollowUpRequestDto & {
@@ -17,10 +18,9 @@ export type LoanFollowUpFormValues = LoanFollowUpRequestDto & {
 };
 
 export interface LoanFollowUpResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const schema: yup.ObjectSchema<LoanFollowUpFormValues> = yup
@@ -52,7 +52,6 @@ const schema: yup.ObjectSchema<LoanFollowUpFormValues> = yup
 
 export default function LoanFollowUpPage() {
   const [reportState, setReportState] = useState<LoanFollowUpResponseExtended>({
-    blobUrl: "",
     isLoading: false,
   });
   const [lastRequest, setLastRequest] = useState<LoanFollowUpRequestDto | null>(
@@ -86,18 +85,27 @@ export default function LoanFollowUpPage() {
   const fetchReport = useCallback(
     async (request: LoanFollowUpRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch (error) {
-        console.error("Report generation error:", error);
-        toast.error("Failed to generate report");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
@@ -148,6 +156,15 @@ export default function LoanFollowUpPage() {
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
+
+  useEffect(() => {
+    return () => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return prev;
+      });
+    };
+  }, []);
 
   return (
     <LoanFollowUpForm

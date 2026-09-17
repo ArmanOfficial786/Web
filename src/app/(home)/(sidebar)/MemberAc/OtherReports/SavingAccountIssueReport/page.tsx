@@ -54,7 +54,7 @@ const schema: yup.ObjectSchema<SavingIssueFormValues> = yup
     depositTypeId: yup.number().nullable().optional().default(null),
     collectorId: yup.number().nullable().optional().default(null),
     memberGroupId: yup.number().nullable().optional().default(null),
-    reportMode: yup.string().nullable().optional().default(""), // ⚠️ not shown in UI — confirm if backend requires a value
+    reportMode: yup.string().nullable().optional().default(""), 
     visualReport: yup.boolean().optional().default(false),
   })
   .required();

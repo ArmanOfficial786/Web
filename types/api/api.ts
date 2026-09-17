@@ -694,7 +694,8 @@ export interface LoanAccountClosedRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -731,7 +732,8 @@ export interface LoanDueInstallmentRequestDto {
   /** @format int32 */
   lmtPaymentDurationTypeId?: number;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -766,7 +768,8 @@ export interface LoanInterestDiscountRequestDto {
 export interface LoanInterestReceivableMonthlyRequestDto {
   tillDateBs?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -781,7 +784,8 @@ export interface LoanInterestReceivableYearEndRequestDto {
   /** @format int32 */
   monthlyMonth?: number | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -789,7 +793,8 @@ export interface LoanInterestReceivableYearEndRequestDto {
 export interface LoanMiscellaneousIncomeRequestDto {
   memberId?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -799,7 +804,8 @@ export interface LoanPaymentRequestDto {
   toDateBs?: string | null;
   paymentBy?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -828,7 +834,8 @@ export interface LoanReScheduleRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -843,7 +850,8 @@ export interface LoanSummaryRequestDto {
   /** @format int64 */
   loanTypeId?: number;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -884,7 +892,8 @@ export interface MaturedLoanRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
-  memberGroupId?: string | null;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }

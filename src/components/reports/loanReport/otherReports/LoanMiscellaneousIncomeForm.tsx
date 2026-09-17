@@ -53,8 +53,8 @@ function LoanMiscellaneousIncomeForm({
   onPageChange,
   onDownload,
 }: LoanMiscellaneousIncomeFormProps) {
-  const { blobUrl, isLoading, pdfData, pagination } = reportState;
-  const showReport = Boolean(blobUrl);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const currentPage = pagination?.currentPage ?? 1;
@@ -177,7 +177,7 @@ function LoanMiscellaneousIncomeForm({
 
         {showReport && (
           <ReportNavigation
-            pdfData={blobUrl ?? ""}
+            pdfData={pdfData ?? ""}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
@@ -190,9 +190,9 @@ function LoanMiscellaneousIncomeForm({
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
-            <embed
-              key={blobUrl}
-              src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
+            <iframe
+              key={pdfData}
+              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
               style={{
                 position: "absolute",
                 top: "-40px",
@@ -200,6 +200,7 @@ function LoanMiscellaneousIncomeForm({
                 width: "100%",
                 height: "calc(100% + 40px)",
                 border: "none",
+                zIndex: 0,
               }}
             />
             <ScrollToFirstPageButton

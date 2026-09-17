@@ -6,11 +6,12 @@ import LoanInterestDiscountForm from "@/components/reports/loanReport/otherRepor
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanInterestDiscountRequestDto } from "types/api/api";
+import type { LoanInterestDiscountRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanInterestDiscountFormValues = LoanInterestDiscountRequestDto & {
@@ -18,10 +19,9 @@ export type LoanInterestDiscountFormValues = LoanInterestDiscountRequestDto & {
 };
 
 export interface LoanInterestDiscountResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const schema: yup.ObjectSchema<LoanInterestDiscountFormValues> = yup
@@ -55,7 +55,6 @@ const schema: yup.ObjectSchema<LoanInterestDiscountFormValues> = yup
 export default function LoanInterestDiscountPage() {
   const [reportState, setReportState] =
     useState<LoanInterestDiscountResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -85,19 +84,31 @@ export default function LoanInterestDiscountPage() {
       loanService.api.loanInterestDiscountCreate(request, { format }),
     [],
   );
-
   const fetchReport = useCallback(
     async (request: LoanInterestDiscountRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -105,7 +116,6 @@ export default function LoanInterestDiscountPage() {
     },
     [callApi],
   );
-
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const total = prev.pagination?.totalPages ?? 1;
@@ -153,7 +163,7 @@ export default function LoanInterestDiscountPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

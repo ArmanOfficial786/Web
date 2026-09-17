@@ -14,10 +14,9 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import {
-  paymentByOptions,
-  type LoanPaymentFormValues,
-  type LoanPaymentResponseExtended,
+import type {
+  LoanPaymentFormValues,
+  LoanPaymentResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/OtherReports/LoanPaymentReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
@@ -34,6 +33,13 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const paymentByOptions = [
+  { value: "All", label: "All" },
+  { value: "Bank", label: "Bank" },
+  { value: "Saving", label: "Saving" },
+  { value: "Cash", label: "Cash" },
+];
 
 interface LoanPaymentFormProps {
   control: Control<LoanPaymentFormValues>;
@@ -55,8 +61,8 @@ function LoanPaymentForm({
   onPageChange,
   onDownload,
 }: LoanPaymentFormProps) {
-  const { blobUrl, isLoading, pdfData, pagination } = reportState;
-  const showReport = Boolean(blobUrl);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const currentPage = pagination?.currentPage ?? 1;
@@ -196,7 +202,7 @@ function LoanPaymentForm({
 
         {showReport && (
           <ReportNavigation
-            pdfData={blobUrl ?? ""}
+            pdfData={pdfData ?? ""}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
@@ -209,9 +215,9 @@ function LoanPaymentForm({
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
-            <embed
-              key={blobUrl}
-              src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
+            <iframe
+              key={pdfData}
+              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
               style={{
                 position: "absolute",
                 top: "-40px",
@@ -219,6 +225,7 @@ function LoanPaymentForm({
                 width: "100%",
                 height: "calc(100% + 40px)",
                 border: "none",
+                zIndex: 0,
               }}
             />
             <ScrollToFirstPageButton

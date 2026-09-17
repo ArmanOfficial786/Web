@@ -52,8 +52,8 @@ function LoanReScheduleForm({
   onPageChange,
   onDownload,
 }: LoanReScheduleFormProps) {
-  const { blobUrl, isLoading, pdfData, pagination } = reportState;
-  const showReport = Boolean(blobUrl);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const currentPage = pagination?.currentPage ?? 1;
@@ -139,7 +139,7 @@ function LoanReScheduleForm({
             <OrderByField<LoanReScheduleFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-reschedule-report" 
+              reportKey="loan-reschedule-report"
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -173,7 +173,7 @@ function LoanReScheduleForm({
 
         {showReport && (
           <ReportNavigation
-            pdfData={blobUrl ?? ""}
+            pdfData={pdfData ?? ""}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
@@ -186,9 +186,9 @@ function LoanReScheduleForm({
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
-            <embed
-              key={blobUrl}
-              src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
+            <iframe
+              key={pdfData}
+              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
               style={{
                 position: "absolute",
                 top: "-40px",
@@ -196,6 +196,7 @@ function LoanReScheduleForm({
                 width: "100%",
                 height: "calc(100% + 40px)",
                 border: "none",
+                zIndex: 0,
               }}
             />
             <ScrollToFirstPageButton

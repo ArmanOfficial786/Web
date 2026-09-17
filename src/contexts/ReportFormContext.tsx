@@ -311,7 +311,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         id: g.memberGroupId ?? 0,
         name: g.name ?? g.memberGroupName ?? "",
       }));
-      setSoleMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setSoleMemberGroupOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       setSoleMemberGroupOptions(DEFAULT_SELECT);
     }

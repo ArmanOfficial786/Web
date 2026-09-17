@@ -1,16 +1,16 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import DropDown from "@/components/form/DropDown";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
+import Box from "@mui/system/Box";
+import { useEffect, useRef } from "react";
 import {
   useWatch,
   type Control,
-  type UseFormSetValue,
   type FieldValues,
   type Path,
+  type UseFormSetValue,
 } from "react-hook-form";
-import FieldRow from "@/utilis/FieldRow";
-import DropDown from "@/components/form/DropDown";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import Box from "@mui/system/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SoleSelectGroupFieldProps<T extends FieldValues> {
@@ -21,18 +21,12 @@ interface SoleSelectGroupFieldProps<T extends FieldValues> {
   defaultGroupValue?: any; // optional safer reset value
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-// Reusable, branch-only group selector — calls the dedicated
-// /api/SoleMemberGroup endpoint via fetchSoleMemberGroups. Use this whenever
-// a report has NO Collection Center field (unlike SelectGroupField, which
-// requires branch + collection center).
-// Fetches on mount AND whenever the selected branch changes.
 export default function SoleSelectGroupField<T extends FieldValues>({
   control,
   setValue,
   branchFieldName,
   groupFieldName,
-  defaultGroupValue = 0,
+  defaultGroupValue = -1,
 }: SoleSelectGroupFieldProps<T>) {
   const { soleMemberGroupOptions, fetchSoleMemberGroups } =
     useReportFormContext();

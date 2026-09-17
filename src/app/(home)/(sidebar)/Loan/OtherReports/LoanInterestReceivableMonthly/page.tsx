@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Loan/OtherReports/LoanInterestReceivableMonthlyReport/page.tsx
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
@@ -6,21 +5,24 @@ import LoanInterestReceivableMonthlyForm from "@/components/reports/loanReport/o
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanInterestReceivableMonthlyRequestDto } from "types/api/api";
+import type {
+  LoanInterestReceivableMonthlyRequestDto,
+  Pagination,
+} from "types/api/api";
 import * as yup from "yup";
 
 export type LoanInterestReceivableMonthlyFormValues =
   LoanInterestReceivableMonthlyRequestDto;
 
 export interface LoanInterestReceivableMonthlyResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const schema: yup.ObjectSchema<LoanInterestReceivableMonthlyFormValues> = yup
@@ -32,7 +34,7 @@ const schema: yup.ObjectSchema<LoanInterestReceivableMonthlyFormValues> = yup
       .required("Till Date is required")
       .typeError("Till Date must be a valid date"),
     branchIds: yup.string().nullable().optional().default("2"),
-    memberGroupId: yup.string().nullable().optional().default("0"),
+    memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -41,7 +43,6 @@ const schema: yup.ObjectSchema<LoanInterestReceivableMonthlyFormValues> = yup
 export default function LoanInterestReceivableMonthlyPage() {
   const [reportState, setReportState] =
     useState<LoanInterestReceivableMonthlyResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -59,7 +60,7 @@ export default function LoanInterestReceivableMonthlyPage() {
     ): LoanInterestReceivableMonthlyRequestDto => ({
       tillDateBs: form.tillDateBs || undefined,
       branchIds: form.branchIds || "-1",
-      memberGroupId: form.memberGroupId || "0",
+      memberGroupId: form.memberGroupId,
       orderBy: form.orderBy || "",
       visualReport: form.visualReport ?? false,
     }),
@@ -75,15 +76,28 @@ export default function LoanInterestReceivableMonthlyPage() {
   const fetchReport = useCallback(
     async (request: LoanInterestReceivableMonthlyRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -140,7 +154,7 @@ export default function LoanInterestReceivableMonthlyPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

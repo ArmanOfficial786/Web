@@ -5,11 +5,12 @@ import LoanDueInstallmentForm from "@/components/reports/loanReport/otherReports
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanDueInstallmentRequestDto } from "types/api/api";
+import type { LoanDueInstallmentRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanDueInstallmentFormValues = LoanDueInstallmentRequestDto & {
@@ -17,10 +18,9 @@ export type LoanDueInstallmentFormValues = LoanDueInstallmentRequestDto & {
 };
 
 export interface LoanDueInstallmentResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const DATE_REQUIRED_MESSAGE = "Please select date";
@@ -45,8 +45,8 @@ const schema: yup.ObjectSchema<LoanDueInstallmentFormValues> = yup
     branchIds: yup.string().nullable().optional().default("2"),
     memberId: yup.string().nullable().optional(),
     memberName: yup.string().nullable().optional(),
-    lmtPaymentDurationTypeId: yup.number().optional().default(0),
-    memberGroupId: yup.string().nullable().optional().default("0"),
+    lmtPaymentDurationTypeId: yup.number().optional().default(-1),
+    memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -55,7 +55,6 @@ const schema: yup.ObjectSchema<LoanDueInstallmentFormValues> = yup
 export default function LoanDueInstallmentPage() {
   const [reportState, setReportState] =
     useState<LoanDueInstallmentResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -73,8 +72,8 @@ export default function LoanDueInstallmentPage() {
       toDateBs: form.toDateBs || undefined,
       branchIds: form.branchIds || "-1",
       memberId: form.memberId || undefined,
-      lmtPaymentDurationTypeId: form.lmtPaymentDurationTypeId || 0,
-      memberGroupId: form.memberGroupId || "0",
+      lmtPaymentDurationTypeId: form.lmtPaymentDurationTypeId || -1,
+      memberGroupId: form.memberGroupId,
       orderBy: form.orderBy || "",
       visualReport: form.visualReport ?? false,
     }),
@@ -91,15 +90,28 @@ export default function LoanDueInstallmentPage() {
   const fetchReport = useCallback(
     async (request: LoanDueInstallmentRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -107,7 +119,6 @@ export default function LoanDueInstallmentPage() {
     },
     [callApi],
   );
-
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const total = prev.pagination?.totalPages ?? 1;
@@ -152,7 +163,16 @@ export default function LoanDueInstallmentPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return prev;
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

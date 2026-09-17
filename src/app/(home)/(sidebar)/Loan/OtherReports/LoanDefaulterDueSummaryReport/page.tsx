@@ -5,21 +5,24 @@ import LoanDefaulterDueSummaryForm from "@/components/reports/loanReport/otherRe
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanDefaulterDueSummaryRequestDto } from "types/api/api";
+import type {
+  LoanDefaulterDueSummaryRequestDto,
+  Pagination,
+} from "types/api/api";
 import * as yup from "yup";
 
 export type LoanDefaulterDueSummaryFormValues =
   LoanDefaulterDueSummaryRequestDto;
 
 export interface LoanDefaulterDueSummaryResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWiseInterestReport";
@@ -49,7 +52,6 @@ const schema: yup.ObjectSchema<LoanDefaulterDueSummaryFormValues> = yup
 export default function LoanDefaulterDueSummaryPage() {
   const [reportState, setReportState] =
     useState<LoanDefaulterDueSummaryResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -85,16 +87,30 @@ export default function LoanDefaulterDueSummaryPage() {
   const fetchReport = useCallback(
     async (request: LoanDefaulterDueSummaryRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
-      } catch (error) {
+        setReportState({ isLoading: false, pdfData, pagination });
+      } catch {
+        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
@@ -146,6 +162,15 @@ export default function LoanDefaulterDueSummaryPage() {
       (formData) => fetchReport(toRequest(formData)),
       [fetchReport, toRequest],
     );
+
+  useEffect(() => {
+    return () => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return prev;
+      });
+    };
+  }, []);
 
   return (
     <LoanDefaulterDueSummaryForm

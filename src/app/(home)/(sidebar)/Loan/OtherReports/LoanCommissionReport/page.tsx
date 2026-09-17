@@ -5,20 +5,20 @@ import LoanCommissionForm from "@/components/reports/loanReport/otherReports/Loa
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanCommissionRequestDto } from "types/api/api";
+import type { LoanCommissionRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanCommissionFormValues = LoanCommissionRequestDto;
 
 export interface LoanCommissionResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
 const DATE_REQUIRED_MESSAGE = "Please select date";
@@ -48,7 +48,6 @@ const schema: yup.ObjectSchema<LoanCommissionFormValues> = yup
 export default function LoanCommissionPage() {
   const [reportState, setReportState] =
     useState<LoanCommissionResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -79,17 +78,29 @@ export default function LoanCommissionPage() {
   const fetchReport = useCallback(
     async (request: LoanCommissionRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
@@ -143,7 +154,7 @@ export default function LoanCommissionPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

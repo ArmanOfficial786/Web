@@ -5,31 +5,23 @@ import LoanPaymentForm from "@/components/reports/loanReport/otherReports/LoanPa
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanPaymentRequestDto } from "types/api/api";
+import type { LoanPaymentRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanPaymentFormValues = LoanPaymentRequestDto;
 
 export interface LoanPaymentResponseExtended {
-  blobUrl: string;
   pdfData?: string;
   isLoading: boolean;
-  pagination?: { currentPage?: number; totalPages?: number };
+  pagination?: Pagination;
 }
 
-// ⚠️ Guessed wire values — confirm against backend
-export const PAYMENT_BY_ALL = "All";
-export const paymentByOptions = [
-  { value: PAYMENT_BY_ALL, label: "All" },
-  { value: "Bank", label: "Bank" },
-  { value: "Saving", label: "Saving" },
-  { value: "Cash", label: "Cash" },
-];
-
+const PAYMENT_BY_ALL = "All";
 const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
@@ -51,7 +43,7 @@ const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
       }),
     paymentBy: yup.string().nullable().optional().default(PAYMENT_BY_ALL),
     branchIds: yup.string().nullable().optional().default("2"),
-    memberGroupId: yup.string().nullable().optional().default("0"),
+    memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -59,7 +51,6 @@ const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
 
 export default function LoanPaymentPage() {
   const [reportState, setReportState] = useState<LoanPaymentResponseExtended>({
-    blobUrl: "",
     isLoading: false,
   });
   const [lastRequest, setLastRequest] = useState<LoanPaymentRequestDto | null>(
@@ -78,7 +69,7 @@ export default function LoanPaymentPage() {
       toDateBs: form.toDateBs || undefined,
       paymentBy: form.paymentBy || PAYMENT_BY_ALL,
       branchIds: form.branchIds || "-1",
-      memberGroupId: form.memberGroupId || "0",
+      memberGroupId: form.memberGroupId || -1,
       orderBy: form.orderBy || "",
       visualReport: form.visualReport ?? false,
     }),
@@ -94,15 +85,28 @@ export default function LoanPaymentPage() {
   const fetchReport = useCallback(
     async (request: LoanPaymentRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { blobUrl: "", isLoading: true };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
 
       try {
         const res = await callApi(request, "VIEW");
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({ blobUrl, pdfData: blobUrl, isLoading: false });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -158,7 +162,7 @@ export default function LoanPaymentPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };
