@@ -515,19 +515,49 @@ export const MENU: MenuNode[] = [
 ];
 
 // ── Dynamic folder derivation ────────────────────────────────────────────
-// A report route is expected to look like: /<Parent>/<Folder>/<ReportName>
-// The "folder" segment is derived directly from the route itself — never
-// hardcoded — so adding a brand-new sub-folder under any parent (e.g.
-// "/MemberAc/LoanAcWiseReport/...") is picked up automatically by both
-// ParentWithReportsItem's grouping and the Navbar's breadcrumb without
-// touching this file's MENU data.
+
 export function getFolderSegment(route: string): string {
   const segments = route.split("/").filter(Boolean);
-  // Need at least 3 segments (Parent / Folder / Report) to have a folder.
   if (segments.length < 3) return DEFAULT_FOLDER_LABEL;
   const folder = segments[segments.length - 2];
   if (!folder) return DEFAULT_FOLDER_LABEL;
-  // Capitalize only the first letter so "reports" → "Reports" while an
-  // already-PascalCase folder like "SavingAcWiseReport" stays untouched.
   return folder.charAt(0).toUpperCase() + folder.slice(1);
 }
+
+export interface FolderGroup {
+  folder: string;
+  key: string; // `${parentLabel}::${folder}`
+  reports: LeafReport[];
+}
+export interface ParentItem extends Omit<ParentWithReports, "reports"> {
+  folders: FolderGroup[];
+}
+export type MenuItem = PlainLink | ParentItem;
+
+export const MENU_TREE: MenuItem[] = MENU.map((node): MenuItem => {
+  if (node.type === "link") return node;
+
+  const order: string[] = [];
+  const groups = new Map<string, LeafReport[]>();
+  for (const report of node.reports) {
+    const folder = getFolderSegment(report.route);
+    if (!groups.has(folder)) {
+      groups.set(folder, []);
+      order.push(folder);
+    }
+    groups.get(folder)!.push(report);
+  }
+
+  return {
+    type: "parent-reports",
+    icon: node.icon,
+    label: node.label,
+    folders: order.map((folder) => ({
+      folder,
+      key: `${node.label}::${folder}`,
+      reports: groups.get(folder)!,
+    })),
+  };
+});
+
+export const NO_FOLDERS: Readonly<Record<string, boolean>> = Object.freeze({});
