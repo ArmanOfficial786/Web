@@ -25,7 +25,7 @@ export interface LoanGuaranteerResponseExtended {
 
 const schema: yup.ObjectSchema<LoanGuaranteerFormValues> = yup
   .object({
-    memberId: yup.string().nullable().optional(),
+    memberId: yup.string().required("Member ID is required"),
     memberName: yup.string().nullable().optional(),
     branchIds: yup.string().nullable().optional().default("2"),
     orderBy: yup.string().nullable().optional().default(""),

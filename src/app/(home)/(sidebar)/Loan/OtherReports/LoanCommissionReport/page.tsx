@@ -40,7 +40,7 @@ const schema: yup.ObjectSchema<LoanCommissionFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    collectorId: yup.number().optional().default(0),
+    collectorId: yup.number().required("Collector Name is required").default(0),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();

@@ -25,7 +25,7 @@ export interface LoanAppraisalResponseExtended {
 
 const schema: yup.ObjectSchema<LoanAppraisalFormValues> = yup
   .object({
-    memberId: yup.string().nullable().optional(),
+    memberId: yup.string().required("Member ID is required"),
     memberName: yup.string().nullable().optional(),
     branchIds: yup.string().nullable().optional().default("2"),
     visualReport: yup.boolean().optional().default(false),
@@ -88,7 +88,6 @@ export default function LoanAppraisalPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
