@@ -511,7 +511,47 @@ export const MENU: MenuNode[] = [
     ],
   },
 
-  { type: "link", icon: ShareIcon, label: "Share", route: "/share" },
+  //============sahare section================
+
+  {
+    type: "parent-reports",
+    icon: ShareIcon,
+    label: "Share",
+    reports: [
+      {
+        label: "SharePurchaseReport",
+        route: "/Share/SharePurchaseReport",
+      },
+      {
+        label: "Share Holding Report",
+        route: "/Share/ShareHoldingReport",
+      },
+      {
+        label: "Share Transfer Report",
+        route: "/Share/ShareTransferReport",
+      },
+      {
+        label: "Share eDividend Report",
+        route: "/Share/ShareDividendReport",
+      },
+      {
+        label: "Share Return Report",
+        route: "/Share/ShareReturnReport",
+      },
+      {
+        label: "Share Statement Reports",
+        route: "/Share/ShareStatementReports",
+      },
+      {
+        label: "Copomis Report",
+        route: "/Share/CopomisReport",
+      },
+      {
+        label: "ShareDividend/PatronizeTransferredReport",
+        route: "/Share/ShareDividendAndPatronizeTransferredReport",
+      },
+    ],
+  },
 ];
 
 // ── Dynamic folder derivation ────────────────────────────────────────────

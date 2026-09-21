@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
-import LoanPaymentForm from "@/components/reports/loanReport/otherReports/LoanPaymentForm";
-import loanService from "@/services/Loan/loanService";
+import CopomisForm from "@/components/reports/share/CopomisForm";
+import shareService from "@/services/Share/shareService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
@@ -10,80 +10,73 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanPaymentRequestDto, Pagination } from "types/api/api";
+import type { CopomisRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-export type LoanPaymentFormValues = LoanPaymentRequestDto;
+export type CopomisFormValues = CopomisRequestDto;
 
-export interface LoanPaymentResponseExtended {
+export interface CopomisResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const PAYMENT_BY_ALL = "All";
 const DATE_REQUIRED_MESSAGE = "Please select date";
 
-const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
+const schema: yup.ObjectSchema<CopomisFormValues> = yup
   .object({
-    fromDateBs: yup
+    tillDateBs: yup
       .string()
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    toDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE)
-      .test("date-order", "To Date cannot be before From Date", function (val) {
-        const { fromDateBs } = this.parent as { fromDateBs: string | null };
-        if (!fromDateBs || !val) return true;
-        return String(val) >= String(fromDateBs);
-      }),
-    paymentBy: yup.string().nullable().optional().default(PAYMENT_BY_ALL),
-    branchIds: yup.string().nullable().optional().default("2"),
+    officeIds: yup.string().nullable().optional().default("2"),
+    memberTypeId: yup.number().optional().default(0),
+    collectionCenterId: yup.number().optional().default(0),
     memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
+    showMemberPhoto: yup.boolean().optional().default(false),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function LoanPaymentPage() {
-  const [reportState, setReportState] = useState<LoanPaymentResponseExtended>({
+export default function CopomisPage() {
+  const [reportState, setReportState] = useState<CopomisResponseExtended>({
     isLoading: false,
   });
-  const [lastRequest, setLastRequest] = useState<LoanPaymentRequestDto | null>(
+  const [lastRequest, setLastRequest] = useState<CopomisRequestDto | null>(
     null,
   );
 
-  const { control, handleSubmit, setValue, reset } =
-    useForm<LoanPaymentFormValues>({
+  const { control, handleSubmit, setValue, reset } = useForm<CopomisFormValues>(
+    {
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
-    });
+    },
+  );
 
   const toRequest = useCallback(
-    (form: LoanPaymentFormValues): LoanPaymentRequestDto => ({
-      fromDateBs: form.fromDateBs || undefined,
-      toDateBs: form.toDateBs || undefined,
-      paymentBy: form.paymentBy || PAYMENT_BY_ALL,
-      branchIds: form.branchIds || "-1",
-      memberGroupId: form.memberGroupId || -1,
+    (form: CopomisFormValues): CopomisRequestDto => ({
+      tillDateBs: form.tillDateBs || undefined,
+      officeIds: form.officeIds || "-1",
+      memberTypeId: form.memberTypeId ?? 0,
+      collectionCenterId: form.collectionCenterId ?? 0,
+      memberGroupId: form.memberGroupId ?? -1,
       orderBy: form.orderBy || "",
+      showMemberPhoto: form.showMemberPhoto ?? false,
       visualReport: form.visualReport ?? false,
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: LoanPaymentRequestDto, format: string) =>
-      loanService.api.loanPaymentCreate(request, { format }),
+    (request: CopomisRequestDto, format: string) =>
+      shareService.api.copomisCreate(request, { format }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: LoanPaymentRequestDto) => {
+    async (request: CopomisRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -128,7 +121,6 @@ export default function LoanPaymentPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
-        toast.warning("Please generate the report first");
         return;
       }
       try {
@@ -139,7 +131,7 @@ export default function LoanPaymentPage() {
         link.download = extractFilenameFromResponse(
           res,
           format,
-          "LoanPaymentReport",
+          "CopomisReport",
         );
         document.body.appendChild(link);
         link.click();
@@ -153,7 +145,7 @@ export default function LoanPaymentPage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<LoanPaymentFormValues> = useCallback(
+  const onSubmit: SubmitHandler<CopomisFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -168,7 +160,7 @@ export default function LoanPaymentPage() {
   }, []);
 
   return (
-    <LoanPaymentForm
+    <CopomisForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

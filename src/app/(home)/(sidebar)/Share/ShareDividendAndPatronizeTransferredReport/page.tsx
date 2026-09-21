@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
-import LoanPaymentForm from "@/components/reports/loanReport/otherReports/LoanPaymentForm";
-import loanService from "@/services/Loan/loanService";
+import ShareDividendPatronizeTransferredForm from "@/components/reports/share/ShareDividendPatronizeTransferredForm";
+import shareService from "@/services/Share/shareService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
@@ -10,80 +10,91 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanPaymentRequestDto, Pagination } from "types/api/api";
+import type {
+  Pagination,
+  ShareDividendPatronizeTransferredRequestDto,
+} from "types/api/api";
 import * as yup from "yup";
 
-export type LoanPaymentFormValues = LoanPaymentRequestDto;
+export type ShareDividendPatronizeTransferredFormValues =
+  ShareDividendPatronizeTransferredRequestDto;
 
-export interface LoanPaymentResponseExtended {
+export interface ShareDividendPatronizeTransferredResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const PAYMENT_BY_ALL = "All";
 const DATE_REQUIRED_MESSAGE = "Please select date";
+const REPORT_TYPE_DEFAULT = "Share Dividend";
 
-const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
-  .object({
-    fromDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE),
-    toDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE)
-      .test("date-order", "To Date cannot be before From Date", function (val) {
-        const { fromDateBs } = this.parent as { fromDateBs: string | null };
-        if (!fromDateBs || !val) return true;
-        return String(val) >= String(fromDateBs);
-      }),
-    paymentBy: yup.string().nullable().optional().default(PAYMENT_BY_ALL),
-    branchIds: yup.string().nullable().optional().default("2"),
-    memberGroupId: yup.number().optional().default(-1),
-    orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false),
-  })
-  .required();
+const schema: yup.ObjectSchema<ShareDividendPatronizeTransferredFormValues> =
+  yup
+    .object({
+      fromDateBs: yup
+        .string()
+        .nullable()
+        .optional()
+        .required(DATE_REQUIRED_MESSAGE),
+      toDateBs: yup
+        .string()
+        .nullable()
+        .optional()
+        .required(DATE_REQUIRED_MESSAGE)
+        .test(
+          "date-order",
+          "To Date cannot be before From Date",
+          function (val) {
+            const { fromDateBs } = this.parent as { fromDateBs: string | null };
+            if (!fromDateBs || !val) return true;
+            return String(val) >= String(fromDateBs);
+          },
+        ),
+      reportType: yup
+        .string()
+        .nullable()
+        .optional()
+        .default(REPORT_TYPE_DEFAULT),
+      visualReport: yup.boolean().optional().default(false),
+    })
+    .required();
 
-export default function LoanPaymentPage() {
-  const [reportState, setReportState] = useState<LoanPaymentResponseExtended>({
-    isLoading: false,
-  });
-  const [lastRequest, setLastRequest] = useState<LoanPaymentRequestDto | null>(
-    null,
-  );
+export default function ShareDividendPatronizeTransferredPage() {
+  const [reportState, setReportState] =
+    useState<ShareDividendPatronizeTransferredResponseExtended>({
+      isLoading: false,
+    });
+  const [lastRequest, setLastRequest] =
+    useState<ShareDividendPatronizeTransferredRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<LoanPaymentFormValues>({
+    useForm<ShareDividendPatronizeTransferredFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
 
   const toRequest = useCallback(
-    (form: LoanPaymentFormValues): LoanPaymentRequestDto => ({
+    (
+      form: ShareDividendPatronizeTransferredFormValues,
+    ): ShareDividendPatronizeTransferredRequestDto => ({
       fromDateBs: form.fromDateBs || undefined,
       toDateBs: form.toDateBs || undefined,
-      paymentBy: form.paymentBy || PAYMENT_BY_ALL,
-      branchIds: form.branchIds || "-1",
-      memberGroupId: form.memberGroupId || -1,
-      orderBy: form.orderBy || "",
+      reportType: form.reportType || REPORT_TYPE_DEFAULT,
       visualReport: form.visualReport ?? false,
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: LoanPaymentRequestDto, format: string) =>
-      loanService.api.loanPaymentCreate(request, { format }),
+    (request: ShareDividendPatronizeTransferredRequestDto, format: string) =>
+      shareService.api.shareDividendPatronizeTransferredCreate(request, {
+        format,
+      }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: LoanPaymentRequestDto) => {
+    async (request: ShareDividendPatronizeTransferredRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -128,7 +139,6 @@ export default function LoanPaymentPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
-        toast.warning("Please generate the report first");
         return;
       }
       try {
@@ -139,7 +149,7 @@ export default function LoanPaymentPage() {
         link.download = extractFilenameFromResponse(
           res,
           format,
-          "LoanPaymentReport",
+          "ShareDividendPatronizeTransferredReport",
         );
         document.body.appendChild(link);
         link.click();
@@ -153,10 +163,11 @@ export default function LoanPaymentPage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<LoanPaymentFormValues> = useCallback(
-    (formData) => fetchReport(toRequest(formData)),
-    [fetchReport, toRequest],
-  );
+  const onSubmit: SubmitHandler<ShareDividendPatronizeTransferredFormValues> =
+    useCallback(
+      (formData) => fetchReport(toRequest(formData)),
+      [fetchReport, toRequest],
+    );
 
   useEffect(() => {
     return () => {
@@ -168,7 +179,7 @@ export default function LoanPaymentPage() {
   }, []);
 
   return (
-    <LoanPaymentForm
+    <ShareDividendPatronizeTransferredForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

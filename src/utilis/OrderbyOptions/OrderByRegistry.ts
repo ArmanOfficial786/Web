@@ -11,13 +11,21 @@ import {
   SavingWiseBalanceOrderByReportKey,
 } from "./memberAccount/savingWiseBalanceOrderByOptions";
 
-import { loanOrderByOptionsMap, LoanOrderByReportKey } from "./Loan/loanOrderByOptions";
+import {
+  loanOrderByOptionsMap,
+  LoanOrderByReportKey,
+} from "./Loan/loanOrderByOptions";
+import {
+  ShareOrderByReportKey,
+  sharePurchaseOrderByOptionsMap,
+} from "./share/shareOrderByOptions";
 
 export type OrderByReportKey =
   | MemberOrderByReportKey
   | AccountOrderByReportKey
   | SavingWiseBalanceOrderByReportKey
-  | LoanOrderByReportKey;
+  | LoanOrderByReportKey
+  | ShareOrderByReportKey;
 
 export const orderByOptionsMap: Record<
   OrderByReportKey,
@@ -27,4 +35,5 @@ export const orderByOptionsMap: Record<
   ...accountOrderByOptionsMap,
   ...savingWiseBalanceOrderByOptionsMap,
   ...loanOrderByOptionsMap,
+  ...sharePurchaseOrderByOptionsMap,
 };

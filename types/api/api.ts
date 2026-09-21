@@ -306,6 +306,20 @@ export interface ConvertResponseDto {
   day?: number;
 }
 
+export interface CopomisRequestDto {
+  tillDateBs?: string | null;
+  officeIds?: string | null;
+  /** @format int64 */
+  memberTypeId?: number;
+  /** @format int64 */
+  collectionCenterId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  showMemberPhoto?: boolean;
+  visualReport?: boolean;
+}
+
 export interface CostOfFundRequest {
   tillDate?: string | null;
   /** @format int64 */
@@ -571,6 +585,15 @@ export interface GeneralResponseOfListOfLmtLoanMaseterListResponse {
   statusCode?: number;
   message?: string | null;
   data?: LmtLoanMaseterListResponse[] | null;
+  pagination?: Pagination;
+}
+
+export interface GeneralResponseOfListOfMemberTypeResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: MemberTypeResponse[] | null;
   pagination?: Pagination;
 }
 
@@ -1102,6 +1125,12 @@ export interface MemberSummaryRequest {
   visualReport?: boolean;
 }
 
+export interface MemberTypeResponse {
+  /** @format int64 */
+  memberTypeId?: number;
+  memberTypeName?: string | null;
+}
+
 export interface MiscellaneousIncomeRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
@@ -1465,6 +1494,122 @@ export interface SecondLedgerDetailsRequestDto {
   voucherType?: string | null;
   reportType?: string | null;
   showOpeningBalance?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareDetailsRequestDto {
+  tillDateBs?: string | null;
+  officeIds?: string | null;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberTypeId?: number;
+  isGreaterThan?: boolean;
+  /** @format double */
+  totalShareAmount?: number;
+  /** @format int64 */
+  collectionCenterId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  enableCollectionCenter?: boolean;
+  enableGroup?: boolean;
+  reportType?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareDividendPatronizeTransferredRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  reportType?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareDividendRequestDto {
+  /** @format int64 */
+  fiscalYearId?: number;
+  /** @format int64 */
+  officeId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareHoldingRequestDto {
+  /** @format int64 */
+  memberId?: number;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  officeId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberTypeId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface SharePurchaseRequestDto {
+  /** @format int64 */
+  memberId?: number;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  officeId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareReturnPaymentRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  officeIds?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareReturnRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  officeId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface ShareStatementRequestDto {
+  /** @format int64 */
+  memberId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  enableHeader?: boolean;
+  enableBillNo?: boolean;
+  visualReport?: boolean;
+}
+
+export interface ShareTransferRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  officeId?: number;
+  /** @format int64 */
+  shareTypeId?: number;
+  /** @format int64 */
+  memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -3317,6 +3462,23 @@ export class Api<
     ) =>
       this.request<MemberSelectedDto, any>({
         path: `/api/MemberLookUp/select/${memMemberRegistrationId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name MemberTypeGetAllActiveList
+     * @request GET:/api/MemberType/GetAllActive
+     * @secure
+     */
+    memberTypeGetAllActiveList: (params: RequestParams = {}) =>
+      this.request<GeneralResponseOfListOfMemberTypeResponse, any>({
+        path: `/api/MemberType/GetAllActive`,
         method: "GET",
         secure: true,
         format: "json",
@@ -5313,6 +5475,266 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/SMSCategory`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name CopomisCreate
+     * @request POST:/api/Copomis
+     * @secure
+     */
+    copomisCreate: (
+      data: CopomisRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/Copomis`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareDetailsCreate
+     * @request POST:/api/ShareDetails
+     * @secure
+     */
+    shareDetailsCreate: (
+      data: ShareDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareDividendCreate
+     * @request POST:/api/ShareDividend
+     * @secure
+     */
+    shareDividendCreate: (
+      data: ShareDividendRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareDividend`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareDividendPatronizeTransferredCreate
+     * @request POST:/api/ShareDividendPatronizeTransferred
+     * @secure
+     */
+    shareDividendPatronizeTransferredCreate: (
+      data: ShareDividendPatronizeTransferredRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareDividendPatronizeTransferred`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareHoldingCreate
+     * @request POST:/api/ShareHolding
+     * @secure
+     */
+    shareHoldingCreate: (
+      data: ShareHoldingRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareHolding`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name SharePurchaseCreate
+     * @request POST:/api/SharePurchase
+     * @secure
+     */
+    sharePurchaseCreate: (
+      data: SharePurchaseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/SharePurchase`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareReturnCreate
+     * @request POST:/api/ShareReturn
+     * @secure
+     */
+    shareReturnCreate: (
+      data: ShareReturnRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareReturn`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareReturnPaymentCreate
+     * @request POST:/api/ShareReturnPayment
+     * @secure
+     */
+    shareReturnPaymentCreate: (
+      data: ShareReturnPaymentRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareReturnPayment`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareStatementCreate
+     * @request POST:/api/ShareStatement
+     * @secure
+     */
+    shareStatementCreate: (
+      data: ShareStatementRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareStatement`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Share
+     * @name ShareTransferCreate
+     * @request POST:/api/ShareTransfer
+     * @secure
+     */
+    shareTransferCreate: (
+      data: ShareTransferRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/ShareTransfer`,
         method: "POST",
         query: query,
         body: data,

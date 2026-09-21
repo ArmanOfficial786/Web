@@ -7,6 +7,7 @@ import depositeTypeService from "@/services/Common/DepositeType";
 import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
 import { memberGroupService } from "@/services/Common/MemberGroupService";
 import { memberLookUpService } from "@/services/Common/MemberLookUpService";
+import memberTypeService from "@/services/Common/MemberTypeService";
 import paymentDurationTypeService from "@/services/Common/PaymentDurationType";
 import shareTypeService from "@/services/Common/ShareTypeService";
 import { soleMemberGroupService } from "@/services/Common/SoleMemberGroupService";
@@ -29,6 +30,7 @@ import {
   CollectorResponse,
   DepositTypeResponse,
   MemberLookUpDtos,
+  MemberTypeResponse,
   TellerLookupResponse,
 } from "types/api/api";
 
@@ -112,6 +114,9 @@ interface ReportFormContextType {
 
   paymentDurationTypeOptions: SelectOption[];
   fetchPaymentDurationTypes: () => Promise<void>;
+
+  memberTypeOptions: SelectOption[];
+  fetchMemberTypes: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -182,6 +187,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [paymentDurationTypeOptions, setPaymentDurationTypeOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
 
+  const [memberTypeOptions, setMemberTypeOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
   //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
@@ -190,6 +198,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const userLookupFetchedRef = useRef<Record<string, boolean>>({});
   const collectionBranchFetchedRef = useRef(false);
   const paymentDurationTypeFetchedRef = useRef(false);
+  const memberTypeFetchedRef = useRef(false);
 
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
@@ -524,6 +533,23 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // ── Member Type — lazy, fetched once, retried on failure (same pattern
+  // as fetchBranches / fetchLoanMasterList — the ref now actually guards).
+  const fetchMemberTypes = useCallback(async () => {
+    if (memberTypeFetchedRef.current) return;
+    memberTypeFetchedRef.current = true;
+    try {
+      const res: MemberTypeResponse[] = await memberTypeService.getAllActive();
+      const mapped = res.map((m: MemberTypeResponse) => ({
+        id: m.memberTypeId ?? 0,
+        name: m.memberTypeName ?? "",
+      }));
+      setMemberTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+    } catch {
+      memberTypeFetchedRef.current = false;
+    }
+  }, []);
+
   //======end call api logic========================
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -568,6 +594,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchVouchers,
       paymentDurationTypeOptions,
       fetchPaymentDurationTypes,
+      memberTypeOptions,
+      fetchMemberTypes,
     }),
     [
       memberLookUp,
@@ -610,6 +638,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchVouchers,
       paymentDurationTypeOptions,
       fetchPaymentDurationTypes,
+      memberTypeOptions,
+      fetchMemberTypes,
     ],
   );
 

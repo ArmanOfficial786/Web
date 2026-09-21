@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
-import LoanPaymentForm from "@/components/reports/loanReport/otherReports/LoanPaymentForm";
-import loanService from "@/services/Loan/loanService";
+import ShareStatementForm from "@/components/reports/share/ShareStatementForm";
+import shareService from "@/services/Share/shareService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
@@ -10,80 +10,61 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanPaymentRequestDto, Pagination } from "types/api/api";
+import type { Pagination, ShareStatementRequestDto } from "types/api/api";
 import * as yup from "yup";
 
-export type LoanPaymentFormValues = LoanPaymentRequestDto;
+export type ShareStatementFormValues = ShareStatementRequestDto & {
+  memberName?: string | null;
+};
 
-export interface LoanPaymentResponseExtended {
+export interface ShareStatementResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-const PAYMENT_BY_ALL = "All";
-const DATE_REQUIRED_MESSAGE = "Please select date";
-
-const schema: yup.ObjectSchema<LoanPaymentFormValues> = yup
+const schema: yup.ObjectSchema<ShareStatementFormValues> = yup
   .object({
-    fromDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE),
-    toDateBs: yup
-      .string()
-      .nullable()
-      .optional()
-      .required(DATE_REQUIRED_MESSAGE)
-      .test("date-order", "To Date cannot be before From Date", function (val) {
-        const { fromDateBs } = this.parent as { fromDateBs: string | null };
-        if (!fromDateBs || !val) return true;
-        return String(val) >= String(fromDateBs);
-      }),
-    paymentBy: yup.string().nullable().optional().default(PAYMENT_BY_ALL),
-    branchIds: yup.string().nullable().optional().default("2"),
-    memberGroupId: yup.number().optional().default(-1),
-    orderBy: yup.string().nullable().optional().default(""),
+    memberId: yup.number().optional(),
+    memberName: yup.string().nullable().optional(),
+    shareTypeId: yup.number().optional().default(0),
+    enableHeader: yup.boolean().optional().default(false),
+    enableBillNo: yup.boolean().optional().default(false),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
-export default function LoanPaymentPage() {
-  const [reportState, setReportState] = useState<LoanPaymentResponseExtended>({
-    isLoading: false,
-  });
-  const [lastRequest, setLastRequest] = useState<LoanPaymentRequestDto | null>(
-    null,
-  );
+export default function ShareStatementPage() {
+  const [reportState, setReportState] =
+    useState<ShareStatementResponseExtended>({ isLoading: false });
+  const [lastRequest, setLastRequest] =
+    useState<ShareStatementRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
-    useForm<LoanPaymentFormValues>({
+    useForm<ShareStatementFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
     });
 
   const toRequest = useCallback(
-    (form: LoanPaymentFormValues): LoanPaymentRequestDto => ({
-      fromDateBs: form.fromDateBs || undefined,
-      toDateBs: form.toDateBs || undefined,
-      paymentBy: form.paymentBy || PAYMENT_BY_ALL,
-      branchIds: form.branchIds || "-1",
-      memberGroupId: form.memberGroupId || -1,
-      orderBy: form.orderBy || "",
+    (form: ShareStatementFormValues): ShareStatementRequestDto => ({
+      memberId: form.memberId,
+      shareTypeId: form.shareTypeId ?? 0,
+      enableHeader: form.enableHeader ?? false,
+      enableBillNo: form.enableBillNo ?? false,
       visualReport: form.visualReport ?? false,
     }),
     [],
   );
 
   const callApi = useCallback(
-    (request: LoanPaymentRequestDto, format: string) =>
-      loanService.api.loanPaymentCreate(request, { format }),
+    (request: ShareStatementRequestDto, format: string) =>
+      shareService.api.shareStatementCreate(request, { format }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: LoanPaymentRequestDto) => {
+    async (request: ShareStatementRequestDto) => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -128,7 +109,6 @@ export default function LoanPaymentPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
-        toast.warning("Please generate the report first");
         return;
       }
       try {
@@ -139,7 +119,7 @@ export default function LoanPaymentPage() {
         link.download = extractFilenameFromResponse(
           res,
           format,
-          "LoanPaymentReport",
+          "ShareStatementReport",
         );
         document.body.appendChild(link);
         link.click();
@@ -153,7 +133,7 @@ export default function LoanPaymentPage() {
     [callApi, lastRequest],
   );
 
-  const onSubmit: SubmitHandler<LoanPaymentFormValues> = useCallback(
+  const onSubmit: SubmitHandler<ShareStatementFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],
   );
@@ -168,7 +148,7 @@ export default function LoanPaymentPage() {
   }, []);
 
   return (
-    <LoanPaymentForm
+    <ShareStatementForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
