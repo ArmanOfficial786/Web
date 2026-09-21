@@ -2,7 +2,6 @@
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
 import LoanInterestReceivableYearEndForm from "@/components/reports/loanReport/otherReports/LoanInterestReceivableYearEndForm";
-import calendarService from "@/services/Common/ComCalendarService";
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -56,39 +55,6 @@ export default function LoanInterestReceivableYearEndPage() {
       defaultValues: schema.getDefault(),
     });
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const applyDefaults = async () => {
-      try {
-        const today = await calendarService.getTodayBs();
-        if (!isMounted) return;
-
-        const formatted = `${today.year}-${String(today.month).padStart(2, "0")}-${String(today.day).padStart(2, "0")}`;
-        setValue("selectType", DEFAULT_SELECT_TYPE, {
-          shouldDirty: false,
-          shouldValidate: true,
-        });
-        setValue("asOnDateBs", formatted, {
-          shouldDirty: false,
-          shouldValidate: true,
-        });
-      } catch {
-        if (!isMounted) return;
-        setValue("selectType", DEFAULT_SELECT_TYPE, {
-          shouldDirty: false,
-          shouldValidate: true,
-        });
-      }
-    };
-
-    applyDefaults();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [setValue]);
-
   const toRequest = useCallback(
     (
       form: LoanInterestReceivableYearEndFormValues,
@@ -138,7 +104,6 @@ export default function LoanInterestReceivableYearEndPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

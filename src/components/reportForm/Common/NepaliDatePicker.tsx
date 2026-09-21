@@ -1,11 +1,17 @@
 // components/reportForm/Common/NepaliDatePicker.tsx
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import calendarService from "@/services/Common/ComCalendarService";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import calendarService from "@/services/Common/ComCalendarService";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 const BS_MONTHS = [
   { value: 1, label: "Baisakh" },
@@ -24,17 +30,40 @@ const BS_MONTHS = [
 
 const BLANK = -1;
 
+type BsParts = { year: number; month: number; day: number };
+
 function pad2(n: number) {
   return String(n).padStart(2, "0");
 }
 
-function parseBS(
-  value: string,
-): { year: number; month: number; day: number } | null {
+function parseBS(value: string): BsParts | null {
   if (!value) return null;
   const parts = value.split("-").map(Number);
   if (parts.length !== 3 || parts.some(isNaN)) return null;
   return { year: parts[0], month: parts[1], day: parts[2] };
+}
+
+/**
+ * Pure helper: pulls (y, m, d) back inside the allowed upper bound.
+ * BLANK (-1) / 0 values are never touched because they are never > a bound.
+ */
+function clampToMax(
+  y: number,
+  m: number,
+  d: number,
+  max: BsParts | null,
+  maxYear: number | null,
+) {
+  if (max) {
+    if (y > max.year) y = max.year;
+    if (y === max.year) {
+      if (m > max.month) m = max.month;
+      if (m === max.month && d > max.day) d = max.day;
+    }
+  } else if (maxYear && y > maxYear) {
+    y = maxYear;
+  }
+  return { y, m, d };
 }
 
 export interface NepaliDatePickerProps {
@@ -75,39 +104,49 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
   const [year, setYear] = useState<number>(blankSelection ? BLANK : 0);
   const [month, setMonth] = useState<number>(blankSelection ? BLANK : 1);
   const [day, setDay] = useState<number>(blankSelection ? BLANK : 0);
-  const initialValueSet = useRef(false);
 
-  const parsedMaxDate = maxDate ? parseBS(maxDate) : null;
+  const onChangeRef = useRef(onChange);
+  const valueRef = useRef(value ?? "");
+  useEffect(() => {
+    onChangeRef.current = onChange;
+    valueRef.current = value ?? "";
+  });
+
+  const lastEmittedDate = useRef(value ?? "");
+  const preserveDay = useRef(false);
+  const prevValueRef = useRef<string>(value ?? "");
+
+  const parsedMaxDate = useMemo(
+    () => (maxDate ? parseBS(maxDate) : null),
+    [maxDate],
+  );
   const effectiveMaxYear = parsedMaxDate?.year ?? maxYear ?? null;
 
-  // ── Dropdown filtering ────────────────────────────────────────────────────
   const visibleYears = effectiveMaxYear
     ? years.filter((y) => y <= effectiveMaxYear)
     : years;
 
-  const visibleMonths = (() => {
-    if (parsedMaxDate && year === parsedMaxDate.year)
-      return BS_MONTHS.filter((m) => m.value <= parsedMaxDate.month);
-    return BS_MONTHS;
-  })();
+  const visibleMonths =
+    parsedMaxDate && year === parsedMaxDate.year
+      ? BS_MONTHS.filter((m) => m.value <= parsedMaxDate.month)
+      : BS_MONTHS;
 
-  const visibleDays = (() => {
-    if (
-      parsedMaxDate &&
-      year === parsedMaxDate.year &&
-      month === parsedMaxDate.month
-    )
-      return days.filter((d) => d <= parsedMaxDate.day);
-    return days;
-  })();
+  const visibleDays =
+    parsedMaxDate &&
+    year === parsedMaxDate.year &&
+    month === parsedMaxDate.month
+      ? days.filter((d) => d <= parsedMaxDate.day)
+      : days;
 
-  // ── Emit helper ───────────────────────────────────────────────────────────
-  const emitDate = (y: number, m: number, d: number) => {
-    if (y && y !== BLANK && m && m !== BLANK && d && d !== BLANK)
-      onChange(`${y}-${pad2(m)}-${pad2(d)}`);
-  };
+  const emitDate = useCallback((y: number, m: number, d: number) => {
+    if (y <= 0 || m <= 0 || d <= 0) return;
+    const nextDate = `${y}-${pad2(m)}-${pad2(d)}`;
+    if (nextDate === lastEmittedDate.current) return;
+    lastEmittedDate.current = nextDate;
+    if (nextDate === valueRef.current) return;
+    onChangeRef.current(nextDate);
+  }, []);
 
-  // ── Mount: load years + resolve initial date ──────────────────────────────
   useEffect(() => {
     let cancelled = false;
     const init = async () => {
@@ -120,186 +159,136 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         let initMonth = blankSelection ? BLANK : 1;
         let initDay = blankSelection ? BLANK : 1;
 
-        if (value && !initialValueSet.current) {
-          const p = parseBS(value);
-          if (p) {
-            initYear = p.year;
-            initMonth = p.month;
-            initDay = p.day;
-            initialValueSet.current = true;
-          }
-        } else if (defaultDate && !initialValueSet.current) {
+        const p = valueRef.current ? parseBS(valueRef.current) : null;
+        if (p) {
+          initYear = p.year;
+          initMonth = p.month;
+          initDay = p.day;
+        } else if (defaultDate) {
           const today = await calendarService.getTodayBs();
-          if (!cancelled) {
-            initYear = today.year;
-            initMonth = today.month;
-            initDay = today.day;
-            initialValueSet.current = true;
-          }
+          if (cancelled) return;
+          initYear = today.year;
+          initMonth = today.month;
+          initDay = today.day;
         }
 
-        if (effectiveMaxYear && initYear > effectiveMaxYear)
-          initYear = effectiveMaxYear;
+        const c = clampToMax(
+          initYear,
+          initMonth,
+          initDay,
+          parsedMaxDate,
+          effectiveMaxYear,
+        );
 
-        if (!cancelled) {
-          setYear(initYear);
-          setMonth(initMonth);
-          if (
-            initYear > 0 &&
-            initYear !== BLANK &&
-            initMonth > 0 &&
-            initMonth !== BLANK
-          ) {
-            const allDays = await calendarService.getDays(initYear, initMonth);
-            if (!cancelled) {
-              setDays(allDays);
-              const maxDayForSlot =
-                parsedMaxDate &&
-                initYear === parsedMaxDate.year &&
-                initMonth === parsedMaxDate.month
-                  ? Math.min(allDays.length, parsedMaxDate.day)
-                  : allDays.length;
-              const clamped =
-                initDay > 0
-                  ? Math.min(initDay, maxDayForSlot)
-                  : blankSelection
-                    ? BLANK
-                    : 1;
-              setDay(clamped);
-              emitDate(initYear, initMonth, clamped);
-            }
-          } else {
-            setDay(blankSelection ? BLANK : 0);
-          }
-        }
-      } catch (e: any) {}
+        if (c.y !== year || c.m !== month) preserveDay.current = true;
+        setYear(c.y);
+        setMonth(c.m);
+        setDay(c.d > 0 ? c.d : blankSelection ? BLANK : 0);
+      } catch {
+        /* calendar service failed – leave the picker empty */
+      }
     };
     init();
     return () => {
       cancelled = true;
     };
-    // This initialization intentionally runs once with the initial field state.
+    // Runs once on mount with the initial field state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Fetch days when year/month changes ────────────────────────────────────
   useEffect(() => {
-    if (!year || year === BLANK || !month || month === BLANK) {
+    if (year <= 0 || month <= 0) {
       setDays([]);
       if (!blankSelection) setDay(0);
       return;
     }
     let cancelled = false;
+    const keepDay = preserveDay.current;
+
     calendarService
       .getDays(year, month)
       .then((allDays) => {
         if (cancelled) return;
+        preserveDay.current = false;
         setDays(allDays);
+
         const maxDayForSlot =
           parsedMaxDate &&
           year === parsedMaxDate.year &&
           month === parsedMaxDate.month
             ? Math.min(allDays.length, parsedMaxDate.day)
             : allDays.length;
-        const newDay = blankSelection
-          ? BLANK
-          : day && day !== BLANK && day <= maxDayForSlot
-            ? day
-            : allDays[0] || 1;
+
+        let newDay: number;
+        if (blankSelection && !keepDay) newDay = BLANK;
+        else if (day > 0 && day <= maxDayForSlot) newDay = day;
+        else newDay = blankSelection ? BLANK : allDays[0] || 1;
+
         setDay(newDay);
         emitDate(year, month, newDay);
       })
       .catch(() => {});
+
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month]);
 
-  // ── Emit on any valid change ──────────────────────────────────────────────
   useEffect(() => {
-    if (
-      year &&
-      year !== BLANK &&
-      month &&
-      month !== BLANK &&
-      day &&
-      day !== BLANK
-    )
-      emitDate(year, month, day);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [year, month, day]);
+    const incoming = value ?? "";
+    if (incoming === prevValueRef.current) return;
+    prevValueRef.current = incoming;
 
-  // ── Sync when external value changes (e.g. after reset) ──────────────────
-  const prevValueRef = useRef<string>(value);
-  useEffect(() => {
-    const prev = prevValueRef.current;
-    prevValueRef.current = value ?? "";
-    if ((value ?? "") === prev) return;
+    if (incoming === lastEmittedDate.current) return;
 
-    if (!value || value === "") {
-      if (
-        !blankSelection &&
-        year &&
-        year !== BLANK &&
-        month &&
-        month !== BLANK &&
-        day &&
-        day !== BLANK
-      )
-        emitDate(year, month, day);
+    if (!incoming) {
+      lastEmittedDate.current = "";
+      if (!blankSelection) emitDate(year, month, day);
       return;
     }
-    const p = parseBS(value);
+
+    const p = parseBS(incoming);
     if (!p) return;
-    if (p.year !== year || p.month !== month || p.day !== day) {
-      setYear(p.year);
-      setMonth(p.month);
-      setDay(p.day);
-    }
+
+    lastEmittedDate.current = incoming;
+
+    if (p.year === year && p.month === month && p.day === day) return;
+    preserveDay.current = p.year !== year || p.month !== month;
+    setYear(p.year);
+    setMonth(p.month);
+    setDay(p.day);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  // ── Guard: clamp selections when maxDate/maxYear prop changes ────────────
   useEffect(() => {
-    if (!parsedMaxDate) return;
-    if (year !== BLANK && year > parsedMaxDate.year) {
-      setYear(parsedMaxDate.year);
-    } else if (year === parsedMaxDate.year) {
-      if (month !== BLANK && month > parsedMaxDate.month)
-        setMonth(parsedMaxDate.month);
-      else if (
-        month === parsedMaxDate.month &&
-        day !== BLANK &&
-        day > parsedMaxDate.day
-      )
-        setDay(parsedMaxDate.day);
+    if (!parsedMaxDate && !effectiveMaxYear) return;
+    const c = clampToMax(year, month, day, parsedMaxDate, effectiveMaxYear);
+    if (c.y === year && c.m === month && c.d === day) return;
+
+    if (c.y !== year || c.m !== month) {
+      preserveDay.current = true;
+      setYear(c.y);
+      setMonth(c.m);
+      setDay(c.d);
+    } else {
+      setDay(c.d);
+      emitDate(c.y, c.m, c.d);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maxDate]);
+  }, [maxDate, maxYear]);
 
-  useEffect(() => {
-    if (!effectiveMaxYear) return;
-    if (year !== BLANK && year > effectiveMaxYear) setYear(effectiveMaxYear);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maxYear]);
+  const handleDayChange = (d: number) => {
+    setDay(d);
+    emitDate(year, month, d);
+  };
 
-  // ── Derived error state ───────────────────────────────────────────────────
-  const isInvalid =
-    requiredValidation &&
-    (!year ||
-      year === BLANK ||
-      !month ||
-      month === BLANK ||
-      !day ||
-      day === BLANK);
+  const isInvalid = requiredValidation && (year <= 0 || month <= 0 || day <= 0);
   const hasError = error || isInvalid;
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Box>
       <Box sx={{ display: "flex", gap: 2 }}>
-        {/* Year */}
         <FormControl size={size} error={hasError} sx={{ minWidth: 80 }}>
           <Select
             value={year || ""}
@@ -327,7 +316,6 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
           </Select>
         </FormControl>
 
-        {/* Month */}
         <FormControl size={size} error={hasError} sx={{ minWidth: 130 }}>
           <Select
             value={month || ""}
@@ -357,7 +345,6 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
           </Select>
         </FormControl>
 
-        {/* Day */}
         <FormControl size={size} error={hasError} sx={{ minWidth: 80 }}>
           <Select
             value={visibleDays.length ? day || "" : ""}
@@ -366,7 +353,7 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
             renderValue={(v: any) =>
               !v || v === BLANK ? (blankSelection ? "dd" : "Day") : pad2(v)
             }
-            onChange={(e) => setDay(Number(e.target.value))}
+            onChange={(e) => handleDayChange(Number(e.target.value))}
           >
             {blankSelection ? (
               <MenuItem value={BLANK} disabled>
