@@ -14,7 +14,10 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-
+import {
+  ShareDividendPatronizeTransferredFormValues,
+  ShareDividendPatronizeTransferredResponseExtended,
+} from "@/app/(home)/(sidebar)/Share/ShareDividendAndPatronizeTransferredReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
@@ -26,7 +29,6 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import FieldRow from "@/utilis/FieldRow";
-import { ShareDividendPatronizeTransferredFormValues, ShareDividendPatronizeTransferredResponseExtended } from "@/app/(home)/(sidebar)/Share/ShareDividendAndPatronizeTransferredReport/page";
 
 export type { ReportFormat };
 
@@ -95,26 +97,7 @@ function ShareDividendPatronizeTransferredForm({
           >
             Share Dividend & Patronize Transferred Report
           </Typography>
-          <Divider sx={{ mb: 0.5 }} />
 
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-              alignItems: "center",
-            }}
-          >
-            <FieldRow label="Payment Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={paymentTypeOptions}
-                row
-              />
-            </FieldRow>
-            <Box />
-          </Box>
           <Divider sx={{ mb: 0.5 }} />
 
           <Box sx={{ mb: 0.5 }}>
@@ -129,12 +112,19 @@ function ShareDividendPatronizeTransferredForm({
 
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 1,
             }}
           >
+            <FieldRow label="Payment Type">
+              <RadioInput
+                name="reportType"
+                control={control}
+                radioOptions={paymentTypeOptions}
+                row
+              />
+            </FieldRow>
             <VisualReportSwitch<ShareDividendPatronizeTransferredFormValues>
               control={control}
               name="visualReport"

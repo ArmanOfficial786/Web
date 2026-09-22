@@ -40,8 +40,8 @@ const schema: yup.ObjectSchema<ShareTransferFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    officeId: yup.number().optional().default(2),
-    shareTypeId: yup.number().optional().default(0),
+    officeId: yup.number().optional().default(-1),
+    shareTypeId: yup.number().optional().default(-1),
     memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -65,8 +65,8 @@ export default function ShareTransferPage() {
     (form: ShareTransferFormValues): ShareTransferRequestDto => ({
       fromDateBs: form.fromDateBs || undefined,
       toDateBs: form.toDateBs || undefined,
-      officeId: form.officeId,
-      shareTypeId: form.shareTypeId ?? 0,
+      officeId: form.officeId ?? 0,
+      shareTypeId: form.shareTypeId ?? -1,
       memberGroupId: form.memberGroupId ?? -1,
       orderBy: form.orderBy || "",
       visualReport: form.visualReport ?? false,

@@ -20,9 +20,9 @@ import {
 } from "@/app/(home)/(sidebar)/Share/ShareReturnReport/page";
 import DropDown from "@/components/form/DropDown";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportNavigation, {
   type ReportFormat,
@@ -120,10 +120,10 @@ function ShareReturnForm({
               gap: 2,
             }}
           >
-            <OfficeNameField<ShareReturnFormValues>
+            <BranchNameField<ShareReturnFormValues>
               control={control}
               branchFieldName="officeId"
-              multiple={false}
+              setValue={setValue}
             />
             <FieldRow label="Share Type">
               <Box sx={{ width: "100%" }}>

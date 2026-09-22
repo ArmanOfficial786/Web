@@ -23,9 +23,12 @@ export interface ShareDividendResponseExtended {
 
 const schema: yup.ObjectSchema<ShareDividendFormValues> = yup
   .object({
-    fiscalYearId: yup.number().optional().default(-1),
-    officeId: yup.number().optional().default(2),
-    shareTypeId: yup.number().optional().default(0),
+    fiscalYearId: yup
+      .number()
+      .default(-1)
+      .moreThan(0, "Fiscal Year is Required"),
+    officeId: yup.number().optional().default(-1),
+    shareTypeId: yup.number().optional().default(-1),
     memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -48,8 +51,8 @@ export default function ShareDividendPage() {
   const toRequest = useCallback(
     (form: ShareDividendFormValues): ShareDividendRequestDto => ({
       fiscalYearId: form.fiscalYearId ?? -1,
-      officeId: form.officeId,
-      shareTypeId: form.shareTypeId ?? 0,
+      officeId: form.officeId ?? -1,
+      shareTypeId: form.shareTypeId ?? -1,
       memberGroupId: form.memberGroupId ?? -1,
       orderBy: form.orderBy || "",
       visualReport: form.visualReport ?? false,

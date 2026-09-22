@@ -43,7 +43,11 @@
 // }
 
 "use client";
-import React, { useEffect } from "react";
+import DropDown from "@/components/form/DropDown";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
+import Box from "@mui/system/Box";
+import { useEffect } from "react";
 import type {
   Control,
   FieldValues,
@@ -51,10 +55,6 @@ import type {
   PathValue,
   UseFormSetValue,
 } from "react-hook-form";
-import FieldRow from "@/utilis/FieldRow";
-import DropDown from "@/components/form/DropDown";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import Box from "@mui/system/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface BranchNameFieldProps<T extends FieldValues> {
@@ -69,7 +69,7 @@ export default function BranchNameField<T extends FieldValues>({
   control,
   branchFieldName,
   setValue,
-  defaultBranchId = 2, // ← default is 2
+  defaultBranchId, // ← default is 2
 }: BranchNameFieldProps<T>) {
   const { fetchBranches, branchOptions } = useReportFormContext();
 

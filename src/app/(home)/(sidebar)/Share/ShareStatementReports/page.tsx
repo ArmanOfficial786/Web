@@ -25,10 +25,10 @@ export interface ShareStatementResponseExtended {
 
 const schema: yup.ObjectSchema<ShareStatementFormValues> = yup
   .object({
-    memberId: yup.number().optional(),
+    memberId: yup.string().nullable().required("Member ID is required"),
     memberName: yup.string().nullable().optional(),
-    shareTypeId: yup.number().optional().default(0),
-    enableHeader: yup.boolean().optional().default(false),
+    shareTypeId: yup.number().optional().default(-1),
+    enableHeader: yup.boolean().optional().default(true),
     enableBillNo: yup.boolean().optional().default(false),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -49,7 +49,7 @@ export default function ShareStatementPage() {
   const toRequest = useCallback(
     (form: ShareStatementFormValues): ShareStatementRequestDto => ({
       memberId: form.memberId,
-      shareTypeId: form.shareTypeId ?? 0,
+      shareTypeId: form.shareTypeId ?? -1,
       enableHeader: form.enableHeader ?? false,
       enableBillNo: form.enableBillNo ?? false,
       visualReport: form.visualReport ?? false,

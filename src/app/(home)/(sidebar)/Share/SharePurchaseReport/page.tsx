@@ -27,7 +27,7 @@ const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<SharePurchaseFormValues> = yup
   .object({
-    memberId: yup.number().nullable().optional().required("Member is required"),
+    memberId: yup.number(),
     memberName: yup.string().nullable().optional(),
     fromDateBs: yup
       .string()
@@ -67,7 +67,7 @@ export default function SharePurchasePage() {
 
   const toRequest = useCallback(
     (form: SharePurchaseFormValues): SharePurchaseRequestDto => ({
-      memberId: form.memberId ?? undefined,
+      memberId: form.memberId,
       fromDateBs: form.fromDateBs || undefined,
       toDateBs: form.toDateBs || undefined,
       officeId: form.officeId ?? -1,

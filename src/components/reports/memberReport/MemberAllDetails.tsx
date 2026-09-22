@@ -1,40 +1,40 @@
 "use client";
 
-import React, { useEffect,  useRef, useState } from "react";
+import type {
+  MemberAllDetailsFormValues,
+  MemberRegistrationResponseExtended,
+} from "@/app/(home)/(sidebar)/Member/reports/MemberAllDetailsReport/page";
+import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown"; // new import
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse"; // new import
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton"; // new import
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Collapse from "@mui/material/Collapse"; // new import
-import IconButton from "@mui/material/IconButton"; // new import
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown"; // new import
-import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
-import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
-import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
-import type {
-  MemberAllDetailsFormValues,
-  MemberRegistrationResponseExtended,
-} from "@/app/(home)/(sidebar)/Member/reports/MemberAllDetailsReport/page";
-import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 
 export type { ReportFormat };
 

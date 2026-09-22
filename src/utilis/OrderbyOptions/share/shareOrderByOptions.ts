@@ -53,6 +53,8 @@ export const compomisReportOrderByOptions = defineOrderByOptions([
   { key: "registrationDate", label: "Registration Date" },
 ] as const);
 
+
+
 export type ShareOrderByReportKey =
   | "share-purchase-report"
   | "share-holding-report"

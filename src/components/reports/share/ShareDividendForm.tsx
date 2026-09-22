@@ -20,8 +20,8 @@ import {
 } from "@/app/(home)/(sidebar)/Share/ShareDividendReport/page";
 import DropDown from "@/components/form/DropDown";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportNavigation, {
   type ReportFormat,
@@ -30,6 +30,7 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import FiscalYearBsField from "@/components/reportForm/Share/FiscalYearBsField";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import FieldRow from "@/utilis/FieldRow";
 
@@ -109,11 +110,28 @@ function ShareDividendForm({
               gap: 2,
             }}
           >
-            <OfficeNameField<ShareDividendFormValues>
+            <FiscalYearBsField<ShareDividendFormValues>
+              control={control}
+              fiscalYearFieldName="fiscalYearId"
+              setValue={setValue}
+              label="Fiscal Year (BS)"
+            />
+            <BranchNameField<ShareDividendFormValues>
               control={control}
               branchFieldName="officeId"
-              multiple={false}
+              setValue={setValue}
             />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
             <FieldRow label="Share Type">
               <Box sx={{ width: "100%" }}>
                 <DropDown
@@ -125,28 +143,12 @@ function ShareDividendForm({
                 />
               </Box>
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-              alignItems: "center",
-            }}
-          >
             <SoleSelectGroupField<ShareDividendFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="officeId"
               groupFieldName="memberGroupId"
             />
-            <OrderByField<ShareDividendFormValues>
-              control={control}
-              name="orderBy"
-              reportKey="share-dividend-report"
-            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -158,10 +160,18 @@ function ShareDividendForm({
               alignItems: "center",
             }}
           >
+            <OrderByField<ShareDividendFormValues>
+              control={control}
+              name="orderBy"
+              reportKey="share-dividend-report"
+            />
             <VisualReportSwitch<ShareDividendFormValues>
               control={control}
               name="visualReport"
             />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+          <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"
@@ -188,7 +198,7 @@ function ShareDividendForm({
                 />
               </Box>
             </Grid>
-          </Box>
+          </Grid>
         </Paper>
 
         {showReport && (

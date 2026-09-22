@@ -118,7 +118,7 @@ function ShareStatementForm({
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
+              gap: 1,
             }}
           >
             <FieldRow label="Share Type">
@@ -132,26 +132,20 @@ function ShareStatementForm({
                 />
               </Box>
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-around",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
               <CheckboxInput
                 name="enableHeader"
                 control={control}
                 label="Enable Header"
                 size="small"
               />
-            </Box>
-            <Box>
               <CheckboxInput
                 name="enableBillNo"
                 control={control}
@@ -174,10 +168,6 @@ function ShareStatementForm({
               control={control}
               name="visualReport"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"
@@ -205,7 +195,7 @@ function ShareStatementForm({
                 />
               </Box>
             </Grid>
-          </Grid>
+          </Box>
         </Paper>
 
         {showReport && (

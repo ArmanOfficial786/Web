@@ -4,6 +4,7 @@ import branchService from "@/services/Common/BranchService";
 import { collectionCenterService } from "@/services/Common/CollectionCenterService";
 import collectorService from "@/services/Common/CollectorService";
 import depositeTypeService from "@/services/Common/DepositeType";
+import fiscalYearBsService from "@/services/Common/FiscalYearBSService";
 import lmtLoanMasterlistService from "@/services/Common/LmtLoanMasterService";
 import { memberGroupService } from "@/services/Common/MemberGroupService";
 import { memberLookUpService } from "@/services/Common/MemberLookUpService";
@@ -29,6 +30,7 @@ import {
   BranchResponse,
   CollectorResponse,
   DepositTypeResponse,
+  FiscalYearResponse,
   MemberLookUpDtos,
   MemberTypeResponse,
   TellerLookupResponse,
@@ -117,6 +119,9 @@ interface ReportFormContextType {
 
   memberTypeOptions: SelectOption[];
   fetchMemberTypes: () => Promise<void>;
+
+  fiscalYearBsOptions: SelectOption[];
+  fetchFiscalYearBs: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -190,6 +195,9 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [memberTypeOptions, setMemberTypeOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
 
+  const [fiscalYearBsOptions, setFiscalYearBsOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
   //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
@@ -199,6 +207,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const collectionBranchFetchedRef = useRef(false);
   const paymentDurationTypeFetchedRef = useRef(false);
   const memberTypeFetchedRef = useRef(false);
+  const fiscalYearBsFetchedRef = useRef(false);
 
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
@@ -251,10 +260,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res: BranchResponse[] = await branchService.getAll();
       const mapped = res.map((b) => ({
-        id: b.branchId ?? 0,
+        id: b.branchId ?? -1,
         name: b.branchName ?? "",
       }));
-      setBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setBranchOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       branchFetchedRef.current = false;
     }
@@ -376,15 +385,32 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // const fetchShareType = useCallback(async () => {
+  //   if (shareTypeFetchedRef.current) return;
+  //   try {
+  //     const res = await shareTypeService.getAll();
+  //     const mapped = res.map((s: any) => ({
+  //       id: s.shareTypeId ?? -1,
+  //       name: s.shareTypeName ?? "",
+  //     }));
+  //     setShareTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
+  //     if (mapped.length > 0) shareTypeFetchedRef.current = true;
+  //   } catch {
+  //     shareTypeFetchedRef.current = false;
+  //   }
+  // }, []);
+
   const fetchShareType = useCallback(async () => {
     if (shareTypeFetchedRef.current) return;
     try {
       const res = await shareTypeService.getAll();
-      const mapped = res.map((s: any) => ({
-        id: s.shareTypeId ?? 0,
-        name: s.shareTypeName ?? "",
-      }));
-      setShareTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      const mapped = res
+        .filter((s: any) => s.shmShareTypeId != null) // drop rows with no real id
+        .map((s: any) => ({
+          id: s.shmShareTypeId,
+          name: s.shareTypeName ?? "",
+        }));
+      setShareTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
       if (mapped.length > 0) shareTypeFetchedRef.current = true;
     } catch {
       shareTypeFetchedRef.current = false;
@@ -550,6 +576,23 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // ── Fiscal Year (BS) — lazy, fetched once, retried on failure ─────────────
+  const fetchFiscalYearBs = useCallback(async () => {
+    if (fiscalYearBsFetchedRef.current) return;
+    fiscalYearBsFetchedRef.current = true;
+    try {
+      const res: FiscalYearResponse[] =
+        await fiscalYearBsService.getAllActive();
+      const mapped = res.map((fy: FiscalYearResponse) => ({
+        id: fy.fiscalYearId ?? -1,
+        name: fy.fiscalYearToOnBs ?? "",
+      }));
+      setFiscalYearBsOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
+    } catch {
+      fiscalYearBsFetchedRef.current = false; // allow retry on failure
+    }
+  }, []);
+
   //======end call api logic========================
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -596,6 +639,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchPaymentDurationTypes,
       memberTypeOptions,
       fetchMemberTypes,
+      fiscalYearBsOptions,
+      fetchFiscalYearBs,
     }),
     [
       memberLookUp,
@@ -640,6 +685,8 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchPaymentDurationTypes,
       memberTypeOptions,
       fetchMemberTypes,
+      fiscalYearBsOptions,
+      fetchFiscalYearBs,
     ],
   );
 

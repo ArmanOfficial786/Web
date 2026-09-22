@@ -497,6 +497,12 @@ export interface FirstLedgerDetailsRequestDto {
   visualReport?: boolean;
 }
 
+export interface FiscalYearResponse {
+  /** @format int64 */
+  fiscalYearId?: number;
+  fiscalYearToOnBs?: string | null;
+}
+
 export interface FixedDepositCertificateScheduleRequestDto {
   /** @format int64 */
   accountId?: number;
@@ -576,6 +582,15 @@ export interface GeneralResponseOfListOfDepositTypeResponse {
   statusCode?: number;
   message?: string | null;
   data?: DepositTypeResponse[] | null;
+  pagination?: Pagination;
+}
+
+export interface GeneralResponseOfListOfFiscalYearResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: FiscalYearResponse[] | null;
   pagination?: Pagination;
 }
 
@@ -1592,8 +1607,7 @@ export interface ShareReturnRequestDto {
 }
 
 export interface ShareStatementRequestDto {
-  /** @format int64 */
-  memberId?: number;
+  memberId?: string | null;
   /** @format int64 */
   shareTypeId?: number;
   enableHeader?: boolean;
@@ -3220,6 +3234,23 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name FiscalYearGetFiscalYearsBsList
+     * @request GET:/api/FiscalYear/GetFiscalYearsBS
+     * @secure
+     */
+    fiscalYearGetFiscalYearsBsList: (params: RequestParams = {}) =>
+      this.request<GeneralResponseOfListOfFiscalYearResponse, any>({
+        path: `/api/FiscalYear/GetFiscalYearsBS`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),

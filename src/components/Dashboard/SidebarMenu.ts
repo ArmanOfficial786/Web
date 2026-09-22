@@ -531,7 +531,7 @@ export const MENU: MenuNode[] = [
         route: "/Share/ShareTransferReport",
       },
       {
-        label: "Share eDividend Report",
+        label: "Share Dividend Report",
         route: "/Share/ShareDividendReport",
       },
       {
@@ -545,6 +545,10 @@ export const MENU: MenuNode[] = [
       {
         label: "Copomis Report",
         route: "/Share/CopomisReport",
+      },
+      {
+        label: "Share Details Report",
+        route: "/Share/ShareDetailsReport",
       },
       {
         label: "ShareDividend/PatronizeTransferredReport",

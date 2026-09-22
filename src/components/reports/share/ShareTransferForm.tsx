@@ -6,9 +6,9 @@ import {
 } from "@/app/(home)/(sidebar)/Share/ShareTransferReport/page";
 import DropDown from "@/components/form/DropDown";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportNavigation, {
   type ReportFormat,
@@ -119,16 +119,10 @@ function ShareTransferForm({
               gap: 2,
             }}
           >
-            {/* ⚠️ OfficeNameField is a multi-select (DropDownMultiple with
-                defaultSelectAll) that stores an array, while officeId on
-                ShareTransferRequestDto is a single int64. The invalid
-                `multiple={false}` prop is removed here since the component
-                doesn't support it — confirm whether officeId should instead
-                be driven by a dedicated single-select field (e.g. a
-                BranchNameField-style component) before shipping. */}
-            <OfficeNameField<ShareTransferFormValues>
+            <BranchNameField<ShareTransferFormValues>
               control={control}
               branchFieldName="officeId"
+              setValue={setValue}
             />
             <FieldRow label="Share Type">
               <Box sx={{ width: "100%" }}>
