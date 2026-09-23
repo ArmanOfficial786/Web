@@ -267,6 +267,19 @@ export interface CollectorWiseCommissionSummaryRequestDto {
   visualReport?: boolean;
 }
 
+export interface CollectorWiseLoanAnalysisRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  collectorId?: string | null;
+  collectionCenterIds?: string | null;
+  penaltyType?: string | null;
+  orderBy?: string | null;
+  enableCollectionCenter?: boolean;
+  reportMode?: string | null;
+  visualReport?: boolean;
+}
+
 export interface CollectorWiseVisitRequestDto {
   month?: string | null;
   year?: string | null;
@@ -738,9 +751,79 @@ export interface LoanAccountClosedRequestDto {
   visualReport?: boolean;
 }
 
+export interface LoanAgeingRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  collectorId?: string | null;
+  penaltyType?: string | null;
+  showLoanIssueDate?: string | null;
+  ageingOn?: string | null;
+  orderBy?: string | null;
+  isNepaliReport?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanAgeingTypeWiseRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  penaltyType?: string | null;
+  orderBy?: string | null;
+  withMemberCount?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanAgingArrealCalculationRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  penaltyType?: string | null;
+  orderBy?: string | null;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  enable1To30Days?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanAgingRiskCalculationRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  penaltyType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanAllDetailsRequestDto {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  loanTypeId?: string | null;
+  status?: string | null;
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  memberGroupId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface LoanAppraisalRequestDto {
   memberId?: string | null;
   branchIds?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanCICRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  loanTypeId?: string | null;
+  provisionType?: string | null;
+  enable1To30Days?: boolean;
+  orderBy?: string | null;
   visualReport?: boolean;
 }
 
@@ -763,6 +846,30 @@ export interface LoanDefaulterDueSummaryRequestDto {
   visualReport?: boolean;
 }
 
+export interface LoanDeletedRequestDto {
+  reportType?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  visualReport?: boolean;
+  memberGroupId?: string | null;
+  orderBy?: string | null;
+}
+
+export interface LoanDetailsRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  loanTypeId?: string | null;
+  status?: string | null;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  orderBy?: string | null;
+  reportType?: string | null;
+  visualReport?: boolean;
+}
+
 export interface LoanDueInstallmentRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
@@ -772,6 +879,20 @@ export interface LoanDueInstallmentRequestDto {
   branchIds?: string | null;
   /** @format int64 */
   memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanFineInterestPrinciplePaymentSummaryRequestDto {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  selectAllOrOnlyCash?: string | null;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -788,6 +909,16 @@ export interface LoanFollowUpRequestDto {
 export interface LoanGuaranteerRequestDto {
   memberId?: string | null;
   branchIds?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanInformationRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  loanTypeId?: string | null;
+  memberGroupId?: string | null;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -826,6 +957,18 @@ export interface LoanInterestReceivableYearEndRequestDto {
   memberGroupId?: number;
   orderBy?: string | null;
   visualReport?: boolean;
+}
+
+export interface LoanIssueDetailsRequestDto {
+  memberId?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  reportType?: string | null;
+  branchIds?: string | null;
+  visualReport?: boolean;
+  orderBy?: string | null;
+  enableCollectionCenter?: boolean;
+  collectionCenterIds?: string | null;
 }
 
 export interface LoanMiscellaneousIncomeRequestDto {
@@ -868,6 +1011,31 @@ export interface LoanPenaltyDiscountRequestDto {
   orderBy?: string | null;
 }
 
+export interface LoanPortfolioRequestDto {
+  branchIds?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanPrinciplePaymentRequestDto {
+  paymentType?: string | null;
+  /** @format int64 */
+  memberRegistrationId?: number;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanProvisionRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  memberGroupId?: string | null;
+  penaltyType?: string | null;
+  visualReport?: boolean;
+}
+
 export interface LoanReScheduleRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
@@ -878,9 +1046,74 @@ export interface LoanReScheduleRequestDto {
   visualReport?: boolean;
 }
 
+export interface LoanRegisterRequestDto {
+  tillDateBs?: string | null;
+  branchIds?: string | null;
+  loanTypeMasterId?: string | null;
+  orderBy?: string | null;
+  collectionCenterIds?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  selectLoan?: string | null;
+  nepaliReport?: boolean;
+  visualReport?: boolean;
+}
+
 export interface LoanRepaymentRequestDto {
   memberId?: string | null;
   branchIds?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanRevolvingStatementRequestDto {
+  accountNo?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanScheduleRequestDto {
+  accountNo?: string | null;
+  /** @format int64 */
+  loanIssueId?: number;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanStatementDateWiseRequestDto {
+  accountNo?: string | null;
+  branchIds?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanStatementRequestDto {
+  accountNo?: string | null;
+  branchIds?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  reportType?: string | null;
+  showEntryBy?: boolean;
+  showDetailNarration?: boolean;
+  showAccountCloseDetails?: boolean;
+  enableBillNumber?: boolean;
+  narrationType?: string | null;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
+}
+
+export interface LoanStatementVerificationRequestDto {
+  /** @format int64 */
+  memberRegistrationId?: number;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  collectorId?: number;
+  orderBy?: string | null;
   visualReport?: boolean;
 }
 
@@ -890,6 +1123,38 @@ export interface LoanSummaryRequestDto {
   branchIds?: string | null;
   /** @format int64 */
   memberGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanTypeWiseRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  loanTypeId?: string | null;
+  memberGroupId?: string | null;
+  collectionCenterId?: string | null;
+  enableCollectionCenter?: boolean;
+  collectorId?: string | null;
+  loanGuarantee?: string | null;
+  /** @format int32 */
+  shareType?: number;
+  sameCompanyName?: boolean;
+  showOpeningBalance?: boolean;
+  showDetail?: boolean;
+  groupByBranch?: boolean;
+  groupByMemberGroup?: boolean;
+  viewCollector?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanVerifiedUnverifiedRequestDto {
+  memberRegistrationId?: string | null;
+  reportType?: string | null;
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
   orderBy?: string | null;
   visualReport?: boolean;
 }
@@ -3693,6 +3958,625 @@ export class Api<
         query: query,
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAccountWiseReport
+     * @name LoanDeletedCreate
+     * @request POST:/api/LoanDeleted
+     * @secure
+     */
+    loanDeletedCreate: (
+      data: LoanDeletedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanDeleted`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAccountWiseReport
+     * @name LoanIssueDetailsCreate
+     * @request POST:/api/LoanIssueDetails
+     * @secure
+     */
+    loanIssueDetailsCreate: (
+      data: LoanIssueDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanIssueDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAccountWiseReport
+     * @name LoanVerifiedUnverifiedCreate
+     * @request POST:/api/LoanVerifiedUnverified
+     * @secure
+     */
+    loanVerifiedUnverifiedCreate: (
+      data: LoanVerifiedUnverifiedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanVerifiedUnverified`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name CollectorWiseLoanAnalysisCreate
+     * @request POST:/api/CollectorWiseLoanAnalysis
+     * @secure
+     */
+    collectorWiseLoanAnalysisCreate: (
+      data: CollectorWiseLoanAnalysisRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CollectorWiseLoanAnalysis`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAgeingCreate
+     * @request POST:/api/LoanAgeing
+     * @secure
+     */
+    loanAgeingCreate: (
+      data: LoanAgeingRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAgeing`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAgeingTypeWiseCreate
+     * @request POST:/api/LoanAgeingTypeWise
+     * @secure
+     */
+    loanAgeingTypeWiseCreate: (
+      data: LoanAgeingTypeWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAgeingTypeWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAgingArrealCalculationCreate
+     * @request POST:/api/LoanAgingArrealCalculation
+     * @secure
+     */
+    loanAgingArrealCalculationCreate: (
+      data: LoanAgingArrealCalculationRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAgingArrealCalculation`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAgingArrealCalculationExportExcelCreate
+     * @request POST:/api/LoanAgingArrealCalculation/export-excel
+     * @secure
+     */
+    loanAgingArrealCalculationExportExcelCreate: (
+      data: LoanAgingArrealCalculationRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAgingArrealCalculation/export-excel`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAgingRiskCalculationCreate
+     * @request POST:/api/LoanAgingRiskCalculation
+     * @secure
+     */
+    loanAgingRiskCalculationCreate: (
+      data: LoanAgingRiskCalculationRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAgingRiskCalculation`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanAllDetailsCreate
+     * @request POST:/api/LoanAllDetails
+     * @secure
+     */
+    loanAllDetailsCreate: (
+      data: LoanAllDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanAllDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanCicCreate
+     * @request POST:/api/LoanCIC
+     * @secure
+     */
+    loanCicCreate: (
+      data: LoanCICRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanCIC`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanDetailsCreate
+     * @request POST:/api/LoanDetails
+     * @secure
+     */
+    loanDetailsCreate: (
+      data: LoanDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanInformationCreate
+     * @request POST:/api/LoanInformation
+     * @secure
+     */
+    loanInformationCreate: (
+      data: LoanInformationRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanInformation`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanPortfolioCreate
+     * @request POST:/api/LoanPortfolio
+     * @secure
+     */
+    loanPortfolioCreate: (
+      data: LoanPortfolioRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanPortfolio`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanProvisionCreate
+     * @request POST:/api/LoanProvision
+     * @secure
+     */
+    loanProvisionCreate: (
+      data: LoanProvisionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanProvision`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanRegisterCreate
+     * @request POST:/api/LoanRegister
+     * @secure
+     */
+    loanRegisterCreate: (
+      data: LoanRegisterRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanRegister`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAnalysisReport
+     * @name LoanTypeWiseCreate
+     * @request POST:/api/LoanTypeWise
+     * @secure
+     */
+    loanTypeWiseCreate: (
+      data: LoanTypeWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanTypeWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanFineInterestPrinciplePaymentSummaryCreate
+     * @request POST:/api/LoanFineInterestPrinciplePaymentSummary
+     * @secure
+     */
+    loanFineInterestPrinciplePaymentSummaryCreate: (
+      data: LoanFineInterestPrinciplePaymentSummaryRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanFineInterestPrinciplePaymentSummary`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanPrinciplePaymentCreate
+     * @request POST:/api/LoanPrinciplePayment
+     * @secure
+     */
+    loanPrinciplePaymentCreate: (
+      data: LoanPrinciplePaymentRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanPrinciplePayment`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanRevolvingStatementCreate
+     * @request POST:/api/LoanRevolvingStatement
+     * @secure
+     */
+    loanRevolvingStatementCreate: (
+      data: LoanRevolvingStatementRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanRevolvingStatement`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanScheduleCreate
+     * @request POST:/api/LoanSchedule
+     * @secure
+     */
+    loanScheduleCreate: (
+      data: LoanScheduleRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanSchedule`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanStatementCreate
+     * @request POST:/api/LoanStatement
+     * @secure
+     */
+    loanStatementCreate: (
+      data: LoanStatementRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanStatement`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanStatementDateWiseCreate
+     * @request POST:/api/LoanStatementDateWise
+     * @secure
+     */
+    loanStatementDateWiseCreate: (
+      data: LoanStatementDateWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanStatementDateWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/OtherReports
+     * @name LoanStatementVerificationCreate
+     * @request POST:/api/LoanStatementVerification
+     * @secure
+     */
+    loanStatementVerificationCreate: (
+      data: LoanStatementVerificationRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanStatementVerification`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 

@@ -111,6 +111,132 @@ export const loanInterestDiscountOrderByOptions = defineOrderByOptions([
   { key: "amount", label: "Amount" },
 ] as const);
 
+//==========loan account wise=============
+
+export const loanDeletedOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "fullName", label: "Full Name" },
+  { key: "type", label: "Type" },
+  { key: "accountNo", label: "Account Number" },
+  { key: "interestRate", label: "Interest Rate" },
+  { key: "issueAmount", label: "Issue Amount" },
+  { key: "issueDate", label: "Issue Date" },
+  { key: "period", label: "Period" },
+  { key: "modifyDate", label: "Modify Date" },
+] as const);
+
+export const loanVerifiedUnverifiedOrderByOptions = defineOrderByOptions([
+  { key: "transactionDate", label: "Transaction Date" },
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanType", label: "Loan Type" },
+  { key: "loanAccountNo", label: "Loan Account Number" },
+  { key: "amount", label: "Amount" },
+] as const);
+
+export const loanPrincipalPaymentOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanTypeName", label: "Loan Type Name" },
+  { key: "accountNo", label: "Account Number" },
+  { key: "paidamount", label: "Paid Amount" },
+  { key: "date", label: "Date" },
+] as const);
+
+export const principalInterestFinePaymentOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanTypeName", label: "Loan Type Name" },
+  { key: "accountNo", label: "Account Number" },
+  { key: "fineAmount", label: "Fine Amount" },
+  { key: "interestAmount", label: "Interes Amount" },
+  { key: "principalAmount", label: "Principal Amount" },
+  { key: "date", label: "Date" },
+] as const);
+
+export const loanStatementVerificationOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "accountNo", label: "Account Number" },
+  { key: "verifiedTill", label: "Verified Till" },
+  { key: "verifiedDate", label: "Verified Date" },
+  { key: "verifiedBy", label: "Verified By" },
+] as const);
+
+//===========loan analysis==============
+
+export const loanAgingRiskCalculationReportOrderByOptions =
+  defineOrderByOptions([
+    { key: "memberId", label: "Member Id" },
+    { key: "memberName", label: "Member Name" },
+    { key: "loanAccountNo", label: "Loan Account Number" },
+    { key: "disburseAmount", label: "Disburse Amount" },
+    { key: "outStandingAmt", label: "OutStanding Amt" },
+    { key: "noOfDays", label: "No Of Days" },
+  ] as const);
+
+export const loanAgingArrealCalculationReportOrderByOptions =
+  defineOrderByOptions([
+    { key: "memberId", label: "Member Id" },
+    { key: "memberName", label: "Member Name" },
+    { key: "disburseAmount", label: "Disburse Amount" },
+    { key: "balanceAmount", label: "Balance Amount" },
+    { key: "loanAccountNo", label: "Loan Account No" },
+    { key: "noOfDays", label: "No Of Days" },
+  ] as const);
+
+export const loanDetailPrincipalOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanType", label: "Loan Type" },
+  { key: "loanAccount", label: "Loan A/C No. " },
+] as const);
+
+export const loanTypeWiseReportOrderByOptions = defineOrderByOptions([
+  { key: "loanType", label: "Loan Type" },
+  { key: "disburseAmount", label: "Disburse Amount" },
+] as const);
+
+export const loanAgeingReportOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanAccount", label: "Loan A/C No. " },
+  { key: "disburseAmount", label: "Disburse Amount" },
+] as const);
+
+export const loanAgingTypeWiseReportOrderByOptions = defineOrderByOptions([
+  { key: "loanType", label: "Loan Type" },
+  { key: "disburseAmount", label: "Disburse Amount" },
+  { key: "rapidAmount", label: "Rapid Amount" },
+  { key: "overDueAmount", label: "OverDue Amount" },
+] as const);
+
+export const loanRegisterReportOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "type", label: "Type" },
+  { key: "issueAmount", label: "Issue Amount" },
+  { key: "issueDate", label: "Issue Date" },
+  { key: "interestRate", label: "Interest Rate" },
+  { key: "paymentCode", label: "Payment Code" },
+] as const);
+
+export const collectorWiseLoanAnalysisReportOrderByOptions =
+  defineOrderByOptions([
+    { key: "loanType", label: "Loan Type" },
+    { key: "disburseAmount", label: "Disburse Amount" },
+    { key: "balanceAmount", label: "Balance Amount" },
+    { key: "goodAmount", label: "Good Amount" },
+  ] as const);
+
+export const loanCICReportOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanType", label: "Loan Type" },
+  { key: "goodAmount", label: "Good Amount" },
+] as const);
+
+//==================================
 export type LoanOrderByReportKey =
   | "loan-follow-up-report"
   | "loan-penalty-discount-report"
@@ -122,7 +248,21 @@ export type LoanOrderByReportKey =
   | "loan-payment-report"
   | "loan-guaranteer-report"
   | "loan-interest-receivable-year-end-report"
-  | "loan-interest-discount-report";
+  | "loan-interest-discount-report"
+  | "loan-deleted-report"
+  | "loan-verified-unverified-report"
+  | "loan-principal-payment-report"
+  | "loan-principal-interest-fine-payment-report"
+  | "loan-statement-verification-report"
+  | "loan-aging-risk-calculation-report"
+  | "loan-ageing-arrear-calculation-report"
+  | "loan-detail-principal-report"
+  | "loan-type-wise-report"
+  | "loan-ageing-report"
+  | "loan-ageing-type-wise-report"
+  | "loan-register-report"
+  | "collector-wise-loan-analysis-report"
+  | "loan-cic-report";
 
 export const loanOrderByOptionsMap: Record<
   LoanOrderByReportKey,
@@ -140,4 +280,22 @@ export const loanOrderByOptionsMap: Record<
   "loan-interest-receivable-year-end-report":
     loanInterestReceivableYearEndOrderByOptions,
   "loan-interest-discount-report": loanInterestDiscountOrderByOptions,
+  "loan-deleted-report": loanDeletedOrderByOptions,
+  "loan-verified-unverified-report": loanVerifiedUnverifiedOrderByOptions,
+  "loan-principal-payment-report": loanPrincipalPaymentOrderByOptions,
+  "loan-principal-interest-fine-payment-report":
+    principalInterestFinePaymentOrderByOptions,
+  "loan-statement-verification-report": loanStatementVerificationOrderByOptions,
+  "loan-aging-risk-calculation-report":
+    loanAgingRiskCalculationReportOrderByOptions,
+  "loan-ageing-arrear-calculation-report":
+    loanAgingArrealCalculationReportOrderByOptions,
+  "loan-detail-principal-report": loanDetailPrincipalOrderByOptions,
+  "loan-type-wise-report": loanTypeWiseReportOrderByOptions,
+  "loan-ageing-report": loanAgeingReportOrderByOptions,
+  "loan-ageing-type-wise-report": loanAgingTypeWiseReportOrderByOptions,
+  "loan-register-report": loanRegisterReportOrderByOptions,
+  "collector-wise-loan-analysis-report":
+    collectorWiseLoanAnalysisReportOrderByOptions,
+  "loan-cic-report": loanCICReportOrderByOptions,
 };

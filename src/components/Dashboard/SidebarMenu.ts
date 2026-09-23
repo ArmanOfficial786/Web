@@ -508,6 +508,106 @@ export const MENU: MenuNode[] = [
         label: "Loan Repayment Report",
         route: "/Loan/OtherReports/LoanRepaymentReport",
       },
+      //==========Loan Account Wise Report========================
+
+      {
+        label: "Loan Issue Report",
+        route: "/Loan/LoanAccountWiseReport/LoanIssueDetailsReport",
+      },
+      {
+        label: "Loan Deleted Report",
+        route: "/Loan/LoanAccountWiseReport/LoanDeletedReport",
+      },
+      {
+        label: "Loan Verified UnVerified Report",
+        route: "/Loan/LoanAccountWiseReport/LoanVerifiedUnVerifiedReport",
+      },
+      {
+        label: "Loan Statement(OD) Report",
+        route: "/Loan/LoanAccountWiseReport/LoanRevolvingStatement",
+      },
+      {
+        label: "Loan Statement Report",
+        route: "/Loan/LoanAccountWiseReport/LoanStatementReport",
+      },
+      {
+        label: "Loan Schedule Report",
+        route: "/Loan/LoanAccountWiseReport/LoanScheduleReport",
+      },
+      {
+        label: "Loan Statement Report Date Wise",
+        route: "/Loan/LoanAccountWiseReport/LoanStatementReportDateWise",
+      },
+      {
+        label: "Loan Principle Payment Report",
+        route: "/Loan/LoanAccountWiseReport/LoanPrinciplePaymentReport",
+      },
+      {
+        label: "Principal Interest Fine Payment Report",
+        route:
+          "/Loan/LoanAccountWiseReport/LoanFineInterestPrincipalPaymentReport",
+      },
+      {
+        label: "Loan Installment Due AC Closing Report",
+        route: "/Loan/LoanAccountWiseReport/LoanInstallmentDueACClosingReport",
+      },
+      {
+        label: "Loan Statement Verification Report",
+        route: "/Loan/LoanAccountWiseReport/LoanStatementVerificationReport",
+      },
+      //============Loan Analysis Report ====================================
+      {
+        label: "Loan Provision Report",
+        route: "/Loan/LoanAnalysisReport/LoanProvisionReport",
+      },
+      {
+        label: "Loan Portfolio Report",
+        route: "/Loan/LoanAnalysisReport/LoanPortfolioReport",
+      },
+      {
+        label: "Loan Aging Risk Calculation Report",
+        route: "/Loan/LoanAnalysisReport/LoanAgingRiskCalculationReport",
+      },
+      {
+        label: "Loan Aging Arrear Calculation Report",
+        route: "/Loan/LoanAnalysisReport/LoanAgingArrearCalculationReport",
+      },
+      {
+        label: "Loan All Details Report",
+        route: "/Loan/LoanAnalysisReport/LoanAllDetailsReport",
+      },
+      {
+        label: "Loan Details Principal Report",
+        route: "/Loan/LoanAnalysisReport/LoanDetailsPrincipalReport",
+      },
+      {
+        label: "Loan Information Principal Report",
+        route: "/Loan/LoanAnalysisReport/LoanInformationReport",
+      },
+      {
+        label: "LoanT ype Wise Report",
+        route: "/Loan/LoanAnalysisReport/LoanTypeWiseReport",
+      },
+      {
+        label: "Loan Ageing Report",
+        route: "/Loan/LoanAnalysisReport/LoanAgeingReport",
+      },
+      {
+        label: "Loan Aging Type Wise Report",
+        route: "/Loan/LoanAnalysisReport/LoanAgingTypeWiseReport",
+      },
+      {
+        label: "Loan Register Report",
+        route: "/Loan/LoanAnalysisReport/LoanRegisterReport",
+      },
+      {
+        label: "Collector Wise Loan Analysis Report",
+        route: "/Loan/LoanAnalysisReport/CollectorWiseLoanAnalysisReport",
+      },
+      {
+        label: "Loan CIC Report",
+        route: "/Loan/LoanAnalysisReport/LoanCICReport",
+      },
     ],
   },
 
