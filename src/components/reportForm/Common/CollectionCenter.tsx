@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
+import DropDown from "@/components/form/DropDown";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
+import { Box } from "@mui/system";
+import { useEffect } from "react";
 import {
   useWatch,
   type Control,
-  type UseFormSetValue,
   type FieldValues,
   type Path,
+  type UseFormSetValue,
 } from "react-hook-form";
-import FieldRow from "@/utilis/FieldRow";
-import DropDown from "@/components/form/DropDown";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import { Box } from "@mui/system";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface CollectionCenterFieldProps<T extends FieldValues> {
@@ -36,9 +36,9 @@ export default function CollectionCenterField<T extends FieldValues>({
   const selectedBranchId = rawBranchId as number | string | undefined;
 
   useEffect(() => {
-    const id = Number(selectedBranchId ?? 0); // ← guaranteed number, never NaN
-    setValue(collectionCenterFieldName, 0 as any);
-    if (!id || id === 0) {
+    const id = Number(selectedBranchId ?? -1); // ← guaranteed number, never NaN
+    setValue(collectionCenterFieldName, -1 as any); // reset collection center when branch changes
+    if (!id || id === -1) {
       // don't bother fetching — reset is enough
       return;
     }
@@ -53,9 +53,7 @@ export default function CollectionCenterField<T extends FieldValues>({
 
   return (
     <FieldRow label="Collection Center">
-      <Box
-      // sx={{ width: 283 }}
-      >
+      <Box>
         <DropDown
           name={collectionCenterFieldName}
           control={control}

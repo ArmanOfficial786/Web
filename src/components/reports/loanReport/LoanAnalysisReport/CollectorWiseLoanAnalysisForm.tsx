@@ -121,10 +121,21 @@ export default function CollectorWiseLoanAnalysisForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <OfficeNameField<CollectorWiseLoanAnalysisFormValues>
               control={control}
               branchFieldName="branchIds"
+            />
+            <Collector<CollectorWiseLoanAnalysisFormValues>
+              control={control}
+              collectorFieldName="collectorId"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -138,16 +149,22 @@ export default function CollectorWiseLoanAnalysisForm({
               mb: 0.5,
             }}
           >
-            <Collector<CollectorWiseLoanAnalysisFormValues>
-              control={control}
-              collectorFieldName="collectorId"
-            />
             <CollectionCenterField<CollectorWiseLoanAnalysisFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterIds"
             />
+            <FieldRow label="">
+              <CheckboxInput
+                name="enableCollectionCenter"
+                control={control}
+                label="Enable Collection Center"
+                size="small"
+                color="primary"
+                labelPlacement="end"
+              />
+            </FieldRow>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -163,16 +180,6 @@ export default function CollectorWiseLoanAnalysisForm({
           >
             <FieldRow label="">
               <CheckboxInput
-                name="enableCollectionCenter"
-                control={control}
-                label="Enable Collection Center"
-                size="small"
-                color="primary"
-                labelPlacement="end"
-              />
-            </FieldRow>
-            <FieldRow label="">
-              <CheckboxInput
                 name="groupByCollectionCenter"
                 control={control}
                 label="Group By Collection Center"
@@ -181,24 +188,6 @@ export default function CollectorWiseLoanAnalysisForm({
                 labelPlacement="end"
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Report Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={reportTypeOptions}
-                row
-              />
-            </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── View Type ───────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="View Type">
               <RadioInput
                 name="viewType"
@@ -210,6 +199,30 @@ export default function CollectorWiseLoanAnalysisForm({
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
+          {/* ── Report Type ─────────────────────────────────────────────── */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <FieldRow label="Report Type">
+              <RadioInput
+                name="reportType"
+                control={control}
+                radioOptions={reportTypeOptions}
+                row
+              />
+            </FieldRow>
+            <OrderByField<CollectorWiseLoanAnalysisFormValues>
+              control={control}
+              name="orderBy"
+              reportKey="collector-wise-loan-analysis-report"
+            />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
           {/* ── Order By + Buttons ───────────────────────────────────────── */}
           <Box
             sx={{
@@ -218,11 +231,6 @@ export default function CollectorWiseLoanAnalysisForm({
               gap: 2,
             }}
           >
-            <OrderByField<CollectorWiseLoanAnalysisFormValues>
-              control={control}
-              name="orderBy"
-              reportKey="collector-wise-loan-analysis-report" // ⚠️ add this key to OrderByReportKey union / options map
-            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{

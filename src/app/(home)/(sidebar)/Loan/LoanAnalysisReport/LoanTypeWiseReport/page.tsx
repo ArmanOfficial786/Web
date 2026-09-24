@@ -75,11 +75,11 @@ const schema: yup.ObjectSchema<LoanTypeWiseFormValues> = yup
         return String(val) >= String(fromDateBs);
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectionCenterId: yup.string().optional().default("0"),
+    collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
-    collectorId: yup.string().optional().default(""),
+    collectorId: yup.string().optional().default("-1"),
     memberGroupId: yup.string().optional().default("-1"),
-    loanTypeId: yup.string().optional().default(""),
+    loanTypeId: yup.string().optional().default("-1"),
     loanGuarantee: yup.string().optional().default(LOAN_GUARANTEE_ALL),
     shareType: yup.string().optional().default(SHARE_TYPE_ALL),
     groupByBranch: yup.boolean().optional().default(false),
@@ -100,7 +100,7 @@ const toRequest = (v: LoanTypeWiseFormValues): LoanTypeWiseRequestDto => {
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
-    collectionCenterId: v.collectionCenterId || "0",
+    collectionCenterId: v.collectionCenterId || undefined,
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     collectorId:
       Number.isFinite(collectorNum) && collectorNum > 0

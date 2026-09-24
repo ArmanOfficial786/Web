@@ -96,7 +96,14 @@ export default function LoanAgeingForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <DateFields<LoanAgeingFormValues>
               control={control}
               toDateName="tillDateBs"
@@ -104,11 +111,6 @@ export default function LoanAgeingForm({
               mode="BS"
               showFromDate={false}
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <OfficeNameField<LoanAgeingFormValues>
               control={control}
               branchFieldName="branchIds"
@@ -139,7 +141,14 @@ export default function LoanAgeingForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Current / Reschedule Date ───────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <FieldRow label="Show Date">
               <RadioInput
                 name="showLoanIssueDate"
@@ -148,24 +157,6 @@ export default function LoanAgeingForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Report Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={reportTypeOptions}
-                row
-              />
-            </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Select Ageing On ────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="Select Ageing On">
               <RadioInput
                 name="ageingOn"
@@ -177,6 +168,10 @@ export default function LoanAgeingForm({
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
+          {/* ── Select Ageing On ────────────────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}></Box>
+          <Divider sx={{ mb: 0.5 }} />
+
           {/* ── Order By + Buttons ───────────────────────────────────────── */}
           <Box
             sx={{
@@ -185,11 +180,23 @@ export default function LoanAgeingForm({
               gap: 2,
             }}
           >
+            <FieldRow label="Report Type">
+              <RadioInput
+                name="reportType"
+                control={control}
+                radioOptions={reportTypeOptions}
+                row
+              />
+            </FieldRow>
             <OrderByField<LoanAgeingFormValues>
               control={control}
               name="orderBy"
               reportKey="loan-ageing-report"
             />
+          </Box>
+
+          <Divider sx={{ mb: 0.5 }} />
+          <Grid container spacing={2} sx={{ mb: 0.5 }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -222,9 +229,7 @@ export default function LoanAgeingForm({
                 />
               </Box>
             </Grid>
-          </Box>
-
-          <Divider sx={{ mb: 0.5 }} />
+          </Grid>
         </Paper>
 
         {showReport && (

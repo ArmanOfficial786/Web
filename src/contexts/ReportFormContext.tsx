@@ -279,10 +279,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         lstOfficeId: branchId,
       });
       const mapped = (res ?? []).map((c: any) => ({
-        id: c.collectionCenterId ?? 0,
+        id: c.collectionCenterId ?? -1,
         name: c.collectionCenterName ?? "",
       }));
-      setCollectionCenterOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setCollectionCenterOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       setCollectionCenterOptions(DEFAULT_SELECT);
     }
@@ -305,10 +305,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
           collectionCenterId,
         });
         const mapped = (res ?? []).map((g: any) => ({
-          id: g.memberGroupId ?? 0,
+          id: g.memberGroupId ?? -1,
           name: g.name ?? "",
         }));
-        setMemberGroupOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+        setMemberGroupOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
       } catch {
         setMemberGroupOptions(DEFAULT_SELECT);
       }
@@ -326,7 +326,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         lstOfficeId: branchId,
       });
       const mapped = (res ?? []).map((g: any) => ({
-        id: g.memberGroupId ?? 0,
+        id: g.memberGroupId ?? -1,
         name: g.name ?? g.memberGroupName ?? "",
       }));
       setSoleMemberGroupOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
@@ -341,10 +341,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res: DepositTypeResponse[] = await depositeTypeService.getAll();
       const mapped = res.map((d) => ({
-        id: d.depositeTypeId ?? 0,
+        id: d.depositeTypeId ?? -1,
         name: d.depositeTypeName ?? "",
       }));
-      setDepositTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setDepositTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       depositeTypeRef.current = false;
     }
@@ -359,12 +359,12 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       const res: CollectorResponse[] =
         await collectorService.getCollectors(userId);
       const mapped = res.map((c) => ({
-        id: c.id ?? 0,
+        id: c.id ?? -1,
         name: c.collectorCode
           ? `${c.collectorCode} - ${c.collectorName?.trim() || ""}`
           : c.collectorName?.trim() || "",
       }));
-      setCollectorOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setCollectorOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       setCollectorOptions(DEFAULT_SELECT);
     }
@@ -376,10 +376,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await lmtLoanMasterlistService.getAll();
       const mapped = res.map((l) => ({
-        id: l.lmtLoanTypeMasterId ?? 0,
+        id: l.lmtLoanTypeMasterId ?? -1,
         name: l.loanTypeName ?? "",
       }));
-      setLoanMasterListOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setLoanMasterListOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       loanMasterListFetchedRef.current = false;
     }
@@ -499,10 +499,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res: BranchResponse[] = await branchService.getCollectionBranches();
       const mapped = res.map((b) => ({
-        id: b.branchId ?? 0,
+        id: b.branchId ?? -1,
         name: b.branchName ?? "",
       }));
-      setCollectionBranchOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setCollectionBranchOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       collectionBranchFetchedRef.current = false;
     } finally {
@@ -528,12 +528,12 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
         const mapped = res
           .filter((v) => v && (v.voucherNo || v.acoVoucherId != null))
           .map((v) => ({
-            id: v.acoVoucherId ?? 0,
+            id: v.acoVoucherId ?? -1,
             name: v.voucherNo ?? "",
           }))
-          .filter((v) => v.name && v.id !== 0);
+          .filter((v) => v.name && v.id !== -1);
 
-        setVoucherOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+        setVoucherOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
       } catch {
         setVoucherOptions(DEFAULT_SELECT);
       } finally {
@@ -550,10 +550,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await paymentDurationTypeService.getAll();
       const mapped = res.map((p) => ({
-        id: p.lmtPaymentDurationTypeId ?? 0,
+        id: p.lmtPaymentDurationTypeId ?? -1,
         name: p.paymentDurationType ?? "",
       }));
-      setPaymentDurationTypeOptions([{ id: 0, name: "-- All --" }, ...mapped]);
+      setPaymentDurationTypeOptions([{ id: -1, name: "-- All --" }, ...mapped]);
     } catch {
       paymentDurationTypeFetchedRef.current = false; // allow retry on failure
     }
@@ -567,10 +567,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res: MemberTypeResponse[] = await memberTypeService.getAllActive();
       const mapped = res.map((m: MemberTypeResponse) => ({
-        id: m.memberTypeId ?? 0,
+        id: m.memberTypeId ?? -1,
         name: m.memberTypeName ?? "",
       }));
-      setMemberTypeOptions([{ id: 0, name: "-- Select --" }, ...mapped]);
+      setMemberTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       memberTypeFetchedRef.current = false;
     }

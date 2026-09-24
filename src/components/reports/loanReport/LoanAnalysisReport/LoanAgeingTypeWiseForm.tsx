@@ -92,7 +92,14 @@ export default function LoanAgeingTypeWiseForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <DateFields<LoanAgeingTypeWiseFormValues>
               control={control}
               toDateName="tillDateBs"
@@ -100,11 +107,6 @@ export default function LoanAgeingTypeWiseForm({
               mode="BS"
               showFromDate={false}
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <OfficeNameField<LoanAgeingTypeWiseFormValues>
               control={control}
               branchFieldName="branchIds"

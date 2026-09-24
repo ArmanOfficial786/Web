@@ -108,7 +108,14 @@ export default function LoanRegisterForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <DateFields<LoanRegisterFormValues>
               control={control}
               toDateName="tillDateBs"
@@ -116,11 +123,6 @@ export default function LoanRegisterForm({
               mode="BS"
               showFromDate={false}
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <OfficeNameField<LoanRegisterFormValues>
               control={control}
               branchFieldName="branchIds"
@@ -179,7 +181,13 @@ export default function LoanRegisterForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Select Loan ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <FieldRow label="Select Loan">
               <RadioInput
                 name="selectLoan"
@@ -188,6 +196,11 @@ export default function LoanRegisterForm({
                 row
               />
             </FieldRow>
+            <OrderByField<LoanRegisterFormValues>
+              control={control}
+              name="orderBy"
+              reportKey="loan-register-report" // ⚠️ add this key to OrderByReportKey union / options map
+            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -199,11 +212,6 @@ export default function LoanRegisterForm({
               gap: 2,
             }}
           >
-            <OrderByField<LoanRegisterFormValues>
-              control={control}
-              name="orderBy"
-              reportKey="loan-register-report" // ⚠️ add this key to OrderByReportKey union / options map
-            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{

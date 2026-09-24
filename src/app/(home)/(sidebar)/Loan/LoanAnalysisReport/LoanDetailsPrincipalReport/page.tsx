@@ -59,7 +59,7 @@ const schema: yup.ObjectSchema<LoanDetailPrincipalFormValues> = yup
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     collectionCenterId: yup.string().optional().default("0"),
     enableCollectionCenter: yup.boolean().optional().default(false),
-    collectorId: yup.string().optional().default(""),
+    collectorId: yup.string().optional().default("-1"),
     reportType: yup.string().optional().default(REPORT_TYPE_DETAIL),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),

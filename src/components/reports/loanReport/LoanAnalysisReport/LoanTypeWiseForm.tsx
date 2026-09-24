@@ -28,6 +28,7 @@ import ReportNavigation, {
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import LoanTypeField from "@/components/reportForm/Loan/LoanTypeField";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
 import {
   loanGuaranteeOptions,
@@ -123,10 +124,23 @@ export default function LoanTypeWiseForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <OfficeNameField<LoanTypeWiseFormValues>
               control={control}
               branchFieldName="branchIds"
+            />
+            <LoanTypeField<LoanTypeWiseFormValues>
+              control={control}
+              loanTypeFieldName="loanTypeId"
+              label="Loan Type"
+              setValue={setValue}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -183,7 +197,14 @@ export default function LoanTypeWiseForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Loan Guarantee ──────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <FieldRow label="Loan Guarantee">
               <RadioInput
                 name="loanGuarantee"
@@ -192,11 +213,6 @@ export default function LoanTypeWiseForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Share Type ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="Share Type">
               <RadioInput
                 name="shareType"
@@ -212,8 +228,7 @@ export default function LoanTypeWiseForm({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
-              gap: 2,
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr 1fr 1fr" },
               alignItems: "center",
               mb: 0.5,
             }}

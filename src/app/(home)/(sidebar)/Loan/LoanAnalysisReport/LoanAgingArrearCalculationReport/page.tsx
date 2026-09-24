@@ -47,8 +47,8 @@ const schema: yup.ObjectSchema<LoanAgeingArrearCalculationFormValues> = yup
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectorId: yup.string().optional().default(""),
-    collectionCenterId: yup.string().optional().default("0"),
+    collectorId: yup.string().optional().default("-1"),
+    collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     enable1To30Days: yup.boolean().optional().default(false),
     memberGroupId: yup.string().optional().default("-1"),
@@ -62,15 +62,12 @@ const toRequest = (
   v: LoanAgeingArrearCalculationFormValues,
 ): LoanAgingArrealCalculationRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
-  const collectorNum = Number(v.collectorId);
+
   return {
     tillDateBs: v.tillDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
-    collectorId:
-      Number.isFinite(collectorNum) && collectorNum > 0
-        ? String(collectorNum)
-        : undefined,
-    collectionCenterId: v.collectionCenterId || "0",
+    collectorId: v.collectorId || "-1",
+    collectionCenterId: v.collectionCenterId || "-1",
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     enable1To30Days: v.enable1To30Days ?? false,
     memberGroupId: v.memberGroupId || "-1",

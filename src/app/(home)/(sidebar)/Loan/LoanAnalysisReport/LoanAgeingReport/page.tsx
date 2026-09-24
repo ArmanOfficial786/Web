@@ -16,16 +16,10 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ── Current / Reschedule Date options (wire = showLoanIssueDate) ──────────────
 const DATE_TYPE_ISSUE_DATE = "IssueDate";
-
-// ── Report Type options ⚠️ DTO has no reportType field — UI-only ──────────────
 const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
-
-// ── Ageing On options (wire = ageingOn) ───────────────────────────────────────
 const AGEING_ON_PRINCIPAL = "Principal";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanAgeingFormValues extends Omit<
   LoanAgeingRequestDto,
   "branchIds" | "memberGroupId" | "collectorId"
@@ -53,7 +47,7 @@ const schema: yup.ObjectSchema<LoanAgeingFormValues> = yup
       .required(DATE_REQUIRED_MESSAGE),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     memberGroupId: yup.string().optional().default("-1"),
-    collectorId: yup.string().optional().default(""),
+    collectorId: yup.string().optional().default("-1"),
     showLoanIssueDate: yup.string().optional().default(DATE_TYPE_ISSUE_DATE),
     reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     ageingOn: yup.string().optional().default(AGEING_ON_PRINCIPAL),
@@ -66,15 +60,12 @@ const schema: yup.ObjectSchema<LoanAgeingFormValues> = yup
 
 const toRequest = (v: LoanAgeingFormValues): LoanAgeingRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
-  const collectorNum = Number(v.collectorId);
+
   return {
     tillDateBs: v.tillDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
     memberGroupId: v.memberGroupId || "-1",
-    collectorId:
-      Number.isFinite(collectorNum) && collectorNum > 0
-        ? String(collectorNum)
-        : undefined,
+    collectorId: v.collectorId || "-1",
     showLoanIssueDate: v.showLoanIssueDate || DATE_TYPE_ISSUE_DATE,
     ageingOn: v.ageingOn || AGEING_ON_PRINCIPAL,
     penaltyType: v.penaltyType || undefined,

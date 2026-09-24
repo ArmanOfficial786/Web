@@ -236,6 +236,19 @@ export const loanCICReportOrderByOptions = defineOrderByOptions([
   { key: "goodAmount", label: "Good Amount" },
 ] as const);
 
+export const loanAllDetailsOrderByOptions = defineOrderByOptions([
+  { key: "memberId", label: "Member Id" },
+  { key: "memberName", label: "Member Name" },
+  { key: "loanTypeName", label: "Loan Type Name" },
+  { key: "accountNo", label: "Account Number" },
+  { key: "issueamount", label: "Issue Amount" },
+  { key: "issueDate", label: "Issue Date" },
+  { key: "interestRate", label: "Interest Rate" },
+  { key: "paymentTypeCode", label: "Payment Type Code" },
+  { key: "maturityDate", label: "Maturity Date" },
+  { key: "totalBalance", label: "Total Balance" },
+] as const);
+
 //==================================
 export type LoanOrderByReportKey =
   | "loan-follow-up-report"
@@ -262,7 +275,8 @@ export type LoanOrderByReportKey =
   | "loan-ageing-type-wise-report"
   | "loan-register-report"
   | "collector-wise-loan-analysis-report"
-  | "loan-cic-report";
+  | "loan-cic-report"
+  | "loan-all-details-report";
 
 export const loanOrderByOptionsMap: Record<
   LoanOrderByReportKey,
@@ -298,4 +312,5 @@ export const loanOrderByOptionsMap: Record<
   "collector-wise-loan-analysis-report":
     collectorWiseLoanAnalysisReportOrderByOptions,
   "loan-cic-report": loanCICReportOrderByOptions,
+  "loan-all-details-report": loanAllDetailsOrderByOptions,
 };

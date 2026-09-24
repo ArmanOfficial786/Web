@@ -105,7 +105,13 @@ export default function LoanAgeingArrearCalculationForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <DateFields<LoanAgeingArrearCalculationFormValues>
               control={control}
               toDateName="tillDateBs"
@@ -113,17 +119,15 @@ export default function LoanAgeingArrearCalculationForm({
               mode="BS"
               showFromDate={false}
             />
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
             <OfficeNameField<LoanAgeingArrearCalculationFormValues>
               control={control}
               branchFieldName="branchIds"
             />
           </Box>
+
+          <Divider sx={{ mb: 1 }} />
+
+          {/* ── Office Name ──────────────────────────────────────────────── */}
 
           <Divider sx={{ mb: 1 }} />
 
@@ -135,29 +139,12 @@ export default function LoanAgeingArrearCalculationForm({
               gap: 2,
             }}
           >
-            <Collector<LoanAgeingArrearCalculationFormValues>
-              control={control}
-              collectorFieldName="collectorId"
-            />
             <CollectionCenterField<LoanAgeingArrearCalculationFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterId"
             />
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── Enable Collection Center + Enable 1 to 30 Days ───────────── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-              alignItems: "center",
-            }}
-          >
             <FieldRow label="">
               <CheckboxInput
                 name="enableCollectionCenter"
@@ -168,6 +155,20 @@ export default function LoanAgeingArrearCalculationForm({
                 labelPlacement="end"
               />
             </FieldRow>
+          </Box>
+
+          <Divider sx={{ mb: 1 }} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <Collector<LoanAgeingArrearCalculationFormValues>
+              control={control}
+              collectorFieldName="collectorId"
+            />
             <FieldRow label="">
               <CheckboxInput
                 name="enable1To30Days"
@@ -179,15 +180,15 @@ export default function LoanAgeingArrearCalculationForm({
               />
             </FieldRow>
           </Box>
-
           <Divider sx={{ mb: 1 }} />
 
-          {/* ── Order By + Buttons ───────────────────────────────────────── */}
+          {/* ── Enable Collection Center + Enable 1 to 30 Days ───────────── */}
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
+              alignItems: "center",
             }}
           >
             <OrderByField<LoanAgeingArrearCalculationFormValues>
@@ -227,8 +228,6 @@ export default function LoanAgeingArrearCalculationForm({
               </Box>
             </Grid>
           </Box>
-
-          <Divider sx={{ mb: 1 }} />
         </Paper>
 
         {showReport && (
