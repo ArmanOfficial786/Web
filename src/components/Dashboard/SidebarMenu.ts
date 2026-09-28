@@ -2,11 +2,15 @@
 import type { SvgIconComponent } from "@mui/icons-material";
 import {
   AccountBalance as AccountIcon,
+  BusinessCenter as AssetIcon,
   Dashboard as DashboardIcon,
+  Shield as InsuranceIcon,
   RequestQuote as LoanIcon,
   Assignment as MasterIcon,
   AccountBalanceWallet as MemberAcIcon,
   CreditCard as MemberIcon,
+  Handshake as MicroFinanceIcon,
+  CurrencyExchange as RemitIcon,
   PieChart as ShareIcon,
 } from "@mui/icons-material";
 
@@ -653,6 +657,132 @@ export const MENU: MenuNode[] = [
       {
         label: "ShareDividend/PatronizeTransferredReport",
         route: "/Share/ShareDividendAndPatronizeTransferredReport",
+      },
+    ],
+  },
+  //========Remit===========
+  {
+    type: "parent-reports",
+    icon: RemitIcon,
+    label: "Remit",
+    reports: [
+      {
+        label: "Remittance Payment Reports",
+        route: "/Remit/Reports/RemRemittancePaymentReports",
+      },
+      {
+        label: "Remittance Received Reports",
+        route: "/Remit/Reports/RemRemittanceReceivedReports",
+      },
+      {
+        label: "Remittance Receipt Print Reports",
+        route: "/Remit/Reports/RemitReceiptPrintReport",
+      },
+    ],
+  },
+
+  //========Asset===========
+  {
+    type: "parent-reports",
+    icon: AssetIcon,
+    label: "Asset",
+    reports: [
+      {
+        label: "Purchase Report",
+        route: "/Asset/Reports/FamPurchaseReport",
+      },
+      {
+        label: "Detail Report",
+        route: "/Asset/Reports/FamDetailReport",
+      },
+      {
+        label: "Depreciation Report",
+        route: "/Asset/Reports/FamDepreciationReport",
+      },
+    ],
+  },
+  //=============Micro Finance Section================
+  {
+    type: "parent-reports",
+    icon: MicroFinanceIcon,
+    label: "MicroFinance",
+    reports: [
+      {
+        label: "Center Collection Sheet Print Report",
+        route:
+          "/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetPrintReport",
+      },
+
+      {
+        label: "Center Collection Sheet Account Wise Report",
+        route:
+          "/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetAccountWiseReport",
+      },
+
+      {
+        label: "Center Collection Sheet Report Master",
+        route:
+          "/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetReportMaster",
+      },
+
+      {
+        label: "Center Collection Sheet Report",
+        route:
+          "/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetReport",
+      },
+
+      {
+        label: "Center Collection Sheet Report Single",
+        route:
+          "/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetReportSingle",
+      },
+
+      {
+        label: "Center Collection Report",
+        route: "/MicroFinance/MicroFinanceSheetReports/CenterCollectionReport",
+      },
+
+      //==============CENTER COLLECTION REPORTS================
+      {
+        label: "Center Meeting Detail Report",
+        route: "/MicroFinance/CenterDetailReports/CenterMeetingDetailReport",
+      },
+      {
+        label: "Loan Evaluation Report",
+        route: "/MicroFinance/CenterDetailReports/LoanEvaluationReport",
+      },
+
+      {
+        label: "Collector Wise Projection Report",
+        route:
+          "/MicroFinance/CenterDetailReports/CollectorWiseProjectionReport",
+      },
+
+      //============MicroFinance Report===============
+      {
+        label: "Collector Wise Projection Report",
+        route: "/MicroFinance/OtherReports/CollectorWiseProjectionReport",
+      },
+      {
+        label: "Office Progress Report",
+        route: "/MicroFinance/OtherReports/MonthlySummaryReport",
+      },
+      {
+        label: "Group Wise Member DetailsReport",
+        route: "/MicroFinance/OtherReports/GroupWiseMemberDetailsReport",
+      },
+    ],
+  },
+
+  //=============Insurance Section================
+  {
+    type: "parent-reports",
+    icon: InsuranceIcon,
+    label: "Insurance",
+    reports: [
+      {
+        label: "Center CollectionSheetPrintReport",
+        route: "/Share/CenterCollectionSheetPrintReport",
       },
     ],
   },

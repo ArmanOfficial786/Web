@@ -1,5 +1,8 @@
 "use client";
 
+import assetCategoryService from "@/services/Asset/AssetCategoryService";
+import { assetLookupService } from "@/services/Asset/AssetLookupService";
+import famClearanceStatusService from "@/services/Asset/FamClearanceStatusService";
 import branchService from "@/services/Common/BranchService";
 import { collectionCenterService } from "@/services/Common/CollectionCenterService";
 import collectorService from "@/services/Common/CollectorService";
@@ -10,6 +13,7 @@ import { memberGroupService } from "@/services/Common/MemberGroupService";
 import { memberLookUpService } from "@/services/Common/MemberLookUpService";
 import memberTypeService from "@/services/Common/MemberTypeService";
 import paymentDurationTypeService from "@/services/Common/PaymentDurationType";
+import remittanceTypeService from "@/services/Common/RemittanceTypeService";
 import shareTypeService from "@/services/Common/ShareTypeService";
 import { soleMemberGroupService } from "@/services/Common/SoleMemberGroupService";
 import tellerExpenseService from "@/services/Common/TellerExpenseService";
@@ -17,6 +21,7 @@ import tellerService from "@/services/Common/TellerService";
 import voucherService, {
   VoucherLookupResponse,
 } from "@/services/Common/VoucherService";
+import { getSession } from "next-auth/react";
 import {
   createContext,
   ReactNode,
@@ -27,16 +32,25 @@ import {
   useState,
 } from "react";
 import {
+  AssetCategoryResponse,
   BranchResponse,
+  CollectionCenterResponseDto,
   CollectorResponse,
   DepositTypeResponse,
+  FamAssetNameLookupDto,
+  FamClearanceStatusLookupDto,
   FiscalYearResponse,
   MemberLookUpDtos,
   MemberTypeResponse,
+  RemittanceTypeResponse,
   TellerLookupResponse,
 } from "types/api/api";
 
 export type SelectOption = { id: number | string; name: string };
+export type CollectionCenterOption = SelectOption & {
+  address?: string | null;
+  meetingDateTimeBs?: string | null;
+};
 export type MemberRecord = MemberLookUpDtos;
 
 export interface MemberLookUpSearchParams {
@@ -68,7 +82,7 @@ interface ReportFormContextType {
   fetchShareType: () => Promise<void>;
 
   branchOptions: SelectOption[];
-  collectionCenterOptions: SelectOption[];
+  collectionCenterOptions: CollectionCenterOption[];
   memberGroupOptions: SelectOption[];
   soleMemberGroupOptions: SelectOption[];
 
@@ -87,7 +101,6 @@ interface ReportFormContextType {
   tellerOptions: SelectOption[];
   fetchTellers: (fromDateBs?: string, toDateBs?: string) => Promise<void>;
 
-  // ✅ NEW — loading flag so TellerExpenseField can show a spinner
   tellerExpenseOptions: SelectOption[];
   tellerExpenseLoading: boolean;
   fetchTellerExpenses: (
@@ -122,6 +135,20 @@ interface ReportFormContextType {
 
   fiscalYearBsOptions: SelectOption[];
   fetchFiscalYearBs: () => Promise<void>;
+
+  remittanceTypeOptions: SelectOption[];
+  fetchRemittanceTypes: () => Promise<void>;
+
+  assetCategoryOptionsMap: Record<string, SelectOption[]>;
+  assetCategoryLoading: Record<string, boolean>;
+  fetchAssetCategories: (type: string) => Promise<void>;
+
+  assetOptionsMap: Record<string, SelectOption[]>;
+  assetLoading: Record<string, boolean>;
+  fetchAssets: (categoryId: number) => Promise<void>;
+
+  clearanceStatusOptions: SelectOption[];
+  fetchClearanceStatus: () => Promise<void>;
 }
 
 const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
@@ -152,7 +179,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [branchOptions, setBranchOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [collectionCenterOptions, setCollectionCenterOptions] =
-    useState<SelectOption[]>(DEFAULT_SELECT);
+    useState<CollectionCenterOption[]>(DEFAULT_SELECT);
   const [memberGroupOptions, setMemberGroupOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
   const [soleMemberGroupOptions, setSoleMemberGroupOptions] =
@@ -198,6 +225,23 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [fiscalYearBsOptions, setFiscalYearBsOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
 
+  const [remittanceTypeOptions, setRemittanceTypeOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
+  const [assetCategoryOptionsMap, setAssetCategoryOptionsMap] = useState<
+    Record<string, SelectOption[]>
+  >({});
+  const [assetCategoryLoading, setAssetCategoryLoading] = useState<
+    Record<string, boolean>
+  >({});
+  const [assetOptionsMap, setAssetOptionsMap] = useState<
+    Record<string, SelectOption[]>
+  >({});
+  const [assetLoading, setAssetLoading] = useState<Record<string, boolean>>({});
+
+  const [clearanceStatusOptions, setClearanceStatusOptions] =
+    useState<SelectOption[]>(DEFAULT_SELECT);
+
   //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
@@ -208,6 +252,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const paymentDurationTypeFetchedRef = useRef(false);
   const memberTypeFetchedRef = useRef(false);
   const fiscalYearBsFetchedRef = useRef(false);
+  const remittanceTypeFetchedRef = useRef(false);
+  const assetCategoryFetchedRef = useRef<Record<string, boolean>>({});
+  const assetFetchedRef = useRef<Record<string, boolean>>({});
+  const clearanceStatusFetchedRef = useRef(false);
 
   const searchmemberLookUp = useCallback(
     async (params: MemberLookUpSearchParams) => {
@@ -278,10 +326,24 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       const res = await collectionCenterService.getAll({
         lstOfficeId: branchId,
       });
-      const mapped = (res ?? []).map((c: any) => ({
-        id: c.collectionCenterId ?? -1,
-        name: c.collectionCenterName ?? "",
-      }));
+      const mapped = (res ?? []).map((c: CollectionCenterResponseDto) => {
+        const raw = c as CollectionCenterResponseDto & {
+          Address?: string | null;
+          MeetingDateTimeBS?: string | null;
+          meetingDateTimeBs?: string | null;
+        };
+
+        return {
+          id: c.collectionCenterId ?? -1,
+          name: c.collectionCenterName ?? "",
+          address: c.address ?? raw.Address ?? "",
+          meetingDateTimeBs:
+            c.meetingDateTimeBS ??
+            raw.MeetingDateTimeBS ??
+            raw.meetingDateTimeBs ??
+            "",
+        };
+      });
       setCollectionCenterOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
       setCollectionCenterOptions(DEFAULT_SELECT);
@@ -593,6 +655,118 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // ── Remittance Type — lazy, fetched once, retried on failure ──────────────
+  const fetchRemittanceTypes = useCallback(async () => {
+    if (remittanceTypeFetchedRef.current) return;
+    remittanceTypeFetchedRef.current = true;
+    try {
+      const res: RemittanceTypeResponse[] =
+        await remittanceTypeService.getAll();
+      const mapped = res.map((r: RemittanceTypeResponse) => ({
+        id: r.remittanceTypeId ?? -1,
+        name: r.remittanceTypeName ?? "",
+      }));
+      setRemittanceTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
+    } catch {
+      remittanceTypeFetchedRef.current = false; // allow retry on failure
+    }
+  }, []);
+
+  // ── Asset Category — cached per type ("F" | "O"), fetched once per app
+  // session; failed/empty results reset the guard so the next call retries.
+  const fetchAssetCategories = useCallback(async (type: string) => {
+    if (!type) return;
+    if (assetCategoryFetchedRef.current[type]) return; // fetched or in flight
+    assetCategoryFetchedRef.current[type] = true;
+
+    setAssetCategoryLoading((prev) => ({ ...prev, [type]: true }));
+    try {
+      // Make sure the auth session is hydrated on a hard reload so the
+      // token is attached to the request.
+      try {
+        await getSession();
+      } catch {
+        /* proceed; the request itself will surface auth errors */
+      }
+
+      const res: AssetCategoryResponse[] =
+        await assetCategoryService.getAllByType(type);
+
+      const mapped: SelectOption[] = (res ?? [])
+        .filter(
+          (c): c is AssetCategoryResponse & { famAssetsCategoryId: number } =>
+            c.famAssetsCategoryId != null,
+        )
+        .map((c) => ({
+          id: c.famAssetsCategoryId,
+          name: c.categoryName ?? c.typeName ?? "",
+        }));
+
+      setAssetCategoryOptionsMap((prev) => ({
+        ...prev,
+        [type]: [{ id: -1, name: "-- Select --" }, ...mapped],
+      }));
+
+      if (mapped.length === 0) assetCategoryFetchedRef.current[type] = false;
+    } catch (error) {
+      console.error("fetchAssetCategories failed", error);
+      assetCategoryFetchedRef.current[type] = false; // allow retry on failure
+    } finally {
+      setAssetCategoryLoading((prev) => ({ ...prev, [type]: false }));
+    }
+  }, []);
+
+  const fetchAssets = useCallback(async (categoryId: number) => {
+    const key = String(categoryId ?? "");
+    if (!categoryId || categoryId <= 0) return;
+    if (assetFetchedRef.current[key]) return;
+    assetFetchedRef.current[key] = true;
+
+    setAssetLoading((prev) => ({ ...prev, [key]: true }));
+    try {
+      const payload = { famFixedAssetsDetailId: categoryId };
+      const response = await assetLookupService.getAll(payload);
+      const asset: FamAssetNameLookupDto | undefined =
+        response.data ?? undefined;
+      const mapped: SelectOption[] =
+        asset?.famFixedAssetsDetailId != null && asset.fixedAssetsName
+          ? [{ id: asset.famFixedAssetsDetailId, name: asset.fixedAssetsName }]
+          : [];
+
+      setAssetOptionsMap((prev) => ({
+        ...prev,
+        [key]: [{ id: -1, name: "-- Select --" }, ...mapped],
+      }));
+
+      if (mapped.length === 0) assetFetchedRef.current[key] = false;
+    } catch (error) {
+      console.error("fetchAssets failed", error);
+      assetFetchedRef.current[key] = false;
+      setAssetOptionsMap((prev) => ({
+        ...prev,
+        [key]: DEFAULT_SELECT,
+      }));
+    } finally {
+      setAssetLoading((prev) => ({ ...prev, [key]: false }));
+    }
+  }, []);
+
+  const fetchClearanceStatus = useCallback(async () => {
+    if (clearanceStatusFetchedRef.current) return;
+    clearanceStatusFetchedRef.current = true;
+    try {
+      const res: FamClearanceStatusLookupDto[] =
+        await famClearanceStatusService.getAll();
+      const mapped = res.map((c) => ({
+        id: c.famFixedAssetsClearanceStatusId ?? -1,
+        name: c.description ?? "",
+      }));
+      setClearanceStatusOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
+    } catch {
+      clearanceStatusFetchedRef.current = false; // allow retry on failure
+    }
+  }, []);
+
   //======end call api logic========================
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
@@ -641,6 +815,16 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchMemberTypes,
       fiscalYearBsOptions,
       fetchFiscalYearBs,
+      remittanceTypeOptions,
+      fetchRemittanceTypes,
+      assetCategoryOptionsMap,
+      assetCategoryLoading,
+      fetchAssetCategories,
+      assetOptionsMap,
+      assetLoading,
+      fetchAssets,
+      clearanceStatusOptions,
+      fetchClearanceStatus,
     }),
     [
       memberLookUp,
@@ -687,6 +871,16 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       fetchMemberTypes,
       fiscalYearBsOptions,
       fetchFiscalYearBs,
+      remittanceTypeOptions,
+      fetchRemittanceTypes,
+      assetCategoryOptionsMap,
+      assetCategoryLoading,
+      fetchAssetCategories,
+      assetOptionsMap,
+      assetLoading,
+      fetchAssets,
+      clearanceStatusOptions,
+      fetchClearanceStatus,
     ],
   );
 

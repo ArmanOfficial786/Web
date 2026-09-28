@@ -12,6 +12,14 @@ import {
 } from "./memberAccount/savingWiseBalanceOrderByOptions";
 
 import {
+  assetOrderByOptionsMap,
+  AssetOrderByReportKey,
+} from "@/utilis/OrderbyOptions/asset/assetOrderByOptions";
+import {
+  remittancePaymentOrderByOptionsMap,
+  RemittancePaymentOrderByReportKey,
+} from "@/utilis/OrderbyOptions/remit/remitOrderByOptions";
+import {
   loanOrderByOptionsMap,
   LoanOrderByReportKey,
 } from "./Loan/loanOrderByOptions";
@@ -25,7 +33,9 @@ export type OrderByReportKey =
   | AccountOrderByReportKey
   | SavingWiseBalanceOrderByReportKey
   | LoanOrderByReportKey
-  | ShareOrderByReportKey;
+  | ShareOrderByReportKey
+  | RemittancePaymentOrderByReportKey
+  | AssetOrderByReportKey;
 
 export const orderByOptionsMap: Record<
   OrderByReportKey,
@@ -36,4 +46,6 @@ export const orderByOptionsMap: Record<
   ...savingWiseBalanceOrderByOptionsMap,
   ...loanOrderByOptionsMap,
   ...sharePurchaseOrderByOptionsMap,
+  ...remittancePaymentOrderByOptionsMap,
+  ...assetOrderByOptionsMap,
 };

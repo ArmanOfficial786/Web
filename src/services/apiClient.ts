@@ -1,8 +1,8 @@
-import { Api } from "../../types/api/api";
+import { Api } from "types/api/api";
 import {
+  errorResponseInterceptor,
   requestInterceptor,
   successResponseInterceptor,
-  errorResponseInterceptor,
 } from "./Interceptor";
 
 const apiClient = new Api({

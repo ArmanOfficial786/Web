@@ -94,6 +94,14 @@ export interface AllReportOrderByResponseModel {
   savingTypeWiseBalance?: OrderByResponse[] | null;
 }
 
+export interface AssetCategoryResponse {
+  /** @format int64 */
+  famAssetsCategoryId?: number;
+  typeName?: string | null;
+  categoryName?: string | null;
+  isActive?: boolean;
+}
+
 export interface BalanceSheetRequest {
   tillDate?: string | null;
   branchIds?: string | null;
@@ -174,6 +182,56 @@ export interface CashFlowRequest {
   visualReport?: boolean;
 }
 
+export interface CenterCollectionRequestDto {
+  tillDateBs?: string | null;
+  collectionCenterId?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CenterCollectionSheetAccountWiseRequestDto {
+  tillDateBs?: string | null;
+  collectionCenterId?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CenterCollectionSheetPrintRequestDto {
+  tillDateBs?: string | null;
+  collectionCenterId?: string | null;
+  sheetType?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CenterCollectionSheetReportMasterUpdateDto {
+  /** @format int32 */
+  sycCollectionCenterScemeId?: number;
+  savingName?: string | null;
+  savingNameCode?: string | null;
+  loanName?: string | null;
+  loanNameCode?: string | null;
+}
+
+export interface CenterCollectionSheetReportRequestDto {
+  tillDateBs?: string | null;
+  collectionCenterId?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CenterCollectionSheetSingleRequestDto {
+  tillDateBs?: string | null;
+  collectionCenterId?: string | null;
+  viewType?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CenterMeetingDetailRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchId?: string | null;
+  collectionCenterId?: string | null;
+  meetingType?: string | null;
+  visualReport?: boolean;
+}
+
 export interface ChequeBookIssueRequestDto {
   /** @format int64 */
   memberId?: number;
@@ -229,6 +287,10 @@ export interface CollectionCenterResponseDto {
   collectionCenterId?: number;
   collectionCenterShortCode?: string | null;
   collectionCenterName?: string | null;
+  address?: string | null;
+  meetingStartDateOnBs?: string | null;
+  meetingTime?: string | null;
+  meetingDateTimeBS?: string | null;
 }
 
 export interface CollectorResponse {
@@ -480,6 +542,54 @@ export interface DetailTrialBalanceRequest {
   visualReport?: boolean;
 }
 
+export interface FamAssetNameLookupDto {
+  /** @format int64 */
+  famFixedAssetsDetailId?: number;
+  fixedAssetsName?: string | null;
+  isActive?: boolean | null;
+}
+
+export interface FamClearanceStatusLookupDto {
+  /** @format int64 */
+  famFixedAssetsClearanceStatusId?: number;
+  description?: string | null;
+}
+
+export interface FamDepreciationReportRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface FamDetailReportRequestDto {
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  categoryId?: number;
+  /** @format int64 */
+  assetId?: number;
+  /** @format int64 */
+  clearanceStatusId?: number;
+  reportType?: string | null;
+  isTypeWise?: boolean;
+  isSummary?: boolean;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface FamPurchaseReportRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  categoryId?: number;
+  reportType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
 export interface Filter {
   /** @format int32 */
   pageNumber?: number;
@@ -535,6 +645,15 @@ export interface FixedDepositInterestTransferRequestDto {
   visualReport?: boolean;
 }
 
+export interface FundWithdrawlRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  orderBy?: string | null;
+  reportMode?: string | null;
+  visualReport?: boolean;
+}
+
 export interface GeneralResponseOfAccountSelectedDto {
   isValid?: boolean;
   /** @format int32 */
@@ -553,12 +672,30 @@ export interface GeneralResponseOfAllReportOrderByResponseModel {
   pagination?: Pagination;
 }
 
+export interface GeneralResponseOfFamAssetNameLookupDto {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: FamAssetNameLookupDto;
+  pagination?: Pagination;
+}
+
 export interface GeneralResponseOfListOfAccountLookUpDtos {
   isValid?: boolean;
   /** @format int32 */
   statusCode?: number;
   message?: string | null;
   data?: AccountLookUpDtos[] | null;
+  pagination?: Pagination;
+}
+
+export interface GeneralResponseOfListOfAssetCategoryResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: AssetCategoryResponse[] | null;
   pagination?: Pagination;
 }
 
@@ -598,6 +735,15 @@ export interface GeneralResponseOfListOfDepositTypeResponse {
   pagination?: Pagination;
 }
 
+export interface GeneralResponseOfListOfFamClearanceStatusLookupDto {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: FamClearanceStatusLookupDto[] | null;
+  pagination?: Pagination;
+}
+
 export interface GeneralResponseOfListOfFiscalYearResponse {
   isValid?: boolean;
   /** @format int32 */
@@ -622,6 +768,24 @@ export interface GeneralResponseOfListOfMemberTypeResponse {
   statusCode?: number;
   message?: string | null;
   data?: MemberTypeResponse[] | null;
+  pagination?: Pagination;
+}
+
+export interface GeneralResponseOfListOfRemittanceReceiptResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: RemittanceReceiptResponse[] | null;
+  pagination?: Pagination;
+}
+
+export interface GeneralResponseOfListOfRemittanceTypeResponse {
+  isValid?: boolean;
+  /** @format int32 */
+  statusCode?: number;
+  message?: string | null;
+  data?: RemittanceTypeResponse[] | null;
   pagination?: Pagination;
 }
 
@@ -659,6 +823,20 @@ export interface GeneralResponseOfVerificationStatusDto {
   message?: string | null;
   data?: VerificationStatusDto;
   pagination?: Pagination;
+}
+
+export interface GroupWiseMemberAccountDetailsRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  collectionCenterIds?: string | null;
+  memberGroupId?: string | null;
+  orderBy?: string | null;
+  groupByCollectionCenter?: boolean;
+  groupByMemberGroup?: boolean;
+  groupByBranch?: boolean;
+  sameCompanyName?: boolean;
+  visualReport?: boolean;
 }
 
 export interface IBTStatementBranchwiseRequestDto {
@@ -880,6 +1058,13 @@ export interface LoanDueInstallmentRequestDto {
   /** @format int64 */
   memberGroupId?: number;
   orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface LoanEvaluationReqResponse {
+  /** @format int64 */
+  memberRegistrationId?: number | null;
+  memberId?: string | null;
   visualReport?: boolean;
 }
 
@@ -1539,6 +1724,80 @@ export interface RatioAnalysisRequest {
   isTotalOnly?: boolean;
   sameCompanyName?: boolean;
   visualReport?: boolean;
+}
+
+export interface RemitOnlinePaymentDetailRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  isPaid?: string | null;
+  /** @format int64 */
+  remittanceGroupId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface RemitReceiptPrintRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  isReceived?: string | null;
+  /** @format int64 */
+  remittanceDetailId?: number;
+  visualReport?: boolean;
+}
+
+export interface RemitReconcileReportRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  /** @format int64 */
+  remittanceGroupId?: number;
+  reportType?: string | null;
+  sessionId?: string | null;
+  visualReport?: boolean;
+}
+
+export interface RemittancePaymentDetailRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  remittanceTypeId?: number;
+  remittanceServiceType?: string | null;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface RemittancePaymentRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  remittanceTypeId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface RemittanceReceiptResponse {
+  /** @format int64 */
+  remittanceReceiptId?: number;
+  remittanceReceiptName?: string | null;
+}
+
+export interface RemittanceReceivedRequestDto {
+  fromDateBs?: string | null;
+  toDateBs?: string | null;
+  branchIds?: string | null;
+  /** @format int64 */
+  remittanceTypeId?: number;
+  orderBy?: string | null;
+  visualReport?: boolean;
+}
+
+export interface RemittanceTypeResponse {
+  /** @format int64 */
+  remittanceTypeId?: number;
+  remittanceTypeName?: string | null;
 }
 
 export interface ReportResponseDtos {
@@ -3172,6 +3431,32 @@ export class Api<
     /**
      * No description
      *
+     * @tags Asset
+     * @name FamPurchaseReportCreate
+     * @request POST:/api/FamPurchaseReport
+     * @secure
+     */
+    famPurchaseReportCreate: (
+      data: FamPurchaseReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/FamPurchaseReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags Common
      * @name AccountLookUpSearchCreate
      * @request POST:/api/AccountLookUp/search
@@ -3223,6 +3508,29 @@ export class Api<
       this.request<GeneralResponseOfAccountSelectedDto, any>({
         path: `/api/AccountLookUp/validate/${accountNo}`,
         method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name AssetCategoryGetAllByTypeList
+     * @request GET:/api/AssetCategory/GetAllByType
+     * @secure
+     */
+    assetCategoryGetAllByTypeList: (
+      query?: {
+        type?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GeneralResponseOfListOfAssetCategoryResponse, any>({
+        path: `/api/AssetCategory/GetAllByType`,
+        method: "GET",
+        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -3499,6 +3807,47 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name FamAssetLookupGetByIdList
+     * @request GET:/api/FamAssetLookup/GetById
+     * @secure
+     */
+    famAssetLookupGetByIdList: (
+      query?: {
+        /** @format int64 */
+        famFixedAssetsDetailId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GeneralResponseOfFamAssetNameLookupDto, any>({
+        path: `/api/FamAssetLookup/GetById`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name FamClearanceStatusLookupList
+     * @request GET:/api/FamClearanceStatusLookup
+     * @secure
+     */
+    famClearanceStatusLookupList: (params: RequestParams = {}) =>
+      this.request<GeneralResponseOfListOfFamClearanceStatusLookupDto, any>({
+        path: `/api/FamClearanceStatusLookup`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -3819,6 +4168,51 @@ export class Api<
      * No description
      *
      * @tags Common
+     * @name RemittanceReceiptGetRemittanceReceiptsList
+     * @request GET:/api/RemittanceReceipt/GetRemittanceReceipts
+     * @secure
+     */
+    remittanceReceiptGetRemittanceReceiptsList: (
+      query?: {
+        isReceived?: boolean;
+        /** @format int64 */
+        createdBy?: number;
+        fromDateBs?: string;
+        toDateBs?: string;
+        officeIds?: number[];
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GeneralResponseOfListOfRemittanceReceiptResponse, any>({
+        path: `/api/RemittanceReceipt/GetRemittanceReceipts`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name RemittanceTypeGetAllRemittanceTypesList
+     * @request GET:/api/RemittanceType/GetAllRemittanceTypes
+     * @secure
+     */
+    remittanceTypeGetAllRemittanceTypesList: (params: RequestParams = {}) =>
+      this.request<GeneralResponseOfListOfRemittanceTypeResponse, any>({
+        path: `/api/RemittanceType/GetAllRemittanceTypes`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
      * @name ShareTypeList
      * @request GET:/api/ShareType
      * @secure
@@ -3958,6 +4352,58 @@ export class Api<
         query: query,
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Fam
+     * @name FamDepreciationReportCreate
+     * @request POST:/api/FamDepreciationReport
+     * @secure
+     */
+    famDepreciationReportCreate: (
+      data: FamDepreciationReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/FamDepreciationReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Fam
+     * @name FamDetailReportCreate
+     * @request POST:/api/FamDetailReport
+     * @secure
+     */
+    famDetailReportCreate: (
+      data: FamDetailReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/FamDetailReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -6390,6 +6836,452 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/SMSCategory`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/CenterDetailReports
+     * @name CenterMeetingDetailCreate
+     * @request POST:/api/CenterMeetingDetail
+     * @secure
+     */
+    centerMeetingDetailCreate: (
+      data: CenterMeetingDetailRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterMeetingDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/CenterDetailReports
+     * @name LoanEvaluationCreate
+     * @request POST:/api/LoanEvaluation
+     * @secure
+     */
+    loanEvaluationCreate: (
+      data: LoanEvaluationReqResponse,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanEvaluation`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceReport
+     * @name FundWithdrawlCreate
+     * @request POST:/api/FundWithdrawl
+     * @secure
+     */
+    fundWithdrawlCreate: (
+      data: FundWithdrawlRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/FundWithdrawl`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceReport
+     * @name GroupWiseMemberAccountDetailsCreate
+     * @request POST:/api/GroupWiseMemberAccountDetails
+     * @secure
+     */
+    groupWiseMemberAccountDetailsCreate: (
+      data: GroupWiseMemberAccountDetailsRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/GroupWiseMemberAccountDetails`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionCreate
+     * @request POST:/api/CenterCollection
+     * @secure
+     */
+    centerCollectionCreate: (
+      data: CenterCollectionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollection`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetAccountWiseCreate
+     * @request POST:/api/CenterCollectionSheetAccountWise
+     * @secure
+     */
+    centerCollectionSheetAccountWiseCreate: (
+      data: CenterCollectionSheetAccountWiseRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetAccountWise`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetPrintCreate
+     * @request POST:/api/CenterCollectionSheetPrint
+     * @secure
+     */
+    centerCollectionSheetPrintCreate: (
+      data: CenterCollectionSheetPrintRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetPrint`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetReportCreate
+     * @request POST:/api/CenterCollectionSheetReport
+     * @secure
+     */
+    centerCollectionSheetReportCreate: (
+      data: CenterCollectionSheetReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetReportMasterList
+     * @request GET:/api/CenterCollectionSheetReportMaster
+     * @secure
+     */
+    centerCollectionSheetReportMasterList: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetReportMaster`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetReportMasterUpdate
+     * @request PUT:/api/CenterCollectionSheetReportMaster
+     * @secure
+     */
+    centerCollectionSheetReportMasterUpdate: (
+      data: CenterCollectionSheetReportMasterUpdateDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetReportMaster`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetReportMasterDetail
+     * @request GET:/api/CenterCollectionSheetReportMaster/{id}
+     * @secure
+     */
+    centerCollectionSheetReportMasterDetail: (
+      id: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetReportMaster/${id}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetSingleCreate
+     * @request POST:/api/CenterCollectionSheetSingle
+     * @secure
+     */
+    centerCollectionSheetSingleCreate: (
+      data: CenterCollectionSheetSingleRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetSingle`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemitOnlinePaymentDetailCreate
+     * @request POST:/api/RemitOnlinePaymentDetail
+     * @secure
+     */
+    remitOnlinePaymentDetailCreate: (
+      data: RemitOnlinePaymentDetailRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemitOnlinePaymentDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemitReceiptPrintCreate
+     * @request POST:/api/RemitReceiptPrint
+     * @secure
+     */
+    remitReceiptPrintCreate: (
+      data: RemitReceiptPrintRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemitReceiptPrint`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemitReconcileReportCreate
+     * @request POST:/api/RemitReconcileReport
+     * @secure
+     */
+    remitReconcileReportCreate: (
+      data: RemitReconcileReportRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemitReconcileReport`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemittancePaymentCreate
+     * @request POST:/api/RemittancePayment
+     * @secure
+     */
+    remittancePaymentCreate: (
+      data: RemittancePaymentRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemittancePayment`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemittancePaymentDetailCreate
+     * @request POST:/api/RemittancePaymentDetail
+     * @secure
+     */
+    remittancePaymentDetailCreate: (
+      data: RemittancePaymentDetailRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemittancePaymentDetail`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Remit
+     * @name RemittanceReceivedCreate
+     * @request POST:/api/RemittanceReceived
+     * @secure
+     */
+    remittanceReceivedCreate: (
+      data: RemittanceReceivedRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/RemittanceReceived`,
         method: "POST",
         query: query,
         body: data,
