@@ -19,15 +19,7 @@ import {
 
 // ── Report Type (wire = meetingType) ──────────────────────────────────────────
 // ⚠️ Guessed wire values — confirm against backend
-export const MEETING_TYPE_NEXT_MEETING = "NextMeeting";
-export const MEETING_TYPE_CENTER_WISE = "CenterWise";
-export const MEETING_TYPE_DETAIL = "Detail";
-
-export const meetingTypeOptions = [
-  { value: MEETING_TYPE_NEXT_MEETING, label: "Next Meeting" },
-  { value: MEETING_TYPE_CENTER_WISE, label: "Center Wise" },
-  { value: MEETING_TYPE_DETAIL, label: "Detail" },
-];
+const MEETING_TYPE_NEXT_MEETING = "NextMeeting";
 
 // branchIds arrives as string[] from OfficeNameField; collectionCenterId is string
 // from CollectionCenterField. Both UI-facing field names differ slightly from DTO.

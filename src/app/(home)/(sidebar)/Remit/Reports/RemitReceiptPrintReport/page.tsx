@@ -21,21 +21,8 @@ export type RemittanceReceiptPrintRequestDto = RemitReceiptPrintRequestDto;
 
 // ── Radio option wire values ──────────────────────────────────────────────────
 // ⚠️ Guessed wire values — confirm against backend
-export const RECEIPT_OF_PAYMENT = "Payment";
-export const RECEIPT_OF_RECEIVED = "Received";
-
-export const remittanceReceiptOfOptions = [
-  { value: RECEIPT_OF_PAYMENT, label: "Payment" },
-  { value: RECEIPT_OF_RECEIVED, label: "Received" },
-];
-
-export const GET_RECEIPT_SINGLE = "Single";
-export const GET_RECEIPT_DOUBLE = "Double";
-
-export const getReceiptOptions = [
-  { value: GET_RECEIPT_SINGLE, label: "Single" },
-  { value: GET_RECEIPT_DOUBLE, label: "Double" },
-];
+const RECEIPT_OF_PAYMENT = "Payment";
+const GET_RECEIPT_DOUBLE = "Double";
 
 // branchIds arrives as string[] from OfficeNameField.
 // entryBy/getReceipt are UI-only fields; the API DTO only expects isReceived + remittanceDetailId.

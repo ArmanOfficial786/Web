@@ -23,6 +23,7 @@ import {
   LoanScheduleResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanScheduleReport/page";
 import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
+import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -34,6 +35,7 @@ interface LoanScheduleFormProps {
   reportState: LoanScheduleResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
+  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanScheduleForm({
@@ -44,6 +46,7 @@ export default function LoanScheduleForm({
   reportState,
   onPageChange,
   onDownload,
+  onAccountSelect,
 }: LoanScheduleFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -94,6 +97,7 @@ export default function LoanScheduleForm({
               control={control}
               setValue={setValue}
               config={loanConfig}
+              onSelect={onAccountSelect}
             />
           </Box>
 

@@ -10,10 +10,9 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import {
+import type {
   FamDetailReportFormValues,
   FamDetailReportResponseExtended,
-  reportTypeOptions,
 } from "@/app/(home)/(sidebar)/Asset/Reports/FamDetailReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
@@ -31,6 +30,11 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const reportTypeOptions = [
+  { value: "Summary", label: "Summary" },
+  { value: "Detail", label: "Detail" },
+];
 
 interface FamDetailReportFormProps {
   control: Control<FamDetailReportFormValues>;

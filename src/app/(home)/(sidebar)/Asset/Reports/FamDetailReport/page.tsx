@@ -23,13 +23,7 @@ import {
 export type FamDetailReportRequestDto = ApiFamDetailReportRequestDto;
 
 // ── Report Type radio ─────────────────────────────────────────────────────────
-export const REPORT_TYPE_SUMMARY = "Summary";
-export const REPORT_TYPE_DETAIL = "Detail";
-
-export const reportTypeOptions = [
-  { value: REPORT_TYPE_SUMMARY, label: "Summary" },
-  { value: REPORT_TYPE_DETAIL, label: "Detail" },
-];
+const REPORT_TYPE_SUMMARY = "Summary";
 
 // branchIds arrives as string[] from OfficeNameField.
 // type is UI-only (drives AssetCategoryField). categoryId/assetId/clearanceStatusId

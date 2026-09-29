@@ -1312,6 +1312,7 @@ export interface LoanStatementRequestDto {
   narrationType?: string | null;
   sameCompanyName?: boolean;
   visualReport?: boolean;
+  language?: string | null;
 }
 
 export interface LoanStatementVerificationRequestDto {

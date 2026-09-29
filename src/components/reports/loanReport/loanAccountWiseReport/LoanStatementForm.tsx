@@ -26,6 +26,7 @@ import type {
   LoanStatementFormValues,
   LoanStatementResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanStatementReport/page";
+import { LanguageSwitch } from "@/components/reports/memberAccount/SavingAccountWiseReports/LanguageSwitch";
 import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 import type { AccountLookUpDtos } from "types/api/api";
 
@@ -50,6 +51,7 @@ export default function LoanStatementForm({
   reportState,
   onPageChange,
   onDownload,
+  onAccountSelect,
 }: LoanStatementFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -100,6 +102,7 @@ export default function LoanStatementForm({
               control={control}
               setValue={setValue}
               config={loanConfig}
+              onSelect={onAccountSelect}
             />
           </Box>
 
@@ -173,8 +176,7 @@ export default function LoanStatementForm({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
             }}
           >
             <SameCompanyField<LoanStatementFormValues>
@@ -183,6 +185,7 @@ export default function LoanStatementForm({
               labelPlacement="end"
               gridSize={{ xs: 12, md: 6 }}
             />
+            <LanguageSwitch control={control} name="language" />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{

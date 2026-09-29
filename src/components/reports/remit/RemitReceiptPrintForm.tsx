@@ -11,12 +11,9 @@ import type {
 } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 
-import {
-  RECEIPT_OF_RECEIVED,
+import type {
   RemitReceiptPrintFormValues,
   RemitReceiptPrintResponseExtended,
-  getReceiptOptions,
-  remittanceReceiptOfOptions,
 } from "@/app/(home)/(sidebar)/Remit/Reports/RemitReceiptPrintReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
@@ -34,6 +31,18 @@ import userLookupService from "@/services/Common/UserLookUpService";
 import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const RECEIPT_OF_RECEIVED = "Received";
+
+const remittanceReceiptOfOptions = [
+  { value: "Payment", label: "Payment" },
+  { value: "Received", label: "Received" },
+];
+
+const getReceiptOptions = [
+  { value: "Single", label: "Single" },
+  { value: "Double", label: "Double" },
+];
 
 interface RemitReceiptPrintFormProps {
   control: Control<RemitReceiptPrintFormValues>;

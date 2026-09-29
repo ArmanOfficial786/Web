@@ -26,6 +26,7 @@ export interface LoanStatementFormValues extends LoanStatementRequestDto {
   fromDateAd?: string;
   toDateAd?: string;
   branchName?: string;
+  language?: "English" | "Nepali";
 }
 
 export interface LoanStatementResponseExtended {
@@ -36,9 +37,9 @@ export interface LoanStatementResponseExtended {
 
 const schema: yup.ObjectSchema<LoanStatementFormValues> = yup
   .object({
-    accountNo: yup.string().optional().default(""),
+    accountNo: yup.string().required("Account Number is Required").default(""),
     branchIds: yup.string().optional().default(""),
-    fromDateBs: yup.string().optional().default(""),
+    fromDateBs: yup.string().required("From Date is Required").default(""),
     toDateBs: yup.string().optional().default(""),
     reportType: yup.string().optional().default(""),
     showEntryBy: yup.boolean().optional().default(false),
@@ -53,6 +54,11 @@ const schema: yup.ObjectSchema<LoanStatementFormValues> = yup
     fromDateAd: yup.string().optional().default(""),
     toDateAd: yup.string().optional().default(""),
     branchName: yup.string().optional().default(""),
+    language: yup
+      .string()
+      .oneOf(["English", "Nepali"])
+      .optional()
+      .default("English"),
   })
   .required();
 
@@ -69,6 +75,7 @@ const toRequest = (v: LoanStatementFormValues): LoanStatementRequestDto => ({
   narrationType: v.narrationType || "",
   sameCompanyName: v.sameCompanyName ?? true,
   visualReport: v.visualReport ?? false,
+  language: v.language || "English",
 });
 
 function LoanStatementPage(): React.ReactElement {

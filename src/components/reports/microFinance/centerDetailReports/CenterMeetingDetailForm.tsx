@@ -10,10 +10,9 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import {
+import type {
   CenterMeetingDetailFormValues,
   CenterMeetingDetailResponseExtended,
-  meetingTypeOptions,
 } from "@/app/(home)/(sidebar)/MicroFinance/CenterDetailReports/CenterMeetingDetailReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
@@ -28,6 +27,12 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const meetingTypeOptions = [
+  { value: "NextMeeting", label: "Next Meeting" },
+  { value: "CenterWise", label: "Center Wise" },
+  { value: "Detail", label: "Detail" },
+];
 
 interface CenterMeetingDetailFormProps {
   control: Control<CenterMeetingDetailFormValues>;

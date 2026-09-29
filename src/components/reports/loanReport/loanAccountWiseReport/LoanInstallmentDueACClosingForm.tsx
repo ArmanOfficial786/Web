@@ -28,6 +28,7 @@ import {
   interestTypeOptions,
 } from "@/config/LoanReportOptions";
 import FieldRow from "@/utilis/FieldRow";
+import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -39,6 +40,7 @@ interface LoanInstallmentDueACClosingFormProps {
   reportState: LoanInstallmentDueACClosingResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
+  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanInstallmentDueACClosingForm({
@@ -49,6 +51,7 @@ export default function LoanInstallmentDueACClosingForm({
   reportState,
   onPageChange,
   onDownload,
+  onAccountSelect,
 }: LoanInstallmentDueACClosingFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -104,6 +107,7 @@ export default function LoanInstallmentDueACClosingForm({
               control={control}
               setValue={setValue}
               config={loanConfig}
+              onSelect={onAccountSelect}
             />
           </Box>
 

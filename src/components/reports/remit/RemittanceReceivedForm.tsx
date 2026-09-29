@@ -10,10 +10,10 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import {
+import type {
   RemittanceReceivedFormValues,
   RemittanceReceivedResponseExtended,
-} from "@/app/(home)/(sidebar)/Remit/Reports/RemittanceReceivedReport/page";
+} from "@/app/(home)/(sidebar)/Remit/Reports/RemRemittanceReceivedReports/page";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";

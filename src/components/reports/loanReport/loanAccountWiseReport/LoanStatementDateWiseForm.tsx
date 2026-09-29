@@ -25,6 +25,7 @@ import {
 } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanStatementReportDateWise/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
+import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -36,6 +37,7 @@ interface LoanStatementDateWiseFormProps {
   reportState: LoanStatementDateWiseResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
+  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanStatementDateWiseForm({
@@ -46,6 +48,7 @@ export default function LoanStatementDateWiseForm({
   reportState,
   onPageChange,
   onDownload,
+  onAccountSelect,
 }: LoanStatementDateWiseFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -96,6 +99,7 @@ export default function LoanStatementDateWiseForm({
               control={control}
               setValue={setValue}
               config={loanConfig}
+              onSelect={onAccountSelect}
             />
           </Box>
 

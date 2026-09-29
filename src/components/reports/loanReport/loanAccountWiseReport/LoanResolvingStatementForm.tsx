@@ -56,6 +56,7 @@ export default function LoanResolvingStatementForm({
   reportState,
   onPageChange,
   onDownload,
+  onAccountSelect,
 }: LoanResolvingStatementFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -106,6 +107,7 @@ export default function LoanResolvingStatementForm({
               control={control}
               setValue={setValue}
               config={loanConfig}
+              onSelect={onAccountSelect}
             />
           </Box>
 

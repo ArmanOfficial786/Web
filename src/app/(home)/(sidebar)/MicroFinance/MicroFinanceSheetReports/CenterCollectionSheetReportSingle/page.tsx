@@ -22,6 +22,8 @@ import {
 
 // collectionCenterId (string) from CollectionCenterField; AD / address /
 // meetingDateTimeBs / branchIds are UI-only bind fields, never sent.
+const PRINT_SHEET_SAVING_AND_LOAN = "SavingAndLoan";
+
 export interface CenterCollectionSheetReportSingleFormValues extends Omit<
   CenterCollectionSheetSingleRequestDto,
   "collectionCenterId"
@@ -31,6 +33,7 @@ export interface CenterCollectionSheetReportSingleFormValues extends Omit<
   tillDateAd?: string; // UI-only, derived from tillDateBs (BOTH_BS mode)
   address?: string; // UI-only, bound by CollectionCenterField
   meetingDateTimeBs?: string; // UI-only, bound by CollectionCenterField
+  viewType?: string;
 }
 
 export interface CenterCollectionSheetReportSingleResponseExtended {
@@ -54,6 +57,7 @@ const schema: yup.ObjectSchema<CenterCollectionSheetReportSingleFormValues> =
       collectionCenterId: yup.string().optional().default("-1"),
       address: yup.string().optional().default(""),
       meetingDateTimeBs: yup.string().optional().default(""),
+      viewType: yup.string().optional().default(PRINT_SHEET_SAVING_AND_LOAN),
       visualReport: yup.boolean().optional().default(false),
     })
     .required();
@@ -63,6 +67,7 @@ const toRequest = (
 ): CenterCollectionSheetSingleRequestDto => ({
   tillDateBs: v.tillDateBs || undefined,
   collectionCenterId: v.collectionCenterId || "-1",
+  viewType: v.viewType || PRINT_SHEET_SAVING_AND_LOAN,
   visualReport: v.visualReport ?? false,
   // branchIds / tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });

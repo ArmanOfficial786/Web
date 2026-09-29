@@ -10,11 +10,10 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import {
+import type {
   OfficeProgressFormValues,
   OfficeProgressResponseExtended,
-  reportTypeOptions,
-} from "@/app/(home)/(sidebar)/Account/AccountingReports/OfficeProgressReport/page";
+} from "@/app/(home)/(sidebar)/MicroFinance/OtherReports/MonthlySummaryReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
@@ -27,6 +26,12 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const reportTypeOptions = [
+  { value: "OfficeProgress", label: "Office Progress" },
+  { value: "Saving", label: "Saving" },
+  { value: "Loan", label: "Loan" },
+];
 
 interface OfficeProgressFormProps {
   control: Control<OfficeProgressFormValues>;

@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 import type { OfficeProgressRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-import OfficeProgressForm from "@/components/reports/accountReport/AccountingReports/OfficeProgressForm";
-import accountService from "@/services/Account/accountService";
+import OfficeProgressForm from "@/components/reports/microFinance/otherReports/OfficeProgressForm";
+import microFinanceService from "@/services/MicroFinance/microFinanceService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
@@ -17,15 +17,7 @@ import {
 } from "@/utilis/Constants/reportConstants";
 
 // ⚠️ Guessed wire values — confirm against backend
-export const REPORT_TYPE_OFFICE_PROGRESS = "OfficeProgress";
-export const REPORT_TYPE_SAVING = "Saving";
-export const REPORT_TYPE_LOAN = "Loan";
-
-export const reportTypeOptions = [
-  { value: REPORT_TYPE_OFFICE_PROGRESS, label: "Office Progress" },
-  { value: REPORT_TYPE_SAVING, label: "Saving" },
-  { value: REPORT_TYPE_LOAN, label: "Loan" },
-];
+const REPORT_TYPE_OFFICE_PROGRESS = "OfficeProgress";
 
 // tillDateAd / branchName are UI-only (BOTH_BS derived + bound display)
 export interface OfficeProgressFormValues extends Omit<
@@ -97,7 +89,7 @@ function OfficeProgressPage(): React.ReactElement {
 
   const callApi = useCallback(
     (request: OfficeProgressRequest, format: string) =>
-      accountService.api.officeProgressGenerateReportCreate(request, {
+      microFinanceService.api.officeProgressGenerateReportCreate(request, {
         format,
       }),
     [],
