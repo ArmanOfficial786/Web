@@ -3,25 +3,26 @@
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
 import { useEffect, useMemo, useRef } from "react";
 import type {
-    Control,
-    SubmitHandler,
-    UseFormHandleSubmit,
-    UseFormSetValue,
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormSetValue,
 } from "react-hook-form";
 
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 import ReportNavigation, {
-    type ReportFormat,
+  type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 
-
-import { LoanScheduleFormValues, LoanScheduleResponseExtended } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanScheduleReport/page";
-import type { AccountLookUpDtos } from "types/api/api";
+import {
+  LoanScheduleFormValues,
+  LoanScheduleResponseExtended,
+} from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanScheduleReport/page";
+import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 
 export type { ReportFormat };
 
@@ -33,7 +34,6 @@ interface LoanScheduleFormProps {
   reportState: LoanScheduleResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanScheduleForm({
@@ -44,7 +44,6 @@ export default function LoanScheduleForm({
   reportState,
   onPageChange,
   onDownload,
-  onAccountSelect,
 }: LoanScheduleFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -56,8 +55,8 @@ export default function LoanScheduleForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  const accountConfig = useMemo(
-    () => createAccountLookupConfig<LoanScheduleFormValues>(),
+  const loanConfig = useMemo(
+    () => createLoanAccountLookupConfig<LoanScheduleFormValues>(),
     [],
   );
 
@@ -94,8 +93,7 @@ export default function LoanScheduleForm({
             <EntityLookupField
               control={control}
               setValue={setValue}
-              config={accountConfig}
-              onSelect={onAccountSelect}
+              config={loanConfig}
             />
           </Box>
 

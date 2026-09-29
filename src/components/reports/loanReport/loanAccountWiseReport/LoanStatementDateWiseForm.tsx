@@ -18,14 +18,13 @@ import ReportNavigation, {
 } from "@/components/reportForm/Common/ReportNavigation";
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 
 import {
   LoanStatementDateWiseFormValues,
   LoanStatementDateWiseResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanStatementReportDateWise/page";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import type { AccountLookUpDtos } from "types/api/api";
+import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 
 export type { ReportFormat };
 
@@ -37,7 +36,6 @@ interface LoanStatementDateWiseFormProps {
   reportState: LoanStatementDateWiseResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanStatementDateWiseForm({
@@ -48,7 +46,6 @@ export default function LoanStatementDateWiseForm({
   reportState,
   onPageChange,
   onDownload,
-  onAccountSelect,
 }: LoanStatementDateWiseFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -60,8 +57,8 @@ export default function LoanStatementDateWiseForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  const accountConfig = useMemo(
-    () => createAccountLookupConfig<LoanStatementDateWiseFormValues>(),
+  const loanConfig = useMemo(
+    () => createLoanAccountLookupConfig<LoanStatementDateWiseFormValues>(),
     [],
   );
 
@@ -98,8 +95,7 @@ export default function LoanStatementDateWiseForm({
             <EntityLookupField
               control={control}
               setValue={setValue}
-              config={accountConfig}
-              onSelect={onAccountSelect}
+              config={loanConfig}
             />
           </Box>
 

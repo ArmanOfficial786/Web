@@ -22,13 +22,12 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
+import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 import {
   asNoDateOptions,
   interestTypeOptions,
 } from "@/config/LoanReportOptions";
 import FieldRow from "@/utilis/FieldRow";
-import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -40,7 +39,6 @@ interface LoanInstallmentDueACClosingFormProps {
   reportState: LoanInstallmentDueACClosingResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  onAccountSelect: (record: AccountLookUpDtos) => void;
 }
 
 export default function LoanInstallmentDueACClosingForm({
@@ -51,7 +49,6 @@ export default function LoanInstallmentDueACClosingForm({
   reportState,
   onPageChange,
   onDownload,
-  onAccountSelect,
 }: LoanInstallmentDueACClosingFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -60,8 +57,9 @@ export default function LoanInstallmentDueACClosingForm({
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
 
-  const accountConfig = useMemo(
-    () => createAccountLookupConfig<LoanInstallmentDueACClosingFormValues>(),
+  const loanConfig = useMemo(
+    () =>
+      createLoanAccountLookupConfig<LoanInstallmentDueACClosingFormValues>(),
     [],
   );
 
@@ -105,8 +103,7 @@ export default function LoanInstallmentDueACClosingForm({
             <EntityLookupField
               control={control}
               setValue={setValue}
-              config={accountConfig}
-              onSelect={onAccountSelect}
+              config={loanConfig}
             />
           </Box>
 

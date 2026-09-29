@@ -18,10 +18,10 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 
 import { LoanResolvingStatementResponseExtended } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanRevolvingStatement/page";
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
@@ -56,7 +56,6 @@ export default function LoanResolvingStatementForm({
   reportState,
   onPageChange,
   onDownload,
-  onAccountSelect,
 }: LoanResolvingStatementFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -68,8 +67,8 @@ export default function LoanResolvingStatementForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  const accountConfig = useMemo(
-    () => createAccountLookupConfig<LoanResolvingStatementFormValues>(),
+  const loanConfig = useMemo(
+    () => createLoanAccountLookupConfig<LoanResolvingStatementFormValues>(),
     [],
   );
 
@@ -106,8 +105,7 @@ export default function LoanResolvingStatementForm({
             <EntityLookupField
               control={control}
               setValue={setValue}
-              config={accountConfig}
-              onSelect={onAccountSelect}
+              config={loanConfig}
             />
           </Box>
 

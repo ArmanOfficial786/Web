@@ -23,7 +23,6 @@ export default function FamClearanceStatusField<T extends FieldValues>({
   const { fetchClearanceStatus, clearanceStatusOptions } =
     useReportFormContext();
 
-
   useEffect(() => {
     fetchClearanceStatus();
   }, [fetchClearanceStatus]);

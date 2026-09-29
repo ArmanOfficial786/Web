@@ -929,6 +929,30 @@ export interface LoanAccountClosedRequestDto {
   visualReport?: boolean;
 }
 
+export interface LoanAccountLookUpDtos {
+  /** @format int64 */
+  loanIssueId?: number;
+  accountNo?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  loanStatus?: string | null;
+  /** @format int32 */
+  totalCount?: number;
+  /** @format int32 */
+  currentPage?: number;
+  /** @format int32 */
+  totalPages?: number;
+}
+
+export interface LoanAccountSelectedDto {
+  /** @format int64 */
+  loanIssueId?: number;
+  accountNo?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  loanStatus?: string | null;
+}
+
 export interface LoanAgeingRequestDto {
   tillDateBs?: string | null;
   branchIds?: string | null;
@@ -1674,6 +1698,20 @@ export interface Pagination {
   hasNextPage?: boolean | null;
   hasPreviousPage?: boolean | null;
   items?: any[] | null;
+}
+
+export interface PaginationOfLoanAccountLookUpDtos {
+  /** @format int32 */
+  currentPage?: number | null;
+  /** @format int32 */
+  totalPages?: number | null;
+  /** @format int32 */
+  pageSize?: number | null;
+  /** @format int32 */
+  totalRecord?: number | null;
+  hasNextPage?: boolean | null;
+  hasPreviousPage?: boolean | null;
+  items?: LoanAccountLookUpDtos[] | null;
 }
 
 export interface PaginationOfMemberLookUpDtos {
@@ -4030,6 +4068,62 @@ export class Api<
     lmtLoanMaseterListList: (params: RequestParams = {}) =>
       this.request<GeneralResponseOfListOfLmtLoanMaseterListResponse, any>({
         path: `/api/LmtLoanMaseterList`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name LoanAccountLookUpSearchList
+     * @request GET:/api/LoanAccountLookUp/search
+     * @secure
+     */
+    loanAccountLookUpSearchList: (
+      query?: {
+        /**
+         * @format int32
+         * @min 1
+         * @max 2147483647
+         */
+        Page?: number;
+        /** @format int64 */
+        LoanIssueId?: number;
+        AccountNo?: string;
+        MemberId?: string;
+        MemberName?: string;
+        LoanStatus?: string;
+        SortColumn?: string;
+        SortDirection?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<PaginationOfLoanAccountLookUpDtos, any>({
+        path: `/api/LoanAccountLookUp/search`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Common
+     * @name LoanAccountLookUpSelectDetail
+     * @request GET:/api/LoanAccountLookUp/select/{loanIssueId}
+     * @secure
+     */
+    loanAccountLookUpSelectDetail: (
+      loanIssueId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<LoanAccountSelectedDto, any>({
+        path: `/api/LoanAccountLookUp/select/${loanIssueId}`,
         method: "GET",
         secure: true,
         format: "json",
