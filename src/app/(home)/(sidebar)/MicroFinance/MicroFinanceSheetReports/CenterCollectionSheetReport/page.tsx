@@ -6,12 +6,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import type {
-  CenterCollectionSheetReportRequestDto,
+  CenterCollectionSheetPrintRequestDto,
   Pagination,
 } from "types/api/api";
 import * as yup from "yup";
 
-import CenterCollectionSheetForm from "@/components/reports/microFinance/financeSheetReports/CenterCollectionSheetForm";
+import CenterCollectionSheetAccountWiseForm from "@/components/reports/microFinance/financeSheetReports/CenterCollectionSheetAccountWiseForm";
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -23,7 +23,7 @@ import {
 // collectionCenterId (string) from CollectionCenterField; AD / address /
 // meetingDateTimeBs / branchIds are UI-only bind fields, never sent.
 export interface CenterCollectionSheetFormValues extends Omit<
-  CenterCollectionSheetReportRequestDto,
+  CenterCollectionSheetPrintRequestDto,
   "collectionCenterId"
 > {
   branchIds?: string[]; // UI-only office id from the authenticated session
@@ -51,6 +51,7 @@ const schema: yup.ObjectSchema<CenterCollectionSheetFormValues> = yup
       .required(DATE_REQUIRED_MESSAGE),
     tillDateAd: yup.string().optional().default(""),
     collectionCenterId: yup.string().optional().default("-1"),
+    sheetType: yup.string().optional().default("SavingAndLoan"),
     address: yup.string().optional().default(""),
     meetingDateTimeBs: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -59,9 +60,10 @@ const schema: yup.ObjectSchema<CenterCollectionSheetFormValues> = yup
 
 const toRequest = (
   v: CenterCollectionSheetFormValues,
-): CenterCollectionSheetReportRequestDto => ({
+): CenterCollectionSheetPrintRequestDto => ({
   tillDateBs: v.tillDateBs || undefined,
   collectionCenterId: v.collectionCenterId || "-1",
+  sheetType: v.sheetType || "SavingAndLoan",
   visualReport: v.visualReport ?? false,
   // branchIds / tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });
@@ -70,7 +72,7 @@ function CenterCollectionSheetPage(): React.ReactElement {
   const [reportState, setReportState] =
     useState<CenterCollectionSheetResponseExtended>({ isLoading: false });
   const [lastRequest, setLastRequest] =
-    useState<CenterCollectionSheetReportRequestDto | null>(null);
+    useState<CenterCollectionSheetPrintRequestDto | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
     useForm<CenterCollectionSheetFormValues>({
@@ -96,13 +98,15 @@ function CenterCollectionSheetPage(): React.ReactElement {
   }, [setValue]);
 
   const callApi = useCallback(
-    (request: CenterCollectionSheetReportRequestDto, format: string) =>
-      loanService.api.centerCollectionSheetReportCreate(request, { format }),
+    (request: CenterCollectionSheetPrintRequestDto, format: string) =>
+      loanService.api.centerCollectionSheetAccountWiseCreate(request, {
+        format,
+      }),
     [],
   );
 
   const fetchReport = useCallback(
-    async (request: CenterCollectionSheetReportRequestDto): Promise<void> => {
+    async (request: CenterCollectionSheetPrintRequestDto): Promise<void> => {
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -187,7 +191,7 @@ function CenterCollectionSheetPage(): React.ReactElement {
   }, []);
 
   return (
-    <CenterCollectionSheetForm
+    <CenterCollectionSheetAccountWiseForm
       control={control}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}

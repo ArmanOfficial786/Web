@@ -47,7 +47,10 @@ const schema: yup.ObjectSchema<CenterCollectionFormValues> = yup
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
     tillDateAd: yup.string().optional().default(""),
-    collectionCenterId: yup.string().optional().default("-1"),
+    collectionCenterId: yup
+      .string()
+      .required("Collection center is required")
+      .default("-1"),
     address: yup.string().optional().default(""),
     meetingDateTimeBs: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -124,7 +127,6 @@ function CenterCollectionPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

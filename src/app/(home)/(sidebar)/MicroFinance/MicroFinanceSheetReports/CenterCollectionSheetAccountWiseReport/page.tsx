@@ -12,7 +12,7 @@ import type {
 import * as yup from "yup";
 
 import CenterCollectionSheetAccountWiseForm from "@/components/reports/microFinance/financeSheetReports/CenterCollectionSheetAccountWiseForm";
-import loanService from "@/services/Loan/loanService";
+import microFinanceService from "@/services/MicroFinance/microFinanceService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
@@ -20,8 +20,6 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// collectionCenterId (string) from CollectionCenterField; AD / address /
-// meetingDateTimeBs / branchIds are UI-only bind fields, never sent.
 export interface CenterCollectionSheetAccountWiseFormValues extends Omit<
   CenterCollectionSheetAccountWiseRequestDto,
   "collectionCenterId"
@@ -50,7 +48,10 @@ const schema: yup.ObjectSchema<CenterCollectionSheetAccountWiseFormValues> = yup
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
     tillDateAd: yup.string().optional().default(""),
-    collectionCenterId: yup.string().optional().default("-1"),
+    collectionCenterId: yup
+      .string()
+      .required("Collection center is required")
+      .default("-1"),
     address: yup.string().optional().default(""),
     meetingDateTimeBs: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -63,7 +64,6 @@ const toRequest = (
   tillDateBs: v.tillDateBs || undefined,
   collectionCenterId: v.collectionCenterId || "-1",
   visualReport: v.visualReport ?? false,
-  // branchIds / tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });
 
 function CenterCollectionSheetAccountWisePage(): React.ReactElement {
@@ -99,7 +99,7 @@ function CenterCollectionSheetAccountWisePage(): React.ReactElement {
 
   const callApi = useCallback(
     (request: CenterCollectionSheetAccountWiseRequestDto, format: string) =>
-      loanService.api.centerCollectionSheetAccountWiseCreate(request, {
+      microFinanceService.api.centerCollectionSheetAccountWiseCreate(request, {
         format,
       }),
     [],

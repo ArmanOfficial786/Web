@@ -16,6 +16,10 @@ import {
   AssetOrderByReportKey,
 } from "@/utilis/OrderbyOptions/asset/assetOrderByOptions";
 import {
+  microFinanceOrderByOptionsMap,
+  MicroFinanceOrderByReportKey,
+} from "@/utilis/OrderbyOptions/microFinance/microFinanceOrderByOptions";
+import {
   remittancePaymentOrderByOptionsMap,
   RemittancePaymentOrderByReportKey,
 } from "@/utilis/OrderbyOptions/remit/remitOrderByOptions";
@@ -35,7 +39,8 @@ export type OrderByReportKey =
   | LoanOrderByReportKey
   | ShareOrderByReportKey
   | RemittancePaymentOrderByReportKey
-  | AssetOrderByReportKey;
+  | AssetOrderByReportKey
+  | MicroFinanceOrderByReportKey;
 
 export const orderByOptionsMap: Record<
   OrderByReportKey,
@@ -48,4 +53,5 @@ export const orderByOptionsMap: Record<
   ...sharePurchaseOrderByOptionsMap,
   ...remittancePaymentOrderByOptionsMap,
   ...assetOrderByOptionsMap,
+  ...microFinanceOrderByOptionsMap,
 };

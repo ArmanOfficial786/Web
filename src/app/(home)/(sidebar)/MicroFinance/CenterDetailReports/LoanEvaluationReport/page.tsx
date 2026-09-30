@@ -5,8 +5,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import type {
-  AccountLookUpDtos,
   LoanEvaluationReqResponse,
+  MemberLookUpDtos,
   Pagination,
 } from "types/api/api";
 import * as yup from "yup";
@@ -20,13 +20,9 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// memberId / memberName are UI-only (populated by EntityLookupField +
-// MemberLookupConfig); only memberRegistrationId is sent on the DTO.
-export interface LoanEvaluationFormValues extends Omit<
-  LoanEvaluationReqResponse,
-  "memberRegistrationId"
-> {
-  memberRegistrationId?: string;
+// memberId / memberName are UI-only metadata from the lookup. The API DTO
+// still expects memberRegistrationId as a numeric identifier.
+export interface LoanEvaluationFormValues extends LoanEvaluationReqResponse {
   memberId?: string;
   memberName?: string;
 }
@@ -39,7 +35,7 @@ export interface LoanEvaluationResponseExtended {
 
 const schema: yup.ObjectSchema<LoanEvaluationFormValues> = yup
   .object({
-    memberRegistrationId: yup.string().optional().default(""),
+    memberRegistrationId: yup.number().optional().default(0),
     memberId: yup.string().optional().default(""),
     memberName: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -47,10 +43,8 @@ const schema: yup.ObjectSchema<LoanEvaluationFormValues> = yup
   .required();
 
 const toRequest = (v: LoanEvaluationFormValues): LoanEvaluationReqResponse => {
-  const regId = Number(v.memberRegistrationId);
   return {
-    memberRegistrationId:
-      Number.isFinite(regId) && regId > 0 ? regId : undefined,
+    memberRegistrationId: v.memberRegistrationId ?? 0,
     visualReport: v.visualReport ?? false,
   };
 };
@@ -68,11 +62,8 @@ function LoanEvaluationPage(): React.ReactElement {
     });
 
   const handleMemberSelect = useCallback(
-    (record: AccountLookUpDtos) => {
-      setValue(
-        "memberRegistrationId",
-        String(record.mamAccountOpeningId ?? ""),
-      );
+    (record: MemberLookUpDtos) => {
+      setValue("memberRegistrationId", record.memMemberRegistrationId ?? 0);
       setValue("memberId", record.memberId ?? "");
       setValue("memberName", record.memberName ?? "");
     },

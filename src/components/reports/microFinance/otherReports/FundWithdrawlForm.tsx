@@ -10,15 +10,16 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-import type {
-  CenterCollectionSingleSheetFormValues,
-  CenterCollectionSingleSheetResponseExtended,
-} from "@/app/(home)/(sidebar)/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetPrintReport/page";
+import {
+  FundWithdrawlFormValues,
+  FundWithdrawlResponseExtended,
+} from "@/app/(home)/(sidebar)/MicroFinance/OtherReports/FundWithdrawlReport/page";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -27,19 +28,23 @@ import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
-interface CenterCollectionSingleSheetFormProps {
-  control: Control<CenterCollectionSingleSheetFormValues>;
-  handleSubmit: UseFormHandleSubmit<CenterCollectionSingleSheetFormValues>;
-  onSubmit: SubmitHandler<CenterCollectionSingleSheetFormValues>;
-  setValue: UseFormSetValue<CenterCollectionSingleSheetFormValues>;
-  reset: UseFormReset<CenterCollectionSingleSheetFormValues>;
-  reportState: CenterCollectionSingleSheetResponseExtended;
+const reportModeOptions = [
+  { value: "Summary", label: "Summary" },
+  { value: "Detail", label: "Detail" },
+];
+
+interface FundWithdrawlFormProps {
+  control: Control<FundWithdrawlFormValues>;
+  handleSubmit: UseFormHandleSubmit<FundWithdrawlFormValues>;
+  onSubmit: SubmitHandler<FundWithdrawlFormValues>;
+  setValue: UseFormSetValue<FundWithdrawlFormValues>;
+  reset: UseFormReset<FundWithdrawlFormValues>;
+  reportState: FundWithdrawlResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  printSheetOptions: { value: string; label: string }[];
 }
 
-export default function CenterCollectionSingleSheetForm({
+export default function FundWithdrawlForm({
   control,
   handleSubmit,
   onSubmit,
@@ -47,8 +52,7 @@ export default function CenterCollectionSingleSheetForm({
   reportState,
   onPageChange,
   onDownload,
-  printSheetOptions,
-}: CenterCollectionSingleSheetFormProps) {
+}: FundWithdrawlFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -87,62 +91,56 @@ export default function CenterCollectionSingleSheetForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Center Collection Single Sheet Report
+            Fund Withdrawl Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Collection Center (with Address + Meeting Date & Time) ───── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
-              gap: 2,
-              mb: 0.5,
-              alignItems: "start",
-            }}
-          >
-            <CollectionCenterField<CenterCollectionSingleSheetFormValues>
+          {/* ── From/To Date ─────────────────────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}>
+            <DateFields<FundWithdrawlFormValues>
               control={control}
-              setValue={setValue}
-              branchFieldName={"branchIds" as any}
-              collectionCenterFieldName="collectionCenterId"
-              mode="both"
-              addressFieldName="address"
-              meetingDateTimeFieldName="meetingDateTimeBs"
+              fromDateName="fromDateBs"
+              toDateName="toDateBs"
+              mode="BS"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Collection Date (BS + A.D.) ──────────────────────────────── */}
+          {/* ── Office Name ──────────────────────────────────────────────── */}
           <Box sx={{ mb: 0.5 }}>
-            <DateFields<CenterCollectionSingleSheetFormValues>
+            <OfficeNameField<FundWithdrawlFormValues>
               control={control}
-              setValue={setValue}
-              showFromDate={false}
-              toDateName="tillDateBs"
-              toDateADName="tillDateAd"
-              toDateLabel="Collection Date BS"
-              toDateADLabel="Collection Date (A.D.)"
-              mode="BOTH_BS"
+              branchFieldName="branchIds"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Print Sheet For ─────────────────────────────────────────── */}
+          {/* ── Report Type ─────────────────────────────────────────────── */}
           <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Print Sheet For">
+            <FieldRow label="Report Type">
               <RadioInput
-                name="viewType"
+                name="reportMode"
                 control={control}
-                radioOptions={printSheetOptions}
+                radioOptions={reportModeOptions}
                 row
               />
             </FieldRow>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── View Report | Clear ─────────────────────────────────────── */}
-          <Grid container spacing={1} alignItems="center">
+          {/* ── Order By + Buttons ───────────────────────────────────────── */}
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <OrderByField<FundWithdrawlFormValues>
+              control={control}
+              name="orderBy"
+              reportKey="fund-withdrawl-report"
+            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -153,7 +151,7 @@ export default function CenterCollectionSingleSheetForm({
                   width: "100%",
                 }}
               >
-                <ViewReportButton<CenterCollectionSingleSheetFormValues>
+                <ViewReportButton<FundWithdrawlFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -163,17 +161,18 @@ export default function CenterCollectionSingleSheetForm({
                 <ClearFormButton
                   setValue={setValue}
                   clearFields={[
-                    "tillDateBs",
-                    "tillDateAd",
-                    "collectionCenterId",
-                    "address",
-                    "meetingDateTimeBs",
-                    "viewType",
+                    "fromDateBs",
+                    "toDateBs",
+                    "branchIds",
+                    "reportMode",
+                    "orderBy",
                   ]}
                 />
               </Box>
             </Grid>
-          </Grid>
+          </Box>
+
+          <Divider sx={{ mb: 0.5 }} />
         </Paper>
 
         {showReport && (

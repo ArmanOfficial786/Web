@@ -210,12 +210,6 @@ export interface CenterCollectionSheetReportMasterUpdateDto {
   loanNameCode?: string | null;
 }
 
-export interface CenterCollectionSheetReportRequestDto {
-  tillDateBs?: string | null;
-  collectionCenterId?: string | null;
-  visualReport?: boolean;
-}
-
 export interface CenterCollectionSheetSingleRequestDto {
   tillDateBs?: string | null;
   collectionCenterId?: string | null;
@@ -339,6 +333,12 @@ export interface CollectorWiseLoanAnalysisRequestDto {
   orderBy?: string | null;
   enableCollectionCenter?: boolean;
   reportMode?: string | null;
+  visualReport?: boolean;
+}
+
+export interface CollectorWiseProjectionRequestDto {
+  tillDateBs?: string | null;
+  branchId?: string | null;
   visualReport?: boolean;
 }
 
@@ -4558,6 +4558,32 @@ export class Api<
      * No description
      *
      * @tags Loan/LoanAccountWiseReport
+     * @name LoanScheduleCreate
+     * @request POST:/api/LoanSchedule
+     * @secure
+     */
+    loanScheduleCreate: (
+      data: LoanScheduleRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/LoanSchedule`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Loan/LoanAccountWiseReport
      * @name LoanVerifiedUnverifiedCreate
      * @request POST:/api/LoanVerifiedUnverified
      * @secure
@@ -5009,32 +5035,6 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/LoanRevolvingStatement`,
-        method: "POST",
-        query: query,
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Loan/OtherReports
-     * @name LoanScheduleCreate
-     * @request POST:/api/LoanSchedule
-     * @secure
-     */
-    loanScheduleCreate: (
-      data: LoanScheduleRequestDto,
-      query?: {
-        /** @default "VIEW" */
-        format?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/LoanSchedule`,
         method: "POST",
         query: query,
         body: data,
@@ -6969,6 +6969,32 @@ export class Api<
      * No description
      *
      * @tags Microfinance/CenterDetailReports
+     * @name CollectorWiseProjectionCreate
+     * @request POST:/api/CollectorWiseProjection
+     * @secure
+     */
+    collectorWiseProjectionCreate: (
+      data: CollectorWiseProjectionRequestDto,
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CollectorWiseProjection`,
+        method: "POST",
+        query: query,
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/CenterDetailReports
      * @name LoanEvaluationCreate
      * @request POST:/api/LoanEvaluation
      * @secure
@@ -7113,32 +7139,6 @@ export class Api<
     ) =>
       this.request<void, any>({
         path: `/api/CenterCollectionSheetPrint`,
-        method: "POST",
-        query: query,
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Microfinance/MicrofinanceSheetReports
-     * @name CenterCollectionSheetReportCreate
-     * @request POST:/api/CenterCollectionSheetReport
-     * @secure
-     */
-    centerCollectionSheetReportCreate: (
-      data: CenterCollectionSheetReportRequestDto,
-      query?: {
-        /** @default "VIEW" */
-        format?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/api/CenterCollectionSheetReport`,
         method: "POST",
         query: query,
         body: data,

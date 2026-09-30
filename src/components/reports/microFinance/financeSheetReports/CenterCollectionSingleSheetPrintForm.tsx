@@ -11,9 +11,10 @@ import type {
 } from "react-hook-form";
 
 import type {
-  CenterCollectionSheetFormValues,
-  CenterCollectionSheetResponseExtended,
-} from "@/app/(home)/(sidebar)/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetReport/page";
+  CenterCollectionSingleSheetFormValues,
+  CenterCollectionSingleSheetResponseExtended,
+} from "@/app/(home)/(sidebar)/MicroFinance/MicroFinanceSheetReports/CenterCollectionSheetPrintReport/page";
+import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -22,21 +23,25 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
-interface CenterCollectionSheetFormProps {
-  control: Control<CenterCollectionSheetFormValues>;
-  handleSubmit: UseFormHandleSubmit<CenterCollectionSheetFormValues>;
-  onSubmit: SubmitHandler<CenterCollectionSheetFormValues>;
-  setValue: UseFormSetValue<CenterCollectionSheetFormValues>;
-  reset: UseFormReset<CenterCollectionSheetFormValues>;
-  reportState: CenterCollectionSheetResponseExtended;
+interface CenterCollectionSingleSheetFormProps {
+  control: Control<CenterCollectionSingleSheetFormValues>;
+  handleSubmit: UseFormHandleSubmit<CenterCollectionSingleSheetFormValues>;
+  onSubmit: SubmitHandler<CenterCollectionSingleSheetFormValues>;
+  setValue: UseFormSetValue<CenterCollectionSingleSheetFormValues>;
+  reset: UseFormReset<CenterCollectionSingleSheetFormValues>;
+  reportState: CenterCollectionSingleSheetResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
+  printSheetOptions: { value: string; label: string }[];
+  iframeRef: React.RefObject<HTMLIFrameElement | null>;
+  renderKey: number;
 }
 
-export default function CenterCollectionSheetForm({
+export default function CenterCollectionSingleSheetForm({
   control,
   handleSubmit,
   onSubmit,
@@ -44,7 +49,10 @@ export default function CenterCollectionSheetForm({
   reportState,
   onPageChange,
   onDownload,
-}: CenterCollectionSheetFormProps) {
+  printSheetOptions,
+  iframeRef,
+  renderKey,
+}: CenterCollectionSingleSheetFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -83,7 +91,7 @@ export default function CenterCollectionSheetForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Center Collection Sheet Report
+            Center Collection Single Sheet Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -97,7 +105,7 @@ export default function CenterCollectionSheetForm({
               alignItems: "start",
             }}
           >
-            <CollectionCenterField<CenterCollectionSheetFormValues>
+            <CollectionCenterField<CenterCollectionSingleSheetFormValues>
               control={control}
               setValue={setValue}
               branchFieldName={"branchIds" as any}
@@ -111,7 +119,7 @@ export default function CenterCollectionSheetForm({
 
           {/* ── Collection Date (BS + A.D.) ──────────────────────────────── */}
           <Box sx={{ mb: 0.5 }}>
-            <DateFields<CenterCollectionSheetFormValues>
+            <DateFields<CenterCollectionSingleSheetFormValues>
               control={control}
               setValue={setValue}
               showFromDate={false}
@@ -121,6 +129,19 @@ export default function CenterCollectionSheetForm({
               toDateADLabel="Collection Date (A.D.)"
               mode="BOTH_BS"
             />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── Print Sheet For ─────────────────────────────────────────── */}
+          <Box sx={{ mb: 0.5 }}>
+            <FieldRow label="Print Sheet For">
+              <RadioInput
+                name="viewType"
+                control={control}
+                radioOptions={printSheetOptions}
+                row
+              />
+            </FieldRow>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -136,7 +157,7 @@ export default function CenterCollectionSheetForm({
                   width: "100%",
                 }}
               >
-                <ViewReportButton<CenterCollectionSheetFormValues>
+                <ViewReportButton<CenterCollectionSingleSheetFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
                   onSubmit={onSubmit}
@@ -151,6 +172,7 @@ export default function CenterCollectionSheetForm({
                     "collectionCenterId",
                     "address",
                     "meetingDateTimeBs",
+                    "viewType",
                   ]}
                 />
               </Box>
@@ -173,17 +195,17 @@ export default function CenterCollectionSheetForm({
             ref={reportRef}
             sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
           >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
+            <iframe
+              ref={iframeRef}
+              key={renderKey}
+              src={pdfData ?? ""}
               style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
                 width: "100%",
-                height: "calc(100% + 40px)",
+                height: "100%",
                 border: "none",
+                display: "block",
               }}
+              title="Center Collection Single Sheet Report"
             />
           </Box>
         )}

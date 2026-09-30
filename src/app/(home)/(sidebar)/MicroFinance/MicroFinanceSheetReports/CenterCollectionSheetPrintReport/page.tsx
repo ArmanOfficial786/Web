@@ -2,7 +2,7 @@
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getSession } from "next-auth/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import type {
@@ -11,7 +11,7 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-import CenterCollectionSingleSheetForm from "@/components/reports/microFinance/financeSheetReports/CenterCollectionSingleSheetForm";
+import CenterCollectionSingleSheetForm from "@/components/reports/microFinance/financeSheetReports/CenterCollectionSingleSheetPrintForm";
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -82,6 +82,8 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
     });
   const [lastRequest, setLastRequest] =
     useState<CenterCollectionSheetSingleRequestDto | null>(null);
+  const [renderKey, setRenderKey] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const { control, handleSubmit, setValue, reset } =
     useForm<CenterCollectionSingleSheetFormValues>({
@@ -108,7 +110,7 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
 
   const callApi = useCallback(
     (request: CenterCollectionSheetSingleRequestDto, format: string) =>
-      loanService.api.centerCollectionSheetSingleCreate(request, { format }),
+      loanService.api.centerCollectionSheetPrintCreate(request, { format }),
     [],
   );
 
@@ -118,24 +120,19 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
+
       try {
         const res = await callApi(request, "VIEW");
-
-        const raw =
-          (res.headers as Record<string, string>)["x-pagination"] ?? "";
-        const pagination: Pagination = (() => {
-          try {
-            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
-          } catch {
-            return DefaultPagination;
-          }
-        })();
-
         const blob = responseToBlob(res.data, "PDF");
         const pdfData = URL.createObjectURL(blob);
 
         setLastRequest(request);
-        setReportState({ isLoading: false, pdfData, pagination });
+        setReportState({
+          isLoading: false,
+          pdfData,
+          pagination: DefaultPagination,
+        });
+        setRenderKey((k) => k + 1);
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
         toast.error("Failed to generate report.");
@@ -178,7 +175,11 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
       const clamped = Math.max(1, Math.min(newPage, total));
       return {
         ...prev,
-        pagination: { ...prev.pagination, currentPage: clamped },
+        pagination: {
+          ...(prev.pagination ?? DefaultPagination),
+          currentPage: clamped,
+          totalPages: total,
+        },
       };
     });
   }, []);
@@ -206,6 +207,8 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}
+      iframeRef={iframeRef}
+      renderKey={renderKey}
     />
   );
 }

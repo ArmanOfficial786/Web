@@ -760,12 +760,8 @@ export const MENU: MenuNode[] = [
 
       //============MicroFinance Report===============
       {
-        label: "Collector Wise Projection Report",
-        route: "/MicroFinance/OtherReports/CollectorWiseProjectionReport",
-      },
-      {
-        label: "Office Progress Report",
-        route: "/MicroFinance/OtherReports/MonthlySummaryReport",
+        label: "Fund Withdrawl Report",
+        route: "/MicroFinance/OtherReports/FundWithdrawlReport",
       },
       {
         label: "Group Wise Member DetailsReport",
