@@ -157,10 +157,21 @@ export default function LoanDetailPrincipalForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <OfficeNameField<LoanDetailPrincipalFormValues>
               control={control}
               branchFieldName="branchIds"
+            />
+            <Collector<LoanDetailPrincipalFormValues>
+              control={control}
+              collectorFieldName="collectorId"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -174,21 +185,12 @@ export default function LoanDetailPrincipalForm({
               mb: 0.5,
             }}
           >
-            <Collector<LoanDetailPrincipalFormValues>
-              control={control}
-              collectorFieldName="collectorId"
-            />
             <CollectionCenterField<LoanDetailPrincipalFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterId"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Enable Collection Center ─────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="">
               <CheckboxInput
                 name="enableCollectionCenter"
@@ -203,7 +205,13 @@ export default function LoanDetailPrincipalForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportType"
@@ -212,22 +220,16 @@ export default function LoanDetailPrincipalForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Order By + Buttons ───────────────────────────────────────── */}
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-              gap: 2,
-            }}
-          >
             <OrderByField<LoanDetailPrincipalFormValues>
               control={control}
               name="orderBy"
               reportKey="loan-detail-principal-report"
             />
+          </Box>
+          <Divider sx={{ mb: 0.5 }} />
+
+          {/* ── Order By + Buttons ───────────────────────────────────────── */}
+          <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -262,9 +264,7 @@ export default function LoanDetailPrincipalForm({
                 />
               </Box>
             </Grid>
-          </Box>
-
-          <Divider sx={{ mb: 0.5 }} />
+          </Grid>
         </Paper>
 
         {showReport && (

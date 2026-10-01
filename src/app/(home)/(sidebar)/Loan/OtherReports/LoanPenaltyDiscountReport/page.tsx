@@ -19,8 +19,8 @@ export type LoanPenaltyDiscountFormValues = Omit<
   LoanPenaltyDiscountRequestDto,
   "branchIds"
 > & {
-  branchIds?: string[];
   memberName?: string | null;
+  branchIds?: string | number | null;
 };
 
 export interface LoanPenaltyDiscountResponseExtended {
@@ -35,7 +35,7 @@ const schema: yup.ObjectSchema<LoanPenaltyDiscountFormValues> = yup
   .object({
     memberId: yup.string().nullable().optional().default(""),
     memberName: yup.string().nullable().optional().default(""),
-    loanTypeId: yup.number().optional().default(0),
+    loanTypeId: yup.number().optional().default(-1),
     fromDateBs: yup
       .string()
       .nullable()
@@ -51,24 +51,10 @@ const schema: yup.ObjectSchema<LoanPenaltyDiscountFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup
-      .array()
-      .of(yup.string().required())
-      .transform((_value, originalValue) => {
-        if (Array.isArray(originalValue)) return originalValue;
-        if (
-          originalValue === null ||
-          originalValue === undefined ||
-          originalValue === ""
-        ) {
-          return [];
-        }
-        return [String(originalValue)];
-      })
-      .optional()
-      .default([]),
+    branchIds: yup.mixed<string | number>().nullable().optional().default("-1"),
+
     orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
@@ -87,14 +73,16 @@ export default function LoanPenaltyDiscountPage() {
 
   const toRequest = useCallback(
     (form: LoanPenaltyDiscountFormValues): LoanPenaltyDiscountRequestDto => {
-      const selectedIds = (form.branchIds ?? []).map(String).filter(Boolean);
-      const isAll = selectedIds.length === 0;
-
       return {
         memberId: form.memberId || undefined,
         fromDateBs: form.fromDateBs || undefined,
         toDateBs: form.toDateBs || undefined,
-        branchIds: isAll ? "-1" : selectedIds.join(","),
+        branchIds:
+          form.branchIds === undefined ||
+          form.branchIds === null ||
+          form.branchIds === ""
+            ? "-1"
+            : String(form.branchIds),
         orderBy: form.orderBy || "",
       };
     },

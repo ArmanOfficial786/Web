@@ -51,7 +51,7 @@ const schema: yup.ObjectSchema<LoanInformationFormValues> = yup
         return String(val) >= String(fromDateBs);
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    loanTypeId: yup.string().optional().default(""),
+    loanTypeId: yup.string().optional().default("-1"),
     memberGroupId: yup.string().optional().default("-1"),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),

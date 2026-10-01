@@ -60,7 +60,7 @@ const schema: yup.ObjectSchema<LoanStatementVerificationFormValues> = yup
         return String(val) >= String(fromDateBs);
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectorId: yup.string().optional().default(""),
+    collectorId: yup.string().optional().default("-1"),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })

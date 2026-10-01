@@ -28,7 +28,7 @@ const schema: yup.ObjectSchema<LoanInterestDiscountFormValues> = yup
   .object({
     memberId: yup.string().nullable().optional(),
     memberName: yup.string().nullable().optional(),
-    loanTypeId: yup.number().optional().default(0),
+    loanTypeId: yup.number().optional().default(-1),
     fromDateBs: yup
       .string()
       .required("From Date is required")

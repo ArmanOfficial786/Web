@@ -36,11 +36,11 @@ export interface LoanPrincipalPaymentResponseExtended {
 const schema: yup.ObjectSchema<LoanPrincipalPaymentFormValues> = yup
   .object({
     paymentType: yup.string().optional().default("Principal Payment"),
-    memberRegistrationId: yup.number().optional().default(0),
+    memberRegistrationId: yup.number().optional().default(-1),
     fromDateBs: yup.string().optional().default(""),
     toDateBs: yup.string().optional().default(""),
-    branchIds: yup.string().optional().default(""),
-    memberGroupId: yup.string().optional().default(""),
+    branchIds: yup.string().optional().default("-1"),
+    memberGroupId: yup.string().optional().default("-1"),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
     memberId: yup.string().optional().default(""),

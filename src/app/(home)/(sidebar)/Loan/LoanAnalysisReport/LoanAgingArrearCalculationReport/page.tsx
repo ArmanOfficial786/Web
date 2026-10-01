@@ -46,7 +46,11 @@ const schema: yup.ObjectSchema<LoanAgeingArrearCalculationFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
     collectorId: yup.string().optional().default("-1"),
     collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),

@@ -44,7 +44,7 @@ const schema: yup.ObjectSchema<LoanCICFormValues> = yup
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    loanTypeId: yup.string().optional().default(""),
+    loanTypeId: yup.string().optional().default("-1"),
     provisionType: yup
       .string()
       .optional()

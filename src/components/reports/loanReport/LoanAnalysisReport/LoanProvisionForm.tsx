@@ -90,13 +90,23 @@ export default function LoanProvisionForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <DateFields<LoanProvisionFormValues>
               control={control}
               toDateName="tillDateBs"
               toDateLabel="Till Date"
               mode="BS"
               showFromDate={false}
+            />
+            <OfficeNameField<LoanProvisionFormValues>
+              control={control}
+              branchFieldName="branchIds"
             />
           </Box>
 
@@ -110,22 +120,12 @@ export default function LoanProvisionForm({
               gap: 2,
             }}
           >
-            <OfficeNameField<LoanProvisionFormValues>
-              control={control}
-              branchFieldName="branchIds"
-            />
             <SoleSelectGroupField<LoanProvisionFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               groupFieldName="memberGroupId"
             />
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportType"

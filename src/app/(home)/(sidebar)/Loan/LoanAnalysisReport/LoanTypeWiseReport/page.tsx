@@ -74,7 +74,11 @@ const schema: yup.ObjectSchema<LoanTypeWiseFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
     collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     collectorId: yup.string().optional().default("-1"),

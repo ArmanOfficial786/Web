@@ -23,10 +23,10 @@ import {
 import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportNavigation, {
   type ReportFormat,
@@ -131,10 +131,10 @@ function LoanDefaulterDueSummaryForm({
               showToDate={false}
               mode="BS"
             />
-            <OfficeNameField<LoanDefaulterDueSummaryFormValues>
+            <BranchNameField<LoanDefaulterDueSummaryFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
-              multiple={false}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

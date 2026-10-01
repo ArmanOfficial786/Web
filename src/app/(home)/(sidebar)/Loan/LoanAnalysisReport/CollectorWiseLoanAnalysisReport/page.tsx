@@ -63,9 +63,13 @@ const schema: yup.ObjectSchema<CollectorWiseLoanAnalysisFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectorId: yup.string().optional().default(""),
-    collectionCenterIds: yup.string().optional().default("0"),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
+    collectorId: yup.string().optional().default("-1"),
+    collectionCenterIds: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     groupByCollectionCenter: yup.boolean().optional().default(false),
     reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
@@ -90,7 +94,7 @@ const toRequest = (
       Number.isFinite(collectorNum) && collectorNum > 0
         ? String(collectorNum)
         : undefined,
-    collectionCenterIds: v.collectionCenterIds || "0",
+    collectionCenterIds: v.collectionCenterIds || "-1",
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     penaltyType: v.penaltyType || undefined,
     reportMode: v.reportMode || undefined,

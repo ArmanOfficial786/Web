@@ -126,7 +126,14 @@ export default function LoanInstallmentDueACClosingForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── As On Date ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
             <FieldRow label="As On Date">
               <RadioInput
                 name="asNoDate"
@@ -135,12 +142,6 @@ export default function LoanInstallmentDueACClosingForm({
                 row
               />
             </FieldRow>
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── Interest Type ───────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
             <FieldRow label="Interest Type">
               <RadioInput
                 name="interestType"

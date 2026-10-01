@@ -45,10 +45,14 @@ const schema: yup.ObjectSchema<LoanRegisterFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    loanTypeMasterId: yup.string().optional().default(""),
-    collectorId: yup.string().optional().default(""),
-    collectionCenterIds: yup.string().optional().default("0"),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
+    loanTypeMasterId: yup.string().optional().default("-1"),
+    collectorId: yup.string().optional().default("-1"),
+    collectionCenterIds: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     selectLoan: yup.string().optional().default(SELECT_LOAN_ALL),
     nepaliReport: yup.boolean().optional().default(false),
@@ -68,7 +72,7 @@ const toRequest = (v: LoanRegisterFormValues): LoanRegisterRequestDto => {
       Number.isFinite(collectorNum) && collectorNum > 0
         ? String(collectorNum)
         : undefined,
-    collectionCenterIds: v.collectionCenterIds || "0",
+    collectionCenterIds: v.collectionCenterIds || "-1",
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     selectLoan: v.selectLoan || SELECT_LOAN_ALL,
     nepaliReport: v.nepaliReport ?? false,

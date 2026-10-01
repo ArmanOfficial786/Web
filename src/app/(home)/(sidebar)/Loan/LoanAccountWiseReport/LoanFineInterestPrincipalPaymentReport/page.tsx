@@ -46,7 +46,7 @@ const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<LoanPrincipalInterestFinePaymentFormValues> = yup
   .object({
-    memberRegistrationId: yup.number().optional().default(0),
+    memberRegistrationId: yup.number().optional().default(-1),
     memberId: yup.string().optional().default(""),
     memberName: yup.string().optional().default(""),
     fromDateBs: yup
@@ -64,9 +64,13 @@ const schema: yup.ObjectSchema<LoanPrincipalInterestFinePaymentFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectorId: yup.string().optional().default(""),
-    collectionCenterId: yup.string().optional().default("0"),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
+    collectorId: yup.string().optional().default("-1"),
+    collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     reportType: yup.string().optional().default(REPORT_TYPE_PAYMENT),
     selectAllOrOnlyCash: yup.string().optional().default(CASH_TYPE_ALL),
@@ -80,12 +84,12 @@ const toRequest = (
 ): LoanFineInterestPrinciplePaymentSummaryRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
-    memberRegistrationId: v.memberRegistrationId || 0,
+    memberRegistrationId: v.memberRegistrationId || -1,
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
     collectorId: v.collectorId || undefined,
-    collectionCenterId: v.collectionCenterId || "0",
+    collectionCenterId: v.collectionCenterId || "-1",
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     selectAllOrOnlyCash: v.selectAllOrOnlyCash || CASH_TYPE_ALL,
     orderBy: v.orderBy || "",

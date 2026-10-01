@@ -38,7 +38,7 @@ export interface LoanStatementResponseExtended {
 const schema: yup.ObjectSchema<LoanStatementFormValues> = yup
   .object({
     accountNo: yup.string().required("Account Number is Required").default(""),
-    branchIds: yup.string().optional().default(""),
+    branchIds: yup.string().optional().default("-1"),
     fromDateBs: yup.string().required("From Date is Required").default(""),
     toDateBs: yup.string().optional().default(""),
     reportType: yup.string().optional().default(""),

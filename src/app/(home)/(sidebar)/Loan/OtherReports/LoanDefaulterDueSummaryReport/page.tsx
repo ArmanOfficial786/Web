@@ -35,10 +35,10 @@ const schema: yup.ObjectSchema<LoanDefaulterDueSummaryFormValues> = yup
       .nullable()
       .optional()
       .typeError("Till Date must be a valid date"),
-    branchIds: yup.string().nullable().optional().default("2"),
-    collectionCenterId: yup.string().nullable().optional().default("0"),
+    branchIds: yup.string().nullable().optional().default("-1"),
+    collectionCenterId: yup.string().nullable().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
-    collectorId: yup.string().nullable().optional().default("0"),
+    collectorId: yup.string().nullable().optional().default("-1"),
     reportType: yup
       .string()
       .nullable()
@@ -69,7 +69,7 @@ export default function LoanDefaulterDueSummaryPage() {
     ): LoanDefaulterDueSummaryRequestDto => ({
       tillDate: form.tillDate || undefined,
       branchIds: form.branchIds || "2",
-      collectionCenterId: String(form.collectionCenterId || "0"),
+      collectionCenterId: String(form.collectionCenterId || "-1"),
       enableCollectionCenter: form.enableCollectionCenter ?? false,
       collectorId: form.collectorId || undefined,
       reportType: form.reportType || REPORT_TYPE_SCHEDULE_WISE,

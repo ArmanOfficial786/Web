@@ -158,7 +158,7 @@ function LoanDueInstallmentForm({
               control={control}
               paymentDurationTypeFieldName="lmtPaymentDurationTypeId"
               setValue={setValue}
-              defaultPaymentDurationTypeId={0}
+              defaultPaymentDurationTypeId={-1}
             />
             <OrderByField<LoanDueInstallmentFormValues>
               control={control}

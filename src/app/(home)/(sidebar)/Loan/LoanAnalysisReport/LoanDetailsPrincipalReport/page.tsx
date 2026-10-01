@@ -39,7 +39,7 @@ const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<LoanDetailPrincipalFormValues> = yup
   .object({
-    loanTypeId: yup.string().optional().default(""),
+    loanTypeId: yup.string().optional().default("-1"),
     status: yup.string().optional().default(STATUS_OPEN),
     fromDateBs: yup
       .string()

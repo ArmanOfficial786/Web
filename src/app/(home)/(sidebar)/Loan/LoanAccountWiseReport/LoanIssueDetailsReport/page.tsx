@@ -13,11 +13,7 @@ import { toast } from "react-toastify";
 import type { LoanIssueDetailsRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_TYPE_LOAN_ISSUE = "LoanIssueReport";
-// export type LoanIssueDetailsFormValues = LoanIssueDetailsRequestDto & {
-//   memberName?: string | null;
-// };
 
 export type LoanIssueDetailsFormValues = Omit<
   LoanIssueDetailsRequestDto,
@@ -54,8 +50,12 @@ const schema: yup.ObjectSchema<LoanIssueDetailsFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    collectionCenterIds: yup.string().nullable().optional().default("0"),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
+    collectionCenterIds: yup.string().nullable().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     reportType: yup
       .string()
@@ -91,7 +91,7 @@ export default function LoanIssueDetailsPage() {
         fromDateBs: form.fromDateBs || undefined,
         toDateBs: form.toDateBs || undefined,
         branchIds: isAll ? "-1" : selectedIds.join(","),
-        collectionCenterIds: form.collectionCenterIds || "0",
+        collectionCenterIds: form.collectionCenterIds || "-1",
         enableCollectionCenter: form.enableCollectionCenter ?? false,
         reportType: form.reportType || REPORT_TYPE_LOAN_ISSUE,
         orderBy: form.orderBy || "",

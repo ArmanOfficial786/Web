@@ -145,10 +145,20 @@ export default function LoanPrincipalInterestFinePaymentForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <OfficeNameField<LoanPrincipalInterestFinePaymentFormValues>
               control={control}
               branchFieldName="branchIds"
+            />
+            <Collector<LoanPrincipalInterestFinePaymentFormValues>
+              control={control}
+              collectorFieldName="collectorId"
             />
           </Box>
 
@@ -162,16 +172,22 @@ export default function LoanPrincipalInterestFinePaymentForm({
               gap: 2,
             }}
           >
-            <Collector<LoanPrincipalInterestFinePaymentFormValues>
-              control={control}
-              collectorFieldName="collectorId"
-            />
             <CollectionCenterField<LoanPrincipalInterestFinePaymentFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterId"
             />
+            <FieldRow label="">
+              <CheckboxInput
+                name="enableCollectionCenter"
+                control={control}
+                label="Enable Collection Center"
+                size="small"
+                color="primary"
+                labelPlacement="end"
+              />
+            </FieldRow>
           </Box>
 
           <Divider sx={{ mb: 1 }} />
@@ -185,16 +201,6 @@ export default function LoanPrincipalInterestFinePaymentForm({
               alignItems: "center",
             }}
           >
-            <FieldRow label="">
-              <CheckboxInput
-                name="enableCollectionCenter"
-                control={control}
-                label="Enable Collection Center"
-                size="small"
-                color="primary"
-                labelPlacement="end"
-              />
-            </FieldRow>
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportType"
@@ -203,12 +209,6 @@ export default function LoanPrincipalInterestFinePaymentForm({
                 row
               />
             </FieldRow>
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── All / Only Cash ──────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
             <FieldRow label="Select">
               <RadioInput
                 name="selectAllOrOnlyCash"
@@ -221,7 +221,7 @@ export default function LoanPrincipalInterestFinePaymentForm({
 
           <Divider sx={{ mb: 1 }} />
 
-          {/* ── Order By + Buttons ───────────────────────────────────────── */}
+          {/* ── All / Only Cash ──────────────────────────────────────────── */}
           <Box
             sx={{
               display: "grid",
@@ -272,7 +272,6 @@ export default function LoanPrincipalInterestFinePaymentForm({
             </Grid>
           </Box>
 
-          <Divider sx={{ mb: 1 }} />
         </Paper>
 
         {showReport && (

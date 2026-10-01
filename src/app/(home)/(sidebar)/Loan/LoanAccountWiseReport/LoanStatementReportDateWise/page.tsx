@@ -37,7 +37,7 @@ export interface LoanStatementDateWiseResponseExtended {
 const schema: yup.ObjectSchema<LoanStatementDateWiseFormValues> = yup
   .object({
     accountNo: yup.string().optional().default(""),
-    branchIds: yup.string().optional().default(""),
+    branchIds: yup.string().optional().default("-1"),
     fromDateBs: yup.string().optional().default(""),
     toDateBs: yup.string().optional().default(""),
     sameCompanyName: yup.boolean().optional().default(true),

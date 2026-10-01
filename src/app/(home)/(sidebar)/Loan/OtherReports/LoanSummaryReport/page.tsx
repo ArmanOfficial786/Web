@@ -23,7 +23,7 @@ export interface LoanSummaryResponseExtended {
 
 const schema: yup.ObjectSchema<LoanSummaryFormValues> = yup
   .object({
-    loanTypeId: yup.number().optional().default(0),
+    loanTypeId: yup.number().optional().default(-1),
     branchIds: yup.string().nullable().optional().default("2"),
     memberGroupId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
