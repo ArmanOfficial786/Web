@@ -19,7 +19,6 @@ import {
   ShareDetailResponseExtended,
 } from "@/app/(home)/(sidebar)/Share/ShareDetailsReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
-import DropDown from "@/components/form/DropDown";
 import Preloader from "@/components/PreLoader/preloader";
 import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
@@ -32,9 +31,8 @@ import ReportNavigation, {
 } from "@/components/reportForm/Common/ReportNavigation";
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import ShareTypeField from "@/components/reportForm/Share/ShareTypeField";
 import TotalShareAmountField from "@/components/reportForm/Share/TotalShareAmtFields";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import FieldRow from "@/utilis/FieldRow";
 export type { ReportFormat };
 
 interface ShareDetailFormProps {
@@ -64,7 +62,6 @@ function ShareDetailForm({
   const { isLoading, htmlContent, totalPages, currentPage } = reportState;
   const showReport = Boolean(htmlContent);
   const reportRef = useRef<HTMLDivElement>(null);
-  const { shareTypeOptions } = useReportFormContext();
 
   useEffect(() => {
     if (showReport && !isLoading) {
@@ -133,17 +130,11 @@ function ShareDetailForm({
               gap: 2,
             }}
           >
-            <FieldRow label="Share Type">
-              <Box sx={{ width: "100%" }}>
-                <DropDown
-                  name="shareTypeId"
-                  control={control}
-                  label="Share Type"
-                  options={shareTypeOptions}
-                  fullWidth
-                />
-              </Box>
-            </FieldRow>
+            <ShareTypeField<ShareDetailFormValues>
+              control={control}
+              shareTypeFieldName="shareTypeId"
+            />
+
             <MemberTypeField<ShareDetailFormValues>
               control={control}
               memberTypeFieldName="memberTypeId"
