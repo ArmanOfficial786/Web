@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import DropDown from "@/components/form/DropDown";
+import IconTextInput from "@/components/form/IconTextInput";
+import TextInput from "@/components/form/TextInput";
+import branchService from "@/services/Common/BranchService";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import BusinessIcon from "@mui/icons-material/Business";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   Alert,
   Box,
@@ -17,13 +18,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import BusinessIcon from "@mui/icons-material/Business";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import DropDown from "@/components/form/DropDown";
-import IconTextInput from "@/components/form/IconTextInput";
-import TextInput from "@/components/form/TextInput";
-import branchService from "@/services/Common/BranchService";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import * as yup from "yup";
 
 interface Branch {
   id: number;
@@ -46,22 +46,15 @@ const loginSchema = yup.object({
     .required("Password is required")
     .min(6, "Password must be at least 6 characters")
     .max(100, "Password must not exceed 100 characters"),
-  companyId: yup
-    .string()
-    .required("Company is required")
-    .test("not-empty", "Please select a branch", (value) => {
-      return value !== "" && value !== "0";
-    }),
+  companyId: yup.string().required("Company is required").default("2"),
 });
-
-const defaultBranchOption: Branch = { id: 0, name: "-- Select --" };
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
   const loginInFlight = useRef(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [branches, setBranches] = useState<Branch[]>([defaultBranchOption]);
+  const [branches, setBranches] = useState<Branch[]>([]);
   const [branchesLoading, setBranchesLoading] = useState(false);
 
   useEffect(() => {
@@ -80,10 +73,10 @@ const LoginForm: React.FC = () => {
             name: branch.branchName ?? "",
           }));
 
-        setBranches([defaultBranchOption, ...branchOptions]);
+        setBranches(branchOptions);
       } catch (error) {
         console.error("Failed to load branches:", error);
-        if (isMounted) setBranches([defaultBranchOption]);
+        if (isMounted) setBranches([]);
       } finally {
         if (isMounted) setBranchesLoading(false);
       }
@@ -104,7 +97,7 @@ const LoginForm: React.FC = () => {
     defaultValues: {
       email: "",
       password: "",
-      companyId: "",
+      companyId: "2",
     },
   });
 
@@ -152,16 +145,16 @@ const LoginForm: React.FC = () => {
 
   return (
     <Paper
-      elevation={12}
+      elevation={10}
       sx={{
-        width: "min(100%, 500px)",
+        width: "min(100%, 480px)",
         p: { xs: 3, sm: 5 },
         borderRadius: 3,
         bgcolor: "background.paper",
       }}
     >
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Stack spacing={3}>
+        <Stack spacing={2}>
           <Box sx={{ textAlign: "center" }}>
             <Typography
               variant="h5"
@@ -182,7 +175,6 @@ const LoginForm: React.FC = () => {
             control={control}
             type="email"
             label="Email"
-            placeholder="Enter your email"
             fullWidth
             autoComplete="email"
           />
@@ -192,7 +184,6 @@ const LoginForm: React.FC = () => {
             control={control}
             type={showPassword ? "text" : "password"}
             label="Password"
-            placeholder="Enter your password"
             fullWidth
             autoComplete="current-password"
             icon={showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}

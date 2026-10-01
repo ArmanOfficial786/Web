@@ -1,23 +1,22 @@
 "use client";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import { useState, useCallback, useEffect } from "react";
-import * as yup from "yup";
-import type { MemberIdCardRequest, Pagination } from "types/api/api";
 import MemberIdCard from "@/components/reports/memberReport/MemberIdCard";
+import memberService from "@/services/member/memberService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
   DefaultPagination,
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberService from "@/services/member/memberService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { MemberIdCardRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── UI-only fields — stripped before sending to API ────────────────────────
 export interface MemberIdCardFormValues extends MemberIdCardRequest {
-  collectionCenterId?: number;
   memberName?: string;
 }
 
@@ -44,8 +43,7 @@ const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
     }),
   orderby: yup.string().nullable().optional().default(""),
   branchId: yup.number().required("Branch ID is required").default(2),
-  collectionCenterId: yup.number().optional().default(0),
-  memberGroupId: yup.number().optional().default(0),
+  memberGroupId: yup.number().optional().default(-1),
   currentPage: yup.number().optional().default(1),
   pageSize: yup.number().optional().default(10),
 });
@@ -56,7 +54,7 @@ const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   fromDate: v.fromDate || null,
   toDate: v.toDate || null,
   branchId: Number(v.branchId) || 0,
-  memberGroupId: Number(v.memberGroupId) || 0,
+  memberGroupId: Number(v.memberGroupId) || -1,
   orderby: v.orderby || "",
   currentPage: 1,
   pageSize: v.pageSize ?? 10,
@@ -71,7 +69,7 @@ function Page(): React.ReactElement {
     null,
   );
 
-  const { control, handleSubmit, setValue, reset } =
+  const { control, handleSubmit, setValue, reset, getValues } =
     useForm<MemberIdCardFormValues>({
       resolver: yupResolver(schema),
       defaultValues: schema.getDefault(),
@@ -113,13 +111,13 @@ function Page(): React.ReactElement {
 
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
-        reset({ memberId: "", memberName: "" });
+        reset({ ...getValues(), memberId: "", memberName: "" });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
         // Error toast handled by Axios interceptor
       }
     },
-    [callApi, reset],
+    [callApi, reset, getValues],
   );
 
   const handleDownload = useCallback(
@@ -144,7 +142,7 @@ function Page(): React.ReactElement {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
       } catch {
-        toast.error("Failed to download file.");
+        setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
     [callApi, lastRequest],

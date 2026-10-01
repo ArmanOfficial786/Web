@@ -1,23 +1,24 @@
 "use client";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import { useState, useCallback, useEffect } from "react";
-import * as yup from "yup";
-import type { MemberDetailsSummaryRequest, Pagination } from "types/api/api";
 import MemberDetailsSummaryForm from "@/components/reports/memberReport/MemberDetailsSummaryForm";
+import type { MemberRecord } from "@/contexts/ReportFormContext";
+import memberService from "@/services/member/memberService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
   DefaultPagination,
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import type { MemberRecord } from "@/contexts/ReportFormContext";
-import memberService from "@/services/member/memberService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { MemberDetailsSummaryRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberDetailsSummaryFormValues extends MemberDetailsSummaryRequest {
+  memberId?: string;
   memberName?: string;
 }
 
@@ -48,6 +49,7 @@ const schema: yup.ObjectSchema<MemberDetailsSummaryFormValues> = yup.object({
   orderBy: yup.string().nullable().optional().default(""),
   visualReport: yup.boolean().optional().default(false),
   memberName: yup.string().optional().default(""),
+  memberId: yup.string().required("Member ID is required"),
 });
 
 // ── Strip UI-only fields before API call ──────────────────────────────────

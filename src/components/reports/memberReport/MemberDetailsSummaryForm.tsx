@@ -1,5 +1,10 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useRef } from "react";
 import type {
   Control,
@@ -7,27 +12,22 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
 import type { MemberRecord } from "@/contexts/ReportFormContext";
 
 import {
   MemberDetailsSummaryFormValues,
   MemberDetailsSummaryResponseExtended,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberDetailSummaryReport/page";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 
 export type { ReportFormat };
 
@@ -39,7 +39,7 @@ interface MemberDetailsSummaryFormProps {
   reportState: MemberDetailsSummaryResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
-  onMemberSelect: (member: MemberRecord) => void; // ✅ new prop
+  onMemberSelect: (member: MemberRecord) => void;
 }
 
 function MemberDetailsSummaryForm({
@@ -50,6 +50,7 @@ function MemberDetailsSummaryForm({
   reportState,
   onPageChange,
   onDownload,
+  onMemberSelect,
 }: MemberDetailsSummaryFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -105,6 +106,7 @@ function MemberDetailsSummaryForm({
             control={control}
             setValue={setValue}
             config={memberConfig}
+            onSelect={onMemberSelect}
           />
           <Divider sx={{ mb: 0.5 }} />
 

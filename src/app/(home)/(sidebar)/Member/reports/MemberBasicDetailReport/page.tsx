@@ -1,20 +1,20 @@
 "use client";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import { useState, useCallback, useEffect } from "react";
-import * as yup from "yup";
-import type { MemberBasicDetailsRequest, Pagination } from "types/api/api";
 import MemberBasicDetailsForm from "@/components/reports/memberReport/MemberBasicDetailsForm";
+import type { MemberRecord } from "@/contexts/ReportFormContext";
+import memberService from "@/services/member/memberService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
   DefaultPagination,
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import type { MemberRecord } from "@/contexts/ReportFormContext";
-import memberService from "@/services/member/memberService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { MemberBasicDetailsRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 // branchId (number) is the UI selection; branchIds (string) is what the API
@@ -52,8 +52,8 @@ const schema: yup.ObjectSchema<MemberBasicDetailsFormValues> = yup.object({
     .number()
     .required("Branch is required")
     .min(1, "Branch is required")
-    .default(0),
-  branchIds: yup.string().nullable().optional().default(""),
+    .default(2),
+  branchIds: yup.string().nullable().optional().default("2"),
   orderBy: yup.string().nullable().optional().default(""),
   visualReport: yup.boolean().optional().default(false),
   sameCompanyName: yup.boolean().optional().default(false),
@@ -69,7 +69,7 @@ const toRequest = (
   fromDate: v.fromDate || "",
   toDate: v.toDate || "",
   // ✅ single branchId joined into the comma-separated branchIds string
-  branchIds: v.branchId ? String(v.branchId) : "",
+  branchIds: v.branchId ? String(v.branchId) : "2",
   orderBy: v.orderBy || "",
   visualReport: v.visualReport || false,
   sameCompanyName: v.sameCompanyName || false,

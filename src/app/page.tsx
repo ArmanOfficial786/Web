@@ -1,21 +1,48 @@
-"use client";
-
-import React from "react";
 import LoginForm from "@/components/auth/Login";
 import NavMarquee from "@/utilis/NavMarquee";
+import Box from "@mui/material/Box";
+
+const MARQUEE_HEIGHT = 56;
 
 export default function HomePage() {
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900">
+    <Box
+      sx={{
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        background:
+          "linear-gradient(to bottom right, #0f172a, #1e3a8a, #581c87)",
+      }}
+    >
       {/* Navbar at top */}
-      <div className="fixed top-0 left-0 w-full z-50 ">
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: MARQUEE_HEIGHT,
+          zIndex: 50,
+        }}
+      >
         <NavMarquee />
-      </div>
+      </Box>
 
-      {/* Centered Login Form */}
-      <div className="flex h-full items-center justify-center">
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          pt: `${MARQUEE_HEIGHT + 15}px`,
+          pb: 3,
+          px: 2,
+        }}
+      >
         <LoginForm />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

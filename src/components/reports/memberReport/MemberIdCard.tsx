@@ -1,5 +1,10 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useMemo, useRef } from "react";
 import type {
   Control,
@@ -7,30 +12,24 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
-import SelectGroupField from "../../reportForm/Common/SelectGroupField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import { MemberIdCardRequest } from "types/api/api";
 import {
   MemberIdCardResponseExtended,
   type MemberIdCardFormValues,
 } from "@/app/(home)/(sidebar)/Member/reports/MemberIDCardDetail/page";
 import Preloader from "@/components/PreLoader/preloader";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import { MemberIdCardRequest } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -144,11 +143,11 @@ function MemberIdCard({
               setValue={setValue}
               branchFieldName="branchId"
             />
-            <CollectionCenterField<MemberIdCardFormValues>
+            <SoleSelectGroupField<MemberIdCardFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchId"
-              collectionCenterFieldName="collectionCenterId"
+              groupFieldName="memberGroupId"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -162,23 +161,11 @@ function MemberIdCard({
               mb: 0.5,
             }}
           >
-            <SelectGroupField<MemberIdCardFormValues>
-              control={control}
-              setValue={setValue}
-              branchFieldName="branchId"
-              collectionCenterFieldName="collectionCenterId"
-              groupFieldName="memberGroupId"
-            />
             <OrderByField<MemberIdCardRequest>
               control={control}
               name="orderby"
               reportKey="member-id-card-detail"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* Row 5 — View Report | Clear */}
-          <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"
@@ -201,7 +188,7 @@ function MemberIdCard({
                 />
               </Box>
             </Grid>
-          </Grid>
+          </Box>
         </Paper>
 
         {/* ── NAVIGATION ─────────────────────────────────────────────────── */}

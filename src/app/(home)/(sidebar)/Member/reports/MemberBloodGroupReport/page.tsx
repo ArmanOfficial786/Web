@@ -1,19 +1,19 @@
 "use client";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import { useState, useCallback, useEffect } from "react";
-import * as yup from "yup";
-import type { MemberBloodGroupReportRequest, Pagination } from "types/api/api";
 import MemberBloodGroupReportForm from "@/components/reports/memberReport/MemberBloodGroupReportForm";
+import memberService from "@/services/member/memberService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import {
   DefaultPagination,
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberService from "@/services/member/memberService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { MemberBloodGroupReportRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberBloodGroupReportFormValues extends MemberBloodGroupReportRequest {}
@@ -40,8 +40,8 @@ const schema: yup.ObjectSchema<MemberBloodGroupReportFormValues> = yup.object({
     .number()
     .required("Branch is required")
     .min(1, "Branch is required")
-    .default(0),
-  memberGroupId: yup.number().optional().default(0),
+    .default(2),
+  memberGroupId: yup.number().optional().default(-1),
   bloodGroupOption: yup.number().optional().default(0), // 0 = All
   orderBy: yup.string().nullable().optional().default(""),
   visualReport: yup.boolean().optional().default(false),
@@ -56,8 +56,8 @@ const toRequest = (
 ): MemberBloodGroupReportRequest => ({
   fromDate: v.fromDate || "",
   toDate: v.toDate || "",
-  branchId: Number(v.branchId) || 0,
-  memberGroupId: Number(v.memberGroupId) || 0,
+  branchId: Number(v.branchId) || 2,
+  memberGroupId: Number(v.memberGroupId) || -1,
   bloodGroupOption: Number(v.bloodGroupOption) || 0,
   orderBy: v.orderBy || "",
   visualReport: v.visualReport || false,
