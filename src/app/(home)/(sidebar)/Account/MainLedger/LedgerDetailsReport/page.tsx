@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type { LedgerDetailsReqResponse, Pagination } from "types/api/api";
 import LedgerDetailsForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/MainLedger/LedgerDetailsForm";
+import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import type { LedgerDetailsReqResponse, Pagination } from "types/api/api";
 
 export interface LedgerDetailsFormValues {
   fromDateBs?: string | null;
@@ -51,7 +51,7 @@ const schema: yup.ObjectSchema<LedgerDetailsFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchId: yup.string().nullable().optional().default(""),
+    branchId: yup.string().nullable().optional().default("-1"),
     ledgerHeadId: yup.string().nullable().optional().default(""),
     ledgerName: yup.string().nullable().optional().default(""),
     voucherType: yup.string().nullable().optional().default("All"),

@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import AccountDayOpenCloseForm, {
+  type ReportFormat,
+} from "@/components/reports/accountReport/OtherReports/AccountDayOpenCloseForm";
+import accountService from "@/services/Account/AccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   AccountDayOpenAndCloseRequestDto,
   Pagination,
 } from "types/api/api";
-import AccountDayOpenCloseForm, {
-  type ReportFormat,
-} from "@/components/reports/accountReport/OtherReports/AccountDayOpenCloseForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import * as yup from "yup";
 
-// ── userName is UI-only (not on the DTO), kept so UserLookupField has a
-// display value to show; userId itself is a string on the real DTO.
 export type AccountDayOpenCloseFormValues = AccountDayOpenAndCloseRequestDto & {
   userName?: string | null;
 };
@@ -48,8 +46,8 @@ const schema: yup.ObjectSchema<AccountDayOpenCloseFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchId: yup.string().nullable().optional().default(""),
-    userId: yup.string().nullable().optional().default("0"),
+    branchId: yup.string().nullable().optional().default("-1"),
+    userId: yup.string().nullable().optional().default("-1"),
     userName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false), // on DTO, not requested for UI — kept for schema completeness only

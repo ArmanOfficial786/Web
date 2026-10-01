@@ -1,22 +1,21 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/TellerToTellerCashTransferReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type {
-  TellerToTellerCashTransferRequestDto,
-  Pagination,
-} from "types/api/api";
 import TellerToTellerCashTransferForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/TellerToTellerCashTransferForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type {
+  Pagination,
+  TellerToTellerCashTransferRequestDto,
+} from "types/api/api";
+import * as yup from "yup";
 
 // ── sameCompanyName is UI-only — the real DTO has no such field.
 export type TellerToTellerCashTransferFormValues =
@@ -49,10 +48,10 @@ const schema: yup.ObjectSchema<TellerToTellerCashTransferFormValues> = yup
         if (!fromDate || !val) return true;
         return String(val) >= String(fromDate);
       }),
-    branchId: yup.string().nullable().optional().default(""),
+    branchId: yup.string().nullable().optional().default("2"),
     orderBy: yup.string().nullable().optional().default(""),
-    sameCompanyName: yup.boolean().optional().default(false), // ⚠️ UI-only — not on the real DTO, never sent to the API
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    sameCompanyName: yup.boolean().optional().default(true),
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 

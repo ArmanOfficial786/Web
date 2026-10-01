@@ -1,20 +1,20 @@
 // app/(home)/(sidebar)/Account/MainLedger/2ndLedgerDetailsReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type { SecondLedgerDetailsRequestDto, Pagination } from "types/api/api";
 import SecondLedgerDetailsForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/MainLedger/SecondLedgerDetailsForm";
+import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import type { Pagination, SecondLedgerDetailsRequestDto } from "types/api/api";
 
 // ledgerHeadId is client-side a string (dropdown value) — DTO wants a number,
 // same convention as FirstLedgerDetailsFormValues.
@@ -51,7 +51,7 @@ const schema: yup.ObjectSchema<SecondLedgerDetailsFormValues> = yup
         if (!fromDate || !val) return true;
         return String(val) >= String(fromDate);
       }),
-    branchIds: yup.string().nullable().optional().default(""),
+    branchIds: yup.string().nullable().optional().default("-1"),
     ledgerHeadId: yup.string().nullable().optional().default(""),
     ledgerName: yup.string().nullable().optional().default(""),
     subLedgerName: yup.string().nullable().optional().default(""),

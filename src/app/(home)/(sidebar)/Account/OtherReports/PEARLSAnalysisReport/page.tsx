@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { PEARLSAnalysisRequestDto, Pagination } from "types/api/api";
 import PearlsAnalysisForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/PearlsAnalysisForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { PEARLSAnalysisRequestDto, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 export type PearlsAnalysisFormValues = PEARLSAnalysisRequestDto;
 
@@ -31,9 +31,9 @@ const schema: yup.ObjectSchema<PearlsAnalysisFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchId: yup.string().nullable().optional().default(""),
-    orderBy: yup.string().nullable().optional().default(""), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    branchId: yup.string().nullable().optional().default("-1"),
+    orderBy: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 

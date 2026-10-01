@@ -1,19 +1,19 @@
 // app/(home)/(sidebar)/Account/OtherReports/ReserveMasterReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { ReserveMasterRequestDto, Pagination } from "types/api/api";
 import ReserveMasterForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/ReserveMasterForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { Pagination, ReserveMasterRequestDto } from "types/api/api";
+import * as yup from "yup";
 
 export type ReserveMasterFormValues = ReserveMasterRequestDto;
 
@@ -42,7 +42,7 @@ const schema: yup.ObjectSchema<ReserveMasterFormValues> = yup
         if (!fromDate || !val) return true;
         return String(val) >= String(fromDate);
       }),
-    branchId: yup.string().nullable().optional().default(""),
+    branchId: yup.string().nullable().optional().default("-1"),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })

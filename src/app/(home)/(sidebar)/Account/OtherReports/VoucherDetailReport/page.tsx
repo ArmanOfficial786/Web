@@ -1,23 +1,20 @@
 // app/(home)/(sidebar)/Account/OtherReports/VoucherDetailReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { VoucherDetailsRequestDto, Pagination } from "types/api/api";
 import VoucherDetailsForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/VoucherDetailsForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { Pagination, VoucherDetailsRequestDto } from "types/api/api";
+import * as yup from "yup";
 
-// ── branchIds is a string on the DTO ("-1" = all, else comma-separated ids),
-// but OfficeNameField binds/writes a string[]. Same collapse pattern as
-// InterestAndTaxDetail / SavingsAccountMaturity.
 export type VoucherDetailsFormValues = Omit<
   VoucherDetailsRequestDto,
   "branchIds"
@@ -51,7 +48,7 @@ const schema: yup.ObjectSchema<VoucherDetailsFormValues> = yup
         return String(val) >= String(fromDate);
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
-    voucherId: yup.number().nullable().optional().default(0),
+    voucherId: yup.number().nullable().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
     viewType: yup
       .string()

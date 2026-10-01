@@ -1,19 +1,19 @@
 // app/(home)/(sidebar)/Account/OtherReports/TellerCashVaultReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { TellerCashVaultRequestDto, Pagination } from "types/api/api";
 import TellerCashVaultForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/TellerCashVaultForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { Pagination, TellerCashVaultRequestDto } from "types/api/api";
+import * as yup from "yup";
 
 export type TellerCashVaultFormValues = TellerCashVaultRequestDto;
 
@@ -42,7 +42,7 @@ const schema: yup.ObjectSchema<TellerCashVaultFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchId: yup.string().nullable().optional().default(""),
+    branchId: yup.string().nullable().optional().default("-1"),
     sameCompanyName: yup.boolean().optional().default(true),
     orderBy: yup.string().nullable().optional().default(""),
     type: yup.boolean().optional().default(false),

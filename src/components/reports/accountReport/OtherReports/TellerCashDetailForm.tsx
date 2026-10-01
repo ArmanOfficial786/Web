@@ -1,44 +1,45 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  FieldErrors,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
-import { useWatch } from "react-hook-form";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
-import { Controller } from "react-hook-form";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  FieldErrors,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import TellerField from "@/components/reportForm/Common/TellerField";
-import BranchField from "@/components/reportForm/Common/BranchNameField";
-import DateInput from "@/components/form/DateInput";
-import FieldRow from "@/utilis/FieldRow";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
 import type {
   TellerCashDetailFormValues,
   TellerCashDetailResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/OtherReports/TellerCashDetailReport/page";
+import DateInput from "@/components/form/DateInput";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import TellerField from "@/components/reportForm/Common/TellerField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
+
+const REPORT_TYPE_OPTIONS = [
+  { value: "Detail", label: "Detail" },
+  { value: "Summary", label: "Summary" },
+];
 
 interface TellerCashDetailFormProps {
   control: Control<TellerCashDetailFormValues>;
@@ -158,29 +159,14 @@ function TellerCashDetailForm({
               mb: 0.5,
             }}
           >
-            <Box>
-              <FormLabel sx={{ fontSize: 14, mb: 0.5, display: "block" }}>
-                Report Type
-              </FormLabel>
-              <Controller
+            <FieldRow label="Report Type">
+              <RadioInput
                 name="reportType"
                 control={control}
-                render={({ field }) => (
-                  <RadioGroup {...field} row>
-                    <FormControlLabel
-                      value="Detail"
-                      control={<Radio size="small" />}
-                      label="Detail"
-                    />
-                    <FormControlLabel
-                      value="Summary"
-                      control={<Radio size="small" />}
-                      label="Summary"
-                    />
-                  </RadioGroup>
-                )}
+                radioOptions={REPORT_TYPE_OPTIONS}
+                row
               />
-            </Box>
+            </FieldRow>
 
             <OrderByField<TellerCashDetailFormValues>
               control={control}

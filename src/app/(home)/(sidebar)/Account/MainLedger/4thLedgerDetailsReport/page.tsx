@@ -1,20 +1,20 @@
 // app/(home)/(sidebar)/Account/MainLedger/4thLedgerDetailsReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type { LedgerDetailsReqResponse, Pagination } from "types/api/api";
 import FourthLedgerDetailsForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/MainLedger/FourthLedgerDetailsForm";
+import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import type { LedgerDetailsReqResponse, Pagination } from "types/api/api";
 
 export type FourthLedgerDetailsFormValues = Omit<
   LedgerDetailsReqResponse,
@@ -54,7 +54,7 @@ const schema: yup.ObjectSchema<FourthLedgerDetailsFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchId: yup.string().nullable().optional().default(""),
+    branchId: yup.string().nullable().optional().default("-1"),
     ledgerHeadId: yup.string().nullable().optional().default(""),
     ledgerName: yup.string().nullable().optional().default(""),
     subLedgerName: yup.string().nullable().optional().default(""),
