@@ -10,7 +10,7 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-import RemittancePaymentDetailForm from "@/components/reportForm/Remit/RemittancePaymentDetailForm";
+import RemittancePaymentDetailForm from "@/components/reports/remit/RemittancePaymentDetailForm";
 import remitService from "@/services/Remit/remitService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";

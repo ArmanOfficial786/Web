@@ -65,7 +65,14 @@ const schema: yup.ObjectSchema<RemitReceiptPrintFormValues> = yup
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     entryBy: yup.number().nullable().optional().default(0),
     getRemittanceReceiptOf: yup.string().optional().default(RECEIPT_OF_PAYMENT),
-    remittanceReceiptId: yup.number().nullable().optional().default(0),
+    remittanceReceiptId: yup
+      .number()
+      .transform((value, originalValue) =>
+        originalValue === "" || originalValue == null ? -1 : value,
+      )
+      .nullable()
+      .optional()
+      .default(-1),
     getReceipt: yup.string().optional().default(GET_RECEIPT_DOUBLE),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -75,12 +82,15 @@ const toRequest = (
   v: RemitReceiptPrintFormValues,
 ): RemittanceReceiptPrintRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
+  const receiptId =
+    v.remittanceReceiptId == null ? Number.NaN : Number(v.remittanceReceiptId);
+
   return {
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
     isReceived: v.getRemittanceReceiptOf || RECEIPT_OF_PAYMENT,
-    remittanceDetailId: Number(v.remittanceReceiptId ?? 0),
+    remittanceDetailId: Number.isFinite(receiptId) ? receiptId : -1,
     visualReport: v.visualReport ?? false,
   };
 };

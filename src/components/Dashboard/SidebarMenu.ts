@@ -678,6 +678,10 @@ export const MENU: MenuNode[] = [
         label: "Remittance Receipt Print Reports",
         route: "/Remit/Reports/RemitReceiptPrintReport",
       },
+      {
+        label: "Remittance Payment Detail Reports",
+        route: "/Remit/Reports/RemRemittancePaymentDetailReports",
+      },
     ],
   },
 

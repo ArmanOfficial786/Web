@@ -56,7 +56,7 @@ export default function RemittanceReceiptField<T extends FieldValues>({
   useEffect(() => {
     if (dependencyRef.current === dependencyKey) return;
     dependencyRef.current = dependencyKey;
-    setValue(name, "" as PathValue<T, Path<T>>, {
+    setValue(name, null as PathValue<T, Path<T>>, {
       shouldDirty: false,
       shouldValidate: false,
     });
