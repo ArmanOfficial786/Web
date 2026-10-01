@@ -1,19 +1,19 @@
 // app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDeactiveReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
 import MemberAccountDeactiveForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberAccountDeacitveForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── branchId (multi-select array) is form-only — resolved into branchIds
 // (comma string) on submit. reportType radio ("Active"|"Inactive") maps to
@@ -52,7 +52,7 @@ const schema: yup.ObjectSchema<MemberAccountDeactiveFormValues> = yup
     branchName: yup.string().nullable().optional().default("All"),
     duePeriod: yup.number().optional().default(1),
     transactionType: yup.string().nullable().optional().default("S"),
-    typeId: yup.number().optional().default(0),
+    typeId: yup.number().optional().default(-1),
     reportType: yup
       .mixed<"Active" | "Inactive">()
       .oneOf(["Active", "Inactive"])
@@ -101,7 +101,7 @@ export default function MemberAccountDeactivePage() {
         branchName,
         duePeriod: form.duePeriod ?? 1,
         transactionType: form.transactionType || "Saving",
-        typeId: form.typeId || 0,
+        typeId: form.typeId || -1,
         isActive: form.reportType === "Active",
         orderBy: form.orderBy || "",
         sameCompanyName: form.sameCompanyName ?? true,

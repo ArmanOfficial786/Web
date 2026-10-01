@@ -1,19 +1,19 @@
 // app/(home)/(sidebar)/MemberAc/OtherReports/SalaryTransactionReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { SalaryTransactionRequestDto, Pagination } from "types/api/api";
 import SalaryTransactionForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/OthersReport/SalaryTransactionFrom";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { Pagination, SalaryTransactionRequestDto } from "types/api/api";
+import * as yup from "yup";
 
 // UI-only field — never sent to the API
 export type SalaryTransactionFormValues = Omit<
@@ -56,22 +56,21 @@ const schema: yup.ObjectSchema<SalaryTransactionFormValues> = yup
       .default(""),
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
-    // reportType is `number | undefined` on the real DTO — NOT nullable.
-    // .nullable() here was the cause of the TS2322 error.
-    reportType: yup.number().optional().default(1), // ⚠️ 1 = Summary, 2 = Detail — confirm actual backend codes
+
+    reportType: yup.number().optional().default(1),
     transferOn: yup
       .string()
-      .oneOf(["all", "saving", "bank"]) // ⚠️ confirm exact backend codes/casing
+      .oneOf(["all", "saving", "bank"])
       .nullable()
       .optional()
       .default("all"),
     staffSelection: yup
       .string()
-      .oneOf(["officewise", "allstaff"]) // ⚠️ confirm exact backend codes/casing
+      .oneOf(["officewise", "allstaff"])
       .nullable()
       .optional()
       .default("officewise"),
-    staffId: yup.number().nullable().optional().default(null), // DTO: number | null — null = "All"
+    staffId: yup.number().nullable().optional().default(-1),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();

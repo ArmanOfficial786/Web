@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import type { DepositUnverifiedRequest, Pagination } from "types/api/api";
 import DepositUnverifiedForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/SavingAccountWiseReports/DepositeUnverifiedForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { DepositUnverifiedRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 // ── branchId is a single number here (bound via BranchNameField), matching
 // CostOfFund/SavingTypeWiseBalance — not a multi-select array anymore.
@@ -28,15 +29,6 @@ export interface DepositUnverifiedResponseExtended {
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 // ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
@@ -65,10 +57,10 @@ const schema: yup.ObjectSchema<DepositUnverifiedFormValues> = yup
       }),
     memberId: yup.string().nullable().optional().default(null),
     memberName: yup.string().nullable().optional().default(""),
-    branchId: yup.number().optional().default(2), // ✅ single value, matches BranchNameField
+    branchId: yup.number().optional().default(2),
     branchName: yup.string().nullable().optional().default(""),
-    depositTypeId: yup.string().nullable().optional().default(""),
-    collectorId: yup.string().nullable().optional().default("0"),
+    depositTypeId: yup.string().nullable().optional().default("-1"),
+    collectorId: yup.string().nullable().optional().default("-1"),
     orderBy: yup.string().nullable().optional().default(""),
     reportType: yup.string().nullable().optional().default("All"),
     sameCompanyName: yup.boolean().optional().default(true),
@@ -128,9 +120,9 @@ export default function DepositUnverifiedPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

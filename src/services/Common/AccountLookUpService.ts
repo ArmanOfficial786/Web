@@ -1,6 +1,6 @@
 // AccountLookUpService.ts - Service for Account Lookup API calls
-import { apiClient } from "../apiClient";
 import type { AccountLookUpDtos } from "types/AccountRecord";
+import { apiClient } from "../apiClient";
 
 export interface FilterParam {
   key: string;
@@ -64,21 +64,11 @@ export const accountLookUpService = {
       );
       const data = response.data;
 
-      // Extract pagination and items from GeneralResponse wrapper
-      if (data?.pagination?.items) {
-        return {
-          items: data.data || [],
-          totalPages: data.pagination.totalPages || 1,
-          currentPage: data.pagination.currentPage || 1,
-          pageSize: data.pagination.pageSize || 20,
-        };
-      }
-
       return {
-        items: data?.data || [],
-        totalPages: 1,
-        currentPage: 1,
-        pageSize: 20,
+        items: Array.isArray(data?.data) ? data.data : [],
+        totalPages: data?.pagination?.totalPages || 1,
+        currentPage: data?.pagination?.currentPage || filter?.pageNumber || 1,
+        pageSize: data?.pagination?.pageSize || filter?.pageSize || 20,
       };
     } catch (error) {
       console.error("AccountLookUp search failed:", error);

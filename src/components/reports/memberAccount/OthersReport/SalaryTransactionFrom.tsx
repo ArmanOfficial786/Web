@@ -1,41 +1,40 @@
 // components/reports/memberAccount/OthersReport/SalaryTransactionForm.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-  UseFormWatch,
-} from "react-hook-form";
-import { Controller } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
-import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import type {
   SalaryTransactionFormValues,
   SalaryTransactionResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/OtherReports/SalaryTransactionReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
+import UserLookupField from "@/components/reportForm/Common/UserLookUpField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import userLookupService from "@/services/Common/UserLookUpService";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -57,14 +56,6 @@ const transferOnOptions = [
 const staffSelectionOptions = [
   { value: "officewise", label: "Office Wise" },
   { value: "allstaff", label: "All Staff" },
-];
-
-// ⚠️ Hardcoded placeholder IDs — "All" maps to null (no filter), Arman/Roshan
-// use placeholder numeric ids. Replace with real staff IDs or a live lookup.
-const staffNameOptions: { value: number | null; label: string }[] = [
-  { value: null, label: "All" },
-  { value: 1, label: "Arman" },
-  { value: 2, label: "Roshan" },
 ];
 
 interface SalaryTransactionFormProps {
@@ -154,50 +145,65 @@ function SalaryTransactionForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ───────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr " },
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
             <OfficeNameField<SalaryTransactionFormValues>
               control={control}
               branchFieldName="branchIds"
             />
+            <Box sx={{ mb: 0.5 }}>
+              <FieldRow label="Report Type">
+                <RadioInput
+                  name="reportType"
+                  control={control}
+                  radioOptions={reportTypeOptions}
+                  row
+                />
+              </FieldRow>
+            </Box>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Report Type: Summary / Detail ────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Report Type">
-              <RadioInput
-                name="reportType"
-                control={control}
-                radioOptions={reportTypeOptions}
-                row
-              />
-            </FieldRow>
-          </Box>
+
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Transfer On: All / Saving / Bank ─────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Transfer On">
-              <RadioInput
-                name="transferOn"
-                control={control}
-                radioOptions={transferOnOptions}
-                row
-              />
-            </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr " },
+              gap: 2,
+              alignItems: "center",
+            }}
+          >
+            <Box>
+              <FieldRow label="Transfer On">
+                <RadioInput
+                  name="transferOn"
+                  control={control}
+                  radioOptions={transferOnOptions}
+                  row
+                />
+              </FieldRow>
+            </Box>
 
-          {/* ── Select Staff: Office Wise / All Staff ────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Select Staff">
-              <RadioInput
-                name="staffSelection"
-                control={control}
-                radioOptions={staffSelectionOptions}
-                row
-              />
-            </FieldRow>
+            <Box>
+              <FieldRow label="Select Staff">
+                <RadioInput
+                  name="staffSelection"
+                  control={control}
+                  radioOptions={staffSelectionOptions}
+                  row
+                />
+              </FieldRow>
+            </Box>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
@@ -205,51 +211,40 @@ function SalaryTransactionForm({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr" },
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
               gap: 2,
               alignItems: "center",
             }}
           >
-            <Controller
-              name="staffId"
+            <UserLookupField<SalaryTransactionFormValues>
               control={control}
-              render={({ field }) => (
-                <TextField
-                  select
-                  label="Staff Name"
-                  size="small"
-                  fullWidth
-                  disabled={staffDropdownDisabled}
-                  value={field.value ?? ""}
-                  onChange={(e) => {
-                    const raw = e.target.value;
-                    field.onChange(raw === "" ? null : Number(raw));
-                  }}
-                >
-                  {staffNameOptions.map((opt) => (
-                    <MenuItem key={opt.label} value={opt.value ?? ""}>
-                      {opt.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
+              name="staffId"
+              label="Staff Name"
+              lookupKey="salary-transaction-staff"
+              fetcher={async () => {
+                const users = await userLookupService.getAll();
+                return users.map((user) => ({
+                  id: user.id ?? -1,
+                  name: user.fullName ?? "",
+                }));
+              }}
+              disabled={staffDropdownDisabled}
             />
 
             <OrderByField<SalaryTransactionFormValues>
               control={control}
               name="orderBy"
-              reportKey="salary-transfer-report" // ⚠️ add this key to your OrderByReportKey union / options map
-            />
-
-            <VisualReportSwitch<SalaryTransactionFormValues>
-              control={control}
-              name="visualReport"
+              reportKey="salary-transfer-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── View Report | Clear ───────────────────────────────────────── */}
           <Grid container spacing={1} alignItems="center">
+            <VisualReportSwitch<SalaryTransactionFormValues>
+              control={control}
+              name="visualReport"
+            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"

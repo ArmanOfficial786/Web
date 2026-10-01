@@ -1,23 +1,23 @@
 // app/(home)/(sidebar)/MemberAc/OtherReports/InterestPayableReport/page.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import InterestPayableForm, {
+  type ReportFormat,
+} from "@/components/reports/memberAccount/InterestPayableReport/InterestPayableForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   InterestPayableRequestDto,
   Pagination,
   ReportResponseDtos,
 } from "types/api/api";
-import InterestPayableForm, {
-  type ReportFormat,
-} from "@/components/reports/memberAccount/InterestPayableReport/InterestPayableForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 export type InterestPayableFormValues = InterestPayableRequestDto;
 
@@ -34,7 +34,7 @@ const schema: yup.ObjectSchema<InterestPayableFormValues> = yup
       .nullable()
       .optional()
       .typeError("Till Date must be a valid date"),
-    branchIds: yup.string().nullable().optional().default(""),
+    branchIds: yup.string().nullable().optional().default("2"),
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
     reportView: yup
@@ -102,7 +102,6 @@ export default function InterestPayablePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, blobUrl, pagination });
       } catch {
-        toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

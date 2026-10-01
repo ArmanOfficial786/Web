@@ -50,7 +50,7 @@ const schema: yup.ObjectSchema<CollectorWiseAccountCloseFormValues> = yup
       .number()
       .required("Collector is required")
       .moreThan(0, "Collector is required")
-      .default(0),
+      .default(-1),
     collectorName: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })

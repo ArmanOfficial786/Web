@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import BranchToBranchExpenseForm, {
+  type ReportFormat,
+} from "@/components/reports/memberAccount/OthersReport/BranchToBranchExpenseForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import type {
   BranchToBranchExpenseRequestDto,
   Pagination,
 } from "types/api/api";
-import BranchToBranchExpenseForm, {
-  type ReportFormat,
-} from "@/components/reports/memberAccount/OthersReport/BranchToBranchExpenseForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 export type BranchToBranchExpenseFormValues = BranchToBranchExpenseRequestDto;
 
@@ -43,9 +43,9 @@ const schema: yup.ObjectSchema<BranchToBranchExpenseFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchFromId: yup.number().optional().default(0),
-    branchToId: yup.number().optional().default(0),
-    collectorId: yup.number().nullable().optional().default(0),
+    branchFromId: yup.number().optional().default(-1),
+    branchToId: yup.number().optional().default(-1),
+    collectorId: yup.number().nullable().optional().default(-1),
     reportType: yup.string().nullable().optional().default("All"),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),

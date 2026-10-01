@@ -1,36 +1,36 @@
 // components/reports/memberAccount/OthersReport/InterestPayableForm.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
 import {
   InterestPayableFormValues,
   InterestPayableResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/InterestPayableReport/SavingInterestPayableReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -103,7 +103,14 @@ function InterestPayableForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Till Date (BS) ───────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <DateFields<InterestPayableFormValues>
               control={control}
               setValue={setValue}
@@ -113,11 +120,6 @@ function InterestPayableForm({
               toDateName="tillDateBs"
               toDateLabel="Till Date"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Office Name ───────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <BranchNameField<InterestPayableFormValues>
               control={control}
               setValue={setValue}
@@ -127,7 +129,14 @@ function InterestPayableForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Interest Payable: All / Only on Till Date ────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+              mb: 0.5,
+            }}
+          >
             <FieldRow label="Interest Payable">
               <RadioInput
                 name="reportView"
@@ -136,11 +145,6 @@ function InterestPayableForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Order By ──────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <OrderByField<InterestPayableFormValues>
               control={control}
               name="orderBy"

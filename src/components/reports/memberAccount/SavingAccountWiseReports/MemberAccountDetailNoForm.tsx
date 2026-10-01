@@ -356,38 +356,38 @@
 // components/reports/memberAccount/MemberAccountDetailNoForm.tsx
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
-import DateInput from "@/components/form/DateInput";
-import DropDown from "@/components/form/DropDown";
-import CheckboxInput from "@/components/form/CheckboxInput";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
 import type {
   MemberAccountDetailNoFormValues,
   MemberAccountDetailNoResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailNoReport/page";
+import DateInput from "@/components/form/DateInput";
+import DropDown from "@/components/form/DropDown";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import TransactionTypeField from "@/components/reportForm/MemberAccount/TransactionTypeField";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -513,39 +513,15 @@ function MemberAccountDetailNoForm({
               control={control}
               branchFieldName="branchId"
             />
-
-            <FieldRow label="Transaction Type">
-              <Box sx={{ display: "flex", gap: 3 }}>
-                <CheckboxInput
-                  name="includeShare"
-                  control={control}
-                  label="Share"
-                  size="small"
-                  color="primary"
-                  labelPlacement="end"
-                />
-                <CheckboxInput
-                  name="includeSaving"
-                  control={control}
-                  label="Saving"
-                  size="small"
-                  color="primary"
-                  labelPlacement="end"
-                />
-                <CheckboxInput
-                  name="includeLoan"
-                  control={control}
-                  label="Loan"
-                  size="small"
-                  color="primary"
-                  labelPlacement="end"
-                />
-              </Box>
-            </FieldRow>
+            <TransactionTypeField<MemberAccountDetailNoFormValues>
+              control={control}
+              name="transactionType"
+              label="Transaction Type"
+            />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 
-          {/* ── Saving Type + Transaction Type checkboxes ────────────────── */}
+          {/* ── Saving and Loan Types ────────────────────────────────────── */}
           <Box
             sx={{
               display: "grid",

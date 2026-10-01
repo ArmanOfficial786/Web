@@ -1,22 +1,19 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import type { MemberSummaryRequest, Pagination } from "types/api/api";
 import MemberSummaryForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/SavingAccountWiseReports/MemberSummaryForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { MemberSummaryRequest, Pagination } from "types/api/api";
+import * as yup from "yup";
 
-// ── branchId (multi-select array) is form-only — resolved into branchIds
-// (comma string) on submit. collectionCenterId/memberGroupId stay strings,
-// cascading off branchId via the existing shared components. ───────────────
 export interface MemberSummaryFormValues extends Omit<
   MemberSummaryRequest,
   "branchIds"
@@ -46,10 +43,10 @@ const schema: yup.ObjectSchema<MemberSummaryFormValues> = yup
       .optional()
       .typeError("Till Date must be a valid date")
       .default(""),
-    branchId: yup.array().of(yup.number().required()).optional().default([]),
+    branchId: yup.array().of(yup.number().required()).optional().default([2]),
     branchName: yup.string().nullable().optional().default("All"),
-    collectionCenterId: yup.string().nullable().optional().default(""),
-    memberGroupId: yup.string().nullable().optional().default(""),
+    collectionCenterId: yup.string().nullable().optional().default("-1"),
+    memberGroupId: yup.string().nullable().optional().default("-1"),
     enableCollectionCenterGroup: yup.boolean().optional().default(false),
     enableMemberGroupGroup: yup.boolean().optional().default(false),
     sameCompanyName: yup.boolean().optional().default(true),

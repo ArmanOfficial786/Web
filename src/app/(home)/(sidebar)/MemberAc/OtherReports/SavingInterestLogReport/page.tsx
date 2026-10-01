@@ -49,7 +49,7 @@ const schema: yup.ObjectSchema<SavingInterestChangeLogFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    officeId: yup.number().nullable().optional().default(null),
+    officeId: yup.number().nullable().optional().default(2),
     officeName: yup.string().nullable().optional().default(""),
     reportType: yup
       .string()

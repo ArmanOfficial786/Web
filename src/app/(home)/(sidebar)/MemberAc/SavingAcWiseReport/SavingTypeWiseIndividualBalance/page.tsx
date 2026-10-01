@@ -1,20 +1,20 @@
 // app/(home)/(sidebar)/Account/reports/SavingTypeWiseIndividualBalance/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import type {
-  SavingTypeWiseIndividualBalanceRequest,
-  Pagination,
-} from "types/api/api";
 import SavingTypeWiseIndividualBalanceForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/SavingAccountWiseReports/savingTypeWiseIndividualBalance";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type {
+  Pagination,
+  SavingTypeWiseIndividualBalanceRequest,
+} from "types/api/api";
+import * as yup from "yup";
 
 // ── branchId is a single number here (matches the Branch Name dropdown in
 // the UI), not a multi-select array — the DTO's string field is derived
@@ -69,9 +69,9 @@ const schema: yup.ObjectSchema<SavingTypeWiseIndividualBalanceFormValues> = yup
       }),
     branchId: yup.number().optional().default(2), // ✅ single value, matches BranchNameField
     branchName: yup.string().nullable().optional().default(""),
-    collectionCenterId: yup.string().nullable().optional().default(""),
-    memberGroupId: yup.string().nullable().optional().default(""),
-    collectorId: yup.string().nullable().optional().default("0"),
+    collectionCenterId: yup.string().nullable().optional().default("-1"),
+    memberGroupId: yup.string().nullable().optional().default("-1"),
+    collectorId: yup.string().nullable().optional().default("-1"),
     orderBy: yup.string().nullable().optional().default(""),
     openingBalance: yup.boolean().optional().default(false),
     percentageBalance: yup.boolean().optional().default(false),

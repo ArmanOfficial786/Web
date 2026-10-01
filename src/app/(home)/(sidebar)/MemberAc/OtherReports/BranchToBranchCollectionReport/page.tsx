@@ -1,21 +1,21 @@
 // app/(home)/(sidebar)/MemberAc/reports/BranchToBranchCollectionReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import BranchToBranchCollectionForm, {
+  type ReportFormat,
+} from "@/components/reports/memberAccount/OthersReport/BranchToBranchCollectionForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import type {
   BranchToBranchCollectionRequestDto,
   Pagination,
 } from "types/api/api";
-import BranchToBranchCollectionForm, {
-  type ReportFormat,
-} from "@/components/reports/memberAccount/OthersReport/BranchToBranchCollectionForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 // ── Form-only shape ──────────────────────────────────────────────────────────
 // Following the same pattern as DataEditedReport
@@ -54,9 +54,9 @@ const schema: yup.ObjectSchema<BranchToBranchCollectionFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchFromId: yup.number().optional().default(0),
-    branchToId: yup.number().optional().default(0),
-    collectorId: yup.number().optional().default(0),
+    branchFromId: yup.number().optional().default(-1),
+    branchToId: yup.number().optional().default(-1),
+    collectorId: yup.number().optional().default(-1),
     reportType: yup.string().nullable().optional().default("All"),
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),

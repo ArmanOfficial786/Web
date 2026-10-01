@@ -1,27 +1,23 @@
 // app/(home)/(sidebar)/MemberAc/OtherReports/SavingDepositAmountMemberReport/page.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type {
-  SavingDepositMemberWiseRequestDto,
-  Pagination,
-} from "types/api/api";
 import SavingDepositMemberWiseForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/OthersReport/SavingDepositMemberWiseForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type {
+  Pagination,
+  SavingDepositMemberWiseRequestDto,
+} from "types/api/api";
+import * as yup from "yup";
 
-// UI-only fields — never sent to the API:
-// - memberName: EntityLookupField display
-// - typeCategory: fixed "Saving" fed to TypeField's transactionTypeName
-//   dependency so it filters savingTypeId options correctly
 export type SavingDepositMemberWiseFormValues = Omit<
   SavingDepositMemberWiseRequestDto,
   "branchIds"
@@ -69,11 +65,11 @@ const schema: yup.ObjectSchema<SavingDepositMemberWiseFormValues> = yup
       .optional()
       .default("Deposit"),
     memberId: yup.number().nullable().optional().default(null),
-    savingTypeId: yup.number().nullable().optional().default(null),
+    savingTypeId: yup.number().nullable().optional().default(-1),
     branchName: yup.string().nullable().optional().default(""),
-    reportMode: yup.string().nullable().optional().default(""), // ⚠️ confirm accepted backend values
+    reportMode: yup.string().nullable().optional().default(""),
     memberName: yup.string().nullable().optional().default(""),
-    typeCategory: yup.string().nullable().optional().default("Saving"), // UI-only, not sent to API
+    typeCategory: yup.string().nullable().optional().default("Saving"),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();

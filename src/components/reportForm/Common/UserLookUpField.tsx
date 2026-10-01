@@ -2,11 +2,11 @@
 
 import DropDownWithLoading from "@/components/form/DropDownWithLoading";
 import {
-  useReportFormContext,
   SelectOption,
+  useReportFormContext,
 } from "@/contexts/ReportFormContext";
 import FieldRow from "@/utilis/FieldRow";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Control, FieldValues, Path } from "react-hook-form";
 
 interface UserLookupFieldProps<T extends FieldValues> {
@@ -25,7 +25,7 @@ interface UserLookupFieldProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
+const DEFAULT_SELECT: SelectOption[] = [{ id: -1, name: "-- Select --" }];
 
 export default function UserLookupField<T extends FieldValues>({
   control,

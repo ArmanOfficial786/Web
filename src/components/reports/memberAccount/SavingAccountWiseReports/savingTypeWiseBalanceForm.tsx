@@ -1,36 +1,36 @@
 // src/components/reports/memberAccount/savingTypeWiseIndividualBalanceForm.tsx
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormSetValue,
   UseFormReset,
+  UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
-import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import CheckboxInput from "@/components/form/CheckboxInput";
-import Collector from "@/components/reportForm/MemberAccount/Collector";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import {
   SavingTypeWiseIndividualBalanceFormValues,
   SavingTypeWiseIndividualBalanceResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/SavingTypeWiseIndividualBalance/page";
+import Preloader from "@/components/PreLoader/preloader";
+import CheckboxInput from "@/components/form/CheckboxInput";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import Collector from "@/components/reportForm/MemberAccount/Collector";
 
 export type { ReportFormat };
 
@@ -85,7 +85,7 @@ function SavingTypeWiseIndividualBalanceForm({
             variant="h6"
             sx={{ color: "primary.main", fontWeight: 600, fontSize: 16 }}
           >
-            Saving Type Wise Individual Balance Report
+            Saving Type Wise Balance Report
           </Typography>
           <Divider sx={{ mb: 0.5 }} />
 

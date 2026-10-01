@@ -1,17 +1,17 @@
 "use client";
 
-import React, { useEffect } from "react";
+import DropDown from "@/components/form/DropDown";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import FieldRow from "@/utilis/FieldRow";
+import Box from "@mui/material/Box";
+import { useEffect } from "react";
 import {
   useWatch,
   type Control,
-  type UseFormSetValue,
   type FieldValues,
   type Path,
+  type UseFormSetValue,
 } from "react-hook-form";
-import FieldRow from "@/utilis/FieldRow";
-import DropDown from "@/components/form/DropDown";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import Box from "@mui/material/Box";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 interface SelectGroupFieldProps<T extends FieldValues> {
@@ -32,7 +32,7 @@ export default function SelectGroupField<T extends FieldValues>({
   branchFieldName,
   collectionCenterFieldName,
   groupFieldName,
-  defaultGroupValue = 0,
+  defaultGroupValue = -1,
 }: SelectGroupFieldProps<T>) {
   const { memberGroupOptions, fetchMemberGroups } = useReportFormContext();
 

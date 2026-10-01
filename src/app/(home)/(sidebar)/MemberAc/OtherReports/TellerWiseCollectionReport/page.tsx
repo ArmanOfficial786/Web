@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import type { TellerWiseCollectionRequestDto, Pagination } from "types/api/api";
 import TellerWiseCollectionForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/OthersReport/TellerWiseCollectionForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import type { Pagination, TellerWiseCollectionRequestDto } from "types/api/api";
+import * as yup from "yup";
 
-// ── tellerId is a number here (matches TellerField's DropDown option ids),
-// converted to the DTO's int64|null in toRequest(). ──────────────────────────
 export interface TellerWiseCollectionFormValues extends Omit<
   TellerWiseCollectionRequestDto,
   "tellerId"
@@ -21,23 +20,11 @@ export interface TellerWiseCollectionFormValues extends Omit<
   tellerId?: number;
 }
 
-// ── Client-only response state (raw PDF blob URL + header pagination) ──────
-// Same shape as DepositUnverifiedResponseExtended — pdfData is ALWAYS a blob
-// URL created via URL.createObjectURL, never a raw base64 string.
 export interface TellerWiseCollectionResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
-
-const DEFAULT_PAGINATION: Pagination = {
-  currentPage: 1,
-  totalPages: 1,
-  totalRecord: 0,
-  pageSize: 1,
-  hasNextPage: false,
-  hasPreviousPage: false,
-};
 
 const DATE_REQUIRED_MESSAGE = "Please select date to get Teller Name";
 const TELLER_REQUIRED_MESSAGE = "Select Date for TellerName";
@@ -123,9 +110,9 @@ export default function TellerWiseCollectionPage() {
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
           try {
-            return raw ? (JSON.parse(raw) as Pagination) : DEFAULT_PAGINATION;
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
           } catch {
-            return DEFAULT_PAGINATION;
+            return DefaultPagination;
           }
         })();
 

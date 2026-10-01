@@ -1,23 +1,23 @@
 // app/(home)/(sidebar)/MemberAc/CollectorDetailReport/CollectorWiseCommissionReport/page.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import CollectorWiseWithdrawalForm from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseWithdrawalForm";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   CollectorWiseWithdrawalRequestDto,
   Pagination,
   ReportResponseDtos,
 } from "types/api/api";
-import CollectorWiseWithdrawalForm from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseWithdrawalForm";
+import * as yup from "yup";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
 export type CollectorWiseWithdrawalFormValues =
@@ -52,7 +52,7 @@ const schema: yup.ObjectSchema<CollectorWiseWithdrawalFormValues> = yup
       .number()
       .required("Collector is required")
       .moreThan(0, "Collector is required")
-      .default(0),
+      .default(-1),
     collectorName: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })

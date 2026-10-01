@@ -1,40 +1,40 @@
 // components/reports/memberAccount/OthersReport/SavingInterestChangeLogForm.tsx
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-  UseFormWatch,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useMemo, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
-import DepositType from "@/components/reportForm/MemberAccount/DepositType";
-import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
-import type { AccountLookUpDtos } from "types/api/api";
 import {
   SavingInterestChangeLogFormValues,
   SavingInterestChangeLogResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/OtherReports/SavingInterestLogReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import DepositType from "@/components/reportForm/MemberAccount/DepositType";
+import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
+import FieldRow from "@/utilis/FieldRow";
+import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -145,17 +145,19 @@ function SavingInterestChangeLogForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ───────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              mb: 0.5,
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <BranchNameField<SavingInterestChangeLogFormValues>
               control={control}
               branchFieldName="officeId"
               setValue={setValue}
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Report Type: Account No / Deposit Type ───────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportType"

@@ -7,7 +7,10 @@ const tellerService = {
     toDateBs?: string;
   }): Promise<TellerLookupResponse[]> => {
     const response = await apiClient.api.tellerList(params ?? {});
-    return response.data ?? [];
+    const body = response.data as unknown;
+    if (Array.isArray(body)) return body as TellerLookupResponse[];
+    const wrapped = (body as { data?: TellerLookupResponse[] | null })?.data;
+    return Array.isArray(wrapped) ? wrapped : [];
   },
 };
 

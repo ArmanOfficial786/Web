@@ -1,27 +1,22 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingDepositAmountDateWiseReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type {
-  SavingDepositDateWiseRequestDto,
-  Pagination,
-} from "types/api/api";
 import SavingDepositDateWiseForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/OthersReport/SavingDepositAmountDateWiseFrom";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type {
+  Pagination,
+  SavingDepositDateWiseRequestDto,
+} from "types/api/api";
+import * as yup from "yup";
 
-// UI-only fields — never sent to the API:
-// - memberName: EntityLookupField display
-// - typeCategory: fixed "Saving" fed to TypeField's transactionTypeName
-//   dependency so it filters savingTypeId options correctly
 export type SavingDepositDateWiseFormValues = Omit<
   SavingDepositDateWiseRequestDto,
   "branchIds"
@@ -65,7 +60,7 @@ const schema: yup.ObjectSchema<SavingDepositDateWiseFormValues> = yup
     orderBy: yup.string().nullable().optional().default(""),
     transactionType: yup
       .string()
-      .oneOf(["All", "ChequeOnly", "CashOnly", "BankOnly"]) // ⚠️ confirm exact backend codes
+      .oneOf(["All", "ChequeOnly", "CashOnly", "BankOnly"])
       .nullable()
       .optional()
       .default("All"),
@@ -76,12 +71,12 @@ const schema: yup.ObjectSchema<SavingDepositDateWiseFormValues> = yup
       .optional()
       .default("Deposit"),
     memberId: yup.number().nullable().optional().default(null),
-    savingTypeId: yup.number().nullable().optional().default(null),
+    savingTypeId: yup.number().nullable().optional().default(-1),
     branchName: yup.string().nullable().optional().default(""),
-    reportMode: yup.string().nullable().optional().default(""), // ⚠️ not shown in UI — confirm if backend requires a value
-    chequeDetail: yup.number().optional(), // ⚠️ present on DTO but unused in this UI — confirm if it's actually needed instead of transactionType
+    reportMode: yup.string().nullable().optional().default(""),
+    chequeDetail: yup.number().optional(),
     memberName: yup.string().nullable().optional().default(""),
-    typeCategory: yup.string().nullable().optional().default("Saving"), // UI-only, not sent to API
+    typeCategory: yup.string().nullable().optional().default("Saving"),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
@@ -117,7 +112,6 @@ export default function SavingDepositDateWisePage() {
       reportMode: form.reportMode || undefined,
       chequeDetail: form.chequeDetail || undefined,
       visualReport: form.visualReport ?? false,
-      // typeCategory intentionally omitted — UI-only field, not part of the DTO
     }),
     [],
   );

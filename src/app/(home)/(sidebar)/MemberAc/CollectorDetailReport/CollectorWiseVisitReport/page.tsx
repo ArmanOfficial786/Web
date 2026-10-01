@@ -1,24 +1,24 @@
 // app/(home)/(sidebar)/MemberAc/OtherReports/CollectorWiseVisitReport/page.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import CollectorWiseVisitForm, {
+  type ReportFormat,
+} from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseVisitForm";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   CollectorWiseVisitRequestDto,
   Pagination,
   ReportResponseDtos,
 } from "types/api/api";
-import CollectorWiseVisitForm, {
-  type ReportFormat,
-} from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseVisitForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 export type CollectorWiseVisitFormValues = CollectorWiseVisitRequestDto;
 
@@ -35,7 +35,7 @@ const schema: yup.ObjectSchema<CollectorWiseVisitFormValues> = yup
       .number()
       .required("Collector is required")
       .moreThan(0, "Collector is required")
-      .default(0),
+      .default(-1),
     collectorName: yup.string().nullable().optional().default(""),
     reportType: yup
       .string()

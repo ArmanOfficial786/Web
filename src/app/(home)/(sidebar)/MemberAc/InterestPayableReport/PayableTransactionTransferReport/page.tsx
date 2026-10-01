@@ -1,28 +1,25 @@
 // app/(home)/(sidebar)/MemberAc/OtherReports/SavingsAccountInterestTransferReport/page.tsx
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type {
-  PayableInterestTransferredRequestDto,
-  Pagination,
-  ReportResponseDtos,
-} from "types/api/api";
 import SavingsAccountInterestTransferForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/InterestPayableReport/SavingsAccountInterestTransferForm";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type {
+  Pagination,
+  PayableInterestTransferredRequestDto,
+  ReportResponseDtos,
+} from "types/api/api";
+import * as yup from "yup";
 
-// ── branchIds is a string on the DTO ("-1" = all, else comma-separated ids),
-// but OfficeNameField binds/writes a string[]. Same collapse pattern as
-// SavingsAccountMaturityReport / InterestAndTaxDetail.
 export type SavingsAccountInterestTransferFormValues = Omit<
   PayableInterestTransferredRequestDto,
   "branchIds"
@@ -57,9 +54,9 @@ const schema: yup.ObjectSchema<SavingsAccountInterestTransferFormValues> = yup
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     branchName: yup.string().nullable().optional().default(""),
-    depositTypeId: yup.number().optional(),
+    depositTypeId: yup.number().optional().default(-1),
     orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
