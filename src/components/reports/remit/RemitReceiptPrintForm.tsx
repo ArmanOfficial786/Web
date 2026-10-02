@@ -158,8 +158,14 @@ export default function RemitReceiptPrintForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Get Remittance Receipt Of ───────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
-            <FieldRow label="Get Remittance Receipt Of">
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
+            <FieldRow label="GetRemittance">
               <RadioInput
                 name="getRemittanceReceiptOf"
                 control={control}
@@ -167,11 +173,6 @@ export default function RemitReceiptPrintForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Person (Receipt) — auto-refetches when dates / isReceived change ── */}
-          <Box sx={{ mb: 0.5 }}>
             <RemittanceReceiptField<RemitReceiptPrintFormValues>
               control={control}
               setValue={setValue}
@@ -185,7 +186,13 @@ export default function RemitReceiptPrintForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Get Receipt ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <FieldRow label="Get Receipt">
               <RadioInput
                 name="getReceipt"
@@ -194,11 +201,6 @@ export default function RemitReceiptPrintForm({
                 row
               />
             </FieldRow>
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── View Report | Clear ─────────────────────────────────────── */}
-          <Grid container spacing={1} alignItems="center">
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -230,7 +232,7 @@ export default function RemitReceiptPrintForm({
                 />
               </Box>
             </Grid>
-          </Grid>
+          </Box>
         </Paper>
 
         {showReport && (
