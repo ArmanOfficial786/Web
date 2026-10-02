@@ -107,16 +107,17 @@ export default function FundWithdrawlForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <OfficeNameField<FundWithdrawlFormValues>
               control={control}
               branchFieldName="branchIds"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportMode"

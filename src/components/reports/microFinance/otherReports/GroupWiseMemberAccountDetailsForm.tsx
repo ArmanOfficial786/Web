@@ -27,7 +27,6 @@ import ReportNavigation, {
 import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -144,14 +143,16 @@ export default function GroupWiseMemberAccountDetailsForm({
           {/* ── Group By / Same Company toggles ──────────────────────────── */}
           <Box
             sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr 1fr 1fr" },
-              gap: 2,
+              display: "flex",
+              justifyContent: "space-around",
               alignItems: "center",
+              gap: 5,
               mb: 0.5,
+              width: "100%",
+              flexWrap: "nowrap",
             }}
           >
-            <FieldRow label="">
+            <Box sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
               <CheckboxInput
                 name="groupByCollectionCenter"
                 control={control}
@@ -160,8 +161,9 @@ export default function GroupWiseMemberAccountDetailsForm({
                 color="primary"
                 labelPlacement="end"
               />
-            </FieldRow>
-            <FieldRow label="">
+            </Box>
+
+            <Box sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
               <CheckboxInput
                 name="groupByMemberGroup"
                 control={control}
@@ -170,8 +172,9 @@ export default function GroupWiseMemberAccountDetailsForm({
                 color="primary"
                 labelPlacement="end"
               />
-            </FieldRow>
-            <FieldRow label="">
+            </Box>
+
+            <Box sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
               <CheckboxInput
                 name="groupByBranch"
                 control={control}
@@ -180,12 +183,15 @@ export default function GroupWiseMemberAccountDetailsForm({
                 color="primary"
                 labelPlacement="end"
               />
-            </FieldRow>
-            <SameCompanyField<GroupWiseMemberAccountDetailsFormValues>
-              control={control}
-              label="Same Company"
-              labelPlacement="end"
-            />
+            </Box>
+
+            <Box sx={{ flexShrink: 0, whiteSpace: "nowrap" }}>
+              <SameCompanyField<GroupWiseMemberAccountDetailsFormValues>
+                control={control}
+                label="Same Company"
+                labelPlacement="end"
+              />
+            </Box>
           </Box>
           <Divider sx={{ mb: 0.5 }} />
 

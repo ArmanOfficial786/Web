@@ -99,7 +99,6 @@ function CollectorWiseProjectionPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

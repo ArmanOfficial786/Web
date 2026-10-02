@@ -17,12 +17,8 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ── Report Type (wire = meetingType) ──────────────────────────────────────────
-// ⚠️ Guessed wire values — confirm against backend
 const MEETING_TYPE_NEXT_MEETING = "NextMeeting";
 
-// branchIds arrives as string[] from OfficeNameField; collectionCenterId is string
-// from CollectionCenterField. Both UI-facing field names differ slightly from DTO.
 export interface CenterMeetingDetailFormValues extends Omit<
   CenterMeetingDetailRequestDto,
   "branchId" | "collectionCenterId"
@@ -56,7 +52,11 @@ const schema: yup.ObjectSchema<CenterMeetingDetailFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup
+      .array()
+      .of(yup.string().required())
+      .optional()
+      .default(["2"]),
     collectionCenterId: yup.string().optional().default("-1"),
     meetingType: yup.string().optional().default(MEETING_TYPE_NEXT_MEETING),
     visualReport: yup.boolean().optional().default(false),

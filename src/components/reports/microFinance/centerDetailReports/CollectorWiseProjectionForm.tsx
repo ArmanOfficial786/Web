@@ -88,7 +88,13 @@ export default function CollectorWiseProjectionForm({
           <Divider sx={{ mb: 0.5 }} />
 
           {/* ── Till Date (BS) ───────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <DateFields<CollectorWiseProjectionFormValues>
               control={control}
               showFromDate={false}
@@ -96,11 +102,6 @@ export default function CollectorWiseProjectionForm({
               toDateLabel="Till Date"
               mode="BS"
             />
-          </Box>
-          <Divider sx={{ mb: 0.5 }} />
-
-          {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 0.5 }}>
             <BranchNameField<CollectorWiseProjectionFormValues>
               control={control}
               setValue={setValue}
