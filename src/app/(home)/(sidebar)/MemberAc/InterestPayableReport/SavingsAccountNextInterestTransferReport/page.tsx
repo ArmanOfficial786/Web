@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingAccountNextInterestTransferReport/page.tsx
 "use client";
 
 import React, { useCallback, useState } from "react";
@@ -19,9 +18,6 @@ import memberAccountService from "@/services/memberAccount/memberAccountService"
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId is a string on the DTO ("-1" = all, else comma-separated ids),
-// but OfficeNameField binds/writes a string[]. Same collapse pattern as
-// SavingsAccountInterestTransferReport / SavingsAccountMaturityReport.
 export type SavingAccountNextInterestTransferFormValues = Omit<
   SavingsAccountInterestTransferRequestDto,
   "branchIds"
@@ -64,7 +60,7 @@ const schema: yup.ObjectSchema<SavingAccountNextInterestTransferFormValues> =
       branchName: yup.string().nullable().optional().default(""),
       depositTypeId: yup.number().optional(),
       orderBy: yup.string().nullable().optional().default(""),
-      visualReport: yup.boolean().optional().default(false), // ⚠️ same as above
+      visualReport: yup.boolean().optional().default(false),
     })
     .required();
 

@@ -1,4 +1,3 @@
-// components/reportForm/Common/VaultTypeSwitch.tsx
 "use client";
 
 import React from "react";

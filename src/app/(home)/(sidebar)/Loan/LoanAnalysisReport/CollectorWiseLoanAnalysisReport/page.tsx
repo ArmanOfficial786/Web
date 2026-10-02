@@ -19,13 +19,10 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend.
-// DTO has no reportType / viewType / groupByCollectionCenter fields — UI-only for now.
 const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
 
 const VIEW_TYPE_SUMMARY = "Summary";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface CollectorWiseLoanAnalysisFormValues extends Omit<
   CollectorWiseLoanAnalysisRequestDto,
   "branchIds" | "collectorId" | "collectionCenterIds"
@@ -33,9 +30,9 @@ export interface CollectorWiseLoanAnalysisFormValues extends Omit<
   branchIds?: string[];
   collectorId?: string;
   collectionCenterIds?: string;
-  reportType?: string; // ⚠️ UI-only — DTO has no such field, never sent
-  viewType?: string; // ⚠️ UI-only — DTO has no such field, never sent
-  groupByCollectionCenter?: boolean; // ⚠️ UI-only — DTO has no such field, never sent
+  reportType?: string;
+  viewType?: string;
+  groupByCollectionCenter?: boolean;
 }
 
 export interface CollectorWiseLoanAnalysisResponseExtended {
@@ -100,8 +97,6 @@ const toRequest = (
     reportMode: v.reportMode || undefined,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
-    // reportType / viewType / groupByCollectionCenter intentionally omitted —
-    // ⚠️ UI-only, not on this DTO
   };
 };
 

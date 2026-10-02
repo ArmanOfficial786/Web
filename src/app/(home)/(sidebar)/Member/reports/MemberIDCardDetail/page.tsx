@@ -15,20 +15,16 @@ import { toast } from "react-toastify";
 import type { MemberIdCardRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── UI-only fields — stripped before sending to API ────────────────────────
 export interface MemberIdCardFormValues extends MemberIdCardRequest {
   memberName?: string;
 }
 
-// ── Client-only state ──────────────────────────────────────────────────────
-// Does NOT extend ReportResponseDtos — backend returns binary PDF, not base64 JSON
 export interface MemberIdCardResponseExtended {
-  pdfData?: string; // blob URL created from binary PDF
+  pdfData?: string;
   isLoading: boolean;
-  pagination?: Pagination; // parsed from X-Pagination header (camelCase JSON)
+  pagination?: Pagination;
 }
 
-// ── Validation schema ──────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
   memberId: yup.string().nullable().optional().default(null),
   memberName: yup.string().optional().default(""),
@@ -48,7 +44,6 @@ const schema: yup.ObjectSchema<MemberIdCardFormValues> = yup.object({
   pageSize: yup.number().optional().default(10),
 });
 
-// ── Strip UI-only fields before API call ───────────────────────────────────
 const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   memberId: v.memberId || null,
   fromDate: v.fromDate || null,
@@ -60,7 +55,6 @@ const toRequest = (v: MemberIdCardFormValues): MemberIdCardRequest => ({
   pageSize: v.pageSize ?? 10,
 });
 
-// ── Page ───────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] = useState<MemberIdCardResponseExtended>({
     isLoading: false,
@@ -85,7 +79,6 @@ function Page(): React.ReactElement {
 
   const fetchReport = useCallback(
     async (request: MemberIdCardRequest): Promise<void> => {
-      // Revoke previous blob URL before creating a new one
       setReportState((prev) => {
         if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
@@ -93,8 +86,6 @@ function Page(): React.ReactElement {
       try {
         const res = await callApi(request, "VIEW");
 
-        // ── Parse X-Pagination JSON header ─────────────────────────────────
-        // Backend serializes anonymous object → keys are already camelCase
         const raw =
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {
@@ -105,7 +96,6 @@ function Page(): React.ReactElement {
           }
         })();
 
-        // ── Binary PDF response → blob URL ─────────────────────────────────
         const blob = responseToBlob(res.data, "PDF");
         const pdfData = URL.createObjectURL(blob);
 
@@ -114,7 +104,6 @@ function Page(): React.ReactElement {
         reset({ ...getValues(), memberId: "", memberName: "" });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        // Error toast handled by Axios interceptor
       }
     },
     [callApi, reset, getValues],
@@ -153,7 +142,6 @@ function Page(): React.ReactElement {
     [fetchReport],
   );
 
-  // ── Page navigation — NO API call — iframe navigates via #page=N ──────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const total = prev.pagination?.totalPages ?? 1;
@@ -165,7 +153,6 @@ function Page(): React.ReactElement {
     });
   }, []);
 
-  // ── Revoke(cancel,terminate) blob URL on unmount(delete) ─────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

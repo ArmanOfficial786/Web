@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/CashFlowDetails/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,7 +14,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── branchId is form-only — resolved into branchIds (comma string) on submit ─
 export interface CashFlowDetailsFormValues extends Omit<
   CashFlowDetailsRequest,
   "branchIds"
@@ -23,7 +21,6 @@ export interface CashFlowDetailsFormValues extends Omit<
   branchId?: number[];
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface CashFlowDetailsResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -60,7 +57,6 @@ export default function CashFlowDetailsPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string). "All" resolves to full id list ──
   const toRequest = useCallback(
     (form: CashFlowDetailsFormValues): CashFlowDetailsRequest => {
       const selectedIds = (form.branchId ?? [])
@@ -121,10 +117,8 @@ export default function CashFlowDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor already shows the toast — this just stops the spinner
-        // and clears any stale report so the UI doesn't look half-succeeded.
         setReportState({ isLoading: false });
-        throw err; // rethrow so interceptor/caller chain still sees rejection if needed
+        throw err;
       }
     },
     [callApi],

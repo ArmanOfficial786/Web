@@ -34,39 +34,31 @@ interface NavBarProps {
   toggleSidebar: () => void;
 }
 
-// ── Helper to build breadcrumb from MENU ──────────────────────────────
 function getBreadcrumbsFromMenu(
   pathname: string,
 ): Array<{ label: string; href?: string }> {
-  // 1. Try to match a plain link
   for (const item of MENU) {
     if (item.type === "link" && pathname === item.route) {
       return [{ label: item.label, href: item.route }];
     }
   }
 
-  // 2. Try to match a report leaf (inside a parent-reports node).
-  //    The folder crumb is derived from the leaf's own route via
-  //    getFolderSegment — no hardcoded parent/folder mapping, so any new
-  //    folder added under any parent shows up automatically.
   for (const item of MENU) {
     if (item.type === "parent-reports") {
       for (const report of item.reports) {
         if (pathname === report.route) {
           return [
-            { label: item.label }, // parent, non‑clickable
-            { label: getFolderSegment(report.route) }, // folder, non-clickable
-            { label: report.label, href: report.route }, // leaf, clickable
+            { label: item.label },
+            { label: getFolderSegment(report.route) },
+            { label: report.label, href: report.route },
           ];
         }
       }
     }
   }
 
-  // 3. Fallback: if route isn't in MENU, build from pathname segments
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) {
-    // root path "/" → just "Home"
     return [{ label: "Home" }];
   }
   const crumbs: Array<{ label: string; href?: string }> = [];
@@ -76,7 +68,6 @@ function getBreadcrumbsFromMenu(
     const label = seg
       .replace(/-/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
-    // Add href for all segments; the rendering will make the last one non‑clickable
     crumbs.push({ label, href: currentPath });
   }
   return crumbs;
@@ -104,10 +95,6 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
   const handleLogout = async () => {
     setUserAnchor(null);
     try {
-      // Calls the backend /api/Auth/logout endpoint to release the
-      // active-session lock, THEN clears the NextAuth client session.
-      // Using plain signOut() here was the root cause of "CredentialsSignin"
-      // failures on the next login attempt.
       await logout("/");
       toast.success("Logged out successfully");
     } catch (error) {
@@ -160,7 +147,6 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
           <Breadcrumbs separator="›" aria-label="breadcrumb">
             {breadcrumbs.map((crumb, idx) => {
               const isLast = idx === breadcrumbs.length - 1;
-              // If href is present and not last → clickable link
               if (crumb.href && !isLast) {
                 return (
                   <Link
@@ -178,7 +164,6 @@ const Navbar: React.FC<NavBarProps> = ({ toggleSidebar }) => {
                   </Link>
                 );
               }
-              // Otherwise (no href or last item) → plain text
               return (
                 <Typography
                   key={idx}

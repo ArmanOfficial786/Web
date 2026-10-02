@@ -16,7 +16,6 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanPortfolioFormValues extends Omit<
   LoanPortfolioRequestDto,
   "branchIds"

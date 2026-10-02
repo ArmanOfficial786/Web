@@ -15,7 +15,7 @@ import FixedDepositInterestTransferForm, {
 } from "@/components/reports/memberAccount/InterestExpenseReport/FixedDepositInterestTransferForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService"; // ⚠️ confirm this exposes fixedDepositInterestTransferCreate
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 
@@ -74,7 +74,6 @@ export default function FixedDepositInterestTransferPage() {
       mode: "onSubmit",
     });
 
-  // ── Collapse the widget's string[] into the DTO's comma-string / "-1" ────
   const toRequest = useCallback(
     (
       form: FixedDepositInterestTransferFormValues,

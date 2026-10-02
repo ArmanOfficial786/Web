@@ -1,4 +1,3 @@
-// src/components/reportForm/Asset/AssetCategoryField.tsx
 "use client";
 
 import DropDown from "@/components/form/DropDown";
@@ -16,34 +15,26 @@ import {
   type UseFormSetValue,
 } from "react-hook-form";
 
-// ── Wire values for the type radio ────────────────────────────────────────────
-export const ASSET_TYPE_FIXED = "F"; // Assets (default)
-export const ASSET_TYPE_STOCK = "O"; // Stock
+export const ASSET_TYPE_FIXED = "F";
+export const ASSET_TYPE_STOCK = "O";
 
 export const assetTypeOptions = [
   { value: ASSET_TYPE_FIXED, label: "Assets" },
   { value: ASSET_TYPE_STOCK, label: "Stock" },
 ];
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface AssetCategoryFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
-  /** Field name for the selected category id (number) */
   categoryFieldName: Path<T>;
-  /** Field name for the selected type ("F" | "O") */
   typeFieldName: Path<T>;
-  /** Label shown above the category dropdown. Defaults to "Asset Category". */
   label?: string;
-  /** Label shown above the type radio. Defaults to "Type". */
   typeLabel?: string;
-  /** Optional: force a specific category as default once options load */
   defaultCategoryId?: number;
 }
 
 const DEFAULT_CATEGORY_OPTIONS = [{ id: -1, name: "-- Select --" }];
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function AssetCategoryField<T extends FieldValues>({
   control,
   setValue,
@@ -63,18 +54,14 @@ export default function AssetCategoryField<T extends FieldValues>({
     | string
     | undefined;
 
-  // Never bail out on an empty type — fall back to the default so the API is
-  // always called on mount / page reload.
   const effectiveType = selectedType || ASSET_TYPE_FIXED;
 
   const categoryOptions =
     assetCategoryOptionsMap[effectiveType] ?? DEFAULT_CATEGORY_OPTIONS;
   const loading = assetCategoryLoading[effectiveType] ?? false;
 
-  // Tracks the last type we handled. Safe under React Strict Mode.
   const previousTypeRef = useRef<string | null>(null);
 
-  // Seed the form value if it's empty so the radio and the API agree.
   useEffect(() => {
     if (!selectedType) {
       setValue(typeFieldName, ASSET_TYPE_FIXED as PathValue<T, Path<T>>, {
@@ -85,8 +72,6 @@ export default function AssetCategoryField<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── Call the context fetch on mount / reload and whenever type changes ────
-  // The context skips the network call if this type is already cached.
   useEffect(() => {
     if (
       previousTypeRef.current !== null &&
@@ -103,7 +88,6 @@ export default function AssetCategoryField<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveType, fetchAssetCategories]);
 
-  // ── Optional default category once options are available ──────────────────
   useEffect(() => {
     if (defaultCategoryId === undefined) return;
     const match = categoryOptions.find((o) => o.id === defaultCategoryId);

@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/MainLedger/4thLedgerDetailsReport/page.tsx
 "use client";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -66,7 +65,7 @@ const schema: yup.ObjectSchema<FourthLedgerDetailsFormValues> = yup
       .string()
       .oneOf(["0", "1"] as const)
       .optional()
-      .default("0"), // ⚠️ codes assumed to match First/Second/Third convention — confirm
+      .default("0"),
     showOpeningBalance: yup.boolean().optional().default(false),
     orderBy: yup.string().nullable().optional().default(""),
   })
@@ -148,7 +147,6 @@ export default function FourthLedgerDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

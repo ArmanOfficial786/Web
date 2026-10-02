@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Loan/OtherReports/LoanInterestDiscountReport/page.tsx
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";

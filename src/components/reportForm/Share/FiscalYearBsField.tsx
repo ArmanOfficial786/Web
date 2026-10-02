@@ -12,16 +12,14 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface FiscalYearBsFieldProps<T extends FieldValues> {
   control: Control<T>;
   fiscalYearFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional — only needed for a default selection
-  defaultFiscalYearId?: number; // optional, no default here
-  label?: string; // configurable, defaults to "Fiscal Year (BS)"
+  setValue?: UseFormSetValue<T>;
+  defaultFiscalYearId?: number;
+  label?: string;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function FiscalYearBsField<T extends FieldValues>({
   control,
   fiscalYearFieldName,
@@ -35,7 +33,6 @@ export default function FiscalYearBsField<T extends FieldValues>({
     fetchFiscalYearBs();
   }, [fetchFiscalYearBs]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultFiscalYearId === undefined) return;
     if (!fiscalYearBsOptions?.length) return;

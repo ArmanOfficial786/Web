@@ -15,9 +15,9 @@ import type {
 interface RemittanceTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   remittanceTypeFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional — only needed for a default selection
-  defaultRemittanceTypeId?: number; // optional, no forced default here
-  label?: string; // configurable, defaults to "Remittance Type"
+  setValue?: UseFormSetValue<T>;
+  defaultRemittanceTypeId?: number;
+  label?: string;
 }
 
 export default function RemittanceTypeField<T extends FieldValues>({
@@ -34,7 +34,6 @@ export default function RemittanceTypeField<T extends FieldValues>({
     fetchRemittanceTypes();
   }, [fetchRemittanceTypes]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultRemittanceTypeId === undefined) return;
     if (!remittanceTypeOptions?.length) return;

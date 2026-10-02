@@ -1,7 +1,6 @@
 import { defineOrderByOptions } from "../DefineOrderByOptions";
 import type { OrderByOption } from "../DefineOrderByOptions";
 
-// ── Report: member-all-details ──────────────────────────────────────────
 export const savingWiseBalanceOrderByOptions = defineOrderByOptions([
   { key: "memberName", label: "Member Name" },
   { key: "memberId", label: "Member ID" },
@@ -206,7 +205,6 @@ export const savingAccountClosedOrderByOptions = defineOrderByOptions([
   { key: "closeAmount", label: "Close Amount" },
 ] as const);
 
-// ── Interest Expense Reports ──────────────────────────────────────────
 
 export const fixedDepositInterestTransferOrderByOptions = defineOrderByOptions([
   { key: "memberId", label: "Member Id" },
@@ -257,7 +255,6 @@ export const interestAndTaxPostedOrderByOptions = defineOrderByOptions([
   { key: "netBalance", label: "Net Balance" },
 ] as const);
 
-// ── Report: collector-wise-Commission ──────────────────────────────────────────
 
 export const collectorWiseCommissionOrderByOptions = defineOrderByOptions([
   { key: "memberId", label: "Member Id" },
@@ -325,9 +322,7 @@ export const chequeBookWithdrawalOrderByOptions = defineOrderByOptions([
   { key: "status", label: "Status" },
 ] as const);
 
-// ── Cheque Book Report ──────────────────────────────
 
-// ── Type for report keys and their options ──────────────────────────────
 export type SavingWiseBalanceOrderByReportKey =
   | "saving-wise-balance-report"
   | "saving-type-wise-balance-report"

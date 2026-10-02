@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/BankReceivedPaymentForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -47,9 +46,6 @@ interface BankReceivedPaymentFormProps {
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-// ⚠️ Values assumed to be "BankReceivedPayment" / "ChequeReceivedPayment" per
-// BankReceivedPaymentRequestDto.paymentType (free string). Confirm exact
-// backend strings and adjust if different.
 const PAYMENT_TYPE_OPTIONS = [
   { value: "BankReceivedPayment", label: "Bank Received Payment" },
   { value: "ChequeReceivedPayment", label: "Cheque Received Payment" },

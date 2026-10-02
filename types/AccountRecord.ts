@@ -1,5 +1,3 @@
-// Custom type for Account Lookup record
-// Used until AccountLookUpDtos is generated from swagger
 export interface AccountLookUpDtos {
   mamAccountOpeningId: number;
   accountNo: string;

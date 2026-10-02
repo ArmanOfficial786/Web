@@ -9,4 +9,3 @@ const orderByService = {
 };
 
 export default orderByService;
-//don't need it by calling api i have done it using client side

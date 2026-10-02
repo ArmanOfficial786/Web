@@ -1,4 +1,3 @@
-// services/memberAccount/MemberAccountDeactiveService.ts
 import { Api } from "types/api/api";
 import {
   errorResponseInterceptor,
@@ -9,8 +8,6 @@ import {
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const memberAccountService = new Api({ baseURL: apiUrl });
 
-// GenerateReport returns a raw payload (client type is `void`) — same
-// pattern as BalanceSheet/PLAccount/DepositUnverified.
 const customRequestInterceptor = async (config: any) => {
   const configWithAuth = await requestInterceptor(config);
   configWithAuth.responseType = "blob";

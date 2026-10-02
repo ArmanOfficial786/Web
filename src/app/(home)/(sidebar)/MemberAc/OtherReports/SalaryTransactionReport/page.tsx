@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SalaryTransactionReport/page.tsx
 "use client";
 
 import SalaryTransactionForm, {
@@ -15,7 +14,6 @@ import { toast } from "react-toastify";
 import type { Pagination, SalaryTransactionRequestDto } from "types/api/api";
 import * as yup from "yup";
 
-// UI-only field — never sent to the API
 export type SalaryTransactionFormValues = Omit<
   SalaryTransactionRequestDto,
   "branchIds"

@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/ReserveMasterReport/page.tsx
 "use client";
 
 import ReserveMasterForm, {
@@ -106,7 +105,6 @@ export default function ReserveMasterPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

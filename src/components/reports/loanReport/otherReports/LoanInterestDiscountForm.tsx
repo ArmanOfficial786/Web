@@ -1,4 +1,3 @@
-// components/reports/loanReport/otherReports/LoanInterestDiscountForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";

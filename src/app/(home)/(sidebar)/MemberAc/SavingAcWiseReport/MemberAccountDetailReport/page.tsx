@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 import type { MemberAccountDetailRequest } from "types/api/api";
 import * as yup from "yup";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const ALL_COLUMN_KEYS = MemberAccountColumnOptions.map((c) => c.key);
 
@@ -34,14 +33,12 @@ export interface MemberAccountDetailResponseExtended {
   currentPage: number;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
 }
 
-// ── Validation schema ─────────────────────────────────────────────────────────
 
 const schema: yup.ObjectSchema<MemberAccountDetailFormValues> = yup
   .object({
@@ -78,7 +75,6 @@ const schema: yup.ObjectSchema<MemberAccountDetailFormValues> = yup
   })
   .required();
 
-// ── Initial report state ──────────────────────────────────────────────────────
 
 const INITIAL_STATE: MemberAccountDetailResponseExtended = {
   isLoading: false,
@@ -87,7 +83,6 @@ const INITIAL_STATE: MemberAccountDetailResponseExtended = {
   currentPage: 1,
 };
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function MemberAccountDetailPage() {
   const [reportState, setReportState] =
@@ -104,7 +99,6 @@ export default function MemberAccountDetailPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── postMessage: receive totalPages from iframe after buildPages() ───────────
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -123,7 +117,6 @@ export default function MemberAccountDetailPage() {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // ── Map form values -> API request ────────────────────────────────────────────
   const toRequest = useCallback(
     (form: MemberAccountDetailFormValues): MemberAccountDetailRequest => {
       const selectedIds = (form.branchId ?? [])
@@ -164,7 +157,6 @@ export default function MemberAccountDetailPage() {
     [branchOptions],
   );
 
-  // ── API call ──────────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberAccountDetailRequest, format: string) =>
       memberAccountService.api.memberAccountDetailCreate(request, {
@@ -179,7 +171,6 @@ export default function MemberAccountDetailPage() {
     return JSON.stringify(response.data);
   }, []);
 
-  // ── Fetch VIEW report (raw HTML — same as MemberAllDetails) ───────────────────
   const fetchReport = useCallback(
     async (request: MemberAccountDetailRequest): Promise<void> => {
       setReportState({
@@ -211,7 +202,6 @@ export default function MemberAccountDetailPage() {
     [callApi, getHtmlString, reset],
   );
 
-  // ── Download (PDF / EXCEL etc. still fetched as a blob) ────────────────────────
   const handleDownload = useCallback(
     async (format: ReportFormat): Promise<void> => {
       if (!lastRequest) {
@@ -241,7 +231,6 @@ export default function MemberAccountDetailPage() {
     [callApi, lastRequest],
   );
 
-  // ── Page navigation (delegates to the iframe's own scrollToPage()) ────────────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const clamped = Math.max(1, Math.min(newPage, prev.totalPages));
@@ -252,13 +241,11 @@ export default function MemberAccountDetailPage() {
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
       } catch {
-        // defensive catch
       }
       return { ...prev, currentPage: clamped };
     });
   }, []);
 
-  // ── Form submit ───────────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<MemberAccountDetailFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport, toRequest],

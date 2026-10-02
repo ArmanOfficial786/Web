@@ -1,4 +1,3 @@
-// lib/ledgerLookupStore.ts
 "use client";
 
 import ledgerLookupService, {
@@ -16,9 +15,6 @@ export const LEDGER_DEFAULT_OPTIONS: SelectOption[] = [
   { id: "", name: "-- Select --" },
 ];
 
-// ============================================================================
-// Ledger Head — one global list for the whole app, fetched at most once.
-// ============================================================================
 
 let ledgerHeadOptions: SelectOption[] = LEDGER_DEFAULT_OPTIONS;
 let ledgerHeadPromise: Promise<void> | null = null;
@@ -44,8 +40,6 @@ function ensureLedgerHeadsLoaded(): void {
       notifyLedgerHead();
     })
     .catch(() => {
-      // Clear the cached promise so the next subscriber's mount retries
-      // instead of the whole app being stuck with an empty list forever.
       ledgerHeadPromise = null;
     });
 }
@@ -63,11 +57,6 @@ export const ledgerHeadStore = {
   },
 };
 
-// ============================================================================
-// Ledger Name — cached per (fromDate, toDate, branchId, accountTypeId) key.
-// Concurrent requests for the same key share one in-flight promise; a key
-// already resolved is served instantly from cache with no network call.
-// ============================================================================
 
 type LedgerNameKey = string;
 
@@ -143,11 +132,6 @@ export const ledgerNameStore = {
   fetch: fetchLedgerNames,
 };
 
-// ============================================================================
-// Sub Ledger Name — cached per (fromDate, toDate, branchId, accountTypeId,
-// mainLedger) key. Same dedupe/cache shape as Ledger Name, one extra key
-// segment for the upstream Ledger Name selection it cascades from.
-// ============================================================================
 
 type SubLedgerNameKey = string;
 

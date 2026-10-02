@@ -1,4 +1,3 @@
-// src/components/reports/memberAccount/OthersReport/DataEditedReportForm.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef } from "react";
@@ -67,9 +66,6 @@ function DataEditedReportForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<DataEditedReportFormValues>(),
     [],
@@ -80,7 +76,6 @@ function DataEditedReportForm({
   const branchError = (errors as FieldErrors<{ branchId?: unknown }>).branchId
     ?.message as string | undefined;
 
-  // ── Scroll AFTER the report actually loads, not before submit ─────────────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

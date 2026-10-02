@@ -14,23 +14,17 @@ import {
   type UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface AssetNameFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
-  /** Field name for the selected asset id (number) */
   assetFieldName: Path<T>;
-  /** Field name of the parent category id — drives the fetch */
   categoryFieldName: Path<T>;
-  /** Label shown above the dropdown. Defaults to "Asset Name". */
   label?: string;
-  /** Optional: force a specific asset as default once options load */
   defaultAssetId?: number;
 }
 
 const DEFAULT_ASSET_OPTIONS = [{ id: -1, name: "-- Select --" }];
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function AssetNameField<T extends FieldValues>({
   control,
   setValue,
@@ -57,11 +51,8 @@ export default function AssetNameField<T extends FieldValues>({
 
   const loading = categoryKey ? (assetLoading[categoryKey] ?? false) : false;
 
-  // Track the previous category so we reset the asset value only when the
-  // category *changes* — not on mount (safe under React Strict Mode).
   const previousCategoryRef = useRef<string | null>(null);
 
-  // ── Fetch on mount/reload + whenever category changes ────────────────────
   useEffect(() => {
     if (!categoryKey) return;
 
@@ -80,7 +71,6 @@ export default function AssetNameField<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryKey, fetchAssets]);
 
-  // ── Optional default asset once options load ────────────────────────────
   useEffect(() => {
     if (defaultAssetId === undefined) return;
     const match = options.find((o) => o.id === defaultAssetId);

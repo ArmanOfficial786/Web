@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/DailyIncomeReport/page.tsx
 "use client";
 
 import DailyIncomeForm, {
@@ -105,7 +104,6 @@ export default function DailyIncomePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

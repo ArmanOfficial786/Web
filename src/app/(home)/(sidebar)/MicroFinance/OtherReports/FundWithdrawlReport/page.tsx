@@ -21,12 +21,9 @@ import {
 
 export type FundWithdrawlRequestDto = ApiFundWithdrawlRequestDto;
 
-// ── Report Mode radio ─────────────────────────────────────────────────────────
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_MODE_SUMMARY = "Summary";
 const REPORT_MODE_DETAIL = "Detail";
 
-// branchIds arrives as string[] from OfficeNameField; joined to CSV in toRequest.
 export interface FundWithdrawlFormValues extends Omit<
   FundWithdrawlRequestDto,
   "branchIds"

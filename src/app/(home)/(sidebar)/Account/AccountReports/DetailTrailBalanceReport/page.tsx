@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/DetailTrialBalance/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,17 +15,14 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import accountService from "@/services/Account/AccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId here is already a single string on the DTO — no form-only shape needed ──
 export type DetailTrialBalanceFormValues = DetailTrialBalanceRequest;
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface DetailTrialBalanceResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -115,7 +111,6 @@ export default function DetailTrialBalancePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

@@ -1,4 +1,3 @@
-// components/reports/loan/OtherReports/LoanFollowUpForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";

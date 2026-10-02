@@ -1,4 +1,3 @@
-// components/reportForm/Common/RemittanceReceiptField.tsx
 "use client";
 
 import DropDownWithLoading from "@/components/form/DropDownWithLoading";
@@ -20,7 +19,6 @@ interface RemittanceReceiptFieldProps<T extends FieldValues> {
   name: Path<T>;
   fromDateFieldName: Path<T>;
   toDateFieldName: Path<T>;
-  /** true = received receipts, false = sent. Defaults to true. */
   isReceived?: boolean;
   label?: string;
 }
@@ -49,7 +47,6 @@ export default function RemittanceReceiptField<T extends FieldValues>({
     isReceived,
   });
 
-  // Clear the selection whenever the date range changes.
   const dependencyRef = useRef<string | null>(null);
   const dependencyKey = `${fromDate ?? ""}|${toDate ?? ""}|${isReceived}`;
 

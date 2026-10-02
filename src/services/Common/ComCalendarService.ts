@@ -1,4 +1,3 @@
-// services/Common/ComCalendarService.ts (cached version)
 import { apiClient } from "../apiClient";
 
 type TodayBs = {
@@ -8,10 +7,9 @@ type TodayBs = {
   convertedDate: string;
 };
 
-// ── Module‑level caches ──────────────────────────────────────────────────────
 let yearsCache: number[] | null = null;
 let todayBsCache: TodayBs | null = null;
-const daysCache = new Map<string, number[]>(); // key: `${year}-${month}`
+const daysCache = new Map<string, number[]>();
 
 const calendarService = {
   getYears: async (forceRefresh = false): Promise<number[]> => {
@@ -65,7 +63,6 @@ const calendarService = {
     return todayBsCache;
   },
 
-  // Optional: clear caches (e.g., after user logout or manual refresh)
   clearCache: () => {
     yearsCache = null;
     todayBsCache = null;

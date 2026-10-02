@@ -15,8 +15,6 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── Form values now map 1:1 to the DTO — tillDateBs is the actual field
-// name, no from/to translation needed.
 export type CashAndBankBalanceFormValues = CashAndBankBalanceRequestDto;
 
 export interface CashAndBankBalanceResponseExtended {
@@ -36,7 +34,7 @@ const schema: yup.ObjectSchema<CashAndBankBalanceFormValues> = yup
       .required(DATE_REQUIRED_MESSAGE),
     branchId: yup.string().nullable().optional().default("-1"),
     orderBy: yup.string().nullable().optional().default(""),
-    nepaliReport: yup.boolean().optional().default(false), // false = English (default)
+    nepaliReport: yup.boolean().optional().default(false),
   })
   .required();
 
@@ -53,7 +51,6 @@ export default function CashAndBankBalancePage() {
       mode: "onSubmit",
     });
 
-  // ── No transform layer needed — form values ARE the request shape ───────
   const toRequest = useCallback(
     (form: CashAndBankBalanceFormValues): CashAndBankBalanceRequestDto => ({
       tillDateBs: form.tillDateBs || undefined,

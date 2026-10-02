@@ -14,10 +14,8 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── branchId here is already a single number on the DTO — no form-only shape needed ──
 export type CostOfFundFormValues = CostOfFundRequest;
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface CostOfFundResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -99,7 +97,6 @@ export default function CostOfFundPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

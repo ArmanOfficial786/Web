@@ -67,8 +67,6 @@ function TellerCashDetailForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // Teller options narrow to the selected till date — same day used for
-  // both fromDateBs/toDateBs since TellerField expects a range.
   const tillDateBs = useWatch({ control, name: "tillDateBs" }) as
     | string
     | undefined;
@@ -171,7 +169,7 @@ function TellerCashDetailForm({
             <OrderByField<TellerCashDetailFormValues>
               control={control}
               name="orderBy"
-              reportKey="teller-cash-detail-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="teller-cash-detail-report"
             />
           </Box>
 

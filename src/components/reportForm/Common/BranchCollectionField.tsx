@@ -12,21 +12,14 @@ import DropDown from "@/components/form/DropDown";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import Box from "@mui/system/Box";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface BranchCollectionFieldProps<T extends FieldValues> {
   control: Control<T>;
-  branchFieldName: Path<T>; // ✅ configurable, no hardcoded field name
-  label: string; // ✅ configurable, no hardcoded label — set by the consuming form
-  setValue?: UseFormSetValue<T>; // optional — only needed if you want a default selection
-  defaultBranchId?: number; // optional, no default here (unlike BranchNameField)
+  branchFieldName: Path<T>;
+  label: string;
+  setValue?: UseFormSetValue<T>;
+  defaultBranchId?: number;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-// Reads collectionBranchOptions / fetchCollectionBranches straight from
-// ReportFormContext. The actual GET /api/Branch/GetCollectionBranch call is
-// guarded there by collectionBranchFetchedRef, so calling fetchCollectionBranches()
-// here on every mount is safe — it's a no-op after the very first successful call,
-// exactly like fetchBranches() is for BranchNameField above.
 export default function BranchCollectionField<T extends FieldValues>({
   control,
   branchFieldName,
@@ -41,7 +34,6 @@ export default function BranchCollectionField<T extends FieldValues>({
     fetchCollectionBranches();
   }, [fetchCollectionBranches]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultBranchId === undefined) return;
     if (!collectionBranchOptions?.length) return;

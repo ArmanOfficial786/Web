@@ -62,8 +62,6 @@ export const createLoanAccountLookupConfig = <
     loanStatus: "",
   },
 
-  // Adjust keys (key/label/filterKey...) to match your LookupColumn type
-  // and your member lookup config.
   columns: [
     { key: "accountNo", label: "Account No", filterKey: "accountNo" },
     { key: "memberId", label: "Member Id", filterKey: "memberId" },

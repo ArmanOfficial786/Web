@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/PayableInterestTransferredForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";

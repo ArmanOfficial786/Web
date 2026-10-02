@@ -1,19 +1,18 @@
-// app/(home)/(sidebar)/Account/OtherReports/AccountYearClosingReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { AccountYearClosingRequestDto, Pagination } from "types/api/api";
 import AccountYearClosingForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/AccountYearClosingForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { AccountYearClosingRequestDto, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 export type AccountYearClosingFormValues = AccountYearClosingRequestDto;
 
@@ -86,7 +85,6 @@ export default function AccountYearClosingPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

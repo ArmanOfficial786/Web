@@ -16,12 +16,10 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend
 const AS_ON_DATE_YES = "Yes";
 
 const INTEREST_TYPE_PI = "PI";
 
-// ⚠️ No matching DTO in api.ts — confirm exact endpoint + shape with backend
 export interface LoanInstallmentDueACClosingRequestDto {
   accountNo?: string | null;
   fromDateBs?: string | null;
@@ -98,7 +96,6 @@ function LoanInstallmentDueACClosingPage(): React.ReactElement {
 
   const callApi = useCallback(
     (request: LoanInstallmentDueACClosingRequestDto, format: string) =>
-      // ⚠️ fake api is used
       loanService.api.accountAccountYearClosingCreate(request, { format }),
     [],
   );

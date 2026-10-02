@@ -27,17 +27,15 @@ const printSheetOptions = [
   { value: PRINT_SHEET_SAVING_OR_LOAN, label: "Saving Or Loan" },
 ];
 
-// collectionCenterId (string) from CollectionCenterField; AD / address /
-// meetingDateTimeBs are UI-only bind fields, never sent.
 export interface CenterCollectionSingleSheetFormValues extends Omit<
   CenterCollectionSheetSingleRequestDto,
   "collectionCenterId"
 > {
-  branchIds?: string[]; // UI-only office id from the authenticated session
+  branchIds?: string[];
   collectionCenterId?: string;
-  tillDateAd?: string; // UI-only, derived from tillDateBs (BOTH_BS mode)
-  address?: string; // UI-only, bound by CollectionCenterField
-  meetingDateTimeBs?: string; // UI-only, bound by CollectionCenterField
+  tillDateAd?: string;
+  address?: string;
+  meetingDateTimeBs?: string;
 }
 
 export interface CenterCollectionSingleSheetResponseExtended {
@@ -72,7 +70,6 @@ const toRequest = (
   collectionCenterId: v.collectionCenterId || "-1",
   viewType: v.viewType || PRINT_SHEET_SAVING_AND_LOAN,
   visualReport: v.visualReport ?? false,
-  // tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });
 
 function CenterCollectionSingleSheetPage(): React.ReactElement {
@@ -135,7 +132,6 @@ function CenterCollectionSingleSheetPage(): React.ReactElement {
         setRenderKey((k) => k + 1);
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/DayBookLedgerWiseForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -117,7 +116,7 @@ function DayBookLedgerWiseForm({
               <OrderByField<DayBookLedgerWiseFormValues>
                 control={control}
                 name="orderBy"
-                reportKey="day-book-ledger-wise-report" // ⚠️ added to OrderByReportKey union / options map above
+                reportKey="day-book-ledger-wise-report"
               />
             </Grid>
           </Grid>

@@ -31,7 +31,6 @@ function CheckboxInput({
         return (
           <FormControl error={!!fieldState.error} sx={{ display: "flex" }}>
             {label ? (
-              // If a label is provided, use FormControlLabel (with its default spacing)
               <FormControlLabel
                 labelPlacement={labelPlacement}
                 control={
@@ -40,7 +39,6 @@ function CheckboxInput({
                 label={label}
               />
             ) : (
-              // No label → render only the checkbox (no extra spacing)
               <Checkbox checked={value} {...restFieldOpts} {...props} />
             )}
             <FormHelperText>{fieldState.error?.message}</FormHelperText>

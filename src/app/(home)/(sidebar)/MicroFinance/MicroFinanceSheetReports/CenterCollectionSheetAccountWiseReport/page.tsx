@@ -24,11 +24,11 @@ export interface CenterCollectionSheetAccountWiseFormValues extends Omit<
   CenterCollectionSheetAccountWiseRequestDto,
   "collectionCenterId"
 > {
-  branchIds?: string[]; // UI-only office id from the authenticated session
+  branchIds?: string[];
   collectionCenterId?: string;
-  tillDateAd?: string; // UI-only, derived from tillDateBs (BOTH_BS mode)
-  address?: string; // UI-only, bound by CollectionCenterField
-  meetingDateTimeBs?: string; // UI-only, bound by CollectionCenterField
+  tillDateAd?: string;
+  address?: string;
+  meetingDateTimeBs?: string;
 }
 
 export interface CenterCollectionSheetAccountWiseResponseExtended {
@@ -133,7 +133,6 @@ function CenterCollectionSheetAccountWisePage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

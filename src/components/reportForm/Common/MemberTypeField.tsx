@@ -12,16 +12,14 @@ import DropDown from "@/components/form/DropDown";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 import Box from "@mui/system/Box";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface MemberTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   memberTypeFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional — only needed for a default selection
-  defaultMemberTypeId?: number; // optional, no default here
-  label?: string; // configurable, defaults to "Member Type"
+  setValue?: UseFormSetValue<T>;
+  defaultMemberTypeId?: number;
+  label?: string;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function MemberTypeField<T extends FieldValues>({
   control,
   memberTypeFieldName,
@@ -35,7 +33,6 @@ export default function MemberTypeField<T extends FieldValues>({
     fetchMemberTypes();
   }, [fetchMemberTypes]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultMemberTypeId === undefined) return;
     if (!memberTypeOptions?.length) return;

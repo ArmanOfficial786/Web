@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingAccountRenewedReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,7 +14,6 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// UI-only field — never sent to the API. Used for EntityLookupField display.
 export type SavingAccountRenewedFormValues = Omit<
   SavingAccountRenewedRequestDto,
   "branchIds"
@@ -57,7 +55,7 @@ const schema: yup.ObjectSchema<SavingAccountRenewedFormValues> = yup
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
     memberId: yup.number().nullable().optional().default(null),
-    reportMode: yup.string().nullable().optional().default(""), // ⚠️ not shown in UI — confirm if backend requires a value
+    reportMode: yup.string().nullable().optional().default(""),
     memberName: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })

@@ -19,13 +19,13 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown"; // new import
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse"; // new import
+import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton"; // new import
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef, useState } from "react";
@@ -38,10 +38,8 @@ import type {
 
 export type { ReportFormat };
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 
 interface MemberAllDetailsReportProps {
-  // ← All three typed against MemberAllDetailsFormValues — was MemberRegistrationFormValues
   control: Control<MemberAllDetailsFormValues>;
   handleSubmit: UseFormHandleSubmit<MemberAllDetailsFormValues>;
   onSubmit: SubmitHandler<MemberAllDetailsFormValues>;
@@ -53,7 +51,6 @@ interface MemberAllDetailsReportProps {
   renderKey: number;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 
 function MemberAllDetailsReport({
   control,
@@ -206,7 +203,7 @@ function MemberAllDetailsReport({
                 name="selectedColumns"
                 control={control}
                 options={COLUMN_OPTIONS}
-                groupLabel="" // ← hide internal label (empty string is falsy)
+                groupLabel=""
                 columns={{ xs: 2, sm: 3, md: 4, lg: 6 }}
               />
             </Collapse>
@@ -229,7 +226,6 @@ function MemberAllDetailsReport({
                   onSubmit={onSubmit}
                   setValue={setValue}
                   loading={isLoading}
-                  //onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
                   setValue={setValue}

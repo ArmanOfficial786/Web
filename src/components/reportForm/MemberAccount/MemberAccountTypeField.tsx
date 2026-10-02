@@ -1,4 +1,3 @@
-// components/reportForm/MemberAccount/MemberAccountTypeField.tsx
 "use client";
 
 import React from "react";
@@ -7,8 +6,6 @@ import Box from "@mui/material/Box";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 
-// ⚠️ ASSUMPTION: no source table/list was given for these options — confirm
-// the actual `typeId` codes/labels against the backend before using.
 const memberAccountTypeOptions = [
   { id: "-1", name: "All" },
   { id: "1", name: "1 Year Normal Saving" },

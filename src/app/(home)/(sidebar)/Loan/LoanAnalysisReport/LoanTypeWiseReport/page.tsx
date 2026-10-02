@@ -16,10 +16,8 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ── Loan Guarantee options ────────────────────────────────────────────────────
 const LOAN_GUARANTEE_ALL = "All";
 
-// ── Share Type options (wire = number) ────────────────────────────────────────
 const SHARE_TYPE_ALL = "All";
 const SHARE_TYPE_PROMOTER = "Promoter";
 const SHARE_TYPE_SHARE_HOLDER = "ShareHolder";
@@ -31,7 +29,6 @@ const shareTypeToNumber = (v: string | undefined): number | undefined => {
   return undefined;
 };
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanTypeWiseFormValues extends Omit<
   LoanTypeWiseRequestDto,
   | "branchIds"
@@ -46,7 +43,7 @@ export interface LoanTypeWiseFormValues extends Omit<
   collectionCenterId?: string;
   collectorId?: string;
   loanTypeId?: string;
-  shareType?: string; // UI string → number in toRequest
+  shareType?: string;
 }
 
 export interface LoanTypeWiseResponseExtended {
@@ -91,7 +88,7 @@ const schema: yup.ObjectSchema<LoanTypeWiseFormValues> = yup
     sameCompanyName: yup.boolean().optional().default(false),
     showOpeningBalance: yup.boolean().optional().default(false),
     showDetail: yup.boolean().optional().default(false),
-    viewCollector: yup.boolean().optional().default(false), // ✅ added — DTO field was missing from schema
+    viewCollector: yup.boolean().optional().default(false),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -119,7 +116,7 @@ const toRequest = (v: LoanTypeWiseFormValues): LoanTypeWiseRequestDto => {
     sameCompanyName: v.sameCompanyName ?? false,
     showOpeningBalance: v.showOpeningBalance ?? false,
     showDetail: v.showDetail ?? false,
-    viewCollector: v.viewCollector ?? false, // ✅ added — pass through to the request DTO
+    viewCollector: v.viewCollector ?? false,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
   };

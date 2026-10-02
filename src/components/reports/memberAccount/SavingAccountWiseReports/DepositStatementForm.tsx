@@ -61,7 +61,6 @@ interface DepositStatementFormProps {
   onDownload: (format: ReportFormat) => void | Promise<void>;
   onAccountSelect: (record: AccountLookUpDtos) => void;
 
-  // ── Passbook verification (new) ───────────────────────────────────────
   verificationStatus: VerificationStatusDto | null;
   verifying: boolean;
   verifyErrorMessage?: string;

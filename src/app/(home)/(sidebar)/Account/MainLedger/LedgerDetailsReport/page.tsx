@@ -19,8 +19,8 @@ export interface LedgerDetailsFormValues {
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchId?: string | null;
-  ledgerHeadId?: string | null; // client-only filter, not sent to API
-  ledgerName?: string | null; // wrapped into ledgerHead[] at request time
+  ledgerHeadId?: string | null;
+  ledgerName?: string | null;
   voucherType?: string | null;
   reportType?: "0" | "1" | null;
   showOpeningBalance?: boolean;
@@ -59,7 +59,7 @@ const schema: yup.ObjectSchema<LedgerDetailsFormValues> = yup
       .string()
       .oneOf(["0", "1"] as const)
       .optional()
-      .default("0"), // ⚠️ codes assumed to match FirstLedgerDetails convention — confirm
+      .default("0"),
     showOpeningBalance: yup.boolean().optional().default(false),
   })
   .required();
@@ -84,8 +84,6 @@ export default function LedgerDetailsPage() {
       branchId: form.branchId || "-1",
       voucherType: form.voucherType || "All",
       reportType: form.reportType ?? "0",
-      // ledgerHeadId is a client-only filter — never sent; only the
-      // resolved ledgerName goes to the API, wrapped in an array.
       ledgerHead: form.ledgerName ? [form.ledgerName] : undefined,
       showOpeningBalance: form.showOpeningBalance ?? false,
       isSummary: form.reportType === "1",
@@ -126,7 +124,6 @@ export default function LedgerDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

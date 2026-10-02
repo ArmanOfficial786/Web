@@ -1,4 +1,3 @@
-// hooks/useLedgerNameOptions.ts
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -65,8 +64,8 @@ export function useLedgerNameOptions({
 
   useEffect(() => {
     if (!key || !ready) return;
-    if (ledgerNameStore.getSnapshot(key)) return; // already cached — no fetch
-    if (triggeredKeyRef.current === key) return; // this key's fetch already kicked off
+    if (ledgerNameStore.getSnapshot(key)) return;
+    if (triggeredKeyRef.current === key) return;
 
     triggeredKeyRef.current = key;
     setLoading(true);

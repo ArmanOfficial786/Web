@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingTransferReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -123,7 +122,6 @@ export default function SavingTransferPage() {
     [callApi],
   );
 
-  // ── Handle page change ────────────────────────────────────────────────────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const total = prev.pagination?.totalPages ?? 1;

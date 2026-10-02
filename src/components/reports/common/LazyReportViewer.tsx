@@ -47,13 +47,11 @@ function LazyReportViewer({
   const prevPdfDataRef = useRef<string>(pdfData);
   const isInitialRenderRef = useRef(true);
 
-  // Reset when new report is submitted
   useEffect(() => {
     setViewerReady(false);
     isInitialRenderRef.current = true;
   }, [reportKey]);
 
-  // Intersection Observer for initial lazy loading
   useEffect(() => {
     if (viewerReady) return;
 
@@ -74,19 +72,16 @@ function LazyReportViewer({
     return () => observer.disconnect();
   }, [viewerReady, reportKey]);
 
-  // 🔥 SILENT append when pdfData changes
   useEffect(() => {
     if (!viewerReady || !viewerRef.current) return;
 
     if (pdfData !== prevPdfDataRef.current) {
-      // Don't update ref immediately - let the append complete first
       viewerRef.current.appendPages(pdfData).then(() => {
         prevPdfDataRef.current = pdfData;
       });
     }
   }, [pdfData, viewerReady]);
 
-  // Scroll to current page
   useEffect(() => {
     if (viewerRef.current && currentPage > 0) {
       viewerRef.current.scrollToPage(currentPage);

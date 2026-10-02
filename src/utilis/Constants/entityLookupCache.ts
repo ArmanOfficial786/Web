@@ -41,7 +41,6 @@ function writeStorage<T>(key: string, entry: PersistedEntry<T>) {
   try {
     window.localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(entry));
   } catch {
-    /* localStorage full/unavailable — in-memory cache still works this tab */
   }
 }
 
@@ -50,7 +49,6 @@ function clearStorage(key: string) {
   try {
     window.localStorage.removeItem(STORAGE_PREFIX + key);
   } catch {
-    /* noop */
   }
 }
 

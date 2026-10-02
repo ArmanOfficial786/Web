@@ -2,7 +2,6 @@ import type { AssetCategoryResponse, RequestParams } from "types/api/api";
 import { apiClient } from "../apiClient";
 
 const assetCategoryService = {
-  // GET /api/AssetCategory/GetAllByType?type=F|O
   getAllByType: async (
     type?: string,
     params?: RequestParams,

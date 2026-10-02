@@ -5,7 +5,6 @@ import type { Control, FieldValues, Path } from "react-hook-form";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface TransactionTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
@@ -14,7 +13,6 @@ interface TransactionTypeFieldProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-// ── Options ───────────────────────────────────────────────────────────────────
 const transactionTypeOptions = [
   { value: "All", label: "All" },
   { value: "Cash", label: "Cash" },
@@ -23,7 +21,6 @@ const transactionTypeOptions = [
   { value: "NoCash", label: "No Cash" },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function TransactionTypeField<T extends FieldValues>({
   control,
   name,

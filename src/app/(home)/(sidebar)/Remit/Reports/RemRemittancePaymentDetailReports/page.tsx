@@ -22,9 +22,6 @@ import {
 export type RemittancePaymentDetailRequestDto =
   ApiRemittancePaymentDetailRequestDto;
 
-// branchIds arrives as string[] from OfficeNameField.
-// remittanceTypeId is a number from the generated API contract.
-// serviceType is a UI-only field; API expects remittanceServiceType.
 export interface RemittancePaymentDetailFormValues extends Omit<
   RemittancePaymentDetailRequestDto,
   "branchIds" | "remittanceTypeId" | "remittanceServiceType"
@@ -126,7 +123,6 @@ function RemittancePaymentDetailPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

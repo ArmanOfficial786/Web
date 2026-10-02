@@ -59,7 +59,6 @@ function TellerWiseCollectionForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Teller options narrow to the selected date range ──────────────────────
   const fromDateBs = useWatch({ control, name: "fromDateBs" }) as
     | string
     | undefined;
@@ -67,11 +66,9 @@ function TellerWiseCollectionForm({
     | string
     | undefined;
 
-  // ── Date validation message: required (either field) or bad order ─────────
   const dateError =
     errors.fromDateBs?.message ?? errors.toDateBs?.message ?? undefined;
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -142,7 +139,7 @@ function TellerWiseCollectionForm({
             <OrderByField<TellerWiseCollectionFormValues>
               control={control}
               name="orderBy"
-              reportKey="teller-wise-collection-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="teller-wise-collection-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

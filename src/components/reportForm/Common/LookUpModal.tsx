@@ -12,11 +12,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import type { FieldValues } from "react-hook-form";
-// NOTE: TableWithFilter.tsx lives at components/form/TableWithFilter.tsx,
-// while this file is at components/reportForm/Common/LookUpModal.tsx —
-// they are NOT in the same folder, so "./TableWithFilter" doesn't resolve.
-// Use the "@" alias (already used for TextInput/types imports elsewhere)
-// instead of a relative path.
 import TableWithFilter from "@/components/form/TableWithFilter";
 import type { LookupColumn } from "types/lookup";
 
@@ -34,7 +29,6 @@ export interface LookUpModalProps<
   pageSize?: number;
   title?: string;
   isLoading?: boolean;
-  /** Optional content rendered below the table (e.g. "loading more" status). */
   footer?: React.ReactNode;
 }
 
@@ -115,7 +109,7 @@ export default function LookUpModal<
           onSelect={handleSelect}
           pageSize={pageSize}
           isLoading={isLoading}
-          resetKey={open} // ← resets filters/page every time the modal reopens
+          resetKey={open}
         />
 
         {footer && (

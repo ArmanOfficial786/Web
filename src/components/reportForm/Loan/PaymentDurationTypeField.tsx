@@ -12,13 +12,12 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface PaymentDurationTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   paymentDurationTypeFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional — only needed for a default selection
-  defaultPaymentDurationTypeId?: number; // optional, no forced default here
-  label?: string; // configurable, defaults to "Payment Duration Type"
+  setValue?: UseFormSetValue<T>;
+  defaultPaymentDurationTypeId?: number;
+  label?: string;
 }
 
 export default function PaymentDurationTypeField<T extends FieldValues>({
@@ -35,7 +34,6 @@ export default function PaymentDurationTypeField<T extends FieldValues>({
     fetchPaymentDurationTypes();
   }, [fetchPaymentDurationTypes]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultPaymentDurationTypeId === undefined) return;
     if (!paymentDurationTypeOptions?.length) return;

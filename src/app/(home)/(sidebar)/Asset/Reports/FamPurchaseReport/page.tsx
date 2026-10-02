@@ -22,15 +22,13 @@ import {
 
 export type FamPurchaseReportRequestDto = ApiFamPurchaseReportRequestDto;
 
-// branchIds arrives as string[] from OfficeNameField.
-// categoryId is a number on the DTO; `type` is UI-only (drives the category list).
 export interface FamPurchaseReportFormValues extends Omit<
   FamPurchaseReportRequestDto,
   "branchIds" | "categoryId"
 > {
   branchIds?: string[];
   categoryId?: number | null;
-  type?: string; // UI-only — drives AssetCategoryField fetch
+  type?: string;
   reportType?: string | null;
 }
 
@@ -127,7 +125,6 @@ function FamPurchaseReportPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

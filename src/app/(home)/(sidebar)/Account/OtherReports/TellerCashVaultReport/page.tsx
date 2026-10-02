@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/TellerCashVaultReport/page.tsx
 "use client";
 
 import TellerCashVaultForm, {
@@ -108,7 +107,6 @@ export default function TellerCashVaultPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

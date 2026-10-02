@@ -41,7 +41,6 @@ export default function IconTextInput({
     ...props.sx,
   };
 
-  // Common props for TextField
   const commonProps = {
     variant: "outlined" as const,
     size: size,

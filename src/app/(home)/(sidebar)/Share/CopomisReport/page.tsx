@@ -63,7 +63,6 @@ export default function CopomisPage() {
     },
   );
 
-  // ── postMessage: receive totalPages from iframe after buildPages() ───────
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -148,7 +147,6 @@ export default function CopomisPage() {
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
       } catch {
-        // defensive catch
       }
       return { ...prev, currentPage: clamped };
     });

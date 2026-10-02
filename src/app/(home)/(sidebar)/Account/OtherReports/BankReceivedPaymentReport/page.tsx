@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/BankReceivedPaymentReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";

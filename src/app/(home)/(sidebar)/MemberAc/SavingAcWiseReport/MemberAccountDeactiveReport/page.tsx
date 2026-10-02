@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDeactiveReport/page.tsx
 "use client";
 
 import MemberAccountDeactiveForm, {
@@ -15,9 +14,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { MemberAccountDeactiveRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── branchId (multi-select array) is form-only — resolved into branchIds
-// (comma string) on submit. reportType radio ("Active"|"Inactive") maps to
-// isActive boolean; transactionType radio: "Saving" | "Loan". ──────────────
 export interface MemberAccountDeactiveFormValues extends Omit<
   MemberAccountDeactiveRequest,
   "branchIds" | "isActive"
@@ -26,14 +22,12 @@ export interface MemberAccountDeactiveFormValues extends Omit<
   reportType?: "Active" | "Inactive";
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface MemberAccountDeactiveResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -77,7 +71,6 @@ export default function MemberAccountDeactivePage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string); reportType -> isActive boolean ──
   const toRequest = useCallback(
     (form: MemberAccountDeactiveFormValues): MemberAccountDeactiveRequest => {
       const selectedIds = (form.branchId ?? [])

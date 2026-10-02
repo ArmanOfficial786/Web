@@ -16,10 +16,8 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend
 const PROVISION_TYPE_SCHEDULE_WISE = "ScheduleWise";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanCICFormValues extends Omit<
   LoanCICRequestDto,
   "branchIds" | "loanTypeId"

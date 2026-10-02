@@ -50,7 +50,7 @@ const schema: yup.ObjectSchema<AccountDayOpenCloseFormValues> = yup
     userId: yup.string().nullable().optional().default("-1"),
     userName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false), // on DTO, not requested for UI — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
@@ -114,7 +114,6 @@ export default function AccountDayOpenClosePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

@@ -119,7 +119,7 @@ function IbtTransactionForm({
             <OrderByField<IbtTransactionFormValues>
               control={control}
               name="orderBy"
-              reportKey="ibt-transaction-report" // ⚠️ add this key to your OrderByReportKey union / options map
+              reportKey="ibt-transaction-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/CashFlow/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,10 +14,8 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import accountService from "@/services/Account/AccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId here is already a single string on the DTO — no form-only shape needed ──
 export type CashFlowFormValues = CashFlowRequest;
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface CashFlowResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -104,7 +101,6 @@ export default function CashFlowPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

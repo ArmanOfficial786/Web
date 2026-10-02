@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/DayBookVoucherWiseForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -117,7 +116,7 @@ function DayBookVoucherWiseForm({
               <OrderByField<DayBookVoucherWiseFormValues>
                 control={control}
                 name="orderBy"
-                reportKey="day-book-voucher-wise-report" // ⚠️ added to OrderByReportKey union / options map above
+                reportKey="day-book-voucher-wise-report"
               />
             </Grid>
           </Grid>

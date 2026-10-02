@@ -5,7 +5,6 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 export type Language = "en" | "np";
 
 export interface Translations {
-  // MemberReport component
   memberRegistrationReport: string;
   startDate: string;
   toDate: string;
@@ -15,7 +14,6 @@ export interface Translations {
   generatingReport: string;
   clickGenerateReport: string;
 
-  // ReportNavigation component
   pageOf: string;
   show: string;
   perPage: string;
@@ -29,7 +27,6 @@ export interface Translations {
   image: string;
   totalRecords: string;
 
-  // Navbar
   home: string;
   about: string;
   Contact: string;

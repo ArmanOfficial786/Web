@@ -74,7 +74,6 @@ export default function RemitReceiptPrintForm({
   const receiptOf = useWatch({ control, name: "getRemittanceReceiptOf" });
   const isReceived = receiptOf === RECEIPT_OF_RECEIVED;
 
-  // UserLookup fetcher for Entry By — cached under this lookupKey.
   const fetchEntryBy = useMemo(
     () => async (): Promise<SelectOption[]> => {
       const res = await userLookupService.getAll();

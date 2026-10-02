@@ -1,4 +1,3 @@
-// components/reports/memberAccount/MemberAccountDeactiveForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -36,7 +35,6 @@ import TypeField from "@/components/reportForm/MemberAccount/TypeField";
 
 export type { ReportFormat };
 
-// ── Report Type: Active / Inactive ───────────────────────────────────────────
 const reportTypeOptions = [
   { value: "Active", label: "Active" },
   { value: "Inactive", label: "Inactive" },
@@ -66,7 +64,6 @@ function MemberAccountDeactiveForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -185,7 +182,7 @@ function MemberAccountDeactiveForm({
             <OrderByField<MemberAccountDeactiveFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-account-deactive-report" // ⚠️ add this key to accountOrderByOptions.ts
+              reportKey="member-account-deactive-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

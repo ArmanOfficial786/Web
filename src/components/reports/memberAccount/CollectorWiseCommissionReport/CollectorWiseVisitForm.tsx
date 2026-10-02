@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/CollectorWiseVisitForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -34,27 +33,22 @@ import type {
 
 export type { ReportFormat };
 
-// ── Report Type: All / Deposit / Loan ────────────────────────────────────
 const reportTypeOptions = [
   { value: "All", label: "All" },
   { value: "Deposit", label: "Deposit" },
   { value: "Loan", label: "Loan" },
 ];
 
-// ⚠️ Mapped to `visitType` on the DTO — low confidence this is the right
-// field. See chat note; confirm with backend before relying on this.
 const viewTypeOptions = [
   { value: "Landscape", label: "Landscape" },
   { value: "Portrait", label: "Portrait" },
 ];
 
-// ── Report By: Count / Amount ────────────────────────────────────────────
 const amountTypeOptions = [
   { value: "Count", label: "Count" },
   { value: "Amount", label: "Amount" },
 ];
 
-// ── Display By: All Account / Only Visit ─────────────────────────────────
 const generateByOptions = [
   { value: "AllAccount", label: "All Account" },
   { value: "OnlyVisit", label: "Only Visit" },

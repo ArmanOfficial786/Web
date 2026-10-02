@@ -131,7 +131,7 @@ export default function RemittancePaymentForm({
             <OrderByField<RemittancePaymentFormValues>
               control={control}
               name="orderBy"
-              reportKey="remittance-payment-report" // ⚠️ add this key to OrderByReportKey union / options map
+              reportKey="remittance-payment-report"
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box

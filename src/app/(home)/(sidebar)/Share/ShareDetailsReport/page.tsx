@@ -67,7 +67,6 @@ export default function ShareDetailReportPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── postMessage: receive totalPages from iframe after buildPages() ───────
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -157,7 +156,6 @@ export default function ShareDetailReportPage() {
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
       } catch {
-        // defensive catch
       }
       return { ...prev, currentPage: clamped };
     });

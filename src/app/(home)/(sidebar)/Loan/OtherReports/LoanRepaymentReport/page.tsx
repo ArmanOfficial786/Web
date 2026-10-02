@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Loan/OtherReports/LoanRepaymentReport/page.tsx
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
@@ -89,7 +88,6 @@ export default function LoanRepaymentPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

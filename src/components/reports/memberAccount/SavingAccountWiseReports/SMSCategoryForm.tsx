@@ -54,9 +54,6 @@ function SMSCategoryForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll AFTER the report actually loads, not before submit — the report
-  // Box doesn't exist in the DOM until showReport flips true, so scrolling
-  // pre-submit had no valid target to scroll to. ──────────────────────────────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

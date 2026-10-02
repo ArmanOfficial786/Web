@@ -1,4 +1,3 @@
-// components/reports/memberAccount/BranchToBranchCollectionForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -37,7 +36,6 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 
 export type { ReportFormat };
 
-// ⚠️ Codes are a guess — confirm against backend
 const reportTypeOptions = [
   { value: "All", label: "All" },
   { value: "SavingWise", label: "Saving Wise" },
@@ -170,7 +168,7 @@ function BranchToBranchCollectionForm({
             <OrderByField<BranchToBranchCollectionFormValues>
               control={control}
               name="orderBy"
-              reportKey="branch-to-branch-collection-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="branch-to-branch-collection-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/ChequeBookLostForm.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef } from "react";
@@ -66,9 +65,6 @@ function ChequeBookLostForm({
     }
   }, [blobUrl, showReport, isLoading]);
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<ChequeBookLostFormValues>(),
     [],
@@ -137,7 +133,7 @@ function ChequeBookLostForm({
             <OrderByField<ChequeBookLostFormValues>
               control={control}
               name="orderBy"
-              reportKey="cheque-book-lost-report" // ⚠️ add this key to your OrderByReportKey union / options map
+              reportKey="cheque-book-lost-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

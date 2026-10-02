@@ -1,4 +1,3 @@
-// components/layout/sidebar-menu.ts
 import type { SvgIconComponent } from "@mui/icons-material";
 import {
   AccountBalance as AccountIcon,
@@ -14,9 +13,8 @@ import {
   PieChart as ShareIcon,
 } from "@mui/icons-material";
 
-const DEFAULT_FOLDER_LABEL = "Reports"; // fallback when a route has no folder segment
+const DEFAULT_FOLDER_LABEL = "Reports";
 
-// ── Data model ──────────────────────────────────────────────────────────
 export interface LeafReport {
   label: string;
   route: string;
@@ -78,7 +76,6 @@ export const MENU: MenuNode[] = [
     icon: MemberAcIcon,
     label: "Member A/C",
     reports: [
-      // ========== SavingAcWiseReport Section==============
       {
         label: "DepositStatementReport",
         route: "/MemberAc/SavingAcWiseReport/DepositStatementReport",
@@ -130,7 +127,6 @@ export const MENU: MenuNode[] = [
         route: "/MemberAc/SavingAcWiseReport/MemberAccountDetailReport",
       },
 
-      //===============Other Reports Section================
       {
         label: "Teller Wise Collection Report",
         route: "/MemberAc/OtherReports/TellerWiseCollectionReport",
@@ -200,7 +196,6 @@ export const MENU: MenuNode[] = [
         route: "/MemberAc/OtherReports/SavingInterestLogReport",
       },
 
-      //===============Interest Expense Reports Section================
 
       {
         label: "Fixed Deposit Interest Transfer Report",
@@ -225,7 +220,6 @@ export const MENU: MenuNode[] = [
           "/MemberAc/InterestExpenseReport/PayableInterestTransferredReport",
       },
 
-      //===============Interest Payable Reports Section================
       {
         label: "Saving Interest Payable Report",
         route: "/MemberAc/InterestPayableReport/SavingInterestPayableReport",
@@ -250,7 +244,6 @@ export const MENU: MenuNode[] = [
           "/MemberAc/InterestPayableReport/FixedDepositCertificateAndScheduleReport",
       },
 
-      //===============Collector Detail Reports Section================
       {
         label: "CollectorWiseCommission Report",
         route: "/MemberAc/CollectorDetailReport/CollectorWiseCommissionReport",
@@ -275,7 +268,6 @@ export const MENU: MenuNode[] = [
         route: "/MemberAc/CollectorDetailReport/CollectorWiseVisitReport",
       },
 
-      //===============Cheque Book Reports Section================
 
       {
         label: "ChequeBookIssueReport",
@@ -338,7 +330,6 @@ export const MENU: MenuNode[] = [
         route: "/Account/AccountReports/RatioAnalysisReport",
       },
 
-      //===============Other Reports Section================
       {
         label: "TellerToTellerCashTransferReport",
         route: "/Account/OtherReports/TellerToTellerCashTransferReport",
@@ -405,7 +396,6 @@ export const MENU: MenuNode[] = [
         route: "/Account/OtherReports/PaymentThroughSavingReport",
       },
 
-      //==========Maini ledger Reports Section================
       {
         label: "Ledger Details Report",
         route: "/Account/MainLedger/LedgerDetailsReport",
@@ -427,7 +417,6 @@ export const MENU: MenuNode[] = [
         route: "/Account/MainLedger/4thLedgerDetailsReport",
       },
 
-      //==============Main Ledger Reports Section================
       {
         label: "IBT Transaction Report",
         route: "/Account/IBTReport/IBTTransactionReport",
@@ -512,7 +501,6 @@ export const MENU: MenuNode[] = [
         label: "Loan Repayment Report",
         route: "/Loan/OtherReports/LoanRepaymentReport",
       },
-      //==========Loan Account Wise Report========================
 
       {
         label: "Loan Issue Report",
@@ -559,7 +547,6 @@ export const MENU: MenuNode[] = [
         label: "Loan Statement Verification Report",
         route: "/Loan/LoanAccountWiseReport/LoanStatementVerificationReport",
       },
-      //============Loan Analysis Report ====================================
       {
         label: "Loan Provision Report",
         route: "/Loan/LoanAnalysisReport/LoanProvisionReport",
@@ -615,7 +602,6 @@ export const MENU: MenuNode[] = [
     ],
   },
 
-  //============sahare section================
 
   {
     type: "parent-reports",
@@ -660,7 +646,6 @@ export const MENU: MenuNode[] = [
       },
     ],
   },
-  //========Remit===========
   {
     type: "parent-reports",
     icon: RemitIcon,
@@ -685,7 +670,6 @@ export const MENU: MenuNode[] = [
     ],
   },
 
-  //========Asset===========
   {
     type: "parent-reports",
     icon: AssetIcon,
@@ -705,7 +689,6 @@ export const MENU: MenuNode[] = [
       },
     ],
   },
-  //=============Micro Finance Section================
   {
     type: "parent-reports",
     icon: MicroFinanceIcon,
@@ -746,7 +729,6 @@ export const MENU: MenuNode[] = [
         route: "/MicroFinance/MicroFinanceSheetReports/CenterCollectionReport",
       },
 
-      //==============CENTER COLLECTION REPORTS================
       {
         label: "Center Meeting Detail Report",
         route: "/MicroFinance/CenterDetailReports/CenterMeetingDetailReport",
@@ -762,7 +744,6 @@ export const MENU: MenuNode[] = [
           "/MicroFinance/CenterDetailReports/CollectorWiseProjectionReport",
       },
 
-      //============MicroFinance Report===============
       {
         label: "Fund Withdrawl Report",
         route: "/MicroFinance/OtherReports/FundWithdrawlReport",
@@ -774,7 +755,6 @@ export const MENU: MenuNode[] = [
     ],
   },
 
-  //=============Insurance Section================
   {
     type: "parent-reports",
     icon: InsuranceIcon,
@@ -788,7 +768,6 @@ export const MENU: MenuNode[] = [
   },
 ];
 
-// ── Dynamic folder derivation ────────────────────────────────────────────
 
 export function getFolderSegment(route: string): string {
   const segments = route.split("/").filter(Boolean);
@@ -800,7 +779,7 @@ export function getFolderSegment(route: string): string {
 
 export interface FolderGroup {
   folder: string;
-  key: string; // `${parentLabel}::${folder}`
+  key: string;
   reports: LeafReport[];
 }
 export interface ParentItem extends Omit<ParentWithReports, "reports"> {

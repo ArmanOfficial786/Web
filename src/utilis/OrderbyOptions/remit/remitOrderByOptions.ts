@@ -28,13 +28,11 @@ export const remittancePaymentDetailOrderByOptions = defineOrderByOptions([
   { key: "cashTeller", label: "Cash Teller" },
 ] as const);
 
-//===================================================
 export type RemittancePaymentOrderByReportKey =
   | "remittance-payment-report"
   | "remittance-received-report"
   | "remittance-payment-detail-report";
 
-//======================================================
 export const remittancePaymentOrderByOptionsMap: Record<
   RemittancePaymentOrderByReportKey,
   readonly OrderByOption[]

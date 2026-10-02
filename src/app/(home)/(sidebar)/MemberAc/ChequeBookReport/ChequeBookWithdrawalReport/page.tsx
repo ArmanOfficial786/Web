@@ -1,24 +1,23 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/ChequeBookWithdrawalReport/page.tsx
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import ChequeBookWithdrawalForm, {
+  type ChequeBookWithdrawalFormValues,
+  type ReportFormat,
+} from "@/components/reports/memberAccount/ChequeBookReport/ChequeBookWithdrawalForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   AccountLookUpDtos,
   ChequeBookWithdrawalRequestDto,
   Pagination,
 } from "types/api/api";
-import ChequeBookWithdrawalForm, {
-  type ChequeBookWithdrawalFormValues,
-  type ReportFormat,
-} from "@/components/reports/memberAccount/ChequeBookReport/ChequeBookWithdrawalForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 export interface ChequeBookWithdrawalResponseExtended {
   pdfData?: string;
@@ -26,7 +25,6 @@ export interface ChequeBookWithdrawalResponseExtended {
   pagination?: Pagination;
 }
 
-// ── UI-only fields (accountId) merged onto the real DTO shape ───────────────
 const schema: yup.ObjectSchema<ChequeBookWithdrawalFormValues> = yup
   .object({
     accountId: yup.number().optional(),
@@ -34,7 +32,7 @@ const schema: yup.ObjectSchema<ChequeBookWithdrawalFormValues> = yup
     memberId: yup.string().nullable().optional().default(""),
     memberName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
@@ -60,7 +58,6 @@ export default function ChequeBookWithdrawalPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── Account selection from the lookup modal ──────────────────────────────
   const handleAccountSelect = useCallback(
     (record: AccountLookUpDtos) => {
       setValue("accountNo", record.accountNo ?? "", { shouldValidate: true });
@@ -104,7 +101,6 @@ export default function ChequeBookWithdrawalPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

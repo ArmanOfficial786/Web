@@ -15,10 +15,6 @@ interface VoucherNoFieldProps<T extends FieldValues> {
   label?: string;
 }
 
-// A BS date string in this app is "YYYY-MM-DD" — 10 chars. Anything shorter
-// is still being assembled from the Year/Month/Day segment dropdowns and
-// should never trigger a fetch. Adjust MIN_DATE_LENGTH if your date format
-// differs.
 const MIN_DATE_LENGTH = 8;
 const isCompleteDate = (value?: string) =>
   !!value && value.length >= MIN_DATE_LENGTH;
@@ -74,15 +70,12 @@ export default function VoucherNoField<T extends FieldValues>({
       branches: branchesSignature,
     };
 
-    // Bail out early on partial/incomplete dates — no fetch, no debounce
-    // scheduled at all, so intermediate Y/M/D segment changes are silent.
     if (!changed || !datesComplete || !hasBranchSelected) {
       return;
     }
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      // fromDate/toDate are narrowed to defined+complete by datesComplete
       fetchVouchers(fromDate as string, toDate as string, branchIds);
     }, 300);
 

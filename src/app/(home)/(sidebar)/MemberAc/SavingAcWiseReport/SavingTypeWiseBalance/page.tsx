@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/SavingTypeWiseBalance/page.tsx
 "use client";
 
 import SavingTypeWiseBalanceForm, {
@@ -13,9 +12,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { Pagination, SavingTypeWiseBalanceRequest } from "types/api/api";
 import * as yup from "yup";
 
-// ── branchId is a single number here (matches the Branch Name dropdown in
-// the UI), not a multi-select array — the DTO's string field is derived
-// from this number in toRequest(). ───────────────────────────────────────────
 export interface SavingTypeWiseBalanceFormValues extends Omit<
   SavingTypeWiseBalanceRequest,
   "branchId"
@@ -23,7 +19,6 @@ export interface SavingTypeWiseBalanceFormValues extends Omit<
   branchId?: number;
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface SavingTypeWiseBalanceResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -39,7 +34,6 @@ const DEFAULT_PAGINATION: Pagination = {
   hasPreviousPage: false,
 };
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -77,7 +71,7 @@ const schema: yup.ObjectSchema<SavingTypeWiseBalanceFormValues> = yup
     groupByCollectionCenter: yup.boolean().optional().default(false),
     groupByMemberGroup: yup.boolean().optional().default(false),
     viewCollector: yup.boolean().optional().default(false),
-    viewDetail: yup.boolean().optional().default(true), // ✅ checked by default per image
+    viewDetail: yup.boolean().optional().default(true),
     sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -153,7 +147,6 @@ export default function SavingTypeWiseBalancePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

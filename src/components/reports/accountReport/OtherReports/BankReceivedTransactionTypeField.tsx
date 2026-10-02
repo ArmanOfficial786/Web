@@ -1,4 +1,3 @@
-// components/reportForm/Common/TransactionTypeField.tsx
 "use client";
 
 import React from "react";
@@ -12,8 +11,6 @@ interface BankReceivedTransactionTypeFieldProps<T extends FieldValues> {
   label?: string;
 }
 
-// ⚠️ Static option set — Saving / Loan / Share / Miscellaneous per your spec.
-// Values assumed to match backend's expected transactionType strings; confirm.
 const TRANSACTION_TYPE_OPTIONS = [
   { id: "", name: "-- Select --" },
   { id: "Saving", name: "Saving" },

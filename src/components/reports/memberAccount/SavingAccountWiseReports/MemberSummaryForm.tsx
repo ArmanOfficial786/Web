@@ -1,4 +1,3 @@
-// components/reports/memberAccount/MemberSummaryForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -60,7 +59,6 @@ function MemberSummaryForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -200,7 +198,7 @@ function MemberSummaryForm({
             <OrderByField<MemberSummaryFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-summary-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="member-summary-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

@@ -26,14 +26,12 @@ export interface MemberAccountDetailNoFormValues extends Omit<
   loanTypeId?: number;
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface MemberAccountDetailNoResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");

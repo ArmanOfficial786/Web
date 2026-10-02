@@ -1,4 +1,3 @@
-// components/hooks/useRemittanceReceipts.ts
 "use client";
 
 import remittanceReceiptService from "@/services/Remit/RemittanceReceiptService";
@@ -23,7 +22,6 @@ export function useRemittanceReceipts({
   const [loading, setLoading] = useState(false);
   const requestIdRef = useRef(0);
 
-  // Primitive deps only, so unrelated form re-renders never restart the fetch.
   useEffect(() => {
     const requestId = ++requestIdRef.current;
 
@@ -32,7 +30,6 @@ export function useRemittanceReceipts({
       return;
     }
 
-    // createdBy and officeIds come from the JWT, not the form.
     const { userId, officeIds } = getAuthClaims();
     const createdBy = Number(userId ?? "");
     const parsedOfficeIds = (officeIds ?? "")
@@ -60,7 +57,7 @@ export function useRemittanceReceipts({
           toDateBs: toDate,
           officeIds: parsedOfficeIds,
         });
-        if (requestId !== requestIdRef.current) return; // stale response
+        if (requestId !== requestIdRef.current) return;
         setOptions([...DEFAULT_OPTIONS, ...rows]);
       } catch {
         if (requestId !== requestIdRef.current) return;

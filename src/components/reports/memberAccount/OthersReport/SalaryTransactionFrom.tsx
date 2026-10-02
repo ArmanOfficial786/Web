@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/SalaryTransactionForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";
@@ -38,21 +37,17 @@ import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
-// ── Report Type: Summary / Detail ────────────────────────────────────────
-// ⚠️ numeric codes are placeholders — confirm against backend
 const reportTypeOptions = [
   { value: 1, label: "Summary" },
   { value: 2, label: "Detail" },
 ];
 
-// ── Transfer On: All / Saving / Bank ─────────────────────────────────────
 const transferOnOptions = [
   { value: "all", label: "All" },
   { value: "saving", label: "Saving" },
   { value: "bank", label: "Bank" },
 ];
 
-// ── Select Staff: Office Wise / All Staff ────────────────────────────────
 const staffSelectionOptions = [
   { value: "officewise", label: "Office Wise" },
   { value: "allstaff", label: "All Staff" },
@@ -87,8 +82,6 @@ function SalaryTransactionForm({
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
 
-  // Staff Name dropdown only meaningful under "Office Wise" —
-  // ⚠️ assumption: reset to "All" (null) when "All Staff" is picked.
   const staffSelection = watch("staffSelection");
   const staffDropdownDisabled = staffSelection === "allstaff";
 

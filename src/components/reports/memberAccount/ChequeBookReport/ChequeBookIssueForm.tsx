@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/ChequeBookIssueForm.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef } from "react";
@@ -66,9 +65,6 @@ function ChequeBookIssueForm({
     }
   }, [blobUrl, showReport, isLoading]);
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<ChequeBookIssueFormValues>(),
     [],

@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/LoanPaymentThroughSavingForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -27,7 +26,7 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 import Preloader from "@/components/PreLoader/preloader";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
-import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch"; // ⚠️ confirm actual path
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import type {
   LoanPaymentThroughSavingFormValues,
   LoanPaymentThroughSavingResponseExtended,
@@ -35,7 +34,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── Report View — Vertical / Horizontal layout ───────────────────────────────
 const reportViewOptions = [
   { value: "Vertical", label: "Vertical" },
   { value: "Horizontal", label: "Horizontal" },

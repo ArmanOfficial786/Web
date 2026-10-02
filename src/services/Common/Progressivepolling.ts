@@ -19,7 +19,7 @@ const savingAcWiseBalanceProgressiveService = {
       `/api/SavingACWiseBalanceReport/progressive/${jobId}`,
       {
         responseType: "blob",
-        silentSuccess: true, // suppress success toast — polling is silent
+        silentSuccess: true,
         signal,
       },
     );

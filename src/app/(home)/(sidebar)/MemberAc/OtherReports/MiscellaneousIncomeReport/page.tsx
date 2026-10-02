@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/MiscellaneousIncomeReport/page.tsx
 "use client";
 
 import React, { useCallback, useState } from "react";
@@ -54,7 +53,7 @@ const schema: yup.ObjectSchema<MiscellaneousIncomeFormValues> = yup
       .default([]),
     reportType: yup
       .string()
-      .oneOf(["Miscellaneous", "Fund"]) // ⚠️ confirm exact backend codes
+      .oneOf(["Miscellaneous", "Fund"])
       .nullable()
       .optional()
       .default("Miscellaneous"),

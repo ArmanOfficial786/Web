@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/TellerCashBalanceReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -50,7 +49,7 @@ const schema: yup.ObjectSchema<TellerCashBalanceFormValues> = yup
       }),
     branchId: yup.number().optional().default(2),
     orderBy: yup.string().nullable().optional().default(""),
-    nepaliReport: yup.boolean().optional().default(false), // false = English (default)
+    nepaliReport: yup.boolean().optional().default(false),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();

@@ -166,7 +166,7 @@ export default function LoanCICForm({
             <OrderByField<LoanCICFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-cic-report" // ⚠️ add this key to OrderByReportKey union / options map
+              reportKey="loan-cic-report"
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box

@@ -18,11 +18,8 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_TYPE_LOAN_VERIFIED = "LoanVerified";
 
-// branchIds arrives as string[] from OfficeNameField
-// memberId / memberName are UI-only (from EntityLookupField)
 export type LoanVerifiedUnverifiedFormValues = Omit<
   LoanVerifiedUnverifiedRequestDto,
   "branchIds" | "memberRegistrationId"
@@ -134,7 +131,6 @@ export default function LoanVerifiedUnverifiedPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

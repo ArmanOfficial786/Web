@@ -1,4 +1,3 @@
-// components/reports/accountReport/DepositWithdrawMaxAmountRangeForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -35,7 +34,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── Type: Deposit / Withdraw / Both — 1/2/3 ──────────────────────────────────
 const transactionTypeOptions = [
   { value: "1", label: "Deposit" },
   { value: "2", label: "Withdraw" },
@@ -66,7 +64,6 @@ function DepositWithdrawMaxAmountRangeForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -167,7 +164,7 @@ function DepositWithdrawMaxAmountRangeForm({
             <OrderByField<DepositWithdrawMaxAmountRangeFormValues>
               control={control}
               name="orderBy"
-              reportKey="deposit-withdraw-max-amount-range-report" // ⚠️ add this key to accountOrderByOptions.ts
+              reportKey="deposit-withdraw-max-amount-range-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

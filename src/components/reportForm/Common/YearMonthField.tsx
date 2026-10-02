@@ -1,4 +1,3 @@
-// components/reportForm/Common/YearMonthField.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import {
@@ -41,9 +40,6 @@ interface YearMonthFieldProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-// Mirrors NepaliDatePicker's year/month dropdown approach (same
-// calendarService.getYears() call, same BS_MONTHS list) but omits the
-// day dropdown entirely — for reports that filter by BS year + month only.
 export default function YearMonthField<T extends FieldValues>({
   control,
   yearFieldName,

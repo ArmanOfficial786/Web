@@ -1,4 +1,3 @@
-// src/app/(home)/(sidebar)/MemberAc/OtherReports/DataEditedReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -13,16 +12,6 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 
-// ── Form-only shape ──────────────────────────────────────────────────────────
-// branchId: array of selected office ids from the checkbox list (joined into
-//           the DTO's comma-separated branchIds string in toRequest()).
-// memberId / memberName / memberRegistrationId: populated by the Member
-//           Directory lookup (EntityLookupField + MemberLookupConfig), same
-//           pattern used on the MemberIdCard page.
-// NOTE: memberId/memberName are typed `string | null` (not `| undefined`) to
-// match the `.nullable()` yup fields below — yup's inferred output type for
-// `.nullable()` is `T | null`, so the interface must agree or ObjectSchema<T>
-// fails to type-check.
 export interface DataEditedReportFormValues extends Omit<
   DataEditedReportRequestDto,
   "branchIds" | "entryBy" | "editedBy" | "memberRegistrationId"
@@ -35,7 +24,6 @@ export interface DataEditedReportFormValues extends Omit<
   memberName?: string | null;
 }
 
-// ── Client-only response state (raw PDF blob URL + header pagination) ──────
 export interface DataEditedReportResponseExtended {
   pdfData?: string;
   isLoading: boolean;

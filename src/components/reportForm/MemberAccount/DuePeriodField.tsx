@@ -1,4 +1,3 @@
-// components/reportForm/MemberAccount/DuePeriodField.tsx
 "use client";
 
 import React from "react";
@@ -7,8 +6,6 @@ import Box from "@mui/material/Box";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 
-// ── Static Due Transaction Period options — confirm these values match
-// what the backend expects for `duePeriod` (int32) ───────────────────────────
 const duePeriodOptions = [
   { id: 1, name: "1 Month" },
   { id: 2, name: "2 Month" },

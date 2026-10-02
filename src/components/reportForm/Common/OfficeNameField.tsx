@@ -21,12 +21,10 @@ export default function OfficeNameField<T extends FieldValues>({
 }: OfficeNameFieldProps<T>) {
   const { fetchBranches, branchOptions } = useReportFormContext();
 
-  // Fetch branches eagerly on mount so defaultSelectAll fires as soon as options arrive
   useEffect(() => {
     fetchBranches();
   }, [fetchBranches]);
 
-  // Filter out any sentinel values (id <= 0) that may exist in initial context state
   const realBranches = branchOptions.filter((o) => Number(o.id) > 0);
 
   return (

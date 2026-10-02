@@ -242,7 +242,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
   const [clearanceStatusOptions, setClearanceStatusOptions] =
     useState<SelectOption[]>(DEFAULT_SELECT);
 
-  //=====ref gurar================
   const branchFetchedRef = useRef(false);
   const depositeTypeRef = useRef(false);
   const searchGenerationRef = useRef(0);
@@ -447,27 +446,13 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // const fetchShareType = useCallback(async () => {
-  //   if (shareTypeFetchedRef.current) return;
-  //   try {
-  //     const res = await shareTypeService.getAll();
-  //     const mapped = res.map((s: any) => ({
-  //       id: s.shareTypeId ?? -1,
-  //       name: s.shareTypeName ?? "",
-  //     }));
-  //     setShareTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
-  //     if (mapped.length > 0) shareTypeFetchedRef.current = true;
-  //   } catch {
-  //     shareTypeFetchedRef.current = false;
-  //   }
-  // }, []);
 
   const fetchShareType = useCallback(async () => {
     if (shareTypeFetchedRef.current) return;
     try {
       const res = await shareTypeService.getAll();
       const mapped = res
-        .filter((s: any) => s.shmShareTypeId != null) // drop rows with no real id
+        .filter((s: any) => s.shmShareTypeId != null)
         .map((s: any) => ({
           id: s.shmShareTypeId,
           name: s.shareTypeName ?? "",
@@ -502,7 +487,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // ── Teller (expense) — now tracks a loading flag ──────────────────────────
   const fetchTellerExpenses = useCallback(
     async (fromDateBs?: string, toDateBs?: string) => {
       setTellerExpenseLoading(true);
@@ -531,7 +515,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserLookupOnce = useCallback(
     async (key: string, fetcher: () => Promise<SelectOption[]>) => {
-      if (userLookupFetchedRef.current[key]) return; // already fetched or in flight
+      if (userLookupFetchedRef.current[key]) return;
       userLookupFetchedRef.current[key] = true;
 
       setUserLookupLoading((prev) => ({ ...prev, [key]: true }));
@@ -542,7 +526,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
           [key]: [{ id: -1, name: "-- Select --" }, ...res],
         }));
       } catch {
-        // allow a future retry on failure instead of caching a permanent miss
         userLookupFetchedRef.current[key] = false;
         setUserLookupOptionsMap((prev) => ({ ...prev, [key]: DEFAULT_SELECT }));
       } finally {
@@ -552,8 +535,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // fetchBranches — add loading toggling (only change: setBranchLoading calls)
-  // ✅ NEW — Collection Branches (lazy, once)
   const fetchCollectionBranches = useCallback(async () => {
     if (collectionBranchFetchedRef.current) return;
     collectionBranchFetchedRef.current = true;
@@ -571,7 +552,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       setCollectionBranchLoading(false);
     }
   }, []);
-  // voucher no
   const fetchVouchers = useCallback(
     async (fromDate: string, toDate: string, branchIds?: number[]) => {
       if (!fromDate || !toDate) {
@@ -605,7 +585,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  // ── Payment Duration Type — lazy, fetched once per app session, then
   const fetchPaymentDurationTypes = useCallback(async () => {
     if (paymentDurationTypeFetchedRef.current) return;
     paymentDurationTypeFetchedRef.current = true;
@@ -617,12 +596,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       }));
       setPaymentDurationTypeOptions([{ id: -1, name: "-- All --" }, ...mapped]);
     } catch {
-      paymentDurationTypeFetchedRef.current = false; // allow retry on failure
+      paymentDurationTypeFetchedRef.current = false;
     }
   }, []);
 
-  // ── Member Type — lazy, fetched once, retried on failure (same pattern
-  // as fetchBranches / fetchLoanMasterList — the ref now actually guards).
   const fetchMemberTypes = useCallback(async () => {
     if (memberTypeFetchedRef.current) return;
     memberTypeFetchedRef.current = true;
@@ -638,7 +615,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // ── Fiscal Year (BS) — lazy, fetched once, retried on failure ─────────────
   const fetchFiscalYearBs = useCallback(async () => {
     if (fiscalYearBsFetchedRef.current) return;
     fiscalYearBsFetchedRef.current = true;
@@ -651,11 +627,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       }));
       setFiscalYearBsOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
-      fiscalYearBsFetchedRef.current = false; // allow retry on failure
+      fiscalYearBsFetchedRef.current = false;
     }
   }, []);
 
-  // ── Remittance Type — lazy, fetched once, retried on failure ──────────────
   const fetchRemittanceTypes = useCallback(async () => {
     if (remittanceTypeFetchedRef.current) return;
     remittanceTypeFetchedRef.current = true;
@@ -668,25 +643,20 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       }));
       setRemittanceTypeOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
-      remittanceTypeFetchedRef.current = false; // allow retry on failure
+      remittanceTypeFetchedRef.current = false;
     }
   }, []);
 
-  // ── Asset Category — cached per type ("F" | "O"), fetched once per app
-  // session; failed/empty results reset the guard so the next call retries.
   const fetchAssetCategories = useCallback(async (type: string) => {
     if (!type) return;
-    if (assetCategoryFetchedRef.current[type]) return; // fetched or in flight
+    if (assetCategoryFetchedRef.current[type]) return;
     assetCategoryFetchedRef.current[type] = true;
 
     setAssetCategoryLoading((prev) => ({ ...prev, [type]: true }));
     try {
-      // Make sure the auth session is hydrated on a hard reload so the
-      // token is attached to the request.
       try {
         await getSession();
       } catch {
-        /* proceed; the request itself will surface auth errors */
       }
 
       const res: AssetCategoryResponse[] =
@@ -710,7 +680,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       if (mapped.length === 0) assetCategoryFetchedRef.current[type] = false;
     } catch (error) {
       console.error("fetchAssetCategories failed", error);
-      assetCategoryFetchedRef.current[type] = false; // allow retry on failure
+      assetCategoryFetchedRef.current[type] = false;
     } finally {
       setAssetCategoryLoading((prev) => ({ ...prev, [type]: false }));
     }
@@ -763,11 +733,10 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
       }));
       setClearanceStatusOptions([{ id: -1, name: "-- Select --" }, ...mapped]);
     } catch {
-      clearanceStatusFetchedRef.current = false; // allow retry on failure
+      clearanceStatusFetchedRef.current = false;
     }
   }, []);
 
-  //======end call api logic========================
   const contextValue = useMemo<ReportFormContextType>(
     () => ({
       memberLookUp,

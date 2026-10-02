@@ -16,16 +16,14 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── UI-only fields — stripped/derived before hitting the API ────────────────
 export interface BalanceSheetFormValues extends Omit<
   BalanceSheetRequest,
   "branchIds"
 > {
-  branchIds?: number[]; // multi-select in the form; joined into a comma string on submit
-  tillDateAD?: string; // derived AD display only — never sent to API
+  branchIds?: number[];
+  tillDateAD?: string;
 }
 
-// ── Client-only response state (binary PDF + header pagination) ─────────────
 export interface BalanceSheetResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -69,8 +67,6 @@ export default function BalanceSheetReportPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchIds (number[] in the form) -> branchIds (comma string on the DTO).
-  // Backend regex rejects "-1", so "all branches" resolves to the full id list ──
   const toRequest = useCallback(
     (form: BalanceSheetFormValues): BalanceSheetRequest => {
       const selectedIds = (form.branchIds ?? [])
@@ -134,7 +130,6 @@ export default function BalanceSheetReportPage() {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        // Error toast handled by Axios interceptor
       }
     },
     [callApi],
@@ -186,7 +181,6 @@ export default function BalanceSheetReportPage() {
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/SavingTypeWiseIndividualBalance/page.tsx
 "use client";
 
 import SavingTypeWiseIndividualBalanceForm, {
@@ -16,9 +15,6 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-// ── branchId is a single number here (matches the Branch Name dropdown in
-// the UI), not a multi-select array — the DTO's string field is derived
-// from this number in toRequest(). ───────────────────────────────────────────
 export interface SavingTypeWiseIndividualBalanceFormValues extends Omit<
   SavingTypeWiseIndividualBalanceRequest,
   "branchId"
@@ -26,7 +22,6 @@ export interface SavingTypeWiseIndividualBalanceFormValues extends Omit<
   branchId?: number;
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface SavingTypeWiseIndividualBalanceResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -42,7 +37,6 @@ const DEFAULT_PAGINATION: Pagination = {
   hasPreviousPage: false,
 };
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -67,7 +61,7 @@ const schema: yup.ObjectSchema<SavingTypeWiseIndividualBalanceFormValues> = yup
         if (!fromDate || !val) return true;
         return String(val) >= String(fromDate);
       }),
-    branchId: yup.number().optional().default(2), // ✅ single value, matches BranchNameField
+    branchId: yup.number().optional().default(2),
     branchName: yup.string().nullable().optional().default(""),
     collectionCenterId: yup.string().nullable().optional().default("-1"),
     memberGroupId: yup.string().nullable().optional().default("-1"),
@@ -78,7 +72,7 @@ const schema: yup.ObjectSchema<SavingTypeWiseIndividualBalanceFormValues> = yup
     groupByBranch: yup.boolean().optional().default(false),
     groupByCollectionCenter: yup.boolean().optional().default(false),
     groupByMemberGroup: yup.boolean().optional().default(false),
-    viewDetail: yup.boolean().optional().default(true), // ✅ checked by default per image
+    viewDetail: yup.boolean().optional().default(true),
     sameCompanyName: yup.boolean().optional().default(true),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -156,7 +150,6 @@ export default function SavingTypeWiseIndividualBalancePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

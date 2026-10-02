@@ -37,14 +37,13 @@ const LazyReportViewer = lazy(
 );
 import { ReportViewerSkeleton } from "@/components/reports/common/LazyReportViewer";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface SavingAcWiseBalanceProps {
   control: Control<SavingAcWiseBalanceRequest>;
   handleSubmit: UseFormHandleSubmit<SavingAcWiseBalanceRequest>;
   onSubmit: SubmitHandler<SavingAcWiseBalanceRequest>;
   setValue: UseFormSetValue<SavingAcWiseBalanceRequest>;
   reportState: SavingAcWiseBalanceResponseExtended;
-  reportKey: number; // ← NEW: increments on every new report submission
+  reportKey: number;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
@@ -202,7 +201,7 @@ function SavingAcWiseBalance({
           {showReport && (
             <Suspense fallback={<ReportViewerSkeleton />}>
               <LazyReportViewer
-                reportKey={reportKey} // ← passed down so viewer knows when to reset
+                reportKey={reportKey}
                 pdfData={pdfData!}
                 pagination={pagination}
                 onPageChange={onPageChange}

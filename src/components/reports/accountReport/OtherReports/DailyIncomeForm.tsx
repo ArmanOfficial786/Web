@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/DailyIncomeForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -117,7 +116,7 @@ function DailyIncomeForm({
               <OrderByField<DailyIncomeFormValues>
                 control={control}
                 name="orderBy"
-                reportKey="daily-income-report" // ⚠️ added to OrderByReportKey union / options map above
+                reportKey="daily-income-report"
               />
             </Grid>
           </Grid>

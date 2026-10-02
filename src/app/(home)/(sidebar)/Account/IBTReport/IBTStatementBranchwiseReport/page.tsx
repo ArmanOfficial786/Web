@@ -72,9 +72,6 @@ export default function IbtStatementBranchwisePage() {
   const { control, handleSubmit, setValue } =
     useForm<IbtStatementBranchwiseFormValues>({
       resolver: yupResolver(schema),
-      // ── schema.getDefault() so payableBranchId actually resolves to "2" —
-      // a hand-written defaultValues object here previously silently
-      // overrode the yup default with "".
       defaultValues: schema.getDefault(),
     });
 

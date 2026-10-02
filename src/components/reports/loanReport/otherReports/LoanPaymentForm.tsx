@@ -155,7 +155,7 @@ function LoanPaymentForm({
             <OrderByField<LoanPaymentFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-payment-report" // ⚠️ confirm this key against memberOrderByOptions.ts
+              reportKey="loan-payment-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

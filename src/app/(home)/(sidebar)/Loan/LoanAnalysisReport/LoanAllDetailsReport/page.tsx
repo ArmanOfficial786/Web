@@ -30,7 +30,6 @@ export interface LoanDetailResponseExtended {
   currentPage: number;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const ALL_COLUMN_KEYS = LOAN_COLUMN_OPTIONS.map((c) => c.key);
 
@@ -59,7 +58,6 @@ const schema: yup.ObjectSchema<LoanDetailFormValues> = yup
   })
   .required();
 
-// ── Request mapper ────────────────────────────────────────────────────────────
 
 const toRequest = (v: LoanDetailFormValues): LoanAllDetailsRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
@@ -78,7 +76,6 @@ const toRequest = (v: LoanDetailFormValues): LoanAllDetailsRequestDto => {
   };
 };
 
-// ── Initial state ─────────────────────────────────────────────────────────────
 
 const INITIAL_STATE: LoanDetailResponseExtended = {
   isLoading: false,
@@ -87,7 +84,6 @@ const INITIAL_STATE: LoanDetailResponseExtended = {
   currentPage: 1,
 };
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
@@ -103,7 +99,6 @@ function Page(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // ── postMessage: receive totalPages from iframe after buildPages() ─────────
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -122,7 +117,6 @@ function Page(): React.ReactElement {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // ── API call ──────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: LoanAllDetailsRequestDto, format: string) =>
       loanService.api.loanAllDetailsCreate(request, { format }),
@@ -135,7 +129,6 @@ function Page(): React.ReactElement {
     return JSON.stringify(response.data);
   }, []);
 
-  // ── Fetch VIEW report ─────────────────────────────────────────────────────
   const fetchReport = useCallback(
     async (request: LoanAllDetailsRequestDto): Promise<void> => {
       setReportState({
@@ -167,7 +160,6 @@ function Page(): React.ReactElement {
     [callApi, getHtmlString, reset],
   );
 
-  // ── Download ──────────────────────────────────────────────────────────────
   const handleDownload = useCallback(
     async (format: ReportFormat): Promise<void> => {
       if (!lastRequest) {
@@ -197,7 +189,6 @@ function Page(): React.ReactElement {
     [callApi, lastRequest],
   );
 
-  // ── Page navigation ───────────────────────────────────────────────────────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const clamped = Math.max(1, Math.min(newPage, prev.totalPages));
@@ -208,13 +199,11 @@ function Page(): React.ReactElement {
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
       } catch {
-        // defensive catch
       }
       return { ...prev, currentPage: clamped };
     });
   }, []);
 
-  // ── Form submit ───────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<LoanDetailFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport],

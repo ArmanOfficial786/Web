@@ -4,7 +4,6 @@ export interface LoanColumnOption {
 }
 
 export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
-  // Group 1
   { key: "memberId", label: "Member Id" },
   { key: "citizenShipIssFrom", label: "CitizenShip Iss From" },
   { key: "loanType", label: "Loan Type" },
@@ -13,7 +12,6 @@ export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
   { key: "currInterest", label: "Curr Interest" },
   { key: "instAmt", label: "Inst Amt" },
   { key: "status", label: "Status" },
-  // Group 2
   { key: "memberName", label: "Member Name" },
   { key: "accountNo", label: "Account No" },
   { key: "intRate", label: "Int Rate" },
@@ -22,7 +20,6 @@ export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
   { key: "currPenalty", label: "Curr Penalty" },
   { key: "priDefaulter", label: "Pri Defaulter" },
   { key: "analysisStatus", label: "Analysis Status" },
-  // Group 3
   { key: "temAddress", label: "Tem Address" },
   { key: "type", label: "Type" },
   { key: "issueDate", label: "Issue Date" },
@@ -31,7 +28,6 @@ export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
   { key: "prevInterest", label: "Prev Interest" },
   { key: "intDefaulter", label: "Int Defaulter" },
   { key: "totalInterest", label: "Total Interest" },
-  // Group 4
   { key: "mobileNo", label: "Mobile No" },
   { key: "period", label: "Period" },
   { key: "matDate", label: "Mat Date" },
@@ -40,7 +36,6 @@ export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
   { key: "prevPenalty", label: "Prev Penalty" },
   { key: "totDefaulter", label: "Tot Defaulter" },
   { key: "totalPenalty", label: "Total Penalty" },
-  // Group 5
   { key: "contactNo", label: "Contact No" },
   { key: "instType", label: "Inst Type" },
   { key: "normalOD", label: "NormalOD" },
@@ -48,7 +43,6 @@ export const LOAN_COLUMN_OPTIONS: LoanColumnOption[] = [
   { key: "rePrincipal", label: "Re Principal" },
   { key: "totalDue", label: "Total Due" },
   { key: "instCon", label: "Inst Con" },
-  // Group 6
   { key: "citizenshipNo", label: "Citizenship No" },
   { key: "loanCategory2", label: "Loan Category" },
   { key: "odSanAmt", label: "OD San Amt" },

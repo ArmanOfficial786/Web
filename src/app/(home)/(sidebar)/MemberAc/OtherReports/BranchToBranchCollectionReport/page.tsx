@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/reports/BranchToBranchCollectionReport/page.tsx
 "use client";
 
 import BranchToBranchCollectionForm, {
@@ -17,8 +16,6 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-// ── Form-only shape ──────────────────────────────────────────────────────────
-// Following the same pattern as DataEditedReport
 export interface BranchToBranchCollectionFormValues extends Omit<
   BranchToBranchCollectionRequestDto,
   "branchFromId" | "branchToId" | "collectorId"
@@ -28,7 +25,6 @@ export interface BranchToBranchCollectionFormValues extends Omit<
   collectorId?: number;
 }
 
-// ── Client-only response state (raw PDF blob URL + header pagination) ──────
 export interface BranchToBranchCollectionResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -76,7 +72,6 @@ export default function BranchToBranchCollectionPage() {
       mode: "onSubmit",
     });
 
-  // ── Transform form values to API request (matching DataEditedReport pattern) ──
   const toRequest = useCallback(
     (
       form: BranchToBranchCollectionFormValues,
@@ -100,7 +95,6 @@ export default function BranchToBranchCollectionPage() {
     [],
   );
 
-  // ── API call method (matching DataEditedReport pattern) ──────────────────
   const callApi = useCallback(
     (request: BranchToBranchCollectionRequestDto, format: string) =>
       memberAccountService.api.branchToBranchCollectionCreate(request, {
@@ -109,7 +103,6 @@ export default function BranchToBranchCollectionPage() {
     [],
   );
 
-  // ── Fetch report (matching DataEditedReport pattern exactly) ─────────────
   const fetchReport = useCallback(
     async (request: BranchToBranchCollectionRequestDto) => {
       setReportState((prev) => {
@@ -142,7 +135,6 @@ export default function BranchToBranchCollectionPage() {
     [callApi],
   );
 
-  // ── Handle page change ────────────────────────────────────────────────────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const total = prev.pagination?.totalPages ?? 1;
@@ -154,7 +146,6 @@ export default function BranchToBranchCollectionPage() {
     });
   }, []);
 
-  // ── Handle download (matching DataEditedReport pattern) ──────────────────
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) return;
@@ -177,14 +168,12 @@ export default function BranchToBranchCollectionPage() {
     [callApi, lastRequest],
   );
 
-  // ── Handle form submission ───────────────────────────────────────────────
   const onSubmit: SubmitHandler<BranchToBranchCollectionFormValues> =
     useCallback(
       (formData) => fetchReport(toRequest(formData)),
       [fetchReport, toRequest],
     );
 
-  // ── Cleanup on unmount ────────────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

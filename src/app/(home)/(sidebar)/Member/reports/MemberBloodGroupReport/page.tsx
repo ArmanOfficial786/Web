@@ -15,17 +15,14 @@ import { toast } from "react-toastify";
 import type { MemberBloodGroupReportRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberBloodGroupReportFormValues extends MemberBloodGroupReportRequest {}
 
-// ── Client-only state ──────────────────────────────────────────────────────
 export interface MemberBloodGroupReportResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Validation schema ──────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<MemberBloodGroupReportFormValues> = yup.object({
   fromDate: yup.string().required("From Date is required").default(""),
   toDate: yup
@@ -42,7 +39,7 @@ const schema: yup.ObjectSchema<MemberBloodGroupReportFormValues> = yup.object({
     .min(1, "Branch is required")
     .default(2),
   memberGroupId: yup.number().optional().default(-1),
-  bloodGroupOption: yup.number().optional().default(0), // 0 = All
+  bloodGroupOption: yup.number().optional().default(0),
   orderBy: yup.string().nullable().optional().default(""),
   visualReport: yup.boolean().optional().default(false),
   sameCompanyName: yup.boolean().optional().default(false),
@@ -50,7 +47,6 @@ const schema: yup.ObjectSchema<MemberBloodGroupReportFormValues> = yup.object({
   branchName: yup.string().nullable().optional().default(""),
 });
 
-// ── Strip UI-only fields before API call ──────────────────────────────────
 const toRequest = (
   v: MemberBloodGroupReportFormValues,
 ): MemberBloodGroupReportRequest => ({
@@ -66,7 +62,6 @@ const toRequest = (
   branchName: v.branchName || "",
 });
 
-// ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
     useState<MemberBloodGroupReportResponseExtended>({ isLoading: false });

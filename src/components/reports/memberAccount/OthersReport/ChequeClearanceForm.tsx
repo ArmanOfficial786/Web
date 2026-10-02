@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/ChequeClearanceForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -33,7 +32,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── Select Cheque Type ───────────────────────────────────────────────────
 const chequeTypeOptions = [
   { value: "GetAll", label: "Get All" },
   { value: "ReceiveCheque", label: "Receive Cheque" },

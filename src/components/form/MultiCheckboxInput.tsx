@@ -8,7 +8,6 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface CheckboxOption {
   key: string;
@@ -21,20 +20,11 @@ interface MultiCheckboxInputProps extends Omit<
   CheckboxProps,
   "name" | "checked" | "onChange"
 > {
-  /** Field name in the form — value must be string[] */
   name: string;
-  /** react-hook-form control (any, same as CheckboxInput) */
   control: any;
-  /** Validation rules */
   rules?: any;
-  /** Options list: { key, label } */
   options: readonly CheckboxOption[];
-  /** Optional heading above the Select-All row */
   groupLabel?: string;
-  /**
-   * Responsive column counts.
-   * Defaults: xs=2  sm=3  md=4  lg=6
-   */
   columns?: {
     xs?: number;
     sm?: number;
@@ -43,7 +33,6 @@ interface MultiCheckboxInputProps extends Omit<
   };
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 
 function MultiCheckboxInput({
   name,
@@ -53,7 +42,7 @@ function MultiCheckboxInput({
   groupLabel,
   columns = { xs: 2, sm: 3, md: 4, lg: 6 },
   size = "small",
-  ...checkboxProps // remaining CheckboxProps forwarded to every Checkbox
+  ...checkboxProps
 }: MultiCheckboxInputProps) {
   const gridTemplateColumns = {
     xs: `repeat(${columns.xs ?? 2}, 1fr)`,
@@ -68,7 +57,6 @@ function MultiCheckboxInput({
       control={control}
       rules={rules}
       render={({ field, fieldState }) => {
-        // Safely coerce — matches how CheckboxInput reads field.value
         const selected: string[] = Array.isArray(field.value)
           ? (field.value as string[])
           : [];
@@ -76,7 +64,6 @@ function MultiCheckboxInput({
         const allChecked = selected.length === options.length;
         const indeterminate = selected.length > 0 && !allChecked;
 
-        // ── Handlers ──────────────────────────────────────────────────────────
 
         const handleSelectAll = () => {
           field.onChange(allChecked ? [] : options.map((o) => o.key));
@@ -90,7 +77,6 @@ function MultiCheckboxInput({
           );
         };
 
-        // ── Render ─────────────────────────────────────────────────────────────
 
         return (
           <FormControl

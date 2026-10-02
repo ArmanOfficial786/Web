@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/SavingDepositMemberWiseForm.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef } from "react";
@@ -27,7 +26,7 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 import Preloader from "@/components/PreLoader/preloader";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
-import TypeField from "@/components/reportForm/MemberAccount/TypeField"; // ⚠️ dependent dropdown — needs transactionTypeName to resolve to "Saving"/"Loan"
+import TypeField from "@/components/reportForm/MemberAccount/TypeField";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
@@ -38,7 +37,6 @@ import {
 
 export type { ReportFormat };
 
-// ── Report Type — Deposit / Withdrawal ───────────────────────────────────────
 const transactionTypeOptions = [
   { value: "Deposit", label: "Deposit" },
   { value: "Withdrawl", label: "Withdrawl" },
@@ -77,9 +75,6 @@ function SavingDepositMemberWiseForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<SavingDepositMemberWiseFormValues>(),
     [],

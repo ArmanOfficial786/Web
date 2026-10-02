@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/SavingInterestChangeLogForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";
@@ -38,7 +37,6 @@ import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
-// ── Report Type: Account No / Deposit Type ───────────────────────────────
 const reportTypeOptions = [
   { value: "AccountNo", label: "Account No" },
   { value: "DepositType", label: "Deposit Type" },

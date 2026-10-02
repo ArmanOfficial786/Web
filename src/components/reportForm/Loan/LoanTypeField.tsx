@@ -12,21 +12,14 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface LoanTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
-  loanTypeFieldName: Path<T>; // ✅ configurable, no hardcoded field name
-  label: string; // ✅ configurable, no hardcoded label — set by the consuming form
-  setValue?: UseFormSetValue<T>; // optional — only needed if you want a default selection
-  defaultLoanTypeId?: number; // optional, no default here (unlike BranchNameField)
+  loanTypeFieldName: Path<T>;
+  label: string;
+  setValue?: UseFormSetValue<T>;
+  defaultLoanTypeId?: number;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
-// Reads loanMasterListOptions / fetchLoanMasterList straight from
-// ReportFormContext. The actual GET /api/LmtLoanMaseterList call is guarded
-// there by loanMasterListFetchedRef, so calling fetchLoanMasterList() here on
-// every mount is safe — it's a no-op after the very first successful call,
-// exactly like fetchCollectionBranches() is for BranchCollectionField.
 export default function LoanTypeField<T extends FieldValues>({
   control,
   loanTypeFieldName,
@@ -40,7 +33,6 @@ export default function LoanTypeField<T extends FieldValues>({
     fetchLoanMasterList();
   }, [fetchLoanMasterList]);
 
-  // ── Set default once options are available (only if requested) ────────────
   useEffect(() => {
     if (!setValue || defaultLoanTypeId === undefined) return;
     if (!loanMasterListOptions?.length) return;

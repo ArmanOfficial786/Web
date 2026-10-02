@@ -69,8 +69,6 @@ export default function LoanTypeWiseForm({
     name: "enableCollectionCenter",
   });
 
-  // Clear the selected Collection Center whenever the checkbox is turned off,
-  // so a stale selection never gets sent while the field is inactive.
   useEffect(() => {
     if (!enableCollectionCenter) {
       setValue("collectionCenterId", "0" as any);
@@ -292,7 +290,7 @@ export default function LoanTypeWiseForm({
             <OrderByField<LoanTypeWiseFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-type-wise-report" // ⚠️ add this key to OrderByReportKey union / options map
+              reportKey="loan-type-wise-report"
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box

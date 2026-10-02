@@ -19,8 +19,6 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// branchIds arrives as string[] from OfficeNameField
-// collectorId, collectionCenterId, memberGroupId are strings from DropDowns
 export interface LoanAgeingArrearCalculationFormValues extends Omit<
   LoanAgingArrealCalculationRequestDto,
   "branchIds" | "collectorId" | "collectionCenterId" | "memberGroupId"

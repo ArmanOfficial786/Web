@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/InterestPayableForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";
@@ -34,7 +33,6 @@ import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
-// ── Interest Payable — All / Only on Till Date ───────────────────────────────
 const reportViewOptions = [
   { value: "All", label: "All" },
   { value: "OnlyTillDate", label: "Only on Till Date" },

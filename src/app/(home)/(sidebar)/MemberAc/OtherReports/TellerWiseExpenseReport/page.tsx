@@ -1,4 +1,3 @@
-// src/app/(home)/(sidebar)/MemberAc/OtherReports/TellerWiseExpenseReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -13,8 +12,6 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 
-// ── tellerId is a number here (matches TellerExpenseField's DropDown option
-// ids), converted to the DTO's int64|null in toRequest(). ────────────────────
 export interface TellerWiseExpenseFormValues extends Omit<
   TellerWiseExpenseRequestDto,
   "tellerId"
@@ -22,7 +19,6 @@ export interface TellerWiseExpenseFormValues extends Omit<
   tellerId?: number;
 }
 
-// ── Client-only response state (raw PDF blob URL + header pagination) ──────
 export interface TellerWiseExpenseResponseExtended {
   pdfData?: string;
   isLoading: boolean;

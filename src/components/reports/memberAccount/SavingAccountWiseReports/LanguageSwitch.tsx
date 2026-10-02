@@ -1,4 +1,3 @@
-// components/reportForm/Common/LanguageSwitch.tsx
 "use client";
 
 import React from "react";
@@ -13,10 +12,9 @@ import Switch from "@mui/material/Switch";
 
 interface LanguageSwitchProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;
-  name: Path<TFieldValues>; // field holding "English" | "Nepali"
+  name: Path<TFieldValues>;
 }
 
-// ── Off = English (default), On = Nepali ─────────────────────────────────
 export function LanguageSwitch<TFieldValues extends FieldValues>({
   control,
   name,

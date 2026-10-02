@@ -1,4 +1,3 @@
-// src/services/Common/TellerExpenseService.ts
 import { TellerLookupResponse } from "types/api/api";
 import { apiClient } from "../apiClient";
 

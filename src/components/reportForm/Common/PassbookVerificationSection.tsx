@@ -24,10 +24,10 @@ interface PassbookVerificationSectionProps {
   setValue: UseFormSetValue<DepositStatementFormValues>;
   handleSubmit: UseFormHandleSubmit<DepositStatementFormValues>;
   onVerify: SubmitHandler<DepositStatementFormValues>;
-  visible: boolean; // mirrors trStatementVerify.Visible
+  visible: boolean;
   status: VerificationStatusDto | null;
   verifying: boolean;
-  errorMessage?: string; // mirrors trMessage/ltrMessage for the verify action
+  errorMessage?: string;
 }
 
 export default function PassbookVerificationSection({

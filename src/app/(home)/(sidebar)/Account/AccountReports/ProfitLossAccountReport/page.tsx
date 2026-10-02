@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/PLAccount/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,7 +15,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── branchId is form-only — resolved into branchIds (comma string) on submit ─
 export interface PLAccountFormValues extends Omit<
   PLAccountRequest,
   "branchIds"
@@ -24,9 +22,8 @@ export interface PLAccountFormValues extends Omit<
   branchId?: number[];
 }
 
-// ── Client-only response state (binary PDF + header pagination, like BalanceSheet) ──
 export interface PLAccountResponseExtended {
-  pdfData?: string; // blob URL created from binary PDF
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -84,7 +81,6 @@ export default function PLAccountPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string). "All" resolves to full id list ──
   const toRequest = useCallback(
     (form: PLAccountFormValues): PLAccountRequest => {
       const selectedIds = (form.branchId ?? [])
@@ -191,7 +187,6 @@ export default function PLAccountPage() {
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

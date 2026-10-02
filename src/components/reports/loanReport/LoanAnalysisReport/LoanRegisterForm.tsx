@@ -64,8 +64,6 @@ export default function LoanRegisterForm({
     name: "enableCollectionCenter",
   });
 
-  // Clear the selected Collection Center whenever the checkbox is turned off,
-  // so a stale selection never gets sent while the field is inactive.
   useEffect(() => {
     if (!enableCollectionCenter) {
       setValue("collectionCenterIds", "0" as any);
@@ -199,7 +197,7 @@ export default function LoanRegisterForm({
             <OrderByField<LoanRegisterFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-register-report" // ⚠️ add this key to OrderByReportKey union / options map
+              reportKey="loan-register-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

@@ -238,7 +238,7 @@ function SavingTypeWiseIndividualBalanceForm({
             <OrderByField<SavingTypeWiseIndividualBalanceFormValues>
               control={control}
               name="orderBy"
-              reportKey="saving-type-wise-balance-report" // ⚠️ confirm exact key in savingWiseBalanceOrderByOptions.ts
+              reportKey="saving-type-wise-balance-report"
             />
             <Box
               display="flex"

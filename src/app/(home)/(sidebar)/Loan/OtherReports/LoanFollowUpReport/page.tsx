@@ -14,7 +14,7 @@ import type { LoanFollowUpRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export type LoanFollowUpFormValues = LoanFollowUpRequestDto & {
-  memberName?: string | null; // display-only companion to memberId; stripped in toRequest
+  memberName?: string | null;
 };
 
 export interface LoanFollowUpResponseExtended {

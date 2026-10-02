@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/TellerCashVaultForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -67,9 +66,6 @@ function TellerCashVaultForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  // ── type=true → To Vault (show "Returned By", hide "Issued By")
-  //    type=false → From Vault (show "Issued By", hide "Returned By")
-  //    Date and Amount are common to both, so they're never excluded.
   const isToVault = useWatch({ control, name: "type" });
   const excludeKeys = isToVault ? ["issuedBy"] : ["returnedBy"];
 

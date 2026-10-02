@@ -7,7 +7,6 @@ import {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-// ── API Instance ──────────────────────────────────────────────────────────────
 const memberService = new Api({ baseURL: apiUrl });
 
 const originalRequestInterceptor = requestInterceptor;

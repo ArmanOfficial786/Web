@@ -126,7 +126,6 @@ export default function CenterMeetingDetailForm({
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterId"
-              // mode omitted → only the CC dropdown renders (no Address / Meeting fields)
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

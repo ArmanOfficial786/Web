@@ -137,7 +137,7 @@ function InterestAndTaxDetailForm({
             <OrderByField<InterestAndTaxDetailFormValues>
               control={control}
               name="orderBy"
-              reportKey="interest-and-tax-detail-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="interest-and-tax-detail-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

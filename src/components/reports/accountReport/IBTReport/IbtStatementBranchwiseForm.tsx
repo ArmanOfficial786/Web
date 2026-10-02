@@ -68,9 +68,6 @@ function IbtStatementBranchwiseForm({
     fetchBranches();
   }, [fetchBranches]);
 
-  // ── Login (read-only) branch name — resolved once from the session's
-  // officeId against the fetched branch list, or falls back to the
-  // session's own branchName if no match is found.
   useEffect(() => {
     let active = true;
 

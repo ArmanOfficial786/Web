@@ -27,12 +27,10 @@ export const depreciationByOptions = defineOrderByOptions([
   { key: "depreciationBranch", label: "Depreciation Branch" },
 ] as const);
 
-//========================================================
 export type AssetOrderByReportKey =
   | "fam-purchase-report"
   | "fam-depreciation-report";
 
-//=========================================================
 export const assetOrderByOptionsMap: Record<
   AssetOrderByReportKey,
   readonly OrderByOption[]

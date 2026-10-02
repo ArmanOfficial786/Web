@@ -16,7 +16,6 @@ interface TransactionTypeFieldProps<T extends FieldValues> {
   name: Path<T>;
   label: string;
   row?: boolean;
-  // ── Some reports need Saving/Loan only, others need all three ──────────────
   showShareType?: boolean;
 }
 

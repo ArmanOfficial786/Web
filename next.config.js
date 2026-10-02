@@ -1,10 +1,9 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      canvas: false, // ✅ Fix for pdfjs-dist error
+      canvas: false,
     };
     return config;
   },

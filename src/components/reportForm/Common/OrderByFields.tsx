@@ -32,13 +32,6 @@ export default function OrderByField<T extends FieldValues>({
         name: opt.label,
       })),
   ];
-  // const options = [
-  //   { id: "", name: "-- Select --" },
-  //   ...orderByOptionsMap[reportKey].map((opt: any) => ({
-  //     id: opt.key,
-  //     name: opt.label,
-  //   })),
-  // ];
 
   return (
     <FieldRow label={label}>

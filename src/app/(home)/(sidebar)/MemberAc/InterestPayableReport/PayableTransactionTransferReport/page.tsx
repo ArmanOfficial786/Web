@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingsAccountInterestTransferReport/page.tsx
 "use client";
 
 import SavingsAccountInterestTransferForm, {

@@ -1,4 +1,3 @@
-// components/reports/accountReport/MainLedger/SecondLedgerDetailsForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";

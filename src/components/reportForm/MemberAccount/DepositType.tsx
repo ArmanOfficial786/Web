@@ -5,7 +5,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import FieldRow from "@/utilis/FieldRow";
 import { Control, FieldValues, Path } from "react-hook-form";
 
-//---------Props------------------
 interface DepositTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   depositTypeFieldName: Path<T>;

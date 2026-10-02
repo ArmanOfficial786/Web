@@ -1,4 +1,3 @@
-// hooks/useSubLedgerNameOptions.ts
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -32,8 +31,6 @@ export function useSubLedgerNameOptions({
 }: UseSubLedgerNameOptionsParams): UseSubLedgerNameOptionsResult {
   const hasLedgerHead =
     ledgerHeadId !== undefined && ledgerHeadId !== null && ledgerHeadId !== "";
-  // ⚠️ Gated on mainLedger too — SubLedgerName cannot resolve without an
-  // upstream Ledger Name selection (backend requires MainLedger = @MainLedger).
   const accountTypeId = hasLedgerHead ? Number(ledgerHeadId) : -1;
   const resolvedBranchId =
     branchId !== undefined &&
@@ -73,8 +70,8 @@ export function useSubLedgerNameOptions({
 
   useEffect(() => {
     if (!key || !ready) return;
-    if (subLedgerNameStore.getSnapshot(key)) return; // already cached — no fetch
-    if (triggeredKeyRef.current === key) return; // this key's fetch already kicked off
+    if (subLedgerNameStore.getSnapshot(key)) return;
+    if (triggeredKeyRef.current === key) return;
 
     triggeredKeyRef.current = key;
     setLoading(true);

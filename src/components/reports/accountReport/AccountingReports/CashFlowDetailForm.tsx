@@ -1,4 +1,3 @@
-// components/reports/accountReport/CashFlowDetailsForm.tsx
 "use client";
 
 import React, { useRef } from "react";

@@ -111,7 +111,6 @@ export const loanInterestDiscountOrderByOptions = defineOrderByOptions([
   { key: "amount", label: "Amount" },
 ] as const);
 
-//==========loan account wise=============
 
 export const loanDeletedOrderByOptions = defineOrderByOptions([
   { key: "memberId", label: "Member Id" },
@@ -163,7 +162,6 @@ export const loanStatementVerificationOrderByOptions = defineOrderByOptions([
   { key: "verifiedBy", label: "Verified By" },
 ] as const);
 
-//===========loan analysis==============
 
 export const loanAgingRiskCalculationReportOrderByOptions =
   defineOrderByOptions([
@@ -249,7 +247,6 @@ export const loanAllDetailsOrderByOptions = defineOrderByOptions([
   { key: "totalBalance", label: "Total Balance" },
 ] as const);
 
-//==================================
 export type LoanOrderByReportKey =
   | "loan-follow-up-report"
   | "loan-penalty-discount-report"

@@ -27,7 +27,7 @@ export interface LoanAgeingFormValues extends Omit<
   branchIds?: string[];
   memberGroupId?: string;
   collectorId?: string;
-  reportType?: string; // ⚠️ UI-only — DTO has no such field, never sent
+  reportType?: string;
 }
 
 export interface LoanAgeingResponseExtended {
@@ -72,7 +72,6 @@ const toRequest = (v: LoanAgeingFormValues): LoanAgeingRequestDto => {
     isNepaliReport: v.isNepaliReport ?? false,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
-    // reportType intentionally omitted — ⚠️ UI-only, not on this DTO
   };
 };
 

@@ -35,7 +35,6 @@ import NepaliReportField from "@/components/reportForm/Common/NepaliReportField"
 
 export type { ReportFormat };
 
-// ── DisplayType options — Horizontal / Vertical ──────────────────────────────
 const displayTypeOptions = [
   { value: "Horizontal", label: "Horizontal" },
   { value: "Vertical", label: "Vertical" },

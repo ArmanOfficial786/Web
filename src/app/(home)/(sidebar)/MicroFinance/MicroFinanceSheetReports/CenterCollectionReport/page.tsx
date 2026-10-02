@@ -17,17 +17,15 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// collectionCenterId (string) from CollectionCenterField; AD / address /
-// meetingDateTimeBs / branchIds are UI-only bind fields, never sent.
 export interface CenterCollectionFormValues extends Omit<
   CenterCollectionRequestDto,
   "collectionCenterId"
 > {
-  branchIds?: string[]; // UI-only office id from the authenticated session
+  branchIds?: string[];
   collectionCenterId?: string;
-  tillDateAd?: string; // UI-only, derived from tillDateBs (BOTH_BS mode)
-  address?: string; // UI-only, bound by CollectionCenterField
-  meetingDateTimeBs?: string; // UI-only, bound by CollectionCenterField
+  tillDateAd?: string;
+  address?: string;
+  meetingDateTimeBs?: string;
 }
 
 export interface CenterCollectionResponseExtended {
@@ -63,7 +61,6 @@ const toRequest = (
   tillDateBs: v.tillDateBs || undefined,
   collectionCenterId: v.collectionCenterId || "-1",
   visualReport: v.visualReport ?? false,
-  // branchIds / tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });
 
 function CenterCollectionPage(): React.ReactElement {

@@ -1,5 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/ChequeClearanceReport/page.tsx
-// ⚠️ Folder name and route are placeholders — rename to match your routing convention.
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,13 +14,10 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Not sourced from types/api/api — no matching DTO exists in the swagger
-// file (no "ChequeClearance" endpoint). Replace with the real generated
-// request/response types once the backend endpoint exists.
 export interface ChequeClearanceRequestDto {
   fromDateBs?: string | null;
   toDateBs?: string | null;
-  chequeType?: string | null; // GetAll | ReceiveCheque | DeletedCheque | SendCheque | ClearanceCheque | RejectedCheque
+  chequeType?: string | null;
   visualReport?: boolean;
 }
 
@@ -67,7 +62,7 @@ const schema: yup.ObjectSchema<ChequeClearanceFormValues> = yup
         "SendCheque",
         "ClearanceCheque",
         "RejectedCheque",
-      ]) // ⚠️ confirm exact backend codes
+      ])
       .nullable()
       .optional()
       .default("GetAll"),
@@ -97,8 +92,6 @@ export default function ChequeClearancePage() {
     [],
   );
 
-  // ⚠️ Placeholder service call — replace `chequeClearanceCreate` with the
-  // real generated method once the endpoint exists.
   const callApi = useCallback(
     (request: ChequeClearanceRequestDto, format: string) =>
       (memberAccountService.api as any).chequeClearanceCreate(request, {

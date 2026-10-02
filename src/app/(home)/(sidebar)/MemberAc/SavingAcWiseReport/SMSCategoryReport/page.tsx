@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/SMSCategory/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,8 +14,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId is form-only (multi-select array) — resolved into a comma
-// string on submit, matching the "Office Name" checkbox UI ──────────────────
 export interface SMSCategoryFormValues extends Omit<
   SMSCategoryRequest,
   "branchId"
@@ -24,7 +21,6 @@ export interface SMSCategoryFormValues extends Omit<
   branchId?: number[];
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface SMSCategoryResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -57,7 +53,6 @@ export default function SMSCategoryPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchId (comma string). "All" resolves to full id list ──
   const toRequest = useCallback(
     (form: SMSCategoryFormValues): SMSCategoryRequest => {
       const selectedIds = (form.branchId ?? [])
@@ -118,7 +113,6 @@ export default function SMSCategoryPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch (err) {
-        // Interceptor shows the error toast — this just stops the spinner
         setReportState({ isLoading: false });
         throw err;
       }

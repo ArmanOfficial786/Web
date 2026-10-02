@@ -1,4 +1,3 @@
-// components/reportForm/Common/ScrollToFirstPageButton.tsx
 "use client";
 
 import React from "react";
@@ -9,13 +8,9 @@ import ArrowUpwardSharpIcon from "@mui/icons-material/ArrowUpwardSharp";
 import ArrowDownwardSharpIcon from "@mui/icons-material/ArrowDownwardSharp";
 
 interface ScrollToFirstPageButtonProps {
-  /** Called when the button is clicked */
   onClick: () => void;
-  /** Current page number (1-indexed) */
   currentPage: number;
-  /** Total pages */
   totalPages: number;
-  /** Hide the button when there's only 1 page */
   hideWhenSinglePage?: boolean;
   tooltipUp?: string;
   tooltipDown?: string;
@@ -29,15 +24,12 @@ function ScrollToFirstPageButton({
   tooltipUp = "Go to first page",
   tooltipDown = "Go to last page",
 }: ScrollToFirstPageButtonProps) {
-  // Hide button if only 1 page exists
   if (hideWhenSinglePage && totalPages <= 1) return null;
 
   const isFirstPage = currentPage <= 1;
 
-  // If on first page and there's only one page, don't show
   if (isFirstPage && totalPages <= 1) return null;
 
-  // Determine which icon and tooltip to show
   const icon = isFirstPage ? (
     <ArrowDownwardSharpIcon />
   ) : (
@@ -46,14 +38,11 @@ function ScrollToFirstPageButton({
   const tooltip = isFirstPage ? tooltipDown : tooltipUp;
   const ariaLabel = isFirstPage ? "Go to last page" : "Go to first page";
 
-  // The action: if on first page, go to last; otherwise go to first
   const handleClick = () => {
     if (isFirstPage) {
-      // Go to last page
-      onClick(); // This should trigger onPageChange(totalPages)
+      onClick();
     } else {
-      // Go to first page
-      onClick(); // This should trigger onPageChange(1)
+      onClick();
     }
   };
 

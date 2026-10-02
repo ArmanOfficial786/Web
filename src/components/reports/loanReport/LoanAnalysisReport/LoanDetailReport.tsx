@@ -55,7 +55,6 @@ interface LoanDetailReportProps {
   renderKey: number;
 }
 
-// ✅ DropDown expects {id, name}; STATUS_OPTIONS is {value, label} — reshape once here
 const STATUS_OPTIONS = [
   { value: "All", label: "-- All --" },
   { value: "Active", label: "Active" },

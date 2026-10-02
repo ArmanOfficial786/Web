@@ -16,18 +16,15 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend.
-// LoanAgeingTypeWiseRequestDto has no reportType field — these are UI-only for now.
 const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanAgeingTypeWiseFormValues extends Omit<
   LoanAgeingTypeWiseRequestDto,
   "branchIds" | "memberGroupId"
 > {
   branchIds?: string[];
   memberGroupId?: string;
-  reportType?: string; // ⚠️ UI-only — DTO has no such field, never sent
+  reportType?: string;
 }
 
 export interface LoanAgeingTypeWiseResponseExtended {
@@ -67,7 +64,6 @@ const toRequest = (
     withMemberCount: v.withMemberCount ?? false,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
-    // reportType intentionally omitted — ⚠️ UI-only, not on this DTO
   };
 };
 

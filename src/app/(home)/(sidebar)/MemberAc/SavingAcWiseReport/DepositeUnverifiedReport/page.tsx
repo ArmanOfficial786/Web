@@ -13,9 +13,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import type { DepositUnverifiedRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── branchId is a single number here (bound via BranchNameField), matching
-// CostOfFund/SavingTypeWiseBalance — not a multi-select array anymore.
-// reportType radio: "All" | "Verified" | "Unverified" ────────────────────────
 export interface DepositUnverifiedFormValues extends Omit<
   DepositUnverifiedRequest,
   "branchIds"
@@ -23,14 +20,12 @@ export interface DepositUnverifiedFormValues extends Omit<
   branchId?: number;
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface DepositUnverifiedResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");

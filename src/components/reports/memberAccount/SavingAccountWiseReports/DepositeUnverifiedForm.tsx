@@ -36,7 +36,6 @@ import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField"
 
 export type { ReportFormat };
 
-// ── Generate options — All / Account Verified / Account Unverified ──────────
 const reportTypeOptions = [
   { value: "All", label: "All" },
   { value: "Verified", label: "Account Verified Report" },
@@ -67,10 +66,8 @@ function DepositUnverifiedForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ⚠️ ASSUMPTION: swap this for your real auth/user hook
   const userId = 160;
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -163,7 +160,7 @@ function DepositUnverifiedForm({
             <OrderByField<DepositUnverifiedFormValues>
               control={control}
               name="orderBy"
-              reportKey="deposit-unverified-report" // ⚠️ add this key to accountOrderByOptions.ts
+              reportKey="deposit-unverified-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

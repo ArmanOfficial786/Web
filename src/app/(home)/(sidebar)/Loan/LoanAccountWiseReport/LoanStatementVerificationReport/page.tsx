@@ -20,7 +20,6 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// branchIds arrives as string[] from OfficeNameField; memberId / memberName are UI-only
 export interface LoanStatementVerificationFormValues extends Omit<
   LoanStatementVerificationRequestDto,
   "branchIds" | "collectorId"

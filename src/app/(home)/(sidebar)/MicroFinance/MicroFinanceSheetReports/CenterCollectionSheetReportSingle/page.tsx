@@ -20,19 +20,17 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// collectionCenterId (string) from CollectionCenterField; AD / address /
-// meetingDateTimeBs / branchIds are UI-only bind fields, never sent.
 const PRINT_SHEET_SAVING_AND_LOAN = "SavingAndLoan";
 
 export interface CenterCollectionSheetReportSingleFormValues extends Omit<
   CenterCollectionSheetSingleRequestDto,
   "collectionCenterId"
 > {
-  branchIds?: string[]; // UI-only office id from the authenticated session
+  branchIds?: string[];
   collectionCenterId?: string;
-  tillDateAd?: string; // UI-only, derived from tillDateBs (BOTH_BS mode)
-  address?: string; // UI-only, bound by CollectionCenterField
-  meetingDateTimeBs?: string; // UI-only, bound by CollectionCenterField
+  tillDateAd?: string;
+  address?: string;
+  meetingDateTimeBs?: string;
   viewType?: string;
 }
 
@@ -69,7 +67,6 @@ const toRequest = (
   collectionCenterId: v.collectionCenterId || "-1",
   viewType: v.viewType || PRINT_SHEET_SAVING_AND_LOAN,
   visualReport: v.visualReport ?? false,
-  // branchIds / tillDateAd / address / meetingDateTimeBs intentionally omitted — UI-only
 });
 
 function CenterCollectionSheetReportSinglePage(): React.ReactElement {
@@ -135,7 +132,6 @@ function CenterCollectionSheetReportSinglePage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

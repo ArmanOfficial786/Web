@@ -13,13 +13,7 @@ interface UserLookupFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label: string;
-  /**
-   * Unique cache key for this dropdown's data. Any two fields using the
-   * same key (across any report) share one fetch and one result — the
-   * second mount is served from cache, no API call.
-   */
   lookupKey: string;
-  /** Fetches + maps the raw API response into SelectOption[]. */
   fetcher: () => Promise<SelectOption[]>;
   fullWidth?: boolean;
   disabled?: boolean;
@@ -39,10 +33,6 @@ export default function UserLookupField<T extends FieldValues>({
   const { userLookupOptionsMap, userLookupLoading, fetchUserLookupOnce } =
     useReportFormContext();
 
-  // Keep the latest fetcher in a ref so the effect doesn't need it as a dep
-  // (fetcher is usually a fresh arrow fn each render) — only lookupKey drives
-  // when we (re)request, and fetchUserLookupOnce itself no-ops after the
-  // first call for that key.
   const fetcherRef = useRef(fetcher);
   fetcherRef.current = fetcher;
 

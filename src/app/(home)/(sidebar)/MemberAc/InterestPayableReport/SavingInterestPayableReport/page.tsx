@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/InterestPayableReport/page.tsx
 "use client";
 
 import InterestPayableForm, {
@@ -39,11 +38,11 @@ const schema: yup.ObjectSchema<InterestPayableFormValues> = yup
     orderBy: yup.string().nullable().optional().default(""),
     reportView: yup
       .string()
-      .oneOf(["All", "OnlyTillDate"]) // ⚠️ confirm exact backend codes
+      .oneOf(["All", "OnlyTillDate"])
       .nullable()
       .optional()
       .default("All"),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 

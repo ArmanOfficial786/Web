@@ -6,7 +6,6 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FieldRow from "@/utilis/FieldRow";
 
-// ⚠️ ASSUMPTION: numeric codes for accountTypeId. Adjust to match your backend.
 export const Account_Type_Option = [
   { value: 0, label: "All" },
   { value: 1, label: "Assets" },

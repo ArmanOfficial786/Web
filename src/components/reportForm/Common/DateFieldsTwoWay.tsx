@@ -1,4 +1,3 @@
-// components/reportForm/Common/DateFieldsTwoWay.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -51,10 +50,6 @@ interface DateFieldsTwoWayProps<T extends FieldValues> {
   showToDate?: boolean;
 }
 
-// ── Renders one logical date (From or To) with BS stacked directly above
-// AD, two-way synced: whichever field the user last edited pushes its
-// converted value into the other. Neither field is ever read-only
-// (unlike DateFields' BOTH_BS/BOTH_AD modes). ───────────────────────────────
 function TwoWayDatePair<T extends FieldValues>({
   control,
   setValue,
@@ -81,19 +76,9 @@ function TwoWayDatePair<T extends FieldValues>({
     | string
     | undefined;
 
-  // ── Echo guards: when a sync effect programmatically writes the OTHER
-  // field, it flags that field's own effect to skip its next run once, so
-  // we don't bounce the freshly-converted value straight back through the
-  // converter (and don't fight the field the user is actually editing).
-  // Unlike the old "did the value change since last render" ref-diff
-  // approach, these effects fire on every value (including the very first
-  // render), so a field that already has a value on mount — e.g. filled by
-  // NepaliDatePicker's own defaultDate/RHF defaultValues before the user
-  // touches anything — still syncs into its counterpart immediately. ──────
   const skipBsToAd = useRef(false);
   const skipAdToBs = useRef(false);
 
-  // ── BS changed (including on mount) -> push converted value into AD ──────
   useEffect(() => {
     if (skipBsToAd.current) {
       skipBsToAd.current = false;
@@ -103,7 +88,7 @@ function TwoWayDatePair<T extends FieldValues>({
     let cancelled = false;
     convertBsToAd(bsValue).then((converted) => {
       if (!cancelled && converted && converted !== adValue) {
-        skipAdToBs.current = true; // this AD write is derived; don't re-convert it back to BS
+        skipAdToBs.current = true;
         setValue(adName, converted as any);
       }
     });
@@ -113,7 +98,6 @@ function TwoWayDatePair<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bsValue]);
 
-  // ── AD changed (including on mount) -> push converted value into BS ──────
   useEffect(() => {
     if (skipAdToBs.current) {
       skipAdToBs.current = false;
@@ -123,7 +107,7 @@ function TwoWayDatePair<T extends FieldValues>({
     let cancelled = false;
     convertAdToBs(adValue).then((converted) => {
       if (!cancelled && converted && converted !== bsValue) {
-        skipBsToAd.current = true; // this BS write is derived; don't re-convert it back to AD
+        skipBsToAd.current = true;
         setValue(bsName, converted as any);
       }
     });
@@ -133,7 +117,6 @@ function TwoWayDatePair<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adValue]);
 
-  // ── BS on top, AD directly below it, within a single column ──────────────
   return (
     <Grid size={colSize}>
       <Box
@@ -168,10 +151,6 @@ function TwoWayDatePair<T extends FieldValues>({
   );
 }
 
-// ── Both BS and AD are fully editable for each logical date (From/To) —
-// whichever side the user last typed into converts and fills the other.
-// From and To render as two side-by-side columns; within each column the
-// BS row sits directly above its AD row. ────────────────────────────────────
 export default function DateFieldsTwoWay<T extends FieldValues>({
   control,
   setValue,
@@ -187,7 +166,6 @@ export default function DateFieldsTwoWay<T extends FieldValues>({
   showFromDate = true,
   showToDate = true,
 }: DateFieldsTwoWayProps<T>) {
-  // Only one side (From OR To) shown → that column takes the full width
   const isSolo = showFromDate !== showToDate;
   const colSize = isSolo ? { xs: 12, md: 12 } : { xs: 12, md: 6 };
 

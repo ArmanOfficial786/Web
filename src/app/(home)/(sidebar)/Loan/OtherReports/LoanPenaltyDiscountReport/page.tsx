@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Loan/OtherReports/LoanPenaltyDiscountReport/page.tsx
 "use client";
 
 import LoanPenaltyDiscountForm, {

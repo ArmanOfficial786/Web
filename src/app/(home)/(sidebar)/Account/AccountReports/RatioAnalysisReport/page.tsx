@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/RatioAnalysisReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -15,9 +14,6 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import accountService from "@/services/Account/AccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId is a plain string here (default "2"), same as MonthlyReport —
-// NOT a multi-select array. viewType ("D"/"T") is still form-only, resolved
-// into isTotalOnly (boolean) on submit. ──────────────────────────────────────
 export interface RatioAnalysisFormValues extends Omit<
   RatioAnalysisRequest,
   "isTotalOnly"
@@ -25,14 +21,12 @@ export interface RatioAnalysisFormValues extends Omit<
   viewType?: "D" | "T";
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface RatioAnalysisResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -57,7 +51,7 @@ const schema: yup.ObjectSchema<RatioAnalysisFormValues> = yup
         if (!fromDate || !val) return true;
         return String(val) >= String(fromDate);
       }),
-    branchId: yup.string().nullable().optional().default("2"), // matches MonthlyReport's default
+    branchId: yup.string().nullable().optional().default("2"),
     branchName: yup.string().nullable().optional().default(""),
     provisionType: yup.string().nullable().optional().default("S"),
     enable1to30Days: yup.boolean().optional().default(false),
@@ -81,8 +75,6 @@ export default function RatioAnalysisPage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId passes straight through as a string now; only viewType
-  // ("D"/"T") needs converting to the isTotalOnly boolean ──────────────────
   const toRequest = useCallback(
     (form: RatioAnalysisFormValues): RatioAnalysisRequest => ({
       fromDate: normalizeBsDate(form.fromDate),

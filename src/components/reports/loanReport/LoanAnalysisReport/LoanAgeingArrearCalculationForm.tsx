@@ -61,8 +61,6 @@ export default function LoanAgeingArrearCalculationForm({
     name: "enableCollectionCenter",
   });
 
-  // Clear the selected Collection Center whenever the checkbox is turned off,
-  // so a stale selection never gets sent while the field is inactive.
   useEffect(() => {
     if (!enableCollectionCenter) {
       setValue("collectionCenterId", "0" as any);

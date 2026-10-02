@@ -16,20 +16,17 @@ import { toast } from "react-toastify";
 import type { MemberDetailsSummaryRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── UI-only fields – stripped before sending to API ────────────────────────
 export interface MemberDetailsSummaryFormValues extends MemberDetailsSummaryRequest {
   memberId?: string;
   memberName?: string;
 }
 
-// ── Client-only state ──────────────────────────────────────────────────────
 export interface MemberDetailsSummaryResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Validation schema ──────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<MemberDetailsSummaryFormValues> = yup.object({
   memberRegistrationId: yup
     .number()
@@ -52,7 +49,6 @@ const schema: yup.ObjectSchema<MemberDetailsSummaryFormValues> = yup.object({
   memberId: yup.string().required("Member ID is required"),
 });
 
-// ── Strip UI-only fields before API call ──────────────────────────────────
 const toRequest = (
   v: MemberDetailsSummaryFormValues,
 ): MemberDetailsSummaryRequest => ({
@@ -63,7 +59,6 @@ const toRequest = (
   visualReport: v.visualReport || false,
 });
 
-// ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
     useState<MemberDetailsSummaryResponseExtended>({ isLoading: false });
@@ -76,18 +71,14 @@ function Page(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // ── Wire modal selection → correct form fields ─────────────────────────
-  // MemberLookupButton calls onMemberSelect with the full MemberRecord.
-  // We pull memMemberRegistrationId (number) → memberRegistrationId
-  // and memberName (string) → memberName (display only)
   const handleMemberSelect = useCallback(
     (member: MemberRecord) => {
       setValue(
         "memberRegistrationId",
-        member.memMemberRegistrationId, // ✅ 202, not "MR-01-202"
+        member.memMemberRegistrationId,
         { shouldValidate: true },
       );
-      setValue("memberName", member.memberName || ""); // ✅ display only
+      setValue("memberName", member.memberName || "");
     },
     [setValue],
   );
@@ -194,7 +185,7 @@ function Page(): React.ReactElement {
       reportState={reportState}
       onPageChange={handlePageChange}
       onDownload={handleDownload}
-      onMemberSelect={handleMemberSelect} // ✅ pass down to form
+      onMemberSelect={handleMemberSelect}
     />
   );
 }

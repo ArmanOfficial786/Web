@@ -124,7 +124,6 @@ const LoginForm: React.FC = () => {
         );
       } else if (result?.ok) {
         toast.success("Login successful!");
-        // Redirect to dashboard or home page
         router.push("/dashboard");
         router.refresh();
       } else {

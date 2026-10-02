@@ -15,13 +15,10 @@ import { toast } from "react-toastify";
 import type { LoanDetailsRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── Status options ────────────────────────────────────────────────────────────
 const STATUS_OPEN = "Open";
 
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_TYPE_DETAIL = "Detail";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanDetailPrincipalFormValues extends Omit<
   LoanDetailsRequestDto,
   "branchIds"

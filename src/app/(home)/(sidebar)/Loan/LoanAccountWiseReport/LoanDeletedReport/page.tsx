@@ -15,11 +15,9 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_TYPE_ALL_DELETED = "ViewAllDeleted";
 const REPORT_TYPE_BETWEEN_DATE = "ViewDeletedBetweenDate";
 
-// branchIds arrives as string[] from OfficeNameField, memberGroupId is UI "Select Group"
 export type LoanDeletedFormValues = Omit<
   LoanDeletedRequestDto,
   "branchIds" | "memberGroupId"
@@ -145,7 +143,6 @@ export default function LoanDeletedPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

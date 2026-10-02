@@ -1,4 +1,3 @@
-// components/reports/accountReport/MemberPenaltyDepositWithdrawForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -35,7 +34,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── Type: Penalty / Deposit / Withdraw / Balance — 1/2/3/4 ───────────────────
 const transactionTypeOptions = [
   { value: "1", label: "Penalty" },
   { value: "2", label: "Deposit" },
@@ -67,7 +65,6 @@ function MemberPenaltyDepositWithdrawForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
-  // ── Scroll only after the report has actually loaded, not before submit ────
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

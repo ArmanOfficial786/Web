@@ -22,7 +22,6 @@ import {
 export type FamDepreciationReportRequestDto =
   ApiFamDepreciationReportRequestDto;
 
-// branchIds arrives as string[] from OfficeNameField; joined to CSV in toRequest.
 export interface FamDepreciationReportFormValues extends Omit<
   FamDepreciationReportRequestDto,
   "branchIds"
@@ -118,7 +117,6 @@ function FamDepreciationReportPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

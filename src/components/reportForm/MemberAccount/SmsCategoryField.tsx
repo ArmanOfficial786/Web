@@ -1,4 +1,3 @@
-// components/reportForm/Account/SmsCategoryField.tsx
 "use client";
 
 import React from "react";
@@ -7,9 +6,6 @@ import Box from "@mui/material/Box";
 import FieldRow from "@/utilis/FieldRow";
 import DropDown from "@/components/form/DropDown";
 
-// ── Static SMS Category options — matches SycSmsCategoryId/SmsCategory
-// columns in the SycSmsCategory table exactly (ids as strings since
-// smsCategoryId is a string field on SMSCategoryRequest/the form). ──────────
 const smsCategoryOptions = [
   { id: "", name: "-- Select --" },
   { id: "1", name: "No Sms" },

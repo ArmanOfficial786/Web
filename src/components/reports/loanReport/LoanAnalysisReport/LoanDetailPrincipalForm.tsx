@@ -49,7 +49,6 @@ interface LoanDetailPrincipalFormProps {
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-// ✅ DropDown expects {id, name}; statusOptions is {value, label} — reshape once here
 const STATUS_DROPDOWN_OPTIONS = statusOptions.map((o) => ({
   id: o.value,
   name: o.label,
@@ -76,8 +75,6 @@ export default function LoanDetailPrincipalForm({
     name: "enableCollectionCenter",
   });
 
-  // Clear the selected Collection Center whenever the checkbox is turned off,
-  // so a stale selection never gets sent while the field is inactive.
   useEffect(() => {
     if (!enableCollectionCenter) {
       setValue("collectionCenterId", "0" as any);

@@ -32,7 +32,6 @@ import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField"
 
 export type { ReportFormat };
 
-// ── Props ─────────────────────────────────────────────────────────────────
 interface MemberRegistrationReportProps {
   control: Control<MemberRegistrationFormValues>;
   handleSubmit: UseFormHandleSubmit<MemberRegistrationFormValues>;
@@ -45,7 +44,6 @@ interface MemberRegistrationReportProps {
   renderKey: number;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────
 function MemberRegistrationReport({
   control,
   handleSubmit,
@@ -172,7 +170,6 @@ function MemberRegistrationReport({
                   onSubmit={onSubmit}
                   setValue={setValue}
                   loading={isLoading}
-                  //onBeforeSubmit={scrollToReport}
                 />
                 <ClearFormButton
                   setValue={setValue}
@@ -203,8 +200,6 @@ function MemberRegistrationReport({
                 border: "1px solid",
                 borderColor: "divider",
                 borderRadius: 1,
-                // overflow:hidden clips the iframe — use overflow:auto so the
-                // user can also scroll the outer container if needed
                 overflow: "auto",
                 height: "100vh",
                 backgroundColor: "#d0d0d0",
@@ -231,5 +226,4 @@ function MemberRegistrationReport({
   );
 }
 
-// memo is fine here — all props are stable references or primitives
 export default React.memo(MemberRegistrationReport);

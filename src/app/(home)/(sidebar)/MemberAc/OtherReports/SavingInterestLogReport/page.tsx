@@ -53,15 +53,15 @@ const schema: yup.ObjectSchema<SavingInterestChangeLogFormValues> = yup
     officeName: yup.string().nullable().optional().default(""),
     reportType: yup
       .string()
-      .oneOf(["AccountNo", "DepositType"]) // ⚠️ confirm exact backend codes
+      .oneOf(["AccountNo", "DepositType"])
       .nullable()
       .optional()
       .default("AccountNo"),
     accountNo: yup.string().nullable().optional().default(""),
     depositTypeId: yup.number().nullable().optional().default(null),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ not in your field list — declared for type-completeness only, not rendered
-    memberId: yup.string().nullable().optional().default(""), // UI-only, not on DTO
-    memberName: yup.string().nullable().optional().default(""), // UI-only, not on DTO
+    visualReport: yup.boolean().optional().default(false),
+    memberId: yup.string().nullable().optional().default(""),
+    memberName: yup.string().nullable().optional().default(""),
   })
   .required();
 
@@ -104,7 +104,6 @@ export default function SavingInterestChangeLogPage() {
           ? (form.depositTypeId ?? undefined)
           : undefined,
       visualReport: form.visualReport ?? false,
-      // memberId / memberName intentionally omitted — not part of this DTO
     }),
     [],
   );

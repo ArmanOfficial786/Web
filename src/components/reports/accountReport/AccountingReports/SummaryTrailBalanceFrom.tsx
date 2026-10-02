@@ -1,4 +1,3 @@
-// components/reports/accountReport/SummaryTrialBalanceForm.tsx
 "use client";
 
 import React, { useRef } from "react";
@@ -34,7 +33,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── ReportType options — Detail / Summary ────────────────────────────────────
 const reportTypeOptions = [
   { value: "Summary", label: "Summary" },
   { value: "Detail", label: "Detail" },

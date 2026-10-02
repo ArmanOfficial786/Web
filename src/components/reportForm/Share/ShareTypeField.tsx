@@ -15,9 +15,9 @@ import type {
 interface ShareTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   shareTypeFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional, only for a default selection
-  defaultShareTypeId?: number; // optional
-  label?: string; // defaults to "Share Type"
+  setValue?: UseFormSetValue<T>;
+  defaultShareTypeId?: number;
+  label?: string;
 }
 
 export default function ShareTypeField<T extends FieldValues>({
@@ -29,12 +29,10 @@ export default function ShareTypeField<T extends FieldValues>({
 }: ShareTypeFieldProps<T>) {
   const { fetchShareType, shareTypeOptions } = useReportFormContext();
 
-  // Lazy, fetched once per app session (guarded by a ref in the context)
   useEffect(() => {
     fetchShareType();
   }, [fetchShareType]);
 
-  // Apply a default once options have loaded (only if requested)
   useEffect(() => {
     if (!setValue || defaultShareTypeId === undefined) return;
     const match = shareTypeOptions.find((s) => s.id === defaultShareTypeId);

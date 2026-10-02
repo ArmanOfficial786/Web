@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/DayBookVoucherWiseReport/page.tsx
 "use client";
 
 import DayBookVoucherWiseForm, {
@@ -103,7 +102,6 @@ export default function DayBookVoucherWisePage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

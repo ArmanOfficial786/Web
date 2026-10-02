@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/CollectorDetailReport/CollectorWiseCommissionReport/page.tsx
 "use client";
 
 import CollectorWiseWithdrawalForm from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseWithdrawalForm";

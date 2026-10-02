@@ -18,7 +18,7 @@ import {
   DefaultPagination,
   type ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-import memberAccountService from "@/services/memberAccount/memberAccountService"; // ⚠️ confirm this exposes fixedDepositCertificateScheduleCreate
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import {
   REPORT_TYPE_CERTIFICATE,
   REPORT_TYPE_SCHEDULE,
@@ -27,7 +27,6 @@ import {
   type ViewKind,
 } from "@/components/reports/memberAccount/InterestPayableReport/fixedDepositCertificateSchedule.types";
 
-// ⚠️ Guessed wire values — confirm against backend
 const schema: yup.ObjectSchema<FixedDepositCertificateScheduleFormValues> = yup
   .object({
     accountNo: yup.string().optional().default(""),
@@ -52,7 +51,6 @@ export default function FixedDepositCertificateSchedulePage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── Account Directory selection ──────────────────────────────────────────
   const handleAccountSelect = useCallback(
     (record: AccountLookUpDtos) => {
       setValue("accountNo", record.accountNo ?? "", { shouldValidate: true });
@@ -165,7 +163,6 @@ export default function FixedDepositCertificateSchedulePage() {
     [callApi, lastRequest],
   );
 
-  // ── Two distinct submit actions sharing one form ────────────────────────
   const onViewSchedule: SubmitHandler<FixedDepositCertificateScheduleFormValues> =
     useCallback(
       (formData) =>

@@ -1,4 +1,3 @@
-// AccountLookUpService.ts - Service for Account Lookup API calls
 import type { AccountLookUpDtos } from "types/AccountRecord";
 import { apiClient } from "../apiClient";
 
@@ -48,9 +47,6 @@ interface PagedResult {
 }
 
 export const accountLookUpService = {
-  /**
-   * Search accounts with pagination and filtering
-   */
   search: async (filter?: Filter): Promise<PagedResult> => {
     try {
       const response = await apiClient.instance.post<any>(
@@ -76,9 +72,6 @@ export const accountLookUpService = {
     }
   },
 
-  /**
-   * Get account list with filters
-   */
   getAllWithFilters: async (
     params: AccountLookUpSearchParams,
   ): Promise<PagedResult> => {
@@ -91,9 +84,6 @@ export const accountLookUpService = {
     return accountLookUpService.search(filter);
   },
 
-  /**
-   * Get paginated accounts
-   */
   getPaged: async (
     page: number = 1,
     pageSize: number = 20,
@@ -106,9 +96,6 @@ export const accountLookUpService = {
     });
   },
 
-  /**
-   * Select specific account by ID
-   */
   selectAccount: async (
     mamAccountOpeningId: number,
   ): Promise<Record<string, any> | null> => {
@@ -127,9 +114,6 @@ export const accountLookUpService = {
     }
   },
 
-  /**
-   * Validate account by account number
-   */
   validateAccountNo: async (
     accountNo: string,
   ): Promise<Record<string, any> | null> => {
@@ -153,9 +137,6 @@ export const accountLookUpService = {
     }
   },
 
-  /**
-   * Search with dynamic filters
-   */
   searchWithFilters: async (
     filters: FilterParam[],
     sorts?: SortParam[],

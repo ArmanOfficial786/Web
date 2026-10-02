@@ -12,7 +12,7 @@ import InterestAndTaxPostedForm, {
 } from "@/components/reports/memberAccount/InterestExpenseReport/InterestAndTaxPostedForm";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService"; // ⚠️ confirm this exposes interestAndTaxPostedCreate
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { useReportFormContext } from "@/contexts/ReportFormContext";
 

@@ -13,7 +13,6 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import { COLUMN_OPTIONS } from "@/utilis/Constants/MemberColumnOptions";
 import memberService from "@/services/member/memberService";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface MemberAllDetailsFormValues extends MemberAllDetailRequst {
   memberId?: string | null;
@@ -27,11 +26,9 @@ export interface MemberRegistrationResponseExtended {
   currentPage: number;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 const ALL_COLUMN_KEYS = COLUMN_OPTIONS.map((c) => c.key);
 
-// ── Validation schema ─────────────────────────────────────────────────────────
 
 const schema: yup.ObjectSchema<MemberAllDetailsFormValues> = yup.object({
   memberId: yup.string().nullable().optional().default(null),
@@ -45,7 +42,7 @@ const schema: yup.ObjectSchema<MemberAllDetailsFormValues> = yup.object({
       const { fromDate } = this.parent;
       return !fromDate || !val || val >= fromDate;
     }),
-  orderby: yup.string().nullable().optional().default(""), // ← lowercase b
+  orderby: yup.string().nullable().optional().default(""),
   branchId: yup.number().required("Branch ID is required").default(2),
   memberGroupId: yup.number().optional().default(0),
   visualReport: yup.boolean().optional().default(false),
@@ -57,7 +54,6 @@ const schema: yup.ObjectSchema<MemberAllDetailsFormValues> = yup.object({
     .default(() => ALL_COLUMN_KEYS),
 });
 
-// ── Request mapper ────────────────────────────────────────────────────────────
 
 const toRequest = (v: MemberAllDetailsFormValues): MemberAllDetailRequst => ({
   memberId: v.memberId || null,
@@ -70,7 +66,6 @@ const toRequest = (v: MemberAllDetailsFormValues): MemberAllDetailRequst => ({
   selectedColumns: v.selectedColumns,
 });
 
-// ── Initial report state ──────────────────────────────────────────────────────
 
 const INITIAL_STATE: MemberRegistrationResponseExtended = {
   isLoading: false,
@@ -79,7 +74,6 @@ const INITIAL_STATE: MemberRegistrationResponseExtended = {
   currentPage: 1,
 };
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
@@ -96,7 +90,6 @@ function Page(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // ── postMessage: receive totalPages from iframe after buildPages() ───────────
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -115,7 +108,6 @@ function Page(): React.ReactElement {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // ── API call ──────────────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberAllDetailRequst, format: string) =>
       memberService.api.memberAllDetailsCreate(request, { format }),
@@ -128,7 +120,6 @@ function Page(): React.ReactElement {
     return JSON.stringify(response.data);
   }, []);
 
-  // ── Fetch VIEW report ─────────────────────────────────────────────────────────
   const fetchReport = useCallback(
     async (request: MemberAllDetailRequst): Promise<void> => {
       setReportState({
@@ -160,7 +151,6 @@ function Page(): React.ReactElement {
     [callApi, getHtmlString, reset],
   );
 
-  // ── Download ──────────────────────────────────────────────────────────────────
   const handleDownload = useCallback(
     async (format: ReportFormat): Promise<void> => {
       if (!lastRequest) {
@@ -190,7 +180,6 @@ function Page(): React.ReactElement {
     [callApi, lastRequest],
   );
 
-  // ── Page navigation ───────────────────────────────────────────────────────────
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const clamped = Math.max(1, Math.min(newPage, prev.totalPages));
@@ -201,13 +190,11 @@ function Page(): React.ReactElement {
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
       } catch {
-        // defensive catch
       }
       return { ...prev, currentPage: clamped };
     });
   }, []);
 
-  // ── Form submit ───────────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<MemberAllDetailsFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport],

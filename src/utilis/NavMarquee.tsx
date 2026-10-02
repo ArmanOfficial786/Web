@@ -15,12 +15,12 @@ const NavMarquee: React.FC = () => {
   useEffect(() => {
     if (isPaused) return;
 
-    const scrollDuration = 30000; // 30 seconds for scrolling
+    const scrollDuration = 30000;
 
     const timer = setTimeout(() => {
       setCurrentMessage((prev) => (prev + 1) % messages.length);
-      setAnimationKey((prev) => prev + 1); // Force animation restart
-    }, scrollDuration); // Only scroll duration, no wait time
+      setAnimationKey((prev) => prev + 1);
+    }, scrollDuration);
 
     return () => clearTimeout(timer);
   }, [currentMessage, isPaused, messages.length]);

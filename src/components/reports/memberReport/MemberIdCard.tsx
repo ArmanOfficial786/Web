@@ -33,21 +33,17 @@ import { MemberIdCardRequest } from "types/api/api";
 
 export type { ReportFormat };
 
-//export type SelectOption = { id: number; name: string };
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface MemberIdCardProps {
   control: Control<MemberIdCardFormValues>;
   handleSubmit: UseFormHandleSubmit<MemberIdCardFormValues>;
   onSubmit: SubmitHandler<MemberIdCardFormValues>;
   setValue: UseFormSetValue<MemberIdCardFormValues>;
-  // reset: UseFormReset<MemberIdCardFormValues>;
   reportState: MemberIdCardResponseExtended;
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 function MemberIdCard({
   control,
   handleSubmit,
@@ -68,9 +64,6 @@ function MemberIdCard({
     });
   };
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<MemberIdCardFormValues>(),
     [],
@@ -217,7 +210,7 @@ function MemberIdCard({
                 src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
                 style={{
                   position: "absolute",
-                  top: "-40px", // pushes the toolbar out of the visible area
+                  top: "-40px",
                   left: 0,
                   width: "100%",
                   height: "calc(100% + 40px)",

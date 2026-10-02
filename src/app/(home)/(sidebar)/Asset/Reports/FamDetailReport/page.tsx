@@ -22,18 +22,14 @@ import {
 
 export type FamDetailReportRequestDto = ApiFamDetailReportRequestDto;
 
-// ── Report Type radio ─────────────────────────────────────────────────────────
 const REPORT_TYPE_SUMMARY = "Summary";
 
-// branchIds arrives as string[] from OfficeNameField.
-// type is UI-only (drives AssetCategoryField). categoryId/assetId/clearanceStatusId
-// are numbers per the DTO.
 export interface FamDetailReportFormValues extends Omit<
   FamDetailReportRequestDto,
   "branchIds" | "categoryId" | "assetId" | "clearanceStatusId"
 > {
   branchIds?: string[];
-  type?: string; // UI-only — "F" | "O"
+  type?: string;
   categoryId?: number | null;
   assetId?: number | null;
   clearanceStatusId?: number | null;
@@ -77,7 +73,6 @@ const toRequest = (v: FamDetailReportFormValues): FamDetailReportRequestDto => {
     assetId: Number(v.assetId ?? -1),
     clearanceStatusId: Number(v.clearanceStatusId ?? -1),
     reportType,
-    // Derive isSummary from the radio so both DTO fields agree.
     isSummary: reportType === REPORT_TYPE_SUMMARY,
     isTypeWise: v.isTypeWise ?? false,
     orderBy: v.orderBy || "",
@@ -129,7 +124,6 @@ function FamDetailReportPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

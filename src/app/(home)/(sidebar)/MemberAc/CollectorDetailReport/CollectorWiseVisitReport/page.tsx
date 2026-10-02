@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/CollectorWiseVisitReport/page.tsx
 "use client";
 
 import CollectorWiseVisitForm, {
@@ -39,31 +38,30 @@ const schema: yup.ObjectSchema<CollectorWiseVisitFormValues> = yup
     collectorName: yup.string().nullable().optional().default(""),
     reportType: yup
       .string()
-      .oneOf(["All", "Deposit", "Loan"]) // ⚠️ confirm exact backend codes
+      .oneOf(["All", "Deposit", "Loan"])
       .nullable()
       .optional()
       .default("All"),
-    // ⚠️ Landscape/Portrait mapped to `visitType` — low confidence, see chat note
     visitType: yup
       .string()
-      .oneOf(["Landscape", "Portrait"]) // ⚠️ confirm exact backend codes / correct field
+      .oneOf(["Landscape", "Portrait"])
       .nullable()
       .optional()
       .default("Portrait"),
     amountType: yup
       .string()
-      .oneOf(["Count", "Amount"]) // ⚠️ confirm exact backend codes
+      .oneOf(["Count", "Amount"])
       .nullable()
       .optional()
       .default("Count"),
     generateBy: yup
       .string()
-      .oneOf(["AllAccount", "OnlyVisit"]) // ⚠️ confirm exact backend codes
+      .oneOf(["AllAccount", "OnlyVisit"])
       .nullable()
       .optional()
       .default("AllAccount"),
     orderBy: yup.string().nullable().optional().default(""),
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not in your field list — kept for schema completeness only
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 

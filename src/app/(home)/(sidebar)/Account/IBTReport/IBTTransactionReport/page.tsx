@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/AccountReports/IbtTransactionReport/page.tsx
 "use client";
 
 import IbtTransactionForm, {
@@ -15,7 +14,7 @@ import type { IBTTransactionRequestDto } from "types/api/api";
 import * as yup from "yup";
 
 export type IbtTransactionFormValues = IBTTransactionRequestDto & {
-  branchName?: string | null; // UI-only, not on the DTO — never sent to the API
+  branchName?: string | null;
 };
 
 export interface IbtTransactionResponseExtended {
@@ -44,9 +43,6 @@ const schema: yup.ObjectSchema<IbtTransactionFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    // ⚠️ Real DTO field is `branchId` (singular string), not `branchIds` like
-    // most other reports — confirm whether OfficeNameField's output (often a
-    // comma-joined multi-select) is compatible with a single-branch field.
     branchId: yup.string().nullable().optional().default("2"),
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
@@ -74,7 +70,6 @@ export default function IbtTransactionPage() {
       toDateBs: form.toDateBs || undefined,
       branchId: form.branchId || undefined,
       orderBy: form.orderBy || "",
-      // branchName intentionally omitted — UI-only, not part of the DTO
     }),
     [],
   );
@@ -85,10 +80,6 @@ export default function IbtTransactionPage() {
     [],
   );
 
-  // Endpoint is void-typed with no `format: "json"` in its request config —
-  // it returns raw PDF bytes, not a JSON isValid/data envelope. Uses the
-  // raw-binary pattern (matches BalanceSheetReportPage /
-  // CollectorWiseWithdrawalPage), not the isValid/base64 pattern.
   const fetchReport = useCallback(
     async (request: IBTTransactionRequestDto) => {
       setReportState((prev) => {
@@ -156,7 +147,6 @@ export default function IbtTransactionPage() {
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

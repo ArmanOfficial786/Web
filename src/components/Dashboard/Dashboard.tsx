@@ -6,7 +6,6 @@ export default function Dashboard() {
     { label: "Today's Money", value: "$53,000", change: "+55%", icon: "💰" },
     { label: "Daily Users", value: "2,300", change: "+3%", icon: "👥" },
     { label: "New Clients", value: "-3,052", change: "-2%", icon: "📄" },
-    // { label: "Total Sales", value: "$173,000", change: "+8%", icon: "🛒" },
   ];
 
   return (

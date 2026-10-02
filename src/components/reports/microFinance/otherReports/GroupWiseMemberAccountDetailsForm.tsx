@@ -129,7 +129,6 @@ export default function GroupWiseMemberAccountDetailsForm({
               setValue={setValue}
               branchFieldName="branchIds"
               collectionCenterFieldName="collectionCenterIds"
-              // mode omitted → only the CC dropdown renders (no Address / Meeting fields)
             />
             <SoleSelectGroupField<GroupWiseMemberAccountDetailsFormValues>
               control={control}

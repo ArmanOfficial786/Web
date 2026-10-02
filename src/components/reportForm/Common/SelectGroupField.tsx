@@ -13,7 +13,6 @@ import {
   type UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface SelectGroupFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
@@ -22,10 +21,9 @@ interface SelectGroupFieldProps<T extends FieldValues> {
   collectionCenterFieldName: Path<T>;
   groupFieldName: Path<T>;
 
-  defaultGroupValue?: any; // optional safer reset value
+  defaultGroupValue?: any;
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 export default function SelectGroupField<T extends FieldValues>({
   control,
   setValue,
@@ -50,10 +48,8 @@ export default function SelectGroupField<T extends FieldValues>({
     const branchId = Number(selectedBranchId);
     const collectionCenterId = Number(selectedCollectionCenterId);
 
-    // reset dependent field
     setValue(groupFieldName, defaultGroupValue);
 
-    // fetch new options
     fetchMemberGroups(branchId, collectionCenterId);
   }, [
     selectedBranchId,

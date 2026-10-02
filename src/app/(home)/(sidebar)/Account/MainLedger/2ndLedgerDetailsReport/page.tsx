@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/MainLedger/2ndLedgerDetailsReport/page.tsx
 "use client";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,8 +15,6 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import type { Pagination, SecondLedgerDetailsRequestDto } from "types/api/api";
 
-// ledgerHeadId is client-side a string (dropdown value) — DTO wants a number,
-// same convention as FirstLedgerDetailsFormValues.
 export type SecondLedgerDetailsFormValues = Omit<
   SecondLedgerDetailsRequestDto,
   "ledgerHeadId"
@@ -137,7 +134,6 @@ export default function SecondLedgerDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

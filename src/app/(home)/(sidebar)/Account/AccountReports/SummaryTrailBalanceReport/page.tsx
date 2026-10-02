@@ -16,7 +16,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import accountService from "@/services/Account/AccountService";
 
-// ── branchId is form-only — resolved into branchIds (comma string) on submit ─
 export interface SummaryTrialBalanceFormValues extends Omit<
   SummaryTrialBalanceRequest,
   "branchIds"
@@ -24,7 +23,6 @@ export interface SummaryTrialBalanceFormValues extends Omit<
   branchId?: number[];
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface SummaryTrialBalanceResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -79,7 +77,6 @@ export default function SummaryTrialBalancePage() {
       defaultValues: schema.getDefault(),
     });
 
-  // ── branchId[] -> branchIds (comma string). "All" resolves to full id list ──
   const toRequest = useCallback(
     (form: SummaryTrialBalanceFormValues): SummaryTrialBalanceRequest => {
       const selectedIds = (form.branchId ?? [])

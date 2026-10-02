@@ -1,10 +1,8 @@
-// utilis/auth/jwt.ts
 export interface AuthClaims {
   userId?: string;
-  officeIds?: string; // comma-separated, e.g. "2" or "2,5"
+  officeIds?: string;
 }
 
-// ⚠️ Change this if your token is stored somewhere else.
 export function getAuthToken(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem("token");

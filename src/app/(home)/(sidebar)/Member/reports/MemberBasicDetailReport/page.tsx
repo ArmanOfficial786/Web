@@ -16,22 +16,17 @@ import { toast } from "react-toastify";
 import type { MemberBasicDetailsRequest, Pagination } from "types/api/api";
 import * as yup from "yup";
 
-// ── UI-only fields – stripped before sending to API ────────────────────────
-// branchId (number) is the UI selection; branchIds (string) is what the API
-// expects — joined from branchId in toRequest.
 export interface MemberBasicDetailsFormValues extends MemberBasicDetailsRequest {
   branchId?: number;
   memberName?: string;
 }
 
-// ── Client-only state ──────────────────────────────────────────────────────
 export interface MemberBasicDetailsResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Validation schema ──────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<MemberBasicDetailsFormValues> = yup.object({
   fromDate: yup.string().required("From Date is required").default(""),
   toDate: yup
@@ -61,14 +56,12 @@ const schema: yup.ObjectSchema<MemberBasicDetailsFormValues> = yup.object({
   branchName: yup.string().nullable().optional().default(""),
 });
 
-// ── Strip UI-only fields before API call ──────────────────────────────────
 const toRequest = (
   v: MemberBasicDetailsFormValues,
 ): MemberBasicDetailsRequest => ({
   memberRegistrationId: Number(v.memberRegistrationId) || 0,
   fromDate: v.fromDate || "",
   toDate: v.toDate || "",
-  // ✅ single branchId joined into the comma-separated branchIds string
   branchIds: v.branchId ? String(v.branchId) : "2",
   orderBy: v.orderBy || "",
   visualReport: v.visualReport || false,
@@ -77,7 +70,6 @@ const toRequest = (
   branchName: v.branchName || "",
 });
 
-// ── Page ──────────────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
     useState<MemberBasicDetailsResponseExtended>({ isLoading: false });
@@ -90,7 +82,6 @@ function Page(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // ── Wire MemberLookupButton selection → correct form fields ────────────
   const handleMemberSelect = useCallback(
     (member: MemberRecord) => {
       setValue("memberRegistrationId", member.memMemberRegistrationId, {

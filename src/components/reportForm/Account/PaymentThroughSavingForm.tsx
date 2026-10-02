@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/PaymentThroughSavingForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -26,7 +25,7 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import Preloader from "@/components/PreLoader/preloader";
 import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import BankReceivedTransactionTypeField from "@/components/reports/accountReport/OtherReports/BankReceivedTransactionTypeField"; // ⚠️ confirm this is the correct transaction-type source for this report
+import BankReceivedTransactionTypeField from "@/components/reports/accountReport/OtherReports/BankReceivedTransactionTypeField";
 import type {
   PaymentThroughSavingFormValues,
   PaymentThroughSavingResponseExtended,

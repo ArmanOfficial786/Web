@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/ChequeBookLostReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -54,8 +53,8 @@ const schema: yup.ObjectSchema<ChequeBookLostFormValues> = yup
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     branchName: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
-    reportView: yup.string().nullable().optional().default(""), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
-    visualReport: yup.boolean().optional().default(false), // ⚠️ on DTO, not requested for UI — kept for schema completeness only
+    reportView: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false),
   })
   .required();
 

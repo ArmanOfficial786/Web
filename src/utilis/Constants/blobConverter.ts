@@ -1,4 +1,3 @@
-// utils/blobConverter.ts
 
 import { ReportFormat } from "@/components/reports/accountReport/AccountingReports/AccountStatement";
 import { mimeTypes } from "./reportConstants";
@@ -6,15 +5,12 @@ import { mimeTypes } from "./reportConstants";
 export function responseToBlob(data: unknown, format: ReportFormat): Blob {
   const mimeType = mimeTypes[format];
 
-  // 1. Already a Blob
   if (data instanceof Blob) {
     console.log("Already a blob");
     return data;
   }
 
-  // 2. Uint8Array / ArrayBuffer
   if (data instanceof Uint8Array) {
-    // Extract the underlying ArrayBuffer (safe cast)
     return new Blob([(data as Uint8Array).buffer as ArrayBuffer], {
       type: mimeType,
     });
@@ -24,11 +20,9 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
     return new Blob([data], { type: mimeType });
   }
 
-  // 3. String handling
   if (typeof data === "string") {
     const trimmed = data.trim();
 
-    // 3a. Raw PDF / binary string
     if (trimmed.startsWith("%PDF")) {
       const len = trimmed.length;
       const byteArray = new Uint8Array(len);
@@ -36,25 +30,21 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
         byteArray[i] = trimmed.charCodeAt(i) & 0xff;
       }
       console.log("Raw pdf/binary string");
-      // Use buffer to avoid SharedArrayBuffer type issue
       return new Blob([byteArray.buffer as ArrayBuffer], { type: mimeType });
     }
 
-    // 3b. Data URL
     const dataUrlMatch = trimmed.match(/^data:[^;]+;base64,(.*)$/i);
     if (dataUrlMatch) {
       const base64 = dataUrlMatch[1];
       return base64ToBlob(base64, mimeType);
     }
 
-    // 3c. Base64 string
     let cleaned = trimmed.replace(/\s/g, "");
     cleaned = cleaned.replace(/-/g, "+").replace(/_/g, "/");
     while (cleaned.length % 4 !== 0) cleaned += "=";
     try {
       return base64ToBlob(cleaned, mimeType);
     } catch {
-      // not valid base64
     }
 
     throw new Error(
@@ -62,7 +52,6 @@ export function responseToBlob(data: unknown, format: ReportFormat): Blob {
     );
   }
 
-  // 4. Object – recursively extract data
   if (data && typeof data === "object") {
     const obj = data as Record<string, unknown>;
     const possibleFields = [
@@ -95,6 +84,5 @@ function base64ToBlob(base64: string, mimeType: string): Blob {
   for (let i = 0; i < len; i++) {
     byteArray[i] = binary.charCodeAt(i);
   }
-  // Use buffer to avoid SharedArrayBuffer type issue
   return new Blob([byteArray.buffer as ArrayBuffer], { type: mimeType });
 }

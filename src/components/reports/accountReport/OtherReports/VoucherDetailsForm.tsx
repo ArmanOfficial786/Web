@@ -1,4 +1,3 @@
-// components/reports/accountReport/OtherReports/VoucherDetailsForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -36,7 +35,6 @@ import VoucherNoField from "@/components/reportForm/Account/VoucherNoField";
 
 export type { ReportFormat };
 
-// ── View As — None (default) / Grouping ──────────────────────────────────────
 const viewTypeOptions = [
   { value: "None", label: "None" },
   { value: "Grouping", label: "Grouping" },
@@ -75,8 +73,6 @@ function VoucherDetailsForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  // VoucherNoField needs to refetch whenever From Date, To Date, or the
-  // selected branches change — watch them here and pass down.
   const fromDate = useWatch({ control, name: "fromDate" }) ?? undefined;
   const toDate = useWatch({ control, name: "toDate" }) ?? undefined;
   const branchIdsRaw = useWatch({ control, name: "branchIds" });
@@ -164,7 +160,7 @@ function VoucherDetailsForm({
             <OrderByField<VoucherDetailsFormValues>
               control={control}
               name="orderBy"
-              reportKey="voucher-details-report" // ⚠️ add this key to your OrderByReportKey union / options map
+              reportKey="voucher-details-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />

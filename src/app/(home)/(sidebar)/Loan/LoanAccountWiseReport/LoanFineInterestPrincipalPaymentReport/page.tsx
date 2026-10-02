@@ -20,12 +20,10 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ⚠️ Guessed wire values — confirm against backend
 const REPORT_TYPE_PAYMENT = "Payment";
 
 const CASH_TYPE_ALL = "All";
 
-// branchIds arrives as string[] from OfficeNameField; memberId / memberName / reportType are UI-facing
 export interface LoanPrincipalInterestFinePaymentFormValues extends Omit<
   LoanFineInterestPrinciplePaymentSummaryRequestDto,
   "branchIds"
@@ -33,7 +31,7 @@ export interface LoanPrincipalInterestFinePaymentFormValues extends Omit<
   branchIds?: string[];
   memberId?: string;
   memberName?: string;
-  reportType?: string; // ⚠️ UI-only — DTO has no such field, never sent
+  reportType?: string;
 }
 
 export interface LoanPrincipalInterestFinePaymentResponseExtended {
@@ -94,7 +92,6 @@ const toRequest = (
     selectAllOrOnlyCash: v.selectAllOrOnlyCash || CASH_TYPE_ALL,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
-    // reportType intentionally omitted — ⚠️ UI-only, not on this DTO
   };
 };
 

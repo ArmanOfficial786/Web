@@ -17,7 +17,6 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-// ── sameCompanyName is UI-only — the real DTO has no such field.
 export type TellerToTellerCashTransferFormValues =
   TellerToTellerCashTransferRequestDto & {
     sameCompanyName?: boolean;
@@ -78,7 +77,6 @@ export default function TellerToTellerCashTransferPage() {
       toDate: form.toDate || undefined,
       branchId: form.branchId || undefined,
       orderBy: form.orderBy || "",
-      // sameCompanyName intentionally omitted — not part of this DTO
     }),
     [],
   );
@@ -117,7 +115,6 @@ export default function TellerToTellerCashTransferPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

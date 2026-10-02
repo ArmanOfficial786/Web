@@ -10,7 +10,6 @@ const branchService = {
     return response.data.data ?? [];
   },
 
-  // ✅ NEW — GET /api/Branch/GetCollectionBranch
   getCollectionBranches: async (
     params?: RequestParams,
   ): Promise<BranchResponse[]> => {

@@ -20,8 +20,6 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// memberId / memberName are UI-only metadata from the lookup. The API DTO
-// still expects memberRegistrationId as a numeric identifier.
 export interface LoanEvaluationFormValues extends LoanEvaluationReqResponse {
   memberId?: string;
   memberName?: string;
@@ -102,7 +100,6 @@ function LoanEvaluationPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

@@ -1,4 +1,3 @@
-// services/memberAccount/depositStatementVerifyService.ts
 import type {
   DepositStatementVerifyRequestDto,
   DepositStatementVerificationDto,

@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/PaymentThroughSavingReport/page.tsx
 "use client";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -88,8 +87,6 @@ export default function PaymentThroughSavingPage() {
 
   const callApi = useCallback(
     (request: PaymentThroughSavingRequestDto, format: string) =>
-      // ⚠️ confirm real generated method name — following BankReceivedPayment's
-      // naming convention (accountService.api.<name>Create)
       accountService.api.paymentThroughSavingCreate(request, { format }),
     [],
   );

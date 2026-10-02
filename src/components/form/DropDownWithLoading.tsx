@@ -1,4 +1,3 @@
-// src/components/form/DropDownWithLoading.tsx
 import isObjEmpty from "@/utilis/isObjEmpty";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -22,7 +21,6 @@ interface DropDownWithLoadingPropType {
   error?: boolean;
   helperText?: string;
   onOpen?: (() => void | Promise<void>) | null;
-  /** Shows a small spinner inside the field, right corner, left of the arrow. */
   loading?: boolean;
 }
 
@@ -38,9 +36,6 @@ export default function DropDownWithLoading({
   onOpen,
   loading = false,
 }: DropDownWithLoadingPropType) {
-  // ── Spinner sits inside the field's own box (position: relative on
-  // FormControl), offset left of the native Select arrow icon (~32px),
-  // vertically centered — not a sibling element below the field. ───────────
   const Spinner = loading ? (
     <Box
       sx={{

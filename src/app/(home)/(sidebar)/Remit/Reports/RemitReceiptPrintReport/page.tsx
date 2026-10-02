@@ -19,10 +19,8 @@ import {
 
 export type RemittanceReceiptPrintRequestDto = RemitReceiptPrintRequestDto;
 
-
 const RECEIPT_OF_PAYMENT = "Payment";
 const GET_RECEIPT_DOUBLE = "Double";
-
 
 export interface RemitReceiptPrintFormValues extends Omit<
   RemittanceReceiptPrintRequestDto,
@@ -137,7 +135,6 @@ function RemitReceiptPrintPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

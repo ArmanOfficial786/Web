@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/MiscellaneousIncomeForm.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef } from "react";
@@ -27,7 +26,7 @@ import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirs
 import Preloader from "@/components/PreLoader/preloader";
 import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
-import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch"; // ⚠️ confirm actual path
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import type {
@@ -37,7 +36,6 @@ import type {
 
 export type { ReportFormat };
 
-// ── Report Type — Miscellaneous / Fund ───────────────────────────────────────
 const reportTypeOptions = [
   { value: "Miscellaneous", label: "Miscellaneous" },
   { value: "Fund", label: "Fund" },
@@ -76,9 +74,6 @@ function MiscellaneousIncomeForm({
     }
   }, [pdfData, showReport, isLoading]);
 
-  // Config is memoized once per mount. cacheKey inside it is "member-lookup",
-  // shared app-wide — if any other report already opened the member
-  // directory this session, this field reuses that data with no API call.
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<MiscellaneousIncomeFormValues>(),
     [],
@@ -166,7 +161,7 @@ function MiscellaneousIncomeForm({
             <OrderByField<MiscellaneousIncomeFormValues>
               control={control}
               name="orderBy"
-              reportKey="miscellaneous-income-report" // ⚠️ add this key to your OrderByReportKey union / options map
+              reportKey="miscellaneous-income-report"
             />
             <VisualReportSwitch<MiscellaneousIncomeFormValues>
               control={control}

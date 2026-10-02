@@ -89,7 +89,6 @@ function CenterMeetingDetailPage(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // Seed branchIds from session so CollectionCenterField can fetch this branch's centers.
   useEffect(() => {
     let active = true;
 
@@ -139,7 +138,6 @@ function CenterMeetingDetailPage(): React.ReactElement {
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
-        toast.error("Failed to generate report.");
       }
     },
     [callApi],

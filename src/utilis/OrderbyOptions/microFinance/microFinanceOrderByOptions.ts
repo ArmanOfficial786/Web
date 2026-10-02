@@ -18,12 +18,10 @@ export const groupWiseMemberAccountDetailsOrderByOptions = defineOrderByOptions(
   ] as const,
 );
 
-//===================================================
 export type MicroFinanceOrderByReportKey =
   | "fund-withdrawl-report"
   | "group-wise-member-account-details";
 
-//======================================================
 export const microFinanceOrderByOptionsMap: Record<
   MicroFinanceOrderByReportKey,
   readonly OrderByOption[]

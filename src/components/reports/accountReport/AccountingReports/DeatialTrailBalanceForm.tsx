@@ -1,4 +1,3 @@
-// components/reports/accountReport/DetailTrialBalanceForm.tsx
 "use client";
 
 import React, { useRef } from "react";

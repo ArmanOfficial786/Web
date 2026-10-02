@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/MainLedger/3rdLedgerDetailsReport/page.tsx
 "use client";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -137,7 +136,6 @@ export default function ThirdLedgerDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

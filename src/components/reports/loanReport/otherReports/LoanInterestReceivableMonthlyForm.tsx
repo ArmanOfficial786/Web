@@ -1,4 +1,3 @@
-// components/reports/loanReport/otherReports/LoanInterestReceivableMonthlyForm.tsx
 "use client";
 
 import Box from "@mui/material/Box";

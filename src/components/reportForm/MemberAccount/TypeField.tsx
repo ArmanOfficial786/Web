@@ -17,8 +17,8 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 interface TypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
-  name: Path<T>; // the "typeId" field this dropdown writes to (number)
-  transactionTypeName: Path<T>; // the "transactionType" field to watch ("S"/"L"/"H")
+  name: Path<T>;
+  transactionTypeName: Path<T>;
   label: string;
 }
 
@@ -54,9 +54,6 @@ export default function TypeField<T extends FieldValues>({
       fetchShareType();
     }
 
-    // ── Reset to "-- Select --" (id 0) whenever the transaction type
-    // actually changes — prevents a stale id lingering across type switches.
-    // Skip on first mount. ──────────────────────────────────────────────────
     if (
       prevTransactionType.current !== transactionType &&
       prevTransactionType.current !== undefined

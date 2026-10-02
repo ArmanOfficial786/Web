@@ -54,7 +54,6 @@ function AccountStatement({
   onPageChange,
   onDownload,
 }: AccountStatementProps) {
-  // ── Destructure from reportState ─────────────────────────────────────────
   const { blobUrl, isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData) && Boolean(blobUrl);
   const reportRef = useRef<HTMLDivElement>(null);

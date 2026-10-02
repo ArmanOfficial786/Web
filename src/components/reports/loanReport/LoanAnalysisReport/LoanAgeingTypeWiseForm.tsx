@@ -167,7 +167,7 @@ export default function LoanAgeingTypeWiseForm({
             <OrderByField<LoanAgeingTypeWiseFormValues>
               control={control}
               name="orderBy"
-              reportKey="loan-ageing-type-wise-report" // ⚠️ add this key to OrderByReportKey union / options map
+              reportKey="loan-ageing-type-wise-report"
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box

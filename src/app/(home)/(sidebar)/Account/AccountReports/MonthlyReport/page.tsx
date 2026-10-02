@@ -15,13 +15,11 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import accountService from "@/services/Account/AccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── Form values — matches the DTO directly (single branchId, like CostOfFund) ──
 export interface MonthlyReportFormValues extends Omit<
   MonthlyReportRequest,
   "isNepali"
 > {}
 
-// ── Client-only response state (binary PDF + header pagination) ─────────────
 export interface MonthlyReportResponseExtended {
   pdfData?: string;
   isLoading: boolean;
@@ -35,7 +33,7 @@ const schema: yup.ObjectSchema<MonthlyReportFormValues> = yup
       .required("Till Date is required")
       .typeError("Till Date must be a valid date")
       .default(""),
-    branchId: yup.string().nullable().optional().default("2"), // matches CostOfFund's defaultBranchId={2}
+    branchId: yup.string().nullable().optional().default("2"),
     branchName: yup.string().nullable().optional().default(""),
     accountTypeId: yup.number().required().default(0),
     reportType: yup.string().optional().default("Summary"),
@@ -68,7 +66,7 @@ export default function MonthlyReportPage() {
       accountTypeId: form.accountTypeId ?? 0,
       reportType: form.reportType,
       isMonthWise: form.isMonthWise ?? false,
-      isNepali: true, // Till Date is BS-only in this form
+      isNepali: true,
       showBudget: form.showBudget ?? false,
       sameCompanyName: form.sameCompanyName ?? true,
       visualReport: false,
@@ -159,7 +157,6 @@ export default function MonthlyReportPage() {
     [fetchReport, toRequest],
   );
 
-  // ── Revoke blob URL on unmount ────────────────────────────────────────────
   useEffect(() => {
     return () => {
       setReportState((prev) => {

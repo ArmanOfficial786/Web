@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/reports/MemberPenaltyDepositWithdrawReport/page.tsx
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -18,9 +17,6 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 
-// ── branchId (multi-select array) is form-only — resolved into branchIds
-// (comma string) on submit. transactionType is a form-only "1"|"2"|"3"|"4"
-// radio, converted to a number for the DTO's int32 in toRequest(). ─────────
 export interface MemberPenaltyDepositWithdrawFormValues extends Omit<
   MemberPenaltyDepositWithdrawRequest,
   "branchIds" | "transactionType"
@@ -29,14 +25,12 @@ export interface MemberPenaltyDepositWithdrawFormValues extends Omit<
   transactionType?: "1" | "2" | "3" | "4";
 }
 
-// ── Client-only response state (raw PDF blob + header pagination) ───────────
 export interface MemberPenaltyDepositWithdrawResponseExtended {
   pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
 
-// ── Normalize BS date string to "yyyy/MM/dd" regardless of picker's separator ──
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
@@ -67,7 +61,7 @@ const schema: yup.ObjectSchema<MemberPenaltyDepositWithdrawFormValues> = yup
       .mixed<"1" | "2" | "3" | "4">()
       .oneOf(["1", "2", "3", "4"])
       .optional()
-      .default("1"), // "Penalty" as default
+      .default("1"),
     amount: yup.number().optional().default(0.0),
     orderBy: yup.string().nullable().optional().default(""),
     sameCompanyName: yup.boolean().optional().default(true),

@@ -12,13 +12,12 @@ import {
   type UseFormSetValue,
 } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface SoleSelectGroupFieldProps<T extends FieldValues> {
   control: Control<T>;
   setValue: UseFormSetValue<T>;
   branchFieldName: Path<T>;
   groupFieldName: Path<T>;
-  defaultGroupValue?: any; // optional safer reset value
+  defaultGroupValue?: any;
 }
 
 export default function SoleSelectGroupField<T extends FieldValues>({
@@ -43,14 +42,12 @@ export default function SoleSelectGroupField<T extends FieldValues>({
       Array.isArray(selectedBranchId) ? selectedBranchId[0] : selectedBranchId,
     );
 
-    // ✅ Always fetch on mount/reload — even before user touches branch field
     if (isFirstRun.current) {
       isFirstRun.current = false;
       fetchSoleMemberGroups(branchId);
       return;
     }
 
-    // On subsequent branch changes: reset dependent field, then refetch
     setValue(groupFieldName, defaultGroupValue);
     fetchSoleMemberGroups(branchId);
   }, [

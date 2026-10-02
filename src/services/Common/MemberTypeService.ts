@@ -1,4 +1,3 @@
-// src/services/Common/MemberTypeService.ts
 import type { MemberTypeResponse, RequestParams } from "types/api/api";
 import { apiClient } from "../apiClient";
 

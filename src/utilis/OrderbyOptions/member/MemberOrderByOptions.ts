@@ -1,19 +1,16 @@
 import { defineOrderByOptions } from "../DefineOrderByOptions";
 import type { OrderByOption } from "../DefineOrderByOptions";
 
-// ── Report: member-all-details ──────────────────────────────────────────
 export const memberAllDetailOrderByOptions = defineOrderByOptions([
   { key: "MemberId", label: "Member ID" },
   { key: "MemberName", label: "Member Name" },
 ] as const);
 
-// ── Report: member-registration ─────────────────────────────────────────
 export const memberRegistrationOrderByOptions = defineOrderByOptions([
   { key: "MemberId", label: "Member ID" },
   { key: "MemberName", label: "Member Name" },
 ] as const);
 
-// ── Report: member-id-card-detail ───────────────────────────────────────
 export const memberIdCardDetailOrderByOptions = defineOrderByOptions([
   { key: "MemberId", label: "Member ID" },
   { key: "MemberName", label: "Member Name" },
@@ -21,7 +18,6 @@ export const memberIdCardDetailOrderByOptions = defineOrderByOptions([
   { key: "birthonbs", label: "Date of Birth" },
   { key: "registrationon", label: "Registration Date" },
 ] as const);
-//Report: member-basic-details
 export const memberBasicDetailOrderByOptions = defineOrderByOptions([
   { key: "MemberId", label: "Member ID" },
   { key: "MemberName", label: "Member Name" },
@@ -29,7 +25,6 @@ export const memberBasicDetailOrderByOptions = defineOrderByOptions([
   { key: "NoOfYear Desc", label: "Age Desc" },
 ] as const);
 
-// ── Type for report keys and their options ──────────────────────────────
 export type MemberOrderByReportKey =
   | "member-all-details"
   | "member-registration"

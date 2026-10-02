@@ -16,10 +16,8 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-// ── Select Loan options ───────────────────────────────────────────────────────
 const SELECT_LOAN_ALL = "All";
 
-// branchIds arrives as string[] from OfficeNameField
 export interface LoanRegisterFormValues extends Omit<
   LoanRegisterRequestDto,
   "branchIds" | "loanTypeMasterId" | "collectorId" | "collectionCenterIds"

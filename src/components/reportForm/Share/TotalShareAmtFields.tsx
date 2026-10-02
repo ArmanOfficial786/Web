@@ -9,19 +9,15 @@ import Box from "@mui/system/Box";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
-// ── Props ─────────────────────────────────────────────────────────────────────
 interface TotalShareAmountFieldProps<T extends FieldValues> {
   control: Control<T>;
-  comparisonFieldName: Path<T>; // maps to rbGreaterOrLessThan ("1" | "0")
-  amountFieldName: Path<T>; // maps to txtTotalShareAmt
+  comparisonFieldName: Path<T>;
+  amountFieldName: Path<T>;
   label?: string;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-// Mirrors FilteredTextBoxExtender ValidChars="1234567890."
 const sanitizeAmount = (value: string) => {
   let cleaned = value.replace(/[^0-9.]/g, "");
-  // allow only one decimal point
   const firstDot = cleaned.indexOf(".");
   if (firstDot !== -1) {
     cleaned =
@@ -31,9 +27,6 @@ const sanitizeAmount = (value: string) => {
   return cleaned;
 };
 
-// ── Component ─────────────────────────────────────────────────────────────────
-// Built without FieldRow so the label never wraps onto a second line —
-// everything (label, radios, amount) sits on one row.
 export default function TotalShareAmountField<T extends FieldValues>({
   control,
   comparisonFieldName,
@@ -48,7 +41,7 @@ export default function TotalShareAmountField<T extends FieldValues>({
         alignItems: "center",
         gap: 2,
         flexWrap: "nowrap",
-        minWidth: 0, // allows children to shrink instead of overflowing
+        minWidth: 0,
       }}
     >
       {/* ── Label ───────────────────────────────────────────────────────── */}
@@ -67,11 +60,11 @@ export default function TotalShareAmountField<T extends FieldValues>({
       <Controller
         name={comparisonFieldName}
         control={control}
-        defaultValue={"1" as any} // "Greater Than" selected by default, like Selected="True"
+        defaultValue={"1" as any}
         render={({ field }) => (
           <RadioGroup
             row
-            value={field.value ?? "1"} // fallback keeps "Greater Than" checked
+            value={field.value ?? "1"}
             onChange={(e) => field.onChange(e.target.value)}
             sx={{ columnGap: 1, flexWrap: "nowrap", flexShrink: 0 }}
           >
@@ -96,11 +89,11 @@ export default function TotalShareAmountField<T extends FieldValues>({
         name={amountFieldName}
         control={control}
         defaultValue={0 as any}
-        rules={{ required: "*" }} // RequiredFieldValidator4
+        rules={{ required: "*" }}
         render={({ field, fieldState }) => (
           <TextInput
             name={amountFieldName as string}
-            control={undefined} // fallback mode: we drive value/onChange ourselves
+            control={undefined}
             value={field.value ?? 0}
             onChange={(e) =>
               field.onChange(Number(sanitizeAmount(e.target.value)) || 0)
@@ -109,9 +102,9 @@ export default function TotalShareAmountField<T extends FieldValues>({
             size="small"
             error={!!fieldState.error}
             helperText={fieldState.error?.message}
-            inputProps={{ inputMode: "decimal" }} // numeric-friendly, mirrors ValidChars
+            inputProps={{ inputMode: "decimal" }}
             sx={{
-              flex: "1 1 60px", // grow and shrink with available space
+              flex: "1 1 60px",
               minWidth: 60,
               maxWidth: 160,
               display: "flex",

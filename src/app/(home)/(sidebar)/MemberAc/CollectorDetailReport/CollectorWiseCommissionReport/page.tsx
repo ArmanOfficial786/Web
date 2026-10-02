@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/CollectorDetailReport/CollectorWiseCommissionReport/page.tsx
 "use client";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";

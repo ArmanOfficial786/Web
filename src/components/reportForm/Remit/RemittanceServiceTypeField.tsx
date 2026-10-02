@@ -11,8 +11,6 @@ import type {
   UseFormSetValue,
 } from "react-hook-form";
 
-// ── Static options ────────────────────────────────────────────────────────────
-// ⚠️ Confirm the exact labels / wire values with backend.
 export const REMITTANCE_SERVICE_TYPE_OPTIONS: {
   id: string;
   name: string;
@@ -25,9 +23,9 @@ export const REMITTANCE_SERVICE_TYPE_OPTIONS: {
 interface RemittanceServiceTypeFieldProps<T extends FieldValues> {
   control: Control<T>;
   serviceTypeFieldName: Path<T>;
-  setValue?: UseFormSetValue<T>; // optional — only needed for a default selection
-  defaultServiceTypeId?: string; // optional, no forced default here
-  label?: string; // configurable, defaults to "Remittance Service Type"
+  setValue?: UseFormSetValue<T>;
+  defaultServiceTypeId?: string;
+  label?: string;
 }
 
 export default function RemittanceServiceTypeField<T extends FieldValues>({
@@ -37,7 +35,6 @@ export default function RemittanceServiceTypeField<T extends FieldValues>({
   defaultServiceTypeId,
   label = "Remittance Service Type",
 }: RemittanceServiceTypeFieldProps<T>) {
-  // ── Set default once on mount (only if requested) ─────────────────────────
   if (
     setValue &&
     defaultServiceTypeId !== undefined &&

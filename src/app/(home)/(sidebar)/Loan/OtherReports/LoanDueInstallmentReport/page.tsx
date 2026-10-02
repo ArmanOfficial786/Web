@@ -80,7 +80,6 @@ export default function LoanDueInstallmentPage() {
     [],
   );
 
-  // ⚠️ Placeholder method name — confirm the real one against api.ts
   const callApi = useCallback(
     (request: LoanDueInstallmentRequestDto, format: string) =>
       loanService.api.loanDueInstallmentCreate(request, { format }),
@@ -113,7 +112,6 @@ export default function LoanDueInstallmentPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

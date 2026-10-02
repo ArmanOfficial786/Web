@@ -23,11 +23,8 @@ interface ViewReportButtonProps<T extends FieldValues> {
   watchField?: Path<T>;
   clearFields?: Path<T>[];
 
-  // ── New, optional — fully backward compatible ───────────────────────────
-  label?: string; // defaults to "View Report" as before
-  disabled?: boolean; // overrides `loading` for the disabled state only —
-  // lets a page disable this button while a SIBLING action is in flight
-  // (e.g. two view buttons sharing one form)
+  label?: string;
+  disabled?: boolean;
 }
 
 export default function ViewReportButton<T extends FieldValues>({

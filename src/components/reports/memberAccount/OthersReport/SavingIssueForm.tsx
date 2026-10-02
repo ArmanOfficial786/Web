@@ -1,4 +1,3 @@
-// components/reports/memberAccount/OthersReport/SavingIssueForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";
@@ -36,9 +35,6 @@ import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroup
 
 export type { ReportFormat };
 
-// ⚠️ Collector requires a logged-in userId, which isn't part of this DTO.
-// Replace this with your real source (auth context, session hook, decoded
-// token, etc.) — 0 is a non-functional placeholder.
 const CURRENT_USER_ID = 0;
 
 interface SavingIssueFormProps {
@@ -168,7 +164,7 @@ function SavingIssueForm({
             <OrderByField<SavingIssueFormValues>
               control={control}
               name="orderBy"
-              reportKey="saving-issue-report" // ⚠️ add this key to your OrderByReportKey union / options map
+              reportKey="saving-issue-report"
             />
             <VisualReportSwitch<SavingIssueFormValues>
               control={control}

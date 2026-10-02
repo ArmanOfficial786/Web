@@ -12,7 +12,6 @@ import { useWatch } from "react-hook-form";
 import type { SxProps, Theme } from "@mui/material/styles";
 import SubmitButton from "@/components/form/SubmitButton";
 
-// ── Props ─────────────────────────────────────────────────────────────────
 interface StatementVerifyButtonProps<T extends FieldValues> {
   control: Control<T>;
   handleSubmit: UseFormHandleSubmit<T>;

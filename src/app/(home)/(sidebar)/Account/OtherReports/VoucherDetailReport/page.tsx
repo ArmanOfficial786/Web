@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/Account/OtherReports/VoucherDetailReport/page.tsx
 "use client";
 
 import VoucherDetailsForm, {
@@ -52,7 +51,7 @@ const schema: yup.ObjectSchema<VoucherDetailsFormValues> = yup
     orderBy: yup.string().nullable().optional().default(""),
     viewType: yup
       .string()
-      .oneOf(["None", "Grouping"]) // ⚠️ confirm exact backend codes
+      .oneOf(["None", "Grouping"])
       .nullable()
       .optional()
       .default("None"),
@@ -124,7 +123,6 @@ export default function VoucherDetailsPage() {
         setLastRequest(request);
         setReportState({ isLoading: false, pdfData, pagination });
       } catch {
-        toast.error("Failed to generate report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },

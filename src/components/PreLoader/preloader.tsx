@@ -1,32 +1,5 @@
-// "use client";
 
-// import Box from "@mui/material/Box";
 
-// export default function preloader() {
-//   return (
-//     <Box
-//       sx={{
-//         width: "100%",
-//         height: "100%",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center",
-//       }}
-//     >
-//       <Box
-//         component="img"
-//         src="/images/loading.png" // put your image in public folder
-//         alt="loading"
-//         sx={{
-//           width: 100,
-//           height: 100,
-//           mixBlendMode: "multiply", // 👈 removes white background
-//           animation: "spin 1s linear infinite",
-//         }}
-//       />
-//     </Box>
-//   );
-// }
 "use client";
 
 import Box from "@mui/material/Box";
@@ -51,8 +24,8 @@ export default function Preloader() {
       <Box
         sx={{
           position: "relative",
-          width: 100, // 👈 matched to your image size
-          height: 100, // 👈 matched to your image size
+          width: 100,
+          height: 100,
         }}
       >
         {Array.from({ length: BARS }).map((_, i) => (
@@ -62,11 +35,11 @@ export default function Preloader() {
               position: "absolute",
               top: "50%",
               left: "50%",
-              width: 5, // 👈 thicker dash
-              height: 16, // 👈 longer dash
+              width: 5,
+              height: 16,
               borderRadius: 3,
               backgroundColor: "#555",
-              transformOrigin: "center -22px", // 👈 larger radius to fill 100px container
+              transformOrigin: "center -22px",
               transform: `rotate(${(360 / BARS) * i}deg) translateY(-100%)`,
               animation: `spinner-fade ${BARS * 0.083}s linear infinite`,
               animationDelay: `${-((BARS - i) * 0.083).toFixed(3)}s`,

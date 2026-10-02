@@ -114,11 +114,6 @@ export function MemberLookupConfig<
         placeholder: "Member name",
       },
     ],
-    /**
-     * memberLookUpService.getAllWithFilters returns MemberLookUpDtosPagination
-     * DIRECTLY: { currentPage, totalPages, pageSize, totalRecord,
-     * hasNextPage, hasPreviousPage, items }. No .data / .pagination nesting.
-     */
     fetchPage: async (page): Promise<LookupPage<MemberRecord>> => {
       const res = await memberLookUpService.getAllWithFilters({ Page: page });
       return {

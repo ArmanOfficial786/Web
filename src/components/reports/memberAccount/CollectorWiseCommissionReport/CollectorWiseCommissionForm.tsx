@@ -1,4 +1,3 @@
-// components/reports/memberAccount/CollectorDetailReport/CollectorWiseCommissionForm.tsx
 "use client";
 
 import React, { useEffect, useRef } from "react";

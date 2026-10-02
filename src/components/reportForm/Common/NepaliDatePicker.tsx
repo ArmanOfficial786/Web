@@ -1,4 +1,3 @@
-// components/reportForm/Common/NepaliDatePicker.tsx
 "use client";
 import calendarService from "@/services/Common/ComCalendarService";
 import Box from "@mui/material/Box";
@@ -43,10 +42,6 @@ function parseBS(value: string): BsParts | null {
   return { year: parts[0], month: parts[1], day: parts[2] };
 }
 
-/**
- * Pure helper: pulls (y, m, d) back inside the allowed upper bound.
- * BLANK (-1) / 0 values are never touched because they are never > a bound.
- */
 function clampToMax(
   y: number,
   m: number,
@@ -76,14 +71,7 @@ export interface NepaliDatePickerProps {
   helperText?: string;
   disabled?: boolean;
   size?: "small" | "medium";
-  /**
-   * Full upper-bound restriction (yyyy-mm-dd in BS).
-   * Hides years, months AND days beyond this date in all three dropdowns.
-   */
   maxDate?: string;
-  /**
-   * Year-only upper-bound. Ignored when maxDate is supplied.
-   */
   maxYear?: number;
 }
 
@@ -185,14 +173,12 @@ const NepaliDatePicker: React.FC<NepaliDatePickerProps> = ({
         setMonth(c.m);
         setDay(c.d > 0 ? c.d : blankSelection ? BLANK : 0);
       } catch {
-        /* calendar service failed – leave the picker empty */
       }
     };
     init();
     return () => {
       cancelled = true;
     };
-    // Runs once on mount with the initial field state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

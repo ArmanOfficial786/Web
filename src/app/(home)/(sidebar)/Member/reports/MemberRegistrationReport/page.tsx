@@ -12,7 +12,6 @@ import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import memberService from "@/services/member/memberService";
 
-// ── Types ─────────────────────────────────────────────────────────────────
 export interface MemberRegistrationFormValues extends MemberDetailRequest {
   memberName?: string;
 }
@@ -24,7 +23,6 @@ export interface MemberRegistrationResponseExtended {
   currentPage: number;
 }
 
-// ── Validation schema ─────────────────────────────────────────────────────
 const schema: yup.ObjectSchema<MemberRegistrationFormValues> = yup.object({
   memberId: yup.string().nullable().optional().default(null),
   memberName: yup.string().optional().default(""),
@@ -53,7 +51,6 @@ const toRequest = (v: MemberRegistrationFormValues): MemberDetailRequest => ({
   visualReport: v.visualReport || false,
 });
 
-// ── Initial state ─────────────────────────────────────────────────────────
 const INITIAL_STATE: MemberRegistrationResponseExtended = {
   isLoading: false,
   htmlContent: undefined,
@@ -61,7 +58,6 @@ const INITIAL_STATE: MemberRegistrationResponseExtended = {
   currentPage: 1,
 };
 
-// ── Page component ────────────────────────────────────────────────────────
 function Page(): React.ReactElement {
   const [reportState, setReportState] =
     useState<MemberRegistrationResponseExtended>(INITIAL_STATE);
@@ -79,9 +75,6 @@ function Page(): React.ReactElement {
       defaultValues: schema.getDefault(),
     });
 
-  // ── postMessage listener ──────────────────────────────────────────────
-  // Receives totalPages from the iframe's buildPages() after pagination
-  // is complete. Fires once per report load.
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       if (
@@ -100,7 +93,6 @@ function Page(): React.ReactElement {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  // ── API call ──────────────────────────────────────────────────────────
   const callApi = useCallback(
     (request: MemberDetailRequest, format: string) =>
       memberService.api.memberRegistrationCreate(request, {
@@ -115,10 +107,8 @@ function Page(): React.ReactElement {
     return JSON.stringify(response.data);
   }, []);
 
-  // ── Fetch VIEW report ─────────────────────────────────────────────────
   const fetchReport = useCallback(
     async (request: MemberDetailRequest): Promise<void> => {
-      // Clear previous state and show loader
       setReportState({
         isLoading: true,
         htmlContent: undefined,
@@ -132,12 +122,10 @@ function Page(): React.ReactElement {
 
         setLastRequest(request);
 
-        // Set content first, then bump renderKey so the iframe mounts
-        // with srcDoc already populated — avoids empty-then-updated flash.
         setReportState({
           isLoading: false,
           htmlContent,
-          totalPages: 1, // will be updated by postMessage after buildPages()
+          totalPages: 1,
           currentPage: 1,
         });
         setRenderKey((k) => k + 1);
@@ -152,7 +140,6 @@ function Page(): React.ReactElement {
     [callApi, getHtmlString, reset],
   );
 
-  // ── Download ──────────────────────────────────────────────────────────
   const handleDownload = useCallback(
     async (format: ReportFormat): Promise<void> => {
       if (!lastRequest) {
@@ -182,17 +169,12 @@ function Page(): React.ReactElement {
     [callApi, lastRequest],
   );
 
-  // ── Page navigation ───────────────────────────────────────────────────
-  // Calls scrollToPage() that buildPages() exposed on the iframe's window.
-  // window.scrollTo() inside the iframe moves the iframe's own scroll
-  // position, which is what the user sees through the fixed-height container.
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
       const clamped = Math.max(1, Math.min(newPage, prev.totalPages));
-      if (clamped === prev.currentPage) return prev; // no-op, skip re-render
+      if (clamped === prev.currentPage) return prev;
 
       try {
-        // contentWindow is accessible because sandbox has allow-same-origin
         const iframeWin = iframeRef.current?.contentWindow as
           | (Window & { scrollToPage?: (n: number) => void })
           | null;
@@ -201,14 +183,12 @@ function Page(): React.ReactElement {
           iframeWin.scrollToPage(clamped);
         }
       } catch {
-        // should never throw with allow-same-origin, but guard anyway
       }
 
       return { ...prev, currentPage: clamped };
     });
   }, []);
 
-  // ── Form submit ────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<MemberRegistrationFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport],

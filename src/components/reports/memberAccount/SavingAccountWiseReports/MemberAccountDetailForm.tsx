@@ -47,8 +47,6 @@ import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField"
 
 export type { ReportFormat };
 
-// ⚠️ ASSUMPTION: -1=All confirmed against backend status switch; the rest map 1:1
-// to MemberAccountDetailController.GetStatusLabel (1..5).
 const statusOptions = [
   { id: "-1", name: "-- All --" },
   { id: "1", name: "Opened" },
@@ -87,10 +85,8 @@ function MemberAccountDetailForm({
   const reportRef = useRef<HTMLDivElement>(null);
   const [columnsExpanded, setColumnsExpanded] = useState(true);
 
-  // ⚠️ ASSUMPTION: swap for your real auth/user hook
   const userId = 160;
 
-  // ── Scroll only after the report has actually loaded ───────────────────────
   useEffect(() => {
     if (htmlContent && reportRef.current) {
       reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -301,7 +297,7 @@ function MemberAccountDetailForm({
             <OrderByField<MemberAccountDetailFormValues>
               control={control}
               name="orderBy"
-              reportKey="member-account-detail-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="member-account-detail-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -377,7 +373,6 @@ function MemberAccountDetailForm({
               {/* Jump to first page of the report */}
               <ScrollToFirstPageButton
                 onClick={() => {
-                  // If on first page, go to last; otherwise go to first
                   if (currentPage <= 1) {
                     onPageChange(totalPages);
                   } else {

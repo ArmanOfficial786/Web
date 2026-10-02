@@ -1,4 +1,3 @@
-// app/(home)/(sidebar)/MemberAc/OtherReports/SavingDepositAmountMemberReport/page.tsx
 "use client";
 
 import SavingDepositMemberWiseForm, {
@@ -104,7 +103,6 @@ export default function SavingDepositMemberWisePage() {
       savingTypeId: form.savingTypeId || undefined,
       reportMode: form.reportMode || undefined,
       visualReport: form.visualReport ?? false,
-      // typeCategory intentionally omitted — UI-only field, not part of the DTO
     }),
     [],
   );

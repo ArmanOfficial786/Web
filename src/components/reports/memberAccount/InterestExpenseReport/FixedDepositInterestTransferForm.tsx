@@ -118,7 +118,7 @@ function FixedDepositInterestTransferForm({
             <OrderByField<FixedDepositInterestTransferFormValues>
               control={control}
               name="orderBy"
-              reportKey="fixed-deposit-interest-transfer-report" // ⚠️ add this key to memberOrderByOptions.ts
+              reportKey="fixed-deposit-interest-transfer-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
