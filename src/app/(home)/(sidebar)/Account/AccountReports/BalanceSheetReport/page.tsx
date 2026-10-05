@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type { BalanceSheetRequest, Pagination } from "types/api/api";
 import BalanceSheetReportForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/AccountingReports/BalanceSheetReportForm";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import type { BalanceSheetRequest, Pagination } from "types/api/api";
 
 export interface BalanceSheetFormValues extends Omit<
   BalanceSheetRequest,
@@ -92,7 +92,7 @@ export default function BalanceSheetReportPage() {
         orderBy: form.orderBy || "Ledger Name",
         includePreviousYearBalance: form.includePreviousYearBalance ?? false,
         sameCompanyName: form.sameCompanyName ?? true,
-        visualReport: false,
+        visualReport: form.visualReport ?? false,
       };
     },
     [branchOptions],

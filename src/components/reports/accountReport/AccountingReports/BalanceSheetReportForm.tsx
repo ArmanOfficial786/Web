@@ -1,35 +1,36 @@
 "use client";
 
-import React, { useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
-import ReportTypeField from "@/components/reportForm/Account/ReportType";
-import CheckboxInput from "@/components/form/CheckboxInput";
-import FieldRow from "@/utilis/FieldRow";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
 import type {
   BalanceSheetFormValues,
   BalanceSheetResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/AccountReports/BalanceSheetReport/page";
+import CheckboxInput from "@/components/form/CheckboxInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ReportTypeField from "@/components/reportForm/Account/ReportType";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -151,6 +152,10 @@ function BalanceSheetReportForm({
           <Divider sx={{ mb: 0.5 }} />
 
           <Grid container spacing={1} alignItems="center">
+            <VisualReportSwitch<BalanceSheetFormValues>
+              control={control}
+              name="visualReport"
+            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"

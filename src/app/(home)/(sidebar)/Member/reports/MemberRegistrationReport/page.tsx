@@ -1,16 +1,16 @@
 "use client";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import { useState, useCallback, useEffect, useRef } from "react";
-import * as yup from "yup";
-import type { MemberDetailRequest } from "types/api/api";
 import MemberRegistrationReport from "@/components/reports/memberReport/MemberRegistrationReport";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import memberService from "@/services/member/memberService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberService from "@/services/member/memberService";
+import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { MemberDetailRequest } from "types/api/api";
+import * as yup from "yup";
 
 export interface MemberRegistrationFormValues extends MemberDetailRequest {
   memberName?: string;
@@ -132,9 +132,7 @@ function Page(): React.ReactElement {
 
         reset({ memberId: "", memberName: "" });
       } catch (err) {
-        console.error("fetchReport error:", err);
         setReportState(INITIAL_STATE);
-        toast.error("Failed to load report.");
       }
     },
     [callApi, getHtmlString, reset],
@@ -182,8 +180,7 @@ function Page(): React.ReactElement {
         if (iframeWin?.scrollToPage) {
           iframeWin.scrollToPage(clamped);
         }
-      } catch {
-      }
+      } catch {}
 
       return { ...prev, currentPage: clamped };
     });
