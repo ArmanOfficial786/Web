@@ -11,10 +11,11 @@ import LoanProvisionForm from "@/components/reports/loanReport/LoanAnalysisRepor
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { ReportFormat } from "@/utilis/Constants/reportConstants";
 import {
-  DefaultPagination,
-  ReportFormat,
-} from "@/utilis/Constants/reportConstants";
+  parseViewResponse,
+  useReportPages,
+} from "@/utilis/Constants/reportView";
 
 const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
 
@@ -28,6 +29,7 @@ export interface LoanProvisionFormValues extends Omit<
 
 export interface LoanProvisionResponseExtended {
   pdfData?: string;
+  isHtml?: boolean;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -67,6 +69,9 @@ function LoanProvisionPage(): React.ReactElement {
   const [lastRequest, setLastRequest] =
     useState<LoanProvisionRequestDto | null>(null);
 
+  // inside the component, after useState:
+  useReportPages(setReportState);
+
   const { control, handleSubmit, setValue } = useForm<LoanProvisionFormValues>({
     resolver: yupResolver(schema),
     defaultValues: schema.getDefault(),
@@ -78,6 +83,37 @@ function LoanProvisionPage(): React.ReactElement {
     [],
   );
 
+  // const fetchReport = useCallback(
+  //   async (request: LoanProvisionRequestDto): Promise<void> => {
+  //     setReportState((prev) => {
+  //       if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+  //       return { isLoading: true };
+  //     });
+  //     try {
+  //       const res = await callApi(request, "VIEW");
+
+  //       const raw =
+  //         (res.headers as Record<string, string>)["x-pagination"] ?? "";
+  //       const pagination: Pagination = (() => {
+  //         try {
+  //           return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+  //         } catch {
+  //           return DefaultPagination;
+  //         }
+  //       })();
+
+  //       const blob = responseToBlob(res.data, "PDF");
+  //       const pdfData = URL.createObjectURL(blob);
+
+  //       setLastRequest(request);
+  //       setReportState({ isLoading: false, pdfData, pagination });
+  //     } catch {
+  //       setReportState((prev) => ({ ...prev, isLoading: false }));
+  //     }
+  //   },
+  //   [callApi],
+  // );
+
   const fetchReport = useCallback(
     async (request: LoanProvisionRequestDto): Promise<void> => {
       setReportState((prev) => {
@@ -86,22 +122,11 @@ function LoanProvisionPage(): React.ReactElement {
       });
       try {
         const res = await callApi(request, "VIEW");
-
-        const raw =
-          (res.headers as Record<string, string>)["x-pagination"] ?? "";
-        const pagination: Pagination = (() => {
-          try {
-            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
-          } catch {
-            return DefaultPagination;
-          }
-        })();
-
-        const blob = responseToBlob(res.data, "PDF");
-        const pdfData = URL.createObjectURL(blob);
-
         setLastRequest(request);
-        setReportState({ isLoading: false, pdfData, pagination });
+        setReportState({
+          isLoading: false,
+          ...parseViewResponse(res as never),
+        });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }

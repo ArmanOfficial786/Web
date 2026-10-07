@@ -1,28 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import type {
   AxiosError,
   AxiosResponse,
@@ -104,6 +79,7 @@ const BINARY_MIME_TYPES = new Set([
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "image/png",
+  "text/html",
 ]);
 
 const PUBLIC_PATHS = ["/", "/register"];
