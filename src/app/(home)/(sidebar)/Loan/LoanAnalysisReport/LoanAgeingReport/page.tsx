@@ -28,6 +28,7 @@ export interface LoanAgeingFormValues extends Omit<
   memberGroupId?: string;
   collectorId?: string;
   reportType?: string;
+  language?: "English" | "Nepali";
 }
 
 export interface LoanAgeingResponseExtended {
@@ -53,6 +54,11 @@ const schema: yup.ObjectSchema<LoanAgeingFormValues> = yup
     ageingOn: yup.string().optional().default(AGEING_ON_PRINCIPAL),
     penaltyType: yup.string().optional().default(""),
     isNepaliReport: yup.boolean().optional().default(false),
+    language: yup
+      .mixed<"English" | "Nepali">()
+      .oneOf(["English", "Nepali"])
+      .optional()
+      .default("English"),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -69,7 +75,9 @@ const toRequest = (v: LoanAgeingFormValues): LoanAgeingRequestDto => {
     showLoanIssueDate: v.showLoanIssueDate || DATE_TYPE_ISSUE_DATE,
     ageingOn: v.ageingOn || AGEING_ON_PRINCIPAL,
     penaltyType: v.penaltyType || undefined,
-    isNepaliReport: v.isNepaliReport ?? false,
+    isNepaliReport: v.language
+      ? v.language === "Nepali"
+      : (v.isNepaliReport ?? false),
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
   };

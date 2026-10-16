@@ -19,11 +19,13 @@ import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import { loanAnalysisReportTypeOptions as reportTypeOptions } from "@/config/LoanReportOptions";
 import FieldRow from "@/utilis/FieldRow";
 
@@ -91,13 +93,23 @@ export default function LoanAgingRiskCalculationForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── Till Date ────────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <DateFields<LoanAgingRiskCalculationFormValues>
               control={control}
               toDateName="tillDateBs"
               toDateLabel="Till Date"
               mode="BS"
               showFromDate={false}
+            />
+            <OfficeNameField<LoanAgingRiskCalculationFormValues>
+              control={control}
+              branchFieldName="branchIds"
             />
           </Box>
 
@@ -111,22 +123,12 @@ export default function LoanAgingRiskCalculationForm({
               gap: 2,
             }}
           >
-            <OfficeNameField<LoanAgingRiskCalculationFormValues>
-              control={control}
-              branchFieldName="branchIds"
-            />
             <SoleSelectGroupField<LoanAgingRiskCalculationFormValues>
               control={control}
               setValue={setValue}
               branchFieldName="branchIds"
               groupFieldName="memberGroupId"
             />
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
-
-          {/* ── Report Type ─────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
             <FieldRow label="Report Type">
               <RadioInput
                 name="reportType"
@@ -152,6 +154,13 @@ export default function LoanAgingRiskCalculationForm({
               name="orderBy"
               reportKey="loan-aging-risk-calculation-report"
             />
+            <VisualReportSwitch<LoanAgingRiskCalculationFormValues>
+              control={control}
+              name="visualReport"
+            />
+          </Box>
+          <Divider sx={{ mb: 1 }} />
+          <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -181,12 +190,10 @@ export default function LoanAgingRiskCalculationForm({
                 />
               </Box>
             </Grid>
-          </Box>
-
-          <Divider sx={{ mb: 1 }} />
+          </Grid>
         </Paper>
 
-        {showReport && (
+        {/* {showReport && (
           <ReportNavigation
             pdfData={pdfData ?? ""}
             currentPage={currentPage}
@@ -214,6 +221,28 @@ export default function LoanAgingRiskCalculationForm({
               }}
             />
           </Box>
+        )} */}
+
+        {showReport && (
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
+            />
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                // isHtml={isHtml}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

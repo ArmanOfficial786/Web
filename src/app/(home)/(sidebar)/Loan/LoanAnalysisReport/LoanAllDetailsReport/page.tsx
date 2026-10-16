@@ -4,12 +4,15 @@ import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { LOAN_COLUMN_OPTIONS } from "@/utilis/Constants/LoanColumnOptions";
-import { type ReportFormat } from "@/utilis/Constants/reportConstants";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import type { LoanAllDetailsRequestDto } from "types/api/api";
+import type { LoanAllDetailsRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 export interface LoanDetailFormValues extends Omit<
@@ -20,16 +23,13 @@ export interface LoanDetailFormValues extends Omit<
   memberId?: string | null;
   memberName?: string;
   groupByMemberGroup?: boolean;
-  selectedColumns?: string[];
 }
 
 export interface LoanDetailResponseExtended {
-  htmlContent?: string;
+  pdfData?: string;
   isLoading: boolean;
-  totalPages: number;
-  currentPage: number;
+  pagination?: Pagination;
 }
-
 
 const ALL_COLUMN_KEYS = LOAN_COLUMN_OPTIONS.map((c) => c.key);
 
@@ -58,7 +58,6 @@ const schema: yup.ObjectSchema<LoanDetailFormValues> = yup
   })
   .required();
 
-
 const toRequest = (v: LoanDetailFormValues): LoanAllDetailsRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
@@ -73,31 +72,23 @@ const toRequest = (v: LoanDetailFormValues): LoanAllDetailsRequestDto => {
     memberGroupId: v.groupByMemberGroup ? v.memberGroupId || "-1" : "-1",
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,
+    selectedColumns: v.selectedColumns,
   };
 };
 
-
-const INITIAL_STATE: LoanDetailResponseExtended = {
-  isLoading: false,
-  htmlContent: undefined,
-  totalPages: 1,
-  currentPage: 1,
-};
-
-
 function Page(): React.ReactElement {
-  const [reportState, setReportState] =
-    useState<LoanDetailResponseExtended>(INITIAL_STATE);
+  const [reportState, setReportState] = useState<LoanDetailResponseExtended>({
+    isLoading: false,
+  });
   const [lastRequest, setLastRequest] =
     useState<LoanAllDetailsRequestDto | null>(null);
-  const [renderKey, setRenderKey] = useState(0);
+  //const [renderKey, setRenderKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  const { control, handleSubmit, setValue, reset } =
-    useForm<LoanDetailFormValues>({
-      resolver: yupResolver(schema),
-      defaultValues: schema.getDefault(),
-    });
+  const { control, handleSubmit, setValue } = useForm<LoanDetailFormValues>({
+    resolver: yupResolver(schema),
+    defaultValues: schema.getDefault(),
+  });
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -123,43 +114,36 @@ function Page(): React.ReactElement {
     [],
   );
 
-  const getHtmlString = useCallback(async (response: any): Promise<string> => {
-    if (response.data instanceof Blob) return (response.data as Blob).text();
-    if (typeof response.data === "string") return response.data;
-    return JSON.stringify(response.data);
-  }, []);
-
   const fetchReport = useCallback(
     async (request: LoanAllDetailsRequestDto): Promise<void> => {
-      setReportState({
-        isLoading: true,
-        htmlContent: undefined,
-        totalPages: 1,
-        currentPage: 1,
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true };
       });
       try {
-        const response = await callApi(request, "VIEW");
-        const htmlContent = await getHtmlString(response);
+        const res = await callApi(request, "VIEW");
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+
         setLastRequest(request);
-        setReportState({
-          isLoading: false,
-          htmlContent,
-          totalPages: 1,
-          currentPage: 1,
-        });
-        setRenderKey((k) => k + 1);
-        reset((prev) => ({ ...prev, memberId: null, memberName: "" }), {
-          keepValues: true,
-        });
-      } catch (err) {
-        console.error("fetchReport error:", err);
-        setReportState(INITIAL_STATE);
-        toast.error("Failed to load report.");
+        setReportState({ isLoading: false, pdfData, pagination });
+      } catch {
+        setReportState((prev) => ({ ...prev, isLoading: false }));
       }
     },
-    [callApi, getHtmlString, reset],
+    [callApi],
   );
-
   const handleDownload = useCallback(
     async (format: ReportFormat): Promise<void> => {
       if (!lastRequest) {
@@ -191,23 +175,27 @@ function Page(): React.ReactElement {
 
   const handlePageChange = useCallback((newPage: number) => {
     setReportState((prev) => {
-      const clamped = Math.max(1, Math.min(newPage, prev.totalPages));
-      if (clamped === prev.currentPage) return prev;
-      try {
-        const iframeWin = iframeRef.current?.contentWindow as
-          | (Window & { scrollToPage?: (n: number) => void })
-          | null;
-        if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
-      } catch {
-      }
-      return { ...prev, currentPage: clamped };
+      const total = prev.pagination?.totalPages ?? 1;
+      const clamped = Math.max(1, Math.min(newPage, total));
+      return {
+        ...prev,
+        pagination: { ...prev.pagination, currentPage: clamped },
+      };
     });
   }, []);
-
   const onSubmit: SubmitHandler<LoanDetailFormValues> = useCallback(
     (formData) => fetchReport(toRequest(formData)),
     [fetchReport],
   );
+
+  useEffect(() => {
+    return () => {
+      setReportState((prev) => {
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return prev;
+      });
+    };
+  }, []);
 
   return (
     <LoanDetailReport
@@ -219,7 +207,7 @@ function Page(): React.ReactElement {
       onPageChange={handlePageChange}
       onDownload={handleDownload}
       iframeRef={iframeRef}
-      renderKey={renderKey}
+      //renderKey={renderKey}
     />
   );
 }

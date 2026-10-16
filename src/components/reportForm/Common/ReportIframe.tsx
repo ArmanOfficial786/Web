@@ -109,7 +109,8 @@ export default function ReportIframe({
       <iframe
         ref={ref}
         key={src}
-        src={isHtml ? src : `${src}#page=${page}&toolbar=0&zoom=100`}
+        // src={isHtml ? src : `${src}#page=${page}&toolbar=0&zoom=100`}
+        src={`${src}#page=${page}&toolbar=0&zoom=100`}
         title="Report"
         style={{
           position: "absolute",

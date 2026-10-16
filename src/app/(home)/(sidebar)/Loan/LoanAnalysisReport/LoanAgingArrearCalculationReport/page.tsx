@@ -105,7 +105,6 @@ function LoanAgeingArrearCalculationPage(): React.ReactElement {
       });
       try {
         const res = await callApi(request, "VIEW");
-
         const raw =
           (res.headers as Record<string, string>)["x-pagination"] ?? "";
         const pagination: Pagination = (() => {

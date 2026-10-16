@@ -20,6 +20,7 @@ import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 
 export type { ReportFormat };
 
@@ -85,10 +86,20 @@ export default function LoanPortfolioForm({
           <Divider sx={{ mb: 1 }} />
 
           {/* ── Office Name ──────────────────────────────────────────────── */}
-          <Box sx={{ mb: 1 }}>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+              gap: 2,
+            }}
+          >
             <OfficeNameField<LoanPortfolioFormValues>
               control={control}
               branchFieldName="branchIds"
+            />
+            <VisualReportSwitch<LoanPortfolioFormValues>
+              control={control}
+              name="visualReport"
             />
           </Box>
 

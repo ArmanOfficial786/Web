@@ -14,11 +14,13 @@ import DateFields from "@/components/reportForm/Common/DateFiels";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroupField";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import LoanTypeField from "@/components/reportForm/Loan/LoanTypeField";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
 import { MemberLookupConfig } from "@/config/MemberLookupConfig";
@@ -52,7 +54,7 @@ interface LoanDetailReportProps {
   onPageChange: (page: number) => void;
   onDownload: (format: ReportFormat) => void | Promise<void>;
   iframeRef: React.RefObject<HTMLIFrameElement | null>;
-  renderKey: number;
+  //renderKey: number;
 }
 
 const STATUS_OPTIONS = [
@@ -75,19 +77,22 @@ function LoanDetailReport({
   reportState,
   onPageChange,
   onDownload,
-  iframeRef,
-  renderKey,
+  // iframeRef,
+  //renderKey,
 }: LoanDetailReportProps) {
-  const { isLoading, htmlContent, totalPages, currentPage } = reportState;
-  const showReport = Boolean(htmlContent);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
   const [columnsExpanded, setColumnsExpanded] = useState(true);
 
+  const currentPage = pagination?.currentPage ?? 1;
+  const totalPages = pagination?.totalPages ?? 1;
+
   useEffect(() => {
-    if (htmlContent && reportRef.current) {
+    if (pdfData && reportRef.current) {
       reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [htmlContent]);
+  }, [pdfData]);
 
   const memberLookupConfig = React.useMemo(
     () => MemberLookupConfig<LoanDetailFormValues>(),
@@ -295,6 +300,10 @@ function LoanDetailReport({
 
           {/* ── View Report | Clear ─────────────────────────────────────── */}
           <Grid container spacing={1} alignItems="center">
+            <VisualReportSwitch<LoanDetailFormValues>
+              control={control}
+              name="visualReport"
+            />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 display="flex"
@@ -331,45 +340,26 @@ function LoanDetailReport({
         </Paper>
 
         {/* ── Report iframe area ──────────────────────────────────────── */}
+
         {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
+          <>
             <ReportNavigation
-              pdfData={undefined}
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={onPageChange}
               onDownload={onDownload}
             />
 
-            <Box
-              sx={{
-                width: "100%",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 1,
-                overflow: "auto",
-                height: "100vh",
-                backgroundColor: "#d0d0d0",
-              }}
-            >
-              <iframe
-                ref={iframeRef}
-                key={renderKey}
-                srcDoc={htmlContent}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                  display: "block",
-                }}
-                sandbox="allow-scripts allow-modals allow-same-origin"
-                title="Loan Detail Report"
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
               />
             </Box>
-          </Box>
+          </>
         )}
       </Box>
     </>

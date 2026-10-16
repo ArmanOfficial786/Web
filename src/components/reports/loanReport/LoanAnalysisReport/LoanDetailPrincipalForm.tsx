@@ -25,10 +25,12 @@ import {
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanDetailsPrincipalReport/page";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import LoanTypeField from "@/components/reportForm/Loan/LoanTypeField";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
 import {
@@ -227,6 +229,11 @@ export default function LoanDetailPrincipalForm({
 
           {/* ── Order By + Buttons ───────────────────────────────────────── */}
           <Grid container spacing={1} alignItems="center">
+            <VisualReportSwitch<LoanDetailPrincipalFormValues>
+              control={control}
+              name="visualReport"
+            />
+
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
@@ -265,33 +272,24 @@ export default function LoanDetailPrincipalForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>
