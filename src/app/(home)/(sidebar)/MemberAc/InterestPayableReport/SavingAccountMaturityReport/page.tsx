@@ -27,7 +27,7 @@ export type SavingsAccountMaturityFormValues = Omit<
 };
 
 export interface SavingsAccountMaturityResponseExtended extends ReportResponseDtos {
-  blobUrl: string;
+  pdfData: string;
   isLoading: boolean;
 }
 
@@ -62,7 +62,7 @@ const schema: yup.ObjectSchema<SavingsAccountMaturityFormValues> = yup
 export default function SavingsAccountMaturityPage() {
   const [reportState, setReportState] =
     useState<SavingsAccountMaturityResponseExtended>({
-      blobUrl: "",
+      pdfData: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -115,8 +115,8 @@ export default function SavingsAccountMaturityPage() {
   const fetchReport = useCallback(
     async (request: SavingsAccountMaturityRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { isLoading: true, blobUrl: "" };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true, pdfData: "" };
       });
       try {
         const res = await callApi(request, "VIEW");
@@ -129,9 +129,9 @@ export default function SavingsAccountMaturityPage() {
             return DefaultPagination;
           }
         })();
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));

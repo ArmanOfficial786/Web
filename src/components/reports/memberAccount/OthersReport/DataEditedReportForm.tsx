@@ -1,40 +1,40 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
-import type {
-  Control,
-  FieldErrors,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useMemo, useRef } from "react";
+import type {
+  Control,
+  FieldErrors,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import UserLookupField from "@/components/reportForm/Common/UserLookUpField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
-import userLookupService from "@/services/Common/UserLookUpService";
 import type {
   DataEditedReportFormValues,
   DataEditedReportResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/OtherReports/DataEditedReport/page";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import UserLookupField from "@/components/reportForm/Common/UserLookUpField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import userLookupService from "@/services/Common/UserLookUpService";
 
 export type { ReportFormat };
 
@@ -248,45 +248,24 @@ function DataEditedReportForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <iframe
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
-            />
-            <ScrollToFirstPageButton
-              onClick={() => {
-                if (currentPage <= 1) {
-                  onPageChange(totalPages);
-                } else {
-                  onPageChange(1);
-                }
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

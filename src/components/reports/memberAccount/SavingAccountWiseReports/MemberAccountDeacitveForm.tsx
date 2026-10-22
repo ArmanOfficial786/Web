@@ -1,37 +1,38 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import DuePeriodField from "@/components/reportForm/MemberAccount/DuePeriodField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
 import type {
   MemberAccountDeactiveFormValues,
   MemberAccountDeactiveResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDeactiveReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import DuePeriodField from "@/components/reportForm/MemberAccount/DuePeriodField";
 import TransactionTypeField from "@/components/reportForm/MemberAccount/TransactionTypeField";
 import TypeField from "@/components/reportForm/MemberAccount/TypeField";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -211,33 +212,24 @@ function MemberAccountDeactiveForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={pagination?.currentPage ?? 1}
-            totalPages={pagination?.totalPages ?? 1}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={pagination?.currentPage ?? 1}
+              totalPages={pagination?.totalPages ?? 1}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={pagination?.currentPage ?? 1}
+                totalPages={pagination?.totalPages ?? 1}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

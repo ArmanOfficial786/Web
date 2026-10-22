@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import YearMonthField from "@/components/reportForm/Common/YearMonthField";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
-import Collector from "@/components/reportForm/MemberAccount/Collector";
 import type {
   CollectorWiseVisitFormValues,
   CollectorWiseVisitResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/CollectorDetailReport/CollectorWiseVisitReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import YearMonthField from "@/components/reportForm/Common/YearMonthField";
+import Collector from "@/components/reportForm/MemberAccount/Collector";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -235,53 +235,24 @@ function CollectorWiseVisitForm({
 
         {/* ── Report Navigation and PDF Viewer ────────────────────────────── */}
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
+            />
 
-        {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-              }}
-            >
-              <embed
-                key={blobUrl}
-                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-
-              <ScrollToFirstPageButton
-                onClick={() => {
-                  if (currentPage <= 1) {
-                    onPageChange(totalPages);
-                  } else {
-                    onPageChange(1);
-                  }
-                }}
-                currentPage={currentPage}
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
                 totalPages={totalPages}
-                hideWhenSinglePage={true}
+                onPageChange={onPageChange}
               />
             </Box>
-          </Box>
+          </>
         )}
       </Box>
     </>

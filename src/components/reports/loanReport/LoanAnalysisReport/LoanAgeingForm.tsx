@@ -17,6 +17,7 @@ import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import { LanguageSwitch } from "@/components/reportForm/Common/LanguageSwitch";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
@@ -27,7 +28,6 @@ import SoleSelectGroupField from "@/components/reportForm/Common/SoleSelectGroup
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
-import { LanguageSwitch } from "@/components/reports/memberAccount/SavingAccountWiseReports/LanguageSwitch";
 import {
   ageingOnOptions,
   dateTypeOptions,

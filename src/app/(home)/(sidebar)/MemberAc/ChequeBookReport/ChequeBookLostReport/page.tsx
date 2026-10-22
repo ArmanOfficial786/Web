@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { toast } from "react-toastify";
-import * as yup from "yup";
-import type { ChequeBookLostRequestDto, Pagination } from "types/api/api";
 import ChequeBookLostForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/ChequeBookReport/ChequeBookLostForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { toast } from "react-toastify";
+import type { ChequeBookLostRequestDto, Pagination } from "types/api/api";
+import * as yup from "yup";
 
 export type ChequeBookLostFormValues = Omit<
   ChequeBookLostRequestDto,
@@ -23,7 +22,7 @@ export type ChequeBookLostFormValues = Omit<
 };
 
 export interface ChequeBookLostResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -99,7 +98,7 @@ export default function ChequeBookLostPage() {
   const fetchReport = useCallback(
     async (request: ChequeBookLostRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
 
@@ -116,9 +115,9 @@ export default function ChequeBookLostPage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -160,7 +159,9 @@ export default function ChequeBookLostPage() {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Download failed.");
+        toast.error(
+          error instanceof Error ? error.message : "Download failed.",
+        );
       }
     },
     [callApi, lastRequest],
@@ -174,7 +175,7 @@ export default function ChequeBookLostPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

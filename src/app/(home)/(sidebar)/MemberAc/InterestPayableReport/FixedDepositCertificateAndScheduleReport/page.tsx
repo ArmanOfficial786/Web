@@ -1,24 +1,11 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type {
-  AccountLookUpDtos,
-  FixedDepositCertificateScheduleRequestDto,
-  Pagination,
-} from "types/api/api";
-import FixedDepositCertificateScheduleForm from "@/components/reports/memberAccount/InterestPayableReport/FixedDepositCertificateScheduleForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import {
-  DefaultPagination,
-  type ReportFormat,
-} from "@/utilis/Constants/reportConstants";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
 import {
   REPORT_TYPE_CERTIFICATE,
   REPORT_TYPE_SCHEDULE,
@@ -26,6 +13,19 @@ import {
   type FixedDepositCertificateScheduleResponseExtended,
   type ViewKind,
 } from "@/components/reports/memberAccount/InterestPayableReport/fixedDepositCertificateSchedule.types";
+import FixedDepositCertificateScheduleForm from "@/components/reports/memberAccount/InterestPayableReport/FixedDepositCertificateScheduleForm";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import {
+  DefaultPagination,
+  type ReportFormat,
+} from "@/utilis/Constants/reportConstants";
+import type {
+  AccountLookUpDtos,
+  FixedDepositCertificateScheduleRequestDto,
+  Pagination,
+} from "types/api/api";
 
 const schema: yup.ObjectSchema<FixedDepositCertificateScheduleFormValues> = yup
   .object({
@@ -90,7 +90,7 @@ export default function FixedDepositCertificateSchedulePage() {
       kind: ViewKind,
     ) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true, loadingKind: kind };
       });
 
@@ -107,9 +107,9 @@ export default function FixedDepositCertificateSchedulePage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({
@@ -183,7 +183,7 @@ export default function FixedDepositCertificateSchedulePage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

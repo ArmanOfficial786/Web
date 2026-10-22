@@ -28,7 +28,7 @@ export type InterestAndTaxDetailFormValues = Omit<
 };
 
 export interface InterestAndTaxDetailResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -126,7 +126,7 @@ export default function InterestAndTaxDetailPage() {
   const fetchReport = useCallback(
     async (request: InterestAndTaxDetailRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
 
@@ -143,9 +143,9 @@ export default function InterestAndTaxDetailPage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -203,7 +203,7 @@ export default function InterestAndTaxDetailPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

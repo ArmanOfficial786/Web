@@ -1,22 +1,22 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
+import SavingAccountNextInterestTransferForm from "@/components/reports/memberAccount/InterestPayableReport/SavingAccountNextInterestTransferForm";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useCallback, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
-import * as yup from "yup";
 import type {
   Pagination,
   ReportResponseDtos,
   SavingsAccountInterestTransferRequestDto,
 } from "types/api/api";
-import SavingAccountNextInterestTransferForm from "@/components/reports/memberAccount/InterestPayableReport/SavingAccountNextInterestTransferForm";
-import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
+import * as yup from "yup";
 
 export type SavingAccountNextInterestTransferFormValues = Omit<
   SavingsAccountInterestTransferRequestDto,
@@ -26,7 +26,7 @@ export type SavingAccountNextInterestTransferFormValues = Omit<
 };
 
 export interface SavingAccountNextInterestTransferResponseExtended extends ReportResponseDtos {
-  blobUrl: string;
+  pdfData: string;
   isLoading: boolean;
 }
 
@@ -67,7 +67,7 @@ const schema: yup.ObjectSchema<SavingAccountNextInterestTransferFormValues> =
 export default function SavingAccountNextInterestTransferPage() {
   const [reportState, setReportState] =
     useState<SavingAccountNextInterestTransferResponseExtended>({
-      blobUrl: "",
+      pdfData: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -119,8 +119,8 @@ export default function SavingAccountNextInterestTransferPage() {
   const fetchReport = useCallback(
     async (request: SavingsAccountInterestTransferRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { isLoading: true, blobUrl: "" };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true, pdfData: "" };
       });
       try {
         const res = await callApi(request, "VIEW");
@@ -133,9 +133,9 @@ export default function SavingAccountNextInterestTransferPage() {
             return DefaultPagination;
           }
         })();
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));

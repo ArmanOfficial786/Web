@@ -14,7 +14,7 @@ export interface FixedDepositCertificateScheduleFormValues {
 }
 
 export interface FixedDepositCertificateScheduleResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   loadingKind?: ViewKind;
   pagination?: Pagination;

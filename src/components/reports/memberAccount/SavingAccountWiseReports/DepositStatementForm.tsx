@@ -1,30 +1,31 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  Path,
-} from "react-hook-form";
-import { Grid, Box, Paper, Typography, Divider } from "@mui/material";
 import CheckboxInput from "@/components/form/CheckboxInput";
-import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import DateFieldsTwoWay from "@/components/reportForm/Common/DateFieldsTwoWay";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
-import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import { LanguageSwitch } from "./LanguageSwitch";
+import DateFieldsTwoWay from "@/components/reportForm/Common/DateFieldsTwoWay";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import PassbookVerificationSection from "@/components/reportForm/Common/PassbookVerificationSection";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import Preloader from "@/components/PreLoader/preloader";
-import PassbookVerificationSection from "@/components/reportForm/Common/PassbookVerificationSection";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
+import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
+import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
+import { useEffect, useMemo, useRef } from "react";
+import type {
+  Control,
+  Path,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormSetValue,
+} from "react-hook-form";
+import { LanguageSwitch } from "../../../reportForm/Common/LanguageSwitch";
 
-import type { AccountLookUpDtos, VerificationStatusDto } from "types/api/api";
 import type { DepositStatementResponseExtended } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/DepositStatementReport/page";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import type { AccountLookUpDtos, VerificationStatusDto } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -84,6 +85,9 @@ export default function DepositStatementForm({
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
+
+  const currentPage = pagination?.currentPage ?? 1;
+  const totalPages = pagination?.totalPages ?? 1;
 
   useEffect(() => {
     if (showReport && !isLoading) {
@@ -279,33 +283,24 @@ export default function DepositStatementForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={pagination?.currentPage ?? 1}
-            totalPages={pagination?.totalPages ?? 1}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

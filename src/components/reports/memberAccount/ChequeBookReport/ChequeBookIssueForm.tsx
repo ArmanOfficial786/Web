@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useMemo, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 import {
   ChequeBookIssueFormValues,
   ChequeBookIssueResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/ChequeBookReport/ChequeBookIssueReport/page";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
 
 export type { ReportFormat };
 
@@ -53,17 +53,17 @@ function ChequeBookIssueForm({
   onPageChange,
   onDownload,
 }: ChequeBookIssueFormProps) {
-  const { isLoading, blobUrl, pagination } = reportState;
+  const { isLoading, pdfData, pagination } = reportState;
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-  const showReport = Boolean(blobUrl);
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [blobUrl, showReport, isLoading]);
+  }, [pdfData, showReport, isLoading]);
 
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<ChequeBookIssueFormValues>(),
@@ -133,7 +133,7 @@ function ChequeBookIssueForm({
             <OrderByField<ChequeBookIssueFormValues>
               control={control}
               name="orderBy"
-              reportKey="cheque-book-issue-report" 
+              reportKey="cheque-book-issue-report"
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -166,7 +166,7 @@ function ChequeBookIssueForm({
 
         {showReport && (
           <ReportNavigation
-            pdfData={blobUrl ?? ""}
+            pdfData={pdfData ?? ""}
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={onPageChange}
@@ -175,40 +175,24 @@ function ChequeBookIssueForm({
         )}
 
         {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-                zIndex: 0,
-              }}
-            >
-              <iframe
-                key={blobUrl}
-                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-            </Box>
-
-            <ScrollToFirstPageButton
-              onClick={() =>
-                currentPage <= 1 ? onPageChange(totalPages) : onPageChange(1)
-              }
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

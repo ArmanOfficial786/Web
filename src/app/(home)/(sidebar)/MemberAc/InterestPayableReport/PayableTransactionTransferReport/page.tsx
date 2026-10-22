@@ -28,7 +28,7 @@ export type SavingsAccountInterestTransferFormValues = Omit<
 };
 
 export interface SavingsAccountInterestTransferResponseExtended extends ReportResponseDtos {
-  blobUrl: string;
+  pdfData: string;
   isLoading: boolean;
 }
 
@@ -62,7 +62,7 @@ const schema: yup.ObjectSchema<SavingsAccountInterestTransferFormValues> = yup
 export default function SavingsAccountInterestTransferPage() {
   const [reportState, setReportState] =
     useState<SavingsAccountInterestTransferResponseExtended>({
-      blobUrl: "",
+      pdfData: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -114,8 +114,8 @@ export default function SavingsAccountInterestTransferPage() {
   const fetchReport = useCallback(
     async (request: PayableInterestTransferredRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { isLoading: true, blobUrl: "" };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true, pdfData: "" };
       });
       try {
         const res = await callApi(request, "VIEW");
@@ -128,9 +128,9 @@ export default function SavingsAccountInterestTransferPage() {
             return DefaultPagination;
           }
         })();
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));

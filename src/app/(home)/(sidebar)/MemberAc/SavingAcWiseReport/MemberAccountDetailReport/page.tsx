@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 import type { MemberAccountDetailRequest } from "types/api/api";
 import * as yup from "yup";
 
-
 const ALL_COLUMN_KEYS = MemberAccountColumnOptions.map((c) => c.key);
 
 export interface MemberAccountDetailFormValues extends Omit<
@@ -27,18 +26,16 @@ export interface MemberAccountDetailFormValues extends Omit<
 }
 
 export interface MemberAccountDetailResponseExtended {
-  htmlContent?: string;
+  pdfData?: string;
   isLoading: boolean;
   totalPages: number;
   currentPage: number;
 }
 
-
 function normalizeBsDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   return value.replace(/-/g, "/");
 }
-
 
 const schema: yup.ObjectSchema<MemberAccountDetailFormValues> = yup
   .object({
@@ -75,14 +72,12 @@ const schema: yup.ObjectSchema<MemberAccountDetailFormValues> = yup
   })
   .required();
 
-
 const INITIAL_STATE: MemberAccountDetailResponseExtended = {
   isLoading: false,
-  htmlContent: undefined,
+  pdfData: undefined,
   totalPages: 1,
   currentPage: 1,
 };
-
 
 export default function MemberAccountDetailPage() {
   const [reportState, setReportState] =
@@ -175,17 +170,17 @@ export default function MemberAccountDetailPage() {
     async (request: MemberAccountDetailRequest): Promise<void> => {
       setReportState({
         isLoading: true,
-        htmlContent: undefined,
+        pdfData: undefined,
         totalPages: 1,
         currentPage: 1,
       });
       try {
         const response = await callApi(request, "VIEW");
-        const htmlContent = await getHtmlString(response);
+        const pdfData = await getHtmlString(response);
         setLastRequest(request);
         setReportState({
           isLoading: false,
-          htmlContent,
+          pdfData,
           totalPages: 1,
           currentPage: 1,
         });
@@ -240,8 +235,7 @@ export default function MemberAccountDetailPage() {
           | (Window & { scrollToPage?: (n: number) => void })
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
-      } catch {
-      }
+      } catch {}
       return { ...prev, currentPage: clamped };
     });
   }, []);

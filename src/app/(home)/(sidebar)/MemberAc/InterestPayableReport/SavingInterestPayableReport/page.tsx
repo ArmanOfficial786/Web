@@ -21,7 +21,7 @@ import * as yup from "yup";
 export type InterestPayableFormValues = InterestPayableRequestDto;
 
 export interface InterestPayableResponseExtended extends ReportResponseDtos {
-  blobUrl: string;
+  pdfData: string;
   isLoading: boolean;
 }
 
@@ -49,7 +49,7 @@ const schema: yup.ObjectSchema<InterestPayableFormValues> = yup
 export default function InterestPayablePage() {
   const [reportState, setReportState] =
     useState<InterestPayableResponseExtended>({
-      blobUrl: "",
+      pdfData: "",
       isLoading: false,
     });
   const [lastRequest, setLastRequest] =
@@ -83,8 +83,8 @@ export default function InterestPayablePage() {
   const fetchReport = useCallback(
     async (request: InterestPayableRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-        return { isLoading: true, blobUrl: "" };
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
+        return { isLoading: true, pdfData: "" };
       });
       try {
         const res = await callApi(request, "VIEW");
@@ -97,9 +97,9 @@ export default function InterestPayablePage() {
             return DefaultPagination;
           }
         })();
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         setReportState((prev) => ({ ...prev, isLoading: false }));
       }

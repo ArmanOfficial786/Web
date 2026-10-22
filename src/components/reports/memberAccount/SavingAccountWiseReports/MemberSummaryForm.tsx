@@ -1,36 +1,37 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef } from "react";
 import type {
   Control,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormSetValue,
   UseFormReset,
+  UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
-import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
-import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import CheckboxInput from "@/components/form/CheckboxInput";
 import type {
   MemberSummaryFormValues,
   MemberSummaryResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberSummaryReport/page";
+import CheckboxInput from "@/components/form/CheckboxInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import FieldRow from "@/utilis/FieldRow";
 import Grid from "@mui/material/Grid";
 
 export type { ReportFormat };
@@ -227,33 +228,24 @@ function MemberSummaryForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={pagination?.currentPage ?? 1}
-            totalPages={pagination?.totalPages ?? 1}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${pagination?.currentPage ?? 1}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={pagination?.currentPage ?? 1}
+              totalPages={pagination?.totalPages ?? 1}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={pagination?.currentPage ?? 1}
+                totalPages={pagination?.totalPages ?? 1}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
+import CheckboxInput from "@/components/form/CheckboxInput";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import CheckboxInput from "@/components/form/CheckboxInput";
+import React, { useEffect, useMemo, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
-import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
+import { createAccountLookupConfig } from "@/config/AccountLookupConfig";
 
-import type { AccountLookUpDtos } from "types/api/api";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import {
   type FixedDepositCertificateScheduleFormValues,
   type FixedDepositCertificateScheduleResponseExtended,
 } from "@/components/reports/memberAccount/InterestPayableReport/fixedDepositCertificateSchedule.types";
+import type { AccountLookUpDtos } from "types/api/api";
 
 export type { ReportFormat };
 
@@ -57,10 +57,10 @@ function FixedDepositCertificateScheduleForm({
   onPageChange,
   onDownload,
 }: FixedDepositCertificateScheduleFormProps) {
-  const { isLoading, loadingKind, blobUrl, pagination } = reportState;
+  const { isLoading, loadingKind, pdfData, pagination } = reportState;
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-  const showReport = Boolean(blobUrl);
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const accountConfig = useMemo(
@@ -73,7 +73,7 @@ function FixedDepositCertificateScheduleForm({
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [blobUrl, showReport, isLoading]);
+  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -170,52 +170,25 @@ function FixedDepositCertificateScheduleForm({
             </Grid>
           </Grid>
         </Paper>
-
         {showReport && (
-          <ReportNavigation
-            pdfData={blobUrl ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-                zIndex: 0,
-              }}
-            >
-              <iframe
-                key={blobUrl}
-                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-            </Box>
-
-            <ScrollToFirstPageButton
-              onClick={() =>
-                currentPage <= 1 ? onPageChange(totalPages) : onPageChange(1)
-              }
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

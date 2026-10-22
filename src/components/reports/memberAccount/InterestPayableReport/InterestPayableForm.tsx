@@ -24,10 +24,10 @@ import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import FieldRow from "@/utilis/FieldRow";
 
@@ -58,8 +58,8 @@ function InterestPayableForm({
   onPageChange,
   onDownload,
 }: InterestPayableFormProps) {
-  const { blobUrl, isLoading, pdfData, pagination } = reportState;
-  const showReport = Boolean(blobUrl);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const currentPage = pagination?.currentPage ?? 1;
@@ -185,54 +185,24 @@ function InterestPayableForm({
 
         {/* ── Report Navigation and PDF Viewer ────────────────────────────── */}
         {showReport && (
-          <ReportNavigation
-            pdfData={blobUrl ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-              }}
-            >
-              <embed
-                key={blobUrl}
-                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-            </Box>
-
-            {/* Jump to first page of the report / last page if already on first */}
-            <ScrollToFirstPageButton
-              onClick={() => {
-                if (currentPage <= 1) {
-                  onPageChange(totalPages);
-                } else {
-                  onPageChange(1);
-                }
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

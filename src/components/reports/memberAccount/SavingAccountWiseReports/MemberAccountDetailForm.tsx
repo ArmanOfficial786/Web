@@ -1,49 +1,49 @@
 "use client";
 
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
   UseFormHandleSubmit,
-  UseFormSetValue,
   UseFormReset,
+  UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUp from "@mui/icons-material/KeyboardArrowUp";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
-import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
-import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import DepositType from "@/components/reportForm/MemberAccount/DepositType";
-import Collector from "@/components/reportForm/MemberAccount/Collector";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import DateInput from "@/components/form/DateInput";
-import DropDown from "@/components/form/DropDown";
-import CheckboxInput from "@/components/form/CheckboxInput";
-import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
 import type {
   MemberAccountDetailFormValues,
   MemberAccountDetailResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/SavingAcWiseReport/MemberAccountDetailReport/page";
-import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
-import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import CheckboxInput from "@/components/form/CheckboxInput";
+import DateInput from "@/components/form/DateInput";
+import DropDown from "@/components/form/DropDown";
+import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import EntityLookupField from "@/components/reportForm/Common/EntityLookUpField";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import SelectGroupField from "@/components/reportForm/Common/SelectGroupField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import Collector from "@/components/reportForm/MemberAccount/Collector";
+import DepositType from "@/components/reportForm/MemberAccount/DepositType";
+import { MemberLookupConfig } from "@/config/MemberLookupConfig";
+import { MemberAccountColumnOptions } from "@/utilis/Constants/MemberAccountColumnOptions";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -77,21 +77,19 @@ function MemberAccountDetailForm({
   reportState,
   onPageChange,
   onDownload,
-  iframeRef,
-  renderKey,
 }: MemberAccountDetailFormProps) {
-  const { isLoading, htmlContent, totalPages, currentPage } = reportState;
-  const showReport = Boolean(htmlContent);
+  const { isLoading, pdfData, totalPages, currentPage } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
   const [columnsExpanded, setColumnsExpanded] = useState(true);
 
   const userId = 160;
 
   useEffect(() => {
-    if (htmlContent && reportRef.current) {
+    if (pdfData && reportRef.current) {
       reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [htmlContent]);
+  }, [pdfData]);
 
   const memberLookupConfig = useMemo(
     () => MemberLookupConfig<MemberAccountDetailFormValues>(),
@@ -330,61 +328,24 @@ function MemberAccountDetailForm({
 
         {/* ── Report iframe area (HTML srcDoc + client-side pagination) ───── */}
         {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
+          <>
             <ReportNavigation
-              pdfData={undefined}
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={onPageChange}
               onDownload={onDownload}
             />
 
-            {/* position: relative so the floating up-arrow button can anchor
-                to this box's bottom-right corner */}
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 1,
-                overflow: "auto",
-                height: "100vh",
-                backgroundColor: "#d0d0d0",
-              }}
-            >
-              <iframe
-                ref={iframeRef}
-                key={renderKey}
-                srcDoc={htmlContent}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                  display: "block",
-                }}
-                sandbox="allow-scripts allow-modals allow-same-origin"
-                title="Member Account Detail Report"
-              />
-
-              {/* Jump to first page of the report */}
-              <ScrollToFirstPageButton
-                onClick={() => {
-                  if (currentPage <= 1) {
-                    onPageChange(totalPages);
-                  } else {
-                    onPageChange(1);
-                  }
-                }}
-                currentPage={currentPage}
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
                 totalPages={totalPages}
-                hideWhenSinglePage={true}
+                onPageChange={onPageChange}
               />
             </Box>
-          </Box>
+          </>
         )}
       </Box>
     </>

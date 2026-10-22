@@ -27,7 +27,7 @@ export type InterestAndTaxTypeWiseFormValues = Omit<
 };
 
 export interface InterestAndTaxTypeWiseResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -116,7 +116,7 @@ export default function InterestAndTaxTypeWisePage() {
   const fetchReport = useCallback(
     async (request: InterestAndTaxTypeWiseRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
 
@@ -133,9 +133,9 @@ export default function InterestAndTaxTypeWisePage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -193,7 +193,7 @@ export default function InterestAndTaxTypeWisePage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

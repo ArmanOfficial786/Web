@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
+import FixedDepositInterestTransferForm, {
+  type ReportFormat,
+} from "@/components/reports/memberAccount/InterestExpenseReport/FixedDepositInterestTransferForm";
+import { useReportFormContext } from "@/contexts/ReportFormContext";
+import memberAccountService from "@/services/memberAccount/memberAccountService";
+import { responseToBlob } from "@/utilis/Constants/blobConverter";
+import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import type {
   FixedDepositInterestTransferRequestDto,
   Pagination,
 } from "types/api/api";
-import FixedDepositInterestTransferForm, {
-  type ReportFormat,
-} from "@/components/reports/memberAccount/InterestExpenseReport/FixedDepositInterestTransferForm";
-import { responseToBlob } from "@/utilis/Constants/blobConverter";
-import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
-import memberAccountService from "@/services/memberAccount/memberAccountService";
-import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import { useReportFormContext } from "@/contexts/ReportFormContext";
 
 export type FixedDepositInterestTransferFormValues = Omit<
   FixedDepositInterestTransferRequestDto,
@@ -27,7 +27,7 @@ export type FixedDepositInterestTransferFormValues = Omit<
 };
 
 export interface FixedDepositInterestTransferResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -114,7 +114,7 @@ export default function FixedDepositInterestTransferPage() {
   const fetchReport = useCallback(
     async (request: FixedDepositInterestTransferRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
 
@@ -131,9 +131,9 @@ export default function FixedDepositInterestTransferPage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -192,7 +192,7 @@ export default function FixedDepositInterestTransferPage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

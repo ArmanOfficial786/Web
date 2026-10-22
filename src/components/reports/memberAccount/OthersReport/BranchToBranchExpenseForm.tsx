@@ -1,5 +1,10 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef } from "react";
 import type {
   Control,
@@ -7,29 +12,25 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchCollectionField from "@/components/reportForm/Common/BranchCollectionField";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import Collector from "@/components/reportForm/MemberAccount/Collector";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import FieldRow from "@/utilis/FieldRow";
-import RadioInput from "@/components/form/RadioInput";
 import type {
   BranchToBranchExpenseFormValues,
   BranchToBranchExpenseResponseExtended,
 } from "@/app/(home)/(sidebar)/MemberAc/OtherReports/BranchToBranchExpenseReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchCollectionField from "@/components/reportForm/Common/BranchCollectionField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import Collector from "@/components/reportForm/MemberAccount/Collector";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -204,33 +205,24 @@ function BranchToBranchExpenseForm({
 
         {/* ── Report Navigation and PDF Viewer ────────────────────────────── */}
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <iframe
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

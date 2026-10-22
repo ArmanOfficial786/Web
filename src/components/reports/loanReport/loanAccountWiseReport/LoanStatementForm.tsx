@@ -26,8 +26,8 @@ import type {
   LoanStatementFormValues,
   LoanStatementResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAccountWiseReport/LoanStatementReport/page";
+import { LanguageSwitch } from "@/components/reportForm/Common/LanguageSwitch";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
-import { LanguageSwitch } from "@/components/reports/memberAccount/SavingAccountWiseReports/LanguageSwitch";
 import { createLoanAccountLookupConfig } from "@/config/loanAccountLookupConfig";
 import type { AccountLookUpDtos } from "types/api/api";
 
