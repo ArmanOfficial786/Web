@@ -1,37 +1,37 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import type {
-  Control,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormSetValue,
-  UseFormReset,
-} from "react-hook-form";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from "react";
+import type {
+  Control,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormReset,
+  UseFormSetValue,
+} from "react-hook-form";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
-import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
-import OrderByField from "@/components/reportForm/Common/OrderByFields";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import Preloader from "@/components/PreLoader/preloader";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import RadioInput from "@/components/form/RadioInput";
-import FieldRow from "@/utilis/FieldRow";
 import type {
   BankReceivedPaymentFormValues,
   BankReceivedPaymentResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/OtherReports/BankReceivedPaymentReport/page";
+import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SameCompanyField from "@/components/reportForm/Common/SameCompanyField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import BankReceivedTransactionTypeField from "@/components/reports/accountReport/OtherReports/BankReceivedTransactionTypeField";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -60,17 +60,17 @@ function BankReceivedPaymentForm({
   onPageChange,
   onDownload,
 }: BankReceivedPaymentFormProps) {
-  const { isLoading, blobUrl, pagination } = reportState;
+  const { isLoading, pdfData, pagination } = reportState;
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-  const showReport = Boolean(blobUrl);
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [blobUrl, showReport, isLoading]);
+  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -194,50 +194,24 @@ function BankReceivedPaymentForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={blobUrl ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-                zIndex: 0,
-              }}
-            >
-              <iframe
-                key={blobUrl}
-                src={`${blobUrl}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-            </Box>
-
-            <ScrollToFirstPageButton
-              onClick={() =>
-                currentPage <= 1 ? onPageChange(totalPages) : onPageChange(1)
-              }
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

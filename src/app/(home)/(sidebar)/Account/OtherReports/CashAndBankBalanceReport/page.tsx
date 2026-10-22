@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { useCallback, useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
+import * as yup from "yup";
 
-import type { CashAndBankBalanceRequestDto, Pagination } from "types/api/api";
 import CashAndBankBalanceForm, {
   type ReportFormat,
 } from "@/components/reports/accountReport/OtherReports/CashAndBankBalanceForm";
+import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import accountService from "@/services/Account/AccountService";
+import type { CashAndBankBalanceRequestDto, Pagination } from "types/api/api";
 
 export type CashAndBankBalanceFormValues = CashAndBankBalanceRequestDto;
 
 export interface CashAndBankBalanceResponseExtended {
-  blobUrl?: string;
+  pdfData?: string;
   isLoading: boolean;
   pagination?: Pagination;
 }
@@ -70,7 +70,7 @@ export default function CashAndBankBalancePage() {
   const fetchReport = useCallback(
     async (request: CashAndBankBalanceRequestDto) => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return { isLoading: true };
       });
 
@@ -87,9 +87,9 @@ export default function CashAndBankBalancePage() {
           }
         })();
 
-        const blobUrl = URL.createObjectURL(responseToBlob(res.data, "PDF"));
+        const pdfData = URL.createObjectURL(responseToBlob(res.data, "PDF"));
         setLastRequest(request);
-        setReportState({ isLoading: false, blobUrl, pagination });
+        setReportState({ isLoading: false, pdfData, pagination });
       } catch {
         toast.error("Failed to load report.");
         setReportState((prev) => ({ ...prev, isLoading: false }));
@@ -147,7 +147,7 @@ export default function CashAndBankBalancePage() {
   useEffect(() => {
     return () => {
       setReportState((prev) => {
-        if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
+        if (prev.pdfData) URL.revokeObjectURL(prev.pdfData);
         return prev;
       });
     };

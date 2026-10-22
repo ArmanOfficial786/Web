@@ -1,5 +1,10 @@
 "use client";
 
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef } from "react";
 import type {
   Control,
@@ -7,31 +12,26 @@ import type {
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
-import ReportNavigation, {
-  type ReportFormat,
-} from "@/components/reportForm/Common/ReportNavigation";
-import DateFields from "@/components/reportForm/Common/DateFiels";
-import BranchNameField from "@/components/reportForm/Common/BranchNameField";
-import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
-import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
-import Preloader from "@/components/PreLoader/preloader";
-import LedgerHeadField from "@/components/reportForm/Common/LedgerHeadField";
-import LedgerNameField from "@/components/reportForm/Common/LedgerNameField";
-import SubLedgerNameField from "@/components/reportForm/Common/SubLedgerNameField";
-import SecondLedgerNameField from "@/components/reportForm/Common/SecondLedgerNameField";
 import type {
   SecondLedgerDetailsFormValues,
   SecondLedgerDetailsResponseExtended,
 } from "@/app/(home)/(sidebar)/Account/MainLedger/2ndLedgerDetailsReport/page";
-import FieldRow from "@/utilis/FieldRow";
 import RadioInput from "@/components/form/RadioInput";
+import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
+import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
+import DateFields from "@/components/reportForm/Common/DateFiels";
+import LedgerHeadField from "@/components/reportForm/Common/LedgerHeadField";
+import LedgerNameField from "@/components/reportForm/Common/LedgerNameField";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
+import ReportNavigation, {
+  type ReportFormat,
+} from "@/components/reportForm/Common/ReportNavigation";
+import SecondLedgerNameField from "@/components/reportForm/Common/SecondLedgerNameField";
+import SubLedgerNameField from "@/components/reportForm/Common/SubLedgerNameField";
+import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
+import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
@@ -247,52 +247,25 @@ function SecondLedgerDetailsForm({
             </Grid>
           </Box>
         </Paper>
-
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box sx={{ position: "relative", isolation: "isolate", zIndex: 1 }}>
-            <Box
-              ref={reportRef}
-              sx={{
-                position: "relative",
-                height: "1000px",
-                overflow: "hidden",
-                zIndex: 0,
-              }}
-            >
-              <iframe
-                key={pdfData}
-                src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: 0,
-                  width: "100%",
-                  height: "calc(100% + 40px)",
-                  border: "none",
-                  zIndex: 0,
-                }}
-              />
-            </Box>
-
-            <ScrollToFirstPageButton
-              onClick={() =>
-                currentPage <= 1 ? onPageChange(totalPages) : onPageChange(1)
-              }
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>
