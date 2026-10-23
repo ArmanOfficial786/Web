@@ -55,8 +55,8 @@ function AccountStatement({
   onPageChange,
   onDownload,
 }: AccountStatementProps) {
-  const { blobUrl, isLoading, pdfData, pagination } = reportState;
-  const showReport = Boolean(pdfData) && Boolean(blobUrl);
+  const { isLoading, pdfData, pagination } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
   const scrollToReport = () =>
     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });

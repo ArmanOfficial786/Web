@@ -121,6 +121,7 @@ export interface BankReceivedPaymentRequestDto {
   paymentType?: string | null;
   transactionType?: string | null;
   orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface BranchResponse {
@@ -849,6 +850,7 @@ export interface IBTStatementBranchwiseRequestDto {
   interestRate?: number;
   /** @format double */
   minimumClosingBalance?: number;
+  visualReport?: boolean;
 }
 
 export interface IBTTransactionRequestDto {
@@ -1752,6 +1754,7 @@ export interface PaymentThroughSavingRequestDto {
   sameCompanyName?: boolean;
   transactionType?: string | null;
   orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface RatioAnalysisRequest {
@@ -2231,6 +2234,7 @@ export interface SubLedgerDetailsRequestDto {
   selectedAccountType?: number;
   ledgerHead?: string[] | null;
   isSummary?: boolean;
+  visualReport?: boolean;
 }
 
 export interface SummaryTrialBalanceRequest {
@@ -2261,6 +2265,7 @@ export interface TellerCashDetailRequestDto {
   tellerId?: string | null;
   orderBy?: string | null;
   reportType?: string | null;
+  visualReport?: boolean;
 }
 
 export interface TellerCashVaultRequestDto {
@@ -2270,6 +2275,7 @@ export interface TellerCashVaultRequestDto {
   sameCompanyName?: boolean;
   orderBy?: string | null;
   type?: boolean;
+  visualReport?: boolean;
 }
 
 export interface TellerLookupResponse {
@@ -2573,14 +2579,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/AccountStatement/AccountStatementReport`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -6316,14 +6321,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/SalaryTransaction`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -6551,14 +6555,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/TellerWiseCollection`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 

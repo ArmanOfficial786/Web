@@ -15,12 +15,7 @@ const customRequestInterceptor = async (config: any) => {
 
   if (configWithAuth.params?.format) {
     const format = configWithAuth.params.format.toLowerCase();
-    const isAccountStatement =
-      configWithAuth.url?.includes("/AccountStatement/");
-    if (
-      ["view", "pdf", "excel", "word", "image"].includes(format) &&
-      !(format === "view" && isAccountStatement)
-    ) {
+    if (["view", "pdf", "excel", "word", "image"].includes(format)) {
       configWithAuth.responseType = "blob";
     }
   }

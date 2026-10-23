@@ -13,8 +13,10 @@ import { useReportFormContext } from "@/contexts/ReportFormContext";
 import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
+import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import type {
   AccountStatementRequest,
+  Pagination,
   ReportResponseDtos,
 } from "types/api/api";
 
@@ -23,7 +25,6 @@ export interface AccountStatementRequestExtended extends AccountStatementRequest
 }
 
 export interface AccountStatementResponseExtended extends ReportResponseDtos {
-  blobUrl: string;
   isLoading: boolean;
 }
 
@@ -74,7 +75,6 @@ const schema: yup.ObjectSchema<AccountStatementRequestExtended> = yup
 export default function AccountStatementPage() {
   const [reportState, setReportState] =
     useState<AccountStatementResponseExtended>({
-      blobUrl: "",
       isLoading: false,
     });
 
@@ -83,33 +83,10 @@ export default function AccountStatementPage() {
   const { branchOptions } = useReportFormContext();
 
   useEffect(() => {
-    const raw = reportState.pdfData;
-
-    if (!raw) {
-      setReportState((prev) => {
-        if (!prev.blobUrl) return prev;
-        URL.revokeObjectURL(prev.blobUrl);
-        return { ...prev, blobUrl: "" };
-      });
-      return;
-    }
-
-    let url = "";
-    try {
-      const binary = atob(raw);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-    } catch {
-      return;
-    }
-
-    setReportState((prev) => {
-      if (prev.blobUrl) URL.revokeObjectURL(prev.blobUrl);
-      return { ...prev, blobUrl: url };
-    });
-
-    return () => URL.revokeObjectURL(url);
+    const pdfData = reportState.pdfData;
+    return () => {
+      if (pdfData) URL.revokeObjectURL(pdfData);
+    };
   }, [reportState.pdfData]);
 
   const { control, handleSubmit, setValue, reset } =
@@ -158,23 +135,33 @@ export default function AccountStatementPage() {
 
   const fetchReport = useCallback(
     async (request: AccountStatementRequest) => {
-      setReportState((prev) => ({ ...prev, isLoading: true }));
+      setLastRequest(null);
+      setReportState({ isLoading: true });
+
       try {
         const res = await callApi(request, "VIEW");
-        if (res.data?.isValid && res.data.data) {
-          setLastRequest(request);
-          setReportState((prev) => ({
-            ...prev,
-            ...res.data.data,
-            isLoading: false,
-          }));
-        } else {
-          toast.error(res.data?.message ?? "Failed to load report.");
-          setReportState((prev) => ({ ...prev, isLoading: false }));
-        }
-      } catch {
-        toast.error("An unexpected error occurred.");
-        setReportState((prev) => ({ ...prev, isLoading: false }));
+
+        const raw =
+          (res.headers as Record<string, string>)["x-pagination"] ?? "";
+        const pagination: Pagination = (() => {
+          try {
+            return raw ? (JSON.parse(raw) as Pagination) : DefaultPagination;
+          } catch {
+            return DefaultPagination;
+          }
+        })();
+
+        const blob = responseToBlob(res.data, "PDF");
+        const pdfData = URL.createObjectURL(blob);
+        console.log("PDF Data URL:", pdfData); // Log the PDF data URL for debugging
+
+        setLastRequest(request);
+        setReportState({ isLoading: false, pdfData, pagination });
+      } catch (err) {
+        setReportState({ isLoading: false });
+        toast.error(
+          `Failed to load report: ${err instanceof Error ? err.message : "Unknown error"}`,
+        );
       }
     },
     [callApi],
@@ -194,6 +181,7 @@ export default function AccountStatementPage() {
   const handleDownload = useCallback(
     async (format: ReportFormat) => {
       if (!lastRequest) {
+        toast.warning("Please view the report before exporting.");
         return;
       }
       try {
@@ -211,7 +199,11 @@ export default function AccountStatementPage() {
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-      } catch (error) {}
+      } catch (error) {
+        toast.error(
+          `Download failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
+      }
     },
     [callApi, lastRequest],
   );
