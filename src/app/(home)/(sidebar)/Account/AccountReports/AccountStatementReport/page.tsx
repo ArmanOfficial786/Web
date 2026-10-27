@@ -14,18 +14,16 @@ import accountService from "@/services/Account/AccountService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
-import type {
-  AccountStatementRequest,
-  Pagination,
-  ReportResponseDtos,
-} from "types/api/api";
+import type { AccountStatementRequest, Pagination } from "types/api/api";
 
 export interface AccountStatementRequestExtended extends AccountStatementRequest {
   branchId?: number[];
 }
 
-export interface AccountStatementResponseExtended extends ReportResponseDtos {
+export interface AccountStatementResponseExtended {
   isLoading: boolean;
+  pdfData?: string;
+  pagination?: Pagination;
 }
 
 const schema: yup.ObjectSchema<AccountStatementRequestExtended> = yup

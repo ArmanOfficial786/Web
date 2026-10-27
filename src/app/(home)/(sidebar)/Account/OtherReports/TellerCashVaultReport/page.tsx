@@ -44,6 +44,7 @@ const schema: yup.ObjectSchema<TellerCashVaultFormValues> = yup
     branchId: yup.string().nullable().optional().default("-1"),
     sameCompanyName: yup.boolean().optional().default(true),
     orderBy: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false),
     type: yup.boolean().optional().default(false),
   })
   .required();
@@ -70,6 +71,7 @@ export default function TellerCashVaultPage() {
       branchId: form.branchId || undefined,
       sameCompanyName: form.sameCompanyName ?? false,
       orderBy: form.orderBy || "",
+      visualReport: form.visualReport ?? false,
       type: form.type ?? false,
     }),
     [],

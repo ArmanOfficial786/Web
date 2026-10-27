@@ -20,6 +20,7 @@ import * as yup from "yup";
 export type IbtStatementBranchwiseFormValues =
   IBTStatementBranchwiseRequestDto & {
     branchName?: string | null;
+    visualReport?: boolean;
   };
 
 export interface IbtStatementBranchwiseResponseExtended {
@@ -55,6 +56,7 @@ const schema: yup.ObjectSchema<IbtStatementBranchwiseFormValues> = yup
       .default(DEFAULT_PAYABLE_BRANCH_ID),
     branchName: yup.string().nullable().optional().default(""),
     reportType: yup.string().required().nullable().default("Detail"),
+    visualReport: yup.boolean().optional().default(false),
     interestRate: yup.number().optional(),
     minimumClosingBalance: yup.number().optional(),
   })
@@ -84,6 +86,7 @@ export default function IbtStatementBranchwisePage() {
       officeId: form.officeId || undefined,
       payableBranchId: form.payableBranchId || DEFAULT_PAYABLE_BRANCH_ID,
       reportType: form.reportType || "Detail",
+      visualReport: form.visualReport ?? false,
       interestRate: form.interestRate,
       minimumClosingBalance: form.minimumClosingBalance,
     }),

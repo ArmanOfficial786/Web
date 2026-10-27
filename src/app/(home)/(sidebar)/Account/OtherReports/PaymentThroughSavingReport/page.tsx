@@ -51,6 +51,7 @@ const schema: yup.ObjectSchema<PaymentThroughSavingFormValues> = yup
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     sameCompanyName: yup.boolean().optional().default(false),
+    visualReport: yup.boolean().optional().default(false),
     transactionType: yup.string().nullable().optional().default(""),
     orderBy: yup.string().nullable().optional().default(""),
   })
@@ -78,6 +79,7 @@ export default function PaymentThroughSavingPage() {
         toDateBs: form.toDateBs || undefined,
         branchIds: selectedIds.length ? selectedIds.join(",") : "-1",
         sameCompanyName: form.sameCompanyName ?? false,
+        visualReport: form.visualReport ?? false,
         transactionType: form.transactionType || undefined,
         orderBy: form.orderBy || "",
       };

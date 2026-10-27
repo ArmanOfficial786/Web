@@ -13,8 +13,10 @@ import { toast } from "react-toastify";
 import type { IBTTransactionRequestDto } from "types/api/api";
 import * as yup from "yup";
 
-export type IbtTransactionFormValues = IBTTransactionRequestDto & {
+export type IbtTransactionFormValues = Omit<IBTTransactionRequestDto, "branchId"> & {
+  branchId?: string | null;
   branchName?: string | null;
+  visualReport?: boolean;
 };
 
 export interface IbtTransactionResponseExtended {
@@ -45,6 +47,7 @@ const schema: yup.ObjectSchema<IbtTransactionFormValues> = yup
       }),
     branchId: yup.string().nullable().optional().default("2"),
     branchName: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false),
     orderBy: yup.string().nullable().optional().default(""),
   })
   .required();

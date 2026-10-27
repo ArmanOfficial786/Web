@@ -49,6 +49,7 @@ const schema: yup.ObjectSchema<BankReceivedPaymentFormValues> = yup
       }),
     branchIds: yup.array().of(yup.string().required()).optional().default([]),
     sameCompanyName: yup.boolean().optional().default(false),
+    visualReport: yup.boolean().optional().default(false),
     paymentType: yup
       .string()
       .nullable()

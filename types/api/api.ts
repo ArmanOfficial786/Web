@@ -163,6 +163,7 @@ export interface CashAndBankBalanceRequestDto {
   branchId?: string | null;
   orderBy?: string | null;
   nepaliReport?: boolean;
+  visualReport?: boolean;
 }
 
 export interface CashFlowDetailsRequest {
@@ -808,15 +809,6 @@ export interface GeneralResponseOfListOfVoucherOptionResponse {
   pagination?: Pagination;
 }
 
-export interface GeneralResponseOfReportResponseDtos {
-  isValid?: boolean;
-  /** @format int32 */
-  statusCode?: number;
-  message?: string | null;
-  data?: ReportResponseDtos;
-  pagination?: Pagination;
-}
-
 export interface GeneralResponseOfVerificationStatusDto {
   isValid?: boolean;
   /** @format int32 */
@@ -858,6 +850,7 @@ export interface IBTTransactionRequestDto {
   toDateBs?: string | null;
   branchId?: string | null;
   orderBy?: string | null;
+  visualReport?: boolean;
 }
 
 export interface InterestAndTaxDetailRequestDto {
@@ -913,6 +906,7 @@ export interface LedgerDetailsReqResponse {
   selectedAccountType?: number;
   showOpeningBalance?: boolean;
   isSummary?: boolean;
+  visualReport?: boolean;
 }
 
 export interface LmtLoanMaseterListResponse {
@@ -1704,6 +1698,12 @@ export interface Pagination {
   items?: any[] | null;
 }
 
+export interface ReportResponseDtos {
+  pdfData?: string | null;
+  reportName?: string | null;
+  pagination?: Pagination;
+}
+
 export interface PaginationOfLoanAccountLookUpDtos {
   /** @format int32 */
   currentPage?: number | null;
@@ -1841,12 +1841,6 @@ export interface RemittanceTypeResponse {
   /** @format int64 */
   remittanceTypeId?: number;
   remittanceTypeName?: string | null;
-}
-
-export interface ReportResponseDtos {
-  pdfData?: string | null;
-  reportName?: string | null;
-  pagination?: Pagination;
 }
 
 export interface ReserveMasterRequestDto {
@@ -5564,14 +5558,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/MemberAllDetails`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -5591,14 +5584,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/MemberBasicDetails`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -5696,14 +5688,13 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<GeneralResponseOfReportResponseDtos, any>({
+      this.request<void, any>({
         path: `/api/MemberRegistration`,
         method: "POST",
         query: query,
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: "json",
         ...params,
       }),
 
@@ -7182,6 +7173,33 @@ export class Api<
       this.request<void, any>({
         path: `/api/CenterCollectionSheetReportMaster/${id}`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Microfinance/MicrofinanceSheetReports
+     * @name CenterCollectionSheetReportMasterReportList
+     * @request GET:/api/CenterCollectionSheetReportMaster/report
+     * @secure
+     */
+    centerCollectionSheetReportMasterReportList: (
+      query?: {
+        /** @default "VIEW" */
+        format?: string;
+        /** @default false */
+        canView?: boolean;
+        /** @default false */
+        canModify?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/api/CenterCollectionSheetReportMaster/report`,
+        method: "GET",
+        query: query,
         secure: true,
         ...params,
       }),

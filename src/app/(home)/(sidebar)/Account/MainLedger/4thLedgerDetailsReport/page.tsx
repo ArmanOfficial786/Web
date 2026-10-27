@@ -17,7 +17,7 @@ import type { LedgerDetailsReqResponse, Pagination } from "types/api/api";
 
 export type FourthLedgerDetailsFormValues = Omit<
   LedgerDetailsReqResponse,
-  "ledgerHeadId" | "ledgerHead" | "selectedAccountType" | "isSummary"
+  "ledgerHeadId" | "ledgerHead" | "selectedAccountType" | "isSummary" | "visualReport"
 > & {
   ledgerHeadId?: string | null;
   ledgerName?: string | null;
@@ -26,6 +26,7 @@ export type FourthLedgerDetailsFormValues = Omit<
   thirdSubLedgerName?: string | null;
   fourthSubLedgerName?: string | null;
   reportType?: "0" | "1" | null;
+  visualReport?: boolean;
 };
 
 export interface FourthLedgerDetailsResponseExtended {
@@ -67,6 +68,7 @@ const schema: yup.ObjectSchema<FourthLedgerDetailsFormValues> = yup
       .optional()
       .default("0"),
     showOpeningBalance: yup.boolean().optional().default(false),
+    visualReport: yup.boolean().optional().default(false),
     orderBy: yup.string().nullable().optional().default(""),
   })
   .required();

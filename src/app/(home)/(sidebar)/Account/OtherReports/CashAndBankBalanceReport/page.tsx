@@ -15,7 +15,12 @@ import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameF
 import { DefaultPagination } from "@/utilis/Constants/reportConstants";
 import type { CashAndBankBalanceRequestDto, Pagination } from "types/api/api";
 
-export type CashAndBankBalanceFormValues = CashAndBankBalanceRequestDto;
+export type CashAndBankBalanceFormValues = Omit<
+  CashAndBankBalanceRequestDto,
+  "visualReport"
+> & {
+  visualReport?: boolean;
+};
 
 export interface CashAndBankBalanceResponseExtended {
   pdfData?: string;
@@ -34,6 +39,7 @@ const schema: yup.ObjectSchema<CashAndBankBalanceFormValues> = yup
       .required(DATE_REQUIRED_MESSAGE),
     branchId: yup.string().nullable().optional().default("-1"),
     orderBy: yup.string().nullable().optional().default(""),
+    visualReport: yup.boolean().optional().default(false),
     nepaliReport: yup.boolean().optional().default(false),
   })
   .required();
