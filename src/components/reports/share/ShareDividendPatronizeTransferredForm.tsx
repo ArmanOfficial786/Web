@@ -22,10 +22,10 @@ import RadioInput from "@/components/form/RadioInput";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
-import ScrollToFirstPageButton from "@/components/reportForm/Common/ScrollToFirstPageButton";
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import FieldRow from "@/utilis/FieldRow";
@@ -156,48 +156,25 @@ function ShareDividendPatronizeTransferredForm({
             </Grid>
           </Grid>
         </Paper>
-
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <iframe
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
-            />
-
-            <ScrollToFirstPageButton
-              onClick={() => {
-                if (currentPage <= 1) {
-                  onPageChange(totalPages);
-                } else {
-                  onPageChange(1);
-                }
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
-              hideWhenSinglePage={true}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

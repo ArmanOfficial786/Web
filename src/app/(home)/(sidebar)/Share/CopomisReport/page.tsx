@@ -15,7 +15,7 @@ import * as yup from "yup";
 export type CopomisFormValues = CopomisRequestDto;
 
 export interface CopomisResponseExtended {
-  htmlContent?: string;
+  pdfData?: string;
   isLoading: boolean;
   totalPages: number;
   currentPage: number;
@@ -42,7 +42,7 @@ const schema: yup.ObjectSchema<CopomisFormValues> = yup
 
 const INITIAL_STATE: CopomisResponseExtended = {
   isLoading: false,
-  htmlContent: undefined,
+  pdfData: undefined,
   totalPages: 1,
   currentPage: 1,
 };
@@ -111,19 +111,19 @@ export default function CopomisPage() {
     async (request: CopomisRequestDto) => {
       setReportState({
         isLoading: true,
-        htmlContent: undefined,
+        pdfData: undefined,
         totalPages: 1,
         currentPage: 1,
       });
 
       try {
         const response = await callApi(request, "VIEW");
-        const htmlContent = await getHtmlString(response);
+        const pdfData = await getHtmlString(response);
 
         setLastRequest(request);
         setReportState({
           isLoading: false,
-          htmlContent,
+          pdfData,
           totalPages: 1,
           currentPage: 1,
         });

@@ -15,7 +15,7 @@ import * as yup from "yup";
 export type ShareDetailFormValues = ShareDetailsRequestDto;
 
 export interface ShareDetailResponseExtended {
-  htmlContent?: string;
+  pdfData?: string;
   isLoading: boolean;
   totalPages: number;
   currentPage: number;
@@ -47,7 +47,7 @@ const schema: yup.ObjectSchema<ShareDetailFormValues> = yup
 
 const INITIAL_STATE: ShareDetailResponseExtended = {
   isLoading: false,
-  htmlContent: undefined,
+  pdfData: undefined,
   totalPages: 1,
   currentPage: 1,
 };
@@ -120,19 +120,19 @@ export default function ShareDetailReportPage() {
     async (request: ShareDetailsRequestDto) => {
       setReportState({
         isLoading: true,
-        htmlContent: undefined,
+        pdfData: undefined,
         totalPages: 1,
         currentPage: 1,
       });
 
       try {
         const response = await callApi(request, "VIEW");
-        const htmlContent = await getHtmlString(response);
+        const pdfData = await getHtmlString(response);
 
         setLastRequest(request);
         setReportState({
           isLoading: false,
-          htmlContent,
+          pdfData,
           totalPages: 1,
           currentPage: 1,
         });
@@ -155,8 +155,7 @@ export default function ShareDetailReportPage() {
           | (Window & { scrollToPage?: (n: number) => void })
           | null;
         if (iframeWin?.scrollToPage) iframeWin.scrollToPage(clamped);
-      } catch {
-      }
+      } catch {}
       return { ...prev, currentPage: clamped };
     });
   }, []);

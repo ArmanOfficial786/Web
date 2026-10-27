@@ -26,6 +26,7 @@ import CollectionCenterField from "@/components/reportForm/Common/CollectionCent
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import MemberTypeField from "@/components/reportForm/Common/MemberTypeField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -56,18 +57,16 @@ function ShareDetailForm({
   reportState,
   onPageChange,
   onDownload,
-  iframeRef,
-  renderKey,
 }: ShareDetailFormProps) {
-  const { isLoading, htmlContent, totalPages, currentPage } = reportState;
-  const showReport = Boolean(htmlContent);
+  const { isLoading, pdfData, totalPages, currentPage } = reportState;
+  const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (showReport && !isLoading) {
       reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [htmlContent, showReport, isLoading]);
+  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -255,46 +254,25 @@ function ShareDetailForm({
             </Grid>
           </Box>
         </Paper>
-
         {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-          >
+          <>
             <ReportNavigation
-              pdfData={undefined}
+              pdfData={pdfData ?? ""}
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={onPageChange}
               onDownload={onDownload}
             />
 
-            <Box
-              sx={{
-                width: "100%",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 1,
-                overflow: "auto",
-                height: "100vh",
-                backgroundColor: "#d0d0d0",
-              }}
-            >
-              <iframe
-                ref={iframeRef}
-                key={renderKey}
-                srcDoc={htmlContent}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  border: "none",
-                  display: "block",
-                }}
-                sandbox="allow-scripts allow-modals allow-same-origin"
-                title="Share Detail Report"
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
               />
             </Box>
-          </Box>
+          </>
         )}
       </Box>
     </>
