@@ -21,6 +21,7 @@ import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -247,33 +248,24 @@ export default function GroupWiseMemberAccountDetailsForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>

@@ -19,6 +19,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
+import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -50,8 +51,6 @@ export default function CenterCollectionSingleSheetForm({
   onPageChange,
   onDownload,
   printSheetOptions,
-  iframeRef,
-  renderKey,
 }: CenterCollectionSingleSheetFormProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
@@ -181,33 +180,24 @@ export default function CenterCollectionSingleSheetForm({
         </Paper>
 
         {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <iframe
-              ref={iframeRef}
-              key={renderKey}
-              src={pdfData ?? ""}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: "none",
-                display: "block",
-              }}
-              title="Center Collection Single Sheet Report"
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
             />
-          </Box>
+
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
         )}
       </Box>
     </>
