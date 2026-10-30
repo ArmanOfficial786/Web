@@ -16,6 +16,7 @@ import {
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/CollectorWiseLoanAnalysisReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -59,6 +60,12 @@ export default function CollectorWiseLoanAnalysisForm({
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<CollectorWiseLoanAnalysisFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
 
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
@@ -73,12 +80,6 @@ export default function CollectorWiseLoanAnalysisForm({
       setValue("collectionCenterIds", "0" as any);
     }
   }, [enableCollectionCenter, setValue]);
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -228,6 +229,8 @@ export default function CollectorWiseLoanAnalysisForm({
             <VisualReportSwitch<CollectorWiseLoanAnalysisFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -242,7 +245,7 @@ export default function CollectorWiseLoanAnalysisForm({
                 <ViewReportButton<CollectorWiseLoanAnalysisFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

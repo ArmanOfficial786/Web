@@ -15,6 +15,7 @@ import {
   LoanAgeingArrearCalculationResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanAgingArrearCalculationReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -54,6 +55,13 @@ export default function LoanAgeingArrearCalculationForm({
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
+
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanAgeingArrearCalculationFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
 
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
@@ -199,6 +207,8 @@ export default function LoanAgeingArrearCalculationForm({
             <VisualReportSwitch<LoanAgeingArrearCalculationFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
           <Divider sx={{ mb: 1 }} />
@@ -217,7 +227,7 @@ export default function LoanAgeingArrearCalculationForm({
                 <ViewReportButton<LoanAgeingArrearCalculationFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

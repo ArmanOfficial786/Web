@@ -16,6 +16,7 @@ import {
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanTypeWiseReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -63,6 +64,13 @@ export default function LoanTypeWiseForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanTypeWiseFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
 
@@ -76,12 +84,6 @@ export default function LoanTypeWiseForm({
       setValue("collectionCenterId", "0" as any);
     }
   }, [enableCollectionCenter, setValue]);
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -297,6 +299,8 @@ export default function LoanTypeWiseForm({
             <VisualReportSwitch<LoanTypeWiseFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -314,7 +318,7 @@ export default function LoanTypeWiseForm({
                 <ViewReportButton<LoanTypeWiseFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

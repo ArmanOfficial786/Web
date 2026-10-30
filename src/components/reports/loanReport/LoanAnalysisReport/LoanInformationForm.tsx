@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -13,6 +13,7 @@ import {
   LoanInformationFormValues,
   LoanInformationResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanInformationReport/page";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
@@ -52,14 +53,15 @@ export default function LoanInformationForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanInformationFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -149,6 +151,8 @@ export default function LoanInformationForm({
             <VisualReportSwitch<LoanInformationFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
 
@@ -167,11 +171,11 @@ export default function LoanInformationForm({
                 <ViewReportButton<LoanInformationFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />
-                <ClearFormButton
+                <ClearFormButton<LoanInformationFormValues>
                   setValue={setValue}
                   clearFields={[
                     "fromDateBs",

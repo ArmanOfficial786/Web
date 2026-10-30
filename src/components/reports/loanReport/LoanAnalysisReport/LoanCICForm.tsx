@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -15,6 +15,7 @@ import {
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanCICReport/page";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
@@ -55,14 +56,15 @@ export default function LoanCICForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanCICFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -173,6 +175,8 @@ export default function LoanCICForm({
             <VisualReportSwitch<LoanCICFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -193,7 +197,7 @@ export default function LoanCICForm({
                 <ViewReportButton<LoanCICFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

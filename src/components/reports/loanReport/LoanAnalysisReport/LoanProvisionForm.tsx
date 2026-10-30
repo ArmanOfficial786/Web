@@ -215,20 +215,20 @@
 "use client";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
   UseFormHandleSubmit,
   UseFormSetValue,
 } from "react-hook-form";
-import { useWatch } from "react-hook-form";
 
 import {
   LoanProvisionFormValues,
   LoanProvisionResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanProvisionReport/page";
 import RadioInput from "@/components/form/RadioInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
@@ -267,35 +267,28 @@ export default function LoanProvisionForm({
   const { isLoading, pdfData, pagination, isHtml } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  // ② one hook call (showReport must be defined above this line)
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanProvisionFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+  // const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // NOTE: this follows the live toggle. If the user flips it after generating,
   // the iframe styling changes before they click View Report again.
   // Safer: store `isVisual` in reportState when the report is generated.
-  const isVisual = Boolean(useWatch({ control, name: "visualReport" }));
+  //const isVisual = Boolean(useWatch({ control, name: "visualReport" }));
 
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
 
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
-
-  // HTML report: page navigation goes through window.scrollToPage() in the report
-  useEffect(() => {
-    if (!isVisual || !showReport) return;
-    const win = iframeRef.current?.contentWindow as
-      | (Window & { scrollToPage?: (page: number) => void })
-      | null
-      | undefined;
-    try {
-      win?.scrollToPage?.(currentPage);
-    } catch {
-      /* cross-origin or not loaded yet */
-    }
-  }, [currentPage, isVisual, showReport]);
+  // useEffect(() => {
+  //   if (showReport && !isLoading) {
+  //     reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  //   }
+  // }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -380,6 +373,8 @@ export default function LoanProvisionForm({
             <VisualReportSwitch<LoanProvisionFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle} 
+              disabled={isLoading}
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -394,7 +389,7 @@ export default function LoanProvisionForm({
                 <ViewReportButton<LoanProvisionFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

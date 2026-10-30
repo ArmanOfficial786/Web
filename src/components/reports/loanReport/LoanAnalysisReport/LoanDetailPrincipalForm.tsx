@@ -23,6 +23,7 @@ import {
   LoanDetailPrincipalFormValues,
   LoanDetailPrincipalResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanDetailsPrincipalReport/page";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
@@ -69,6 +70,13 @@ export default function LoanDetailPrincipalForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanDetailPrincipalFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
 
@@ -82,12 +90,6 @@ export default function LoanDetailPrincipalForm({
       setValue("collectionCenterId", "0" as any);
     }
   }, [enableCollectionCenter, setValue]);
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -232,6 +234,8 @@ export default function LoanDetailPrincipalForm({
             <VisualReportSwitch<LoanDetailPrincipalFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
 
             <Grid size={{ xs: 12, md: 6 }}>
@@ -247,7 +251,7 @@ export default function LoanDetailPrincipalForm({
                 <ViewReportButton<LoanDetailPrincipalFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

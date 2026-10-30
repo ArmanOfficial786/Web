@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -14,6 +14,7 @@ import {
   LoanAgingRiskCalculationResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanAgingRiskCalculationReport/page";
 import RadioInput from "@/components/form/RadioInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
@@ -54,14 +55,15 @@ export default function LoanAgingRiskCalculationForm({
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
 
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanAgingRiskCalculationFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -157,6 +159,8 @@ export default function LoanAgingRiskCalculationForm({
             <VisualReportSwitch<LoanAgingRiskCalculationFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
           <Divider sx={{ mb: 1 }} />
@@ -174,7 +178,7 @@ export default function LoanAgingRiskCalculationForm({
                 <ViewReportButton<LoanAgingRiskCalculationFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

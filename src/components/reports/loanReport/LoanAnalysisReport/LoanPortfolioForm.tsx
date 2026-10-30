@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -13,6 +13,7 @@ import {
   LoanPortfolioFormValues,
   LoanPortfolioResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanPortfolioReport/page";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
@@ -46,15 +47,15 @@ export default function LoanPortfolioForm({
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanPortfolioFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
 
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-
-  useEffect(() => {
-    if (showReport && !isLoading) {
-      reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData, showReport, isLoading]);
 
   return (
     <>
@@ -100,6 +101,8 @@ export default function LoanPortfolioForm({
             <VisualReportSwitch<LoanPortfolioFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
           </Box>
 
@@ -120,7 +123,7 @@ export default function LoanPortfolioForm({
                 <ViewReportButton<LoanPortfolioFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />

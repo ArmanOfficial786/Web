@@ -7,6 +7,7 @@ import {
 import CheckboxInput from "@/components/form/CheckboxInput";
 import DropDown from "@/components/form/DropDown";
 import MultiCheckboxInput from "@/components/form/MultiCheckboxInput";
+import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
@@ -35,7 +36,7 @@ import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import type {
   Control,
   SubmitHandler,
@@ -77,22 +78,21 @@ function LoanDetailReport({
   reportState,
   onPageChange,
   onDownload,
-  // iframeRef,
-  //renderKey,
 }: LoanDetailReportProps) {
   const { isLoading, pdfData, pagination } = reportState;
   const showReport = Boolean(pdfData);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { submitAndRemember, handleVisualToggle } =
+    useVisualReportToggle<LoanDetailFormValues>({
+      onSubmit,
+      showReport,
+      isLoading,
+    });
+
   const [columnsExpanded, setColumnsExpanded] = useState(true);
 
   const currentPage = pagination?.currentPage ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
-
-  useEffect(() => {
-    if (pdfData && reportRef.current) {
-      reportRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [pdfData]);
 
   const memberLookupConfig = React.useMemo(
     () => MemberLookupConfig<LoanDetailFormValues>(),
@@ -303,6 +303,8 @@ function LoanDetailReport({
             <VisualReportSwitch<LoanDetailFormValues>
               control={control}
               name="visualReport"
+              onToggle={handleVisualToggle}
+              disabled={isLoading}
             />
             <Grid size={{ xs: 12, md: 6 }}>
               <Box
@@ -315,11 +317,11 @@ function LoanDetailReport({
                 <ViewReportButton<LoanDetailFormValues>
                   control={control}
                   handleSubmit={handleSubmit}
-                  onSubmit={onSubmit}
+                  onSubmit={submitAndRemember}
                   setValue={setValue}
                   loading={isLoading}
                 />
-                <ClearFormButton
+                <ClearFormButton<LoanDetailFormValues>
                   setValue={setValue}
                   clearFields={[
                     "loanTypeId",
