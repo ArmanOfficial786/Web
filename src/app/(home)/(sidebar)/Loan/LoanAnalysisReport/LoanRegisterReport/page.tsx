@@ -16,13 +16,13 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-const SELECT_LOAN_ALL = "All";
+const SELECT_LOAN_ALL = "-1";
 
 export interface LoanRegisterFormValues extends Omit<
   LoanRegisterRequestDto,
   "branchIds" | "loanTypeMasterId" | "collectorId" | "collectionCenterIds"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   loanTypeMasterId?: string;
   collectorId?: string;
   collectionCenterIds?: string;
@@ -43,11 +43,7 @@ const schema: yup.ObjectSchema<LoanRegisterFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup
-      .array()
-      .of(yup.string().required())
-      .optional()
-      .default(["2"]),
+    branchIds: yup.string().optional().default("2"),
     loanTypeMasterId: yup.string().optional().default("-1"),
     collectorId: yup.string().optional().default("-1"),
     collectionCenterIds: yup.string().optional().default("-1"),
@@ -60,11 +56,10 @@ const schema: yup.ObjectSchema<LoanRegisterFormValues> = yup
   .required();
 
 const toRequest = (v: LoanRegisterFormValues): LoanRegisterRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   const collectorNum = Number(v.collectorId);
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     loanTypeMasterId: v.loanTypeMasterId || undefined,
     collectorId:
       Number.isFinite(collectorNum) && collectorNum > 0

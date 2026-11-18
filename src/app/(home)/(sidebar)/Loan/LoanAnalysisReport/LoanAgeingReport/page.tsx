@@ -8,6 +8,7 @@ import type { LoanAgeingRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 import LoanAgeingForm from "@/components/reports/loanReport/LoanAnalysisReport/LoanAgeingForm";
+import { REPORT_TYPE_SCHEDULE_WISE } from "@/config/LoanReportOptions";
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -16,18 +17,16 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-const DATE_TYPE_ISSUE_DATE = "IssueDate";
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
-const AGEING_ON_PRINCIPAL = "Principal";
+const DATE_TYPE_ISSUE_DATE = "ID";
+const AGEING_ON_PRINCIPAL = "P";
 
 export interface LoanAgeingFormValues extends Omit<
   LoanAgeingRequestDto,
   "branchIds" | "memberGroupId" | "collectorId"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   memberGroupId?: string;
   collectorId?: string;
-  reportType?: string;
   language?: "English" | "Nepali";
 }
 
@@ -46,13 +45,12 @@ const schema: yup.ObjectSchema<LoanAgeingFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     memberGroupId: yup.string().optional().default("-1"),
     collectorId: yup.string().optional().default("-1"),
     showLoanIssueDate: yup.string().optional().default(DATE_TYPE_ISSUE_DATE),
-    reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
+    penaltyType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     ageingOn: yup.string().optional().default(AGEING_ON_PRINCIPAL),
-    penaltyType: yup.string().optional().default(""),
     isNepaliReport: yup.boolean().optional().default(false),
     language: yup
       .mixed<"English" | "Nepali">()
@@ -65,11 +63,9 @@ const schema: yup.ObjectSchema<LoanAgeingFormValues> = yup
   .required();
 
 const toRequest = (v: LoanAgeingFormValues): LoanAgeingRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
-
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     memberGroupId: v.memberGroupId || "-1",
     collectorId: v.collectorId || "-1",
     showLoanIssueDate: v.showLoanIssueDate || DATE_TYPE_ISSUE_DATE,

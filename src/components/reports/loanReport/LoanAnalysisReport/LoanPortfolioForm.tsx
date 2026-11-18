@@ -16,7 +16,7 @@ import {
 import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ReportNavigation, {
   type ReportFormat,
 } from "@/components/reportForm/Common/ReportNavigation";
@@ -94,9 +94,11 @@ export default function LoanPortfolioForm({
               gap: 2,
             }}
           >
-            <OfficeNameField<LoanPortfolioFormValues>
+            <BranchNameField<LoanPortfolioFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
             <VisualReportSwitch<LoanPortfolioFormValues>
               control={control}

@@ -17,13 +17,13 @@ import * as yup from "yup";
 
 const STATUS_OPEN = "Open";
 
-const REPORT_TYPE_DETAIL = "Detail";
+const REPORT_TYPE_DETAIL = "D";
 
 export interface LoanDetailPrincipalFormValues extends Omit<
   LoanDetailsRequestDto,
   "branchIds"
 > {
-  branchIds?: string[];
+  branchIds?: string;
 }
 
 export interface LoanDetailPrincipalResponseExtended {
@@ -53,7 +53,7 @@ const schema: yup.ObjectSchema<LoanDetailPrincipalFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     collectionCenterId: yup.string().optional().default("0"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     collectorId: yup.string().optional().default("-1"),
@@ -64,14 +64,13 @@ const schema: yup.ObjectSchema<LoanDetailPrincipalFormValues> = yup
   .required();
 
 const toRequest = (v: LoanDetailPrincipalFormValues): LoanDetailsRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   const collectorNum = Number(v.collectorId);
   return {
     loanTypeId: v.loanTypeId || undefined,
     status: v.status || STATUS_OPEN,
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     collectionCenterId: v.collectionCenterId || "0",
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     collectorId:

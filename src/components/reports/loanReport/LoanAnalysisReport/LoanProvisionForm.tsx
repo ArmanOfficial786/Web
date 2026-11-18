@@ -232,7 +232,7 @@ import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle"
 import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
   type ReportFormat,
@@ -334,9 +334,11 @@ export default function LoanProvisionForm({
               mode="BS"
               showFromDate={false}
             />
-            <OfficeNameField<LoanProvisionFormValues>
+            <BranchNameField<LoanProvisionFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
           </Box>
 
@@ -358,7 +360,7 @@ export default function LoanProvisionForm({
             />
             <FieldRow label="Report Type">
               <RadioInput
-                name="reportType"
+                name="penaltyType"
                 control={control}
                 radioOptions={reportTypeOptions}
                 row
@@ -399,7 +401,7 @@ export default function LoanProvisionForm({
                     "tillDateBs",
                     "branchIds",
                     "memberGroupId",
-                    "reportType",
+                    "penaltyType",
                   ]}
                 />
               </Box>

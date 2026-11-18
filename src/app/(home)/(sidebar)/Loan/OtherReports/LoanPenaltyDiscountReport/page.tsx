@@ -50,7 +50,7 @@ const schema: yup.ObjectSchema<LoanPenaltyDiscountFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.mixed<string | number>().nullable().optional().default("-1"),
+    branchIds: yup.mixed<string | number>().nullable().optional().default("2"),
 
     orderBy: yup.string().nullable().optional().default(""),
     visualReport: yup.boolean().optional().default(false),

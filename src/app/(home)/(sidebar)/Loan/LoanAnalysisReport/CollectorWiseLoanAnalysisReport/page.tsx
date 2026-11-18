@@ -11,6 +11,10 @@ import type {
 import * as yup from "yup";
 
 import CollectorWiseLoanAnalysisForm from "@/components/reports/loanReport/LoanAnalysisReport/CollectorWiseLoanAnalysisForm";
+import {
+  REPORT_TYPE_SCHEDULE_WISE,
+  REPORT_TYPE_SUMMARY,
+} from "@/config/LoanReportOptions";
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -19,19 +23,14 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
-
-const VIEW_TYPE_SUMMARY = "Summary";
-
 export interface CollectorWiseLoanAnalysisFormValues extends Omit<
   CollectorWiseLoanAnalysisRequestDto,
   "branchIds" | "collectorId" | "collectionCenterIds"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   collectorId?: string;
   collectionCenterIds?: string;
-  reportType?: string;
-  viewType?: string;
+
   groupByCollectionCenter?: boolean;
 }
 
@@ -60,19 +59,13 @@ const schema: yup.ObjectSchema<CollectorWiseLoanAnalysisFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup
-      .array()
-      .of(yup.string().required())
-      .optional()
-      .default(["2"]),
+    branchIds: yup.string().optional().default("2"),
     collectorId: yup.string().optional().default("-1"),
     collectionCenterIds: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     groupByCollectionCenter: yup.boolean().optional().default(false),
-    reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
-    viewType: yup.string().optional().default(VIEW_TYPE_SUMMARY),
-    penaltyType: yup.string().optional().default(""),
-    reportMode: yup.string().optional().default(""),
+    penaltyType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
+    reportMode: yup.string().optional().default(REPORT_TYPE_SUMMARY),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -81,12 +74,11 @@ const schema: yup.ObjectSchema<CollectorWiseLoanAnalysisFormValues> = yup
 const toRequest = (
   v: CollectorWiseLoanAnalysisFormValues,
 ): CollectorWiseLoanAnalysisRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   const collectorNum = Number(v.collectorId);
   return {
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     collectorId:
       Number.isFinite(collectorNum) && collectorNum > 0
         ? String(collectorNum)

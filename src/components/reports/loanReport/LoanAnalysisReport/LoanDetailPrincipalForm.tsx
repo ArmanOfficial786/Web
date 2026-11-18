@@ -24,7 +24,7 @@ import {
   LoanDetailPrincipalResponseExtended,
 } from "@/app/(home)/(sidebar)/Loan/LoanAnalysisReport/LoanDetailsPrincipalReport/page";
 import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -166,9 +166,11 @@ export default function LoanDetailPrincipalForm({
               mb: 0.5,
             }}
           >
-            <OfficeNameField<LoanDetailPrincipalFormValues>
+            <BranchNameField<LoanDetailPrincipalFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
             <Collector<LoanDetailPrincipalFormValues>
               control={control}

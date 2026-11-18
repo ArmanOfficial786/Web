@@ -19,7 +19,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
 import { LanguageSwitch } from "@/components/reportForm/Common/LanguageSwitch";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -115,9 +115,11 @@ export default function LoanAgeingForm({
               mode="BS"
               showFromDate={false}
             />
-            <OfficeNameField<LoanAgeingFormValues>
+            <BranchNameField<LoanAgeingFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -186,7 +188,7 @@ export default function LoanAgeingForm({
           >
             <FieldRow label="Report Type">
               <RadioInput
-                name="reportType"
+                name="penaltyType"
                 control={control}
                 radioOptions={reportTypeOptions}
                 row
@@ -238,7 +240,7 @@ export default function LoanAgeingForm({
                     "memberGroupId",
                     "collectorId",
                     "showLoanIssueDate",
-                    "reportType",
+                    "penaltyType",
                     "ageingOn",
                     "orderBy",
                   ]}

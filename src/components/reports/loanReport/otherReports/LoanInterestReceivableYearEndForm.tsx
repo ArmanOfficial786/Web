@@ -35,9 +35,9 @@ import FieldRow from "@/utilis/FieldRow";
 export type { ReportFormat };
 
 const selectTypeOptions = [
-  { value: "1", label: "As On Date" },
-  { value: "2", label: "Monthly" },
-  { value: "3", label: "Yearly" },
+  { value: "As", label: "As On Date" },
+  { value: "Monthly", label: "Monthly" },
+  { value: "Yearly", label: "Yearly" },
 ];
 
 interface LoanInterestReceivableYearEndFormProps {
@@ -197,27 +197,26 @@ function LoanInterestReceivableYearEndForm({
           </Box>
         </Paper>
 
+        {showReport && (
+          <>
+            <ReportNavigation
+              pdfData={pdfData ?? ""}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+              onDownload={onDownload}
+            />
 
-                {showReport && (
-                  <>
-                    <ReportNavigation
-                      pdfData={pdfData ?? ""}
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={onPageChange}
-                      onDownload={onDownload}
-                    />
-
-                    <Box ref={reportRef}>
-                      <ReportIframe
-                        src={pdfData!}
-                        page={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={onPageChange}
-                      />
-                    </Box>
-                  </>
-                )}
+            <Box ref={reportRef}>
+              <ReportIframe
+                src={pdfData!}
+                page={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </Box>
+          </>
+        )}
       </Box>
     </>
   );

@@ -17,9 +17,9 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
 import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -28,8 +28,8 @@ import ReportNavigation, {
 import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import LoanTypeField from "@/components/reportForm/Loan/LoanTypeField";
-import { provisionTypeOptions } from "@/config/LoanReportOptions";
 import FieldRow from "@/utilis/FieldRow";
+import { loanAnalysisReportTypeOptions } from "@/config/LoanReportOptions";
 
 export type { ReportFormat };
 
@@ -111,9 +111,11 @@ export default function LoanCICForm({
               mode="BS"
               showFromDate={false}
             />
-            <OfficeNameField<LoanCICFormValues>
+            <BranchNameField<LoanCICFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
           </Box>
           <Divider sx={{ mb: 0.5 }} />
@@ -152,7 +154,7 @@ export default function LoanCICForm({
               <RadioInput
                 name="provisionType"
                 control={control}
-                radioOptions={provisionTypeOptions}
+                radioOptions={loanAnalysisReportTypeOptions}
                 row
               />
             </FieldRow>

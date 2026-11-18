@@ -23,7 +23,7 @@ export interface LoanAgeingArrearCalculationFormValues extends Omit<
   LoanAgingArrealCalculationRequestDto,
   "branchIds" | "collectorId" | "collectionCenterId" | "memberGroupId"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   collectorId?: string;
   collectionCenterId?: string;
   memberGroupId?: string;
@@ -44,11 +44,7 @@ const schema: yup.ObjectSchema<LoanAgeingArrearCalculationFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup
-      .array()
-      .of(yup.string().required())
-      .optional()
-      .default(["2"]),
+    branchIds: yup.string().optional().default("2"),
     collectorId: yup.string().optional().default("-1"),
     collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
@@ -63,11 +59,9 @@ const schema: yup.ObjectSchema<LoanAgeingArrearCalculationFormValues> = yup
 const toRequest = (
   v: LoanAgeingArrearCalculationFormValues,
 ): LoanAgingArrealCalculationRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
-
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     collectorId: v.collectorId || "-1",
     collectionCenterId: v.collectionCenterId || "-1",
     enableCollectionCenter: v.enableCollectionCenter ?? false,

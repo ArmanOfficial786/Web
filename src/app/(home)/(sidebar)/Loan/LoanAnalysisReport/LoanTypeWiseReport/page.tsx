@@ -16,11 +16,11 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-const LOAN_GUARANTEE_ALL = "All";
+const LOAN_GUARANTEE_ALL = "-1";
 
-const SHARE_TYPE_ALL = "All";
-const SHARE_TYPE_PROMOTER = "Promoter";
-const SHARE_TYPE_SHARE_HOLDER = "ShareHolder";
+const SHARE_TYPE_ALL = "-1";
+const SHARE_TYPE_PROMOTER = "1";
+const SHARE_TYPE_SHARE_HOLDER = "3";
 
 const shareTypeToNumber = (v: string | undefined): number | undefined => {
   if (!v || v === SHARE_TYPE_ALL) return undefined;
@@ -38,7 +38,7 @@ export interface LoanTypeWiseFormValues extends Omit<
   | "loanTypeId"
   | "shareType"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   memberGroupId?: string;
   collectionCenterId?: string;
   collectorId?: string;
@@ -71,11 +71,7 @@ const schema: yup.ObjectSchema<LoanTypeWiseFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup
-      .array()
-      .of(yup.string().required())
-      .optional()
-      .default(["2"]),
+    branchIds: yup.string().optional().default("2"),
     collectionCenterId: yup.string().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     collectorId: yup.string().optional().default("-1"),
@@ -95,12 +91,11 @@ const schema: yup.ObjectSchema<LoanTypeWiseFormValues> = yup
   .required();
 
 const toRequest = (v: LoanTypeWiseFormValues): LoanTypeWiseRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   const collectorNum = Number(v.collectorId);
   return {
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     collectionCenterId: v.collectionCenterId || undefined,
     enableCollectionCenter: v.enableCollectionCenter ?? false,
     collectorId:

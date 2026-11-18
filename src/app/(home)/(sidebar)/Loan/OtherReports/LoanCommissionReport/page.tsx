@@ -43,6 +43,7 @@ const schema: yup.ObjectSchema<LoanCommissionFormValues> = yup
     collectorId: yup
       .number()
       .required("Collector Name is required")
+      .moreThan(0, "Collector Name is required")
       .default(-1),
     visualReport: yup.boolean().optional().default(false),
   })

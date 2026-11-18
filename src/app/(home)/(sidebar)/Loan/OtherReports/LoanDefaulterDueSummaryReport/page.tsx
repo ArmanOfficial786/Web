@@ -25,7 +25,7 @@ export interface LoanDefaulterDueSummaryResponseExtended {
   pagination?: Pagination;
 }
 
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWiseInterestReport";
+const REPORT_TYPE_SCHEDULE_WISE = "LDR";
 
 const schema: yup.ObjectSchema<LoanDefaulterDueSummaryFormValues> = yup
   .object({
@@ -35,7 +35,7 @@ const schema: yup.ObjectSchema<LoanDefaulterDueSummaryFormValues> = yup
       .nullable()
       .optional()
       .typeError("Till Date must be a valid date"),
-    branchIds: yup.string().nullable().optional().default("-1"),
+    branchIds: yup.string().nullable().optional().default("2"),
     collectionCenterId: yup.string().nullable().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     collectorId: yup.string().nullable().optional().default("-1"),

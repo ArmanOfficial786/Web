@@ -37,8 +37,8 @@ import FieldRow from "@/utilis/FieldRow";
 
 export type { ReportFormat };
 
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWiseInterestReport";
-const REPORT_TYPE_TILL_DATE = "TillDateInterestReport";
+const REPORT_TYPE_SCHEDULE_WISE = "LDR";
+const REPORT_TYPE_TILL_DATE = "LDRTPR";
 
 interface LoanDefaulterDueSummaryFormProps {
   control: Control<LoanDefaulterDueSummaryFormValues>;
@@ -74,7 +74,7 @@ function LoanDefaulterDueSummaryForm({
 
   useEffect(() => {
     if (!enableCollectionCenter) {
-      setValue("collectionCenterId", 0 as any);
+      setValue("collectionCenterId", "-1");
     }
   }, [enableCollectionCenter, setValue]);
 

@@ -151,7 +151,7 @@ interface ReportFormContextType {
   fetchClearanceStatus: () => Promise<void>;
 }
 
-const DEFAULT_SELECT: SelectOption[] = [{ id: 0, name: "-- Select --" }];
+const DEFAULT_SELECT: SelectOption[] = [{ id: -1, name: "-- Select --" }];
 
 const ReportFormContext = createContext<ReportFormContextType | undefined>(
   undefined,
@@ -446,7 +446,6 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-
   const fetchShareType = useCallback(async () => {
     if (shareTypeFetchedRef.current) return;
     try {
@@ -656,8 +655,7 @@ export const ReportFormProvider = ({ children }: { children: ReactNode }) => {
     try {
       try {
         await getSession();
-      } catch {
-      }
+      } catch {}
 
       const res: AssetCategoryResponse[] =
         await assetCategoryService.getAllByType(type);

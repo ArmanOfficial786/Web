@@ -16,9 +16,9 @@ import {
 import RadioInput from "@/components/form/RadioInput";
 import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -109,9 +109,11 @@ export default function LoanAgingRiskCalculationForm({
               mode="BS"
               showFromDate={false}
             />
-            <OfficeNameField<LoanAgingRiskCalculationFormValues>
+            <BranchNameField<LoanAgingRiskCalculationFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
           </Box>
 
@@ -133,7 +135,7 @@ export default function LoanAgingRiskCalculationForm({
             />
             <FieldRow label="Report Type">
               <RadioInput
-                name="reportType"
+                name="penaltyType"
                 control={control}
                 radioOptions={reportTypeOptions}
                 row
@@ -188,7 +190,6 @@ export default function LoanAgingRiskCalculationForm({
                     "tillDateBs",
                     "branchIds",
                     "memberGroupId",
-                    "reportType",
                     "orderBy",
                   ]}
                 />
@@ -196,36 +197,6 @@ export default function LoanAgingRiskCalculationForm({
             </Grid>
           </Grid>
         </Paper>
-
-        {/* {showReport && (
-          <ReportNavigation
-            pdfData={pdfData ?? ""}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={onPageChange}
-            onDownload={onDownload}
-          />
-        )}
-
-        {showReport && (
-          <Box
-            ref={reportRef}
-            sx={{ position: "relative", height: "1000px", overflow: "hidden" }}
-          >
-            <embed
-              key={pdfData}
-              src={`${pdfData}#page=${currentPage}&toolbar=0&zoom=100`}
-              style={{
-                position: "absolute",
-                top: "-40px",
-                left: 0,
-                width: "100%",
-                height: "calc(100% + 40px)",
-                border: "none",
-              }}
-            />
-          </Box>
-        )} */}
 
         {showReport && (
           <>

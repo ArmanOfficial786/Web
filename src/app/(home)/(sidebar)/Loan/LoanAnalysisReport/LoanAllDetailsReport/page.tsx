@@ -19,7 +19,7 @@ export interface LoanDetailFormValues extends Omit<
   LoanAllDetailsRequestDto,
   "branchIds"
 > {
-  branchIds: string[];
+  branchIds: string;
   memberId?: string | null;
   memberName?: string;
   groupByMemberGroup?: boolean;
@@ -41,7 +41,7 @@ const schema: yup.ObjectSchema<LoanDetailFormValues> = yup
     collectorId: yup.string().nullable().optional().default("-1"),
     tillDateBs: yup.string().nullable().optional().default(""),
     status: yup.string().nullable().optional().default("All"),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     collectionCenterId: yup.string().nullable().optional().default("-1"),
     enableCollectionCenter: yup.boolean().optional().default(false),
     memberGroupId: yup.string().nullable().optional().default("-1"),
@@ -59,11 +59,10 @@ const schema: yup.ObjectSchema<LoanDetailFormValues> = yup
   .required();
 
 const toRequest = (v: LoanDetailFormValues): LoanAllDetailsRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
     memberRegistrationId: v.memberRegistrationId ?? -1,
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     loanTypeId: v.loanTypeId || "-1",
     status: v.status || "All",
     collectionCenterId: v.collectionCenterId || "-1",

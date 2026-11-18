@@ -8,6 +8,7 @@ import type { LoanCICRequestDto, Pagination } from "types/api/api";
 import * as yup from "yup";
 
 import LoanCICForm from "@/components/reports/loanReport/LoanAnalysisReport/LoanCICForm";
+
 import loanService from "@/services/Loan/loanService";
 import { responseToBlob } from "@/utilis/Constants/blobConverter";
 import { extractFilenameFromResponse } from "@/utilis/Constants/extractFilenameFromResponse";
@@ -16,13 +17,13 @@ import {
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
 
-const PROVISION_TYPE_SCHEDULE_WISE = "ScheduleWise";
+const REPORT_TYPE_SCHEDULE_WISE = "S";
 
 export interface LoanCICFormValues extends Omit<
   LoanCICRequestDto,
   "branchIds" | "loanTypeId"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   loanTypeId?: string;
 }
 
@@ -41,12 +42,9 @@ const schema: yup.ObjectSchema<LoanCICFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     loanTypeId: yup.string().optional().default("-1"),
-    provisionType: yup
-      .string()
-      .optional()
-      .default(PROVISION_TYPE_SCHEDULE_WISE),
+    provisionType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     enable1To30Days: yup.boolean().optional().default(false),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
@@ -54,12 +52,11 @@ const schema: yup.ObjectSchema<LoanCICFormValues> = yup
   .required();
 
 const toRequest = (v: LoanCICFormValues): LoanCICRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     loanTypeId: v.loanTypeId || undefined,
-    provisionType: v.provisionType || PROVISION_TYPE_SCHEDULE_WISE,
+    provisionType: v.provisionType || REPORT_TYPE_SCHEDULE_WISE,
     enable1To30Days: v.enable1To30Days ?? false,
     orderBy: v.orderBy || "",
     visualReport: v.visualReport ?? false,

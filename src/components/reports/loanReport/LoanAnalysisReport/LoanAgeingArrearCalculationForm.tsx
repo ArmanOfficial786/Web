@@ -20,7 +20,7 @@ import Preloader from "@/components/PreLoader/preloader";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -127,9 +127,11 @@ export default function LoanAgeingArrearCalculationForm({
               mode="BS"
               showFromDate={false}
             />
-            <OfficeNameField<LoanAgeingArrearCalculationFormValues>
+            <BranchNameField<LoanAgeingArrearCalculationFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
           </Box>
 

@@ -20,7 +20,7 @@ export interface LoanInformationFormValues extends Omit<
   LoanInformationRequestDto,
   "branchIds" | "memberGroupId"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   memberGroupId?: string;
 }
 
@@ -49,7 +49,7 @@ const schema: yup.ObjectSchema<LoanInformationFormValues> = yup
         if (!fromDateBs || !val) return true;
         return String(val) >= String(fromDateBs);
       }),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     loanTypeId: yup.string().optional().default("-1"),
     memberGroupId: yup.string().optional().default("-1"),
     orderBy: yup.string().optional().default(""),
@@ -58,11 +58,10 @@ const schema: yup.ObjectSchema<LoanInformationFormValues> = yup
   .required();
 
 const toRequest = (v: LoanInformationFormValues): LoanInformationRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     loanTypeId: v.loanTypeId || undefined,
     memberGroupId: v.memberGroupId || "-1",
     orderBy: v.orderBy || "",

@@ -18,10 +18,10 @@ import CheckboxInput from "@/components/form/CheckboxInput";
 import RadioInput from "@/components/form/RadioInput";
 import { useVisualReportToggle } from "@/components/hooks/useVisualReportToggle";
 import Preloader from "@/components/PreLoader/preloader";
+import BranchNameField from "@/components/reportForm/Common/BranchNameField";
 import ClearFormButton from "@/components/reportForm/Common/ClearFormButton";
 import CollectionCenterField from "@/components/reportForm/Common/CollectionCenter";
 import DateFields from "@/components/reportForm/Common/DateFiels";
-import OfficeNameField from "@/components/reportForm/Common/OfficeNameField";
 import OrderByField from "@/components/reportForm/Common/OrderByFields";
 import ReportIframe from "@/components/reportForm/Common/ReportIframe";
 import ReportNavigation, {
@@ -31,8 +31,8 @@ import ViewReportButton from "@/components/reportForm/Common/ViewReportButton";
 import { VisualReportSwitch } from "@/components/reportForm/Common/VisualReportSwitch";
 import Collector from "@/components/reportForm/MemberAccount/Collector";
 import {
+  detailReportTypeOptions as reportModeOptions,
   loanAnalysisReportTypeOptions as reportTypeOptions,
-  viewTypeOptions,
 } from "@/config/LoanReportOptions";
 import FieldRow from "@/utilis/FieldRow";
 
@@ -130,9 +130,11 @@ export default function CollectorWiseLoanAnalysisForm({
               mb: 0.5,
             }}
           >
-            <OfficeNameField<CollectorWiseLoanAnalysisFormValues>
+            <BranchNameField<CollectorWiseLoanAnalysisFormValues>
               control={control}
+              setValue={setValue}
               branchFieldName="branchIds"
+              defaultBranchId={2}
             />
             <Collector<CollectorWiseLoanAnalysisFormValues>
               control={control}
@@ -191,9 +193,9 @@ export default function CollectorWiseLoanAnalysisForm({
             </FieldRow>
             <FieldRow label="View Type">
               <RadioInput
-                name="viewType"
+                name="reportMode"
                 control={control}
-                radioOptions={viewTypeOptions}
+                radioOptions={reportModeOptions}
                 row
               />
             </FieldRow>
@@ -210,7 +212,7 @@ export default function CollectorWiseLoanAnalysisForm({
           >
             <FieldRow label="Report Type">
               <RadioInput
-                name="reportType"
+                name="penaltyType"
                 control={control}
                 radioOptions={reportTypeOptions}
                 row
@@ -259,8 +261,7 @@ export default function CollectorWiseLoanAnalysisForm({
                     "collectionCenterIds",
                     "enableCollectionCenter",
                     "groupByCollectionCenter",
-                    "reportType",
-                    "viewType",
+                    "penaltyType",
                     "orderBy",
                   ]}
                 />

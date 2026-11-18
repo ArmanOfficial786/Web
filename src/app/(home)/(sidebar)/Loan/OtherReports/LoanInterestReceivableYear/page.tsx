@@ -16,7 +16,7 @@ import type {
 } from "types/api/api";
 import * as yup from "yup";
 
-const DEFAULT_SELECT_TYPE = "1";
+const DEFAULT_SELECT_TYPE = "As";
 
 export type LoanInterestReceivableYearEndFormValues =
   LoanInterestReceivableYearEndRequestDto;

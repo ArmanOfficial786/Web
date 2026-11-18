@@ -15,16 +15,14 @@ import {
   DefaultPagination,
   ReportFormat,
 } from "@/utilis/Constants/reportConstants";
-
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
+import { REPORT_TYPE_SCHEDULE_WISE } from "@/config/LoanReportOptions";
 
 export interface LoanAgeingTypeWiseFormValues extends Omit<
   LoanAgeingTypeWiseRequestDto,
   "branchIds" | "memberGroupId"
 > {
-  branchIds?: string[];
+  branchIds?: string;
   memberGroupId?: string;
-  reportType?: string;
 }
 
 export interface LoanAgeingTypeWiseResponseExtended {
@@ -42,11 +40,10 @@ const schema: yup.ObjectSchema<LoanAgeingTypeWiseFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     memberGroupId: yup.string().optional().default("-1"),
-    penaltyType: yup.string().optional().default(""),
+    penaltyType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     withMemberCount: yup.boolean().optional().default(false),
-    reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     orderBy: yup.string().optional().default(""),
     visualReport: yup.boolean().optional().default(false),
   })
@@ -55,10 +52,9 @@ const schema: yup.ObjectSchema<LoanAgeingTypeWiseFormValues> = yup
 const toRequest = (
   v: LoanAgeingTypeWiseFormValues,
 ): LoanAgeingTypeWiseRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     memberGroupId: v.memberGroupId || "-1",
     penaltyType: v.penaltyType || undefined,
     withMemberCount: v.withMemberCount ?? false,

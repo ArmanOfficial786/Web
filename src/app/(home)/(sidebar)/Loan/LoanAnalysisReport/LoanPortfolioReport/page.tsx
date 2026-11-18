@@ -20,7 +20,7 @@ export interface LoanPortfolioFormValues extends Omit<
   LoanPortfolioRequestDto,
   "branchIds"
 > {
-  branchIds?: string[];
+  branchIds?: string;
 }
 
 export interface LoanPortfolioResponseExtended {
@@ -31,15 +31,14 @@ export interface LoanPortfolioResponseExtended {
 
 const schema: yup.ObjectSchema<LoanPortfolioFormValues> = yup
   .object({
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
 const toRequest = (v: LoanPortfolioFormValues): LoanPortfolioRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     visualReport: v.visualReport ?? false,
   };
 };

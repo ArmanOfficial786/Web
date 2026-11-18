@@ -16,15 +16,13 @@ import {
   parseViewResponse,
   useReportPages,
 } from "@/utilis/Constants/reportView";
-
-const REPORT_TYPE_SCHEDULE_WISE = "ScheduleWise";
+import { REPORT_TYPE_SCHEDULE_WISE } from "@/config/LoanReportOptions";
 
 export interface LoanProvisionFormValues extends Omit<
   LoanProvisionRequestDto,
   "branchIds"
 > {
-  branchIds?: string[];
-  reportType?: string;
+  branchIds?: string;
 }
 
 export interface LoanProvisionResponseExtended {
@@ -43,19 +41,17 @@ const schema: yup.ObjectSchema<LoanProvisionFormValues> = yup
       .nullable()
       .optional()
       .required(DATE_REQUIRED_MESSAGE),
-    branchIds: yup.array().of(yup.string().required()).optional().default([]),
+    branchIds: yup.string().optional().default("2"),
     memberGroupId: yup.string().optional().default("-1"),
-    penaltyType: yup.string().optional().default(""),
-    reportType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
+    penaltyType: yup.string().optional().default(REPORT_TYPE_SCHEDULE_WISE),
     visualReport: yup.boolean().optional().default(false),
   })
   .required();
 
 const toRequest = (v: LoanProvisionFormValues): LoanProvisionRequestDto => {
-  const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
     tillDateBs: v.tillDateBs || undefined,
-    branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
+    branchIds: String(v.branchIds || "2"),
     memberGroupId: v.memberGroupId || "-1",
     penaltyType: v.penaltyType || undefined,
     visualReport: v.visualReport ?? false,
