@@ -6,6 +6,8 @@ const nextConfig = {
   // Generate standalone production output for deployment
   output: "standalone",
 
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
+
   // Webpack configuration
   webpack: (config) => {
     config.resolve.fallback = {
