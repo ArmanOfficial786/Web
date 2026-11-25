@@ -163,7 +163,6 @@ export interface CashAndBankBalanceRequestDto {
   branchId?: string | null;
   orderBy?: string | null;
   nepaliReport?: boolean;
-  visualReport?: boolean;
 }
 
 export interface CashFlowDetailsRequest {
@@ -850,7 +849,6 @@ export interface IBTTransactionRequestDto {
   toDateBs?: string | null;
   branchId?: string | null;
   orderBy?: string | null;
-  visualReport?: boolean;
 }
 
 export interface InterestAndTaxDetailRequestDto {
@@ -906,7 +904,6 @@ export interface LedgerDetailsReqResponse {
   selectedAccountType?: number;
   showOpeningBalance?: boolean;
   isSummary?: boolean;
-  visualReport?: boolean;
 }
 
 export interface LmtLoanMaseterListResponse {
@@ -1090,11 +1087,11 @@ export interface LoanEvaluationReqResponse {
 }
 
 export interface LoanFineInterestPrinciplePaymentSummaryRequestDto {
-  /** @format int64 */
-  memberRegistrationId?: number;
+  memberId?: string | null;
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
+  reportType?: string | null;
   collectionCenterId?: string | null;
   enableCollectionCenter?: boolean;
   collectorId?: string | null;
@@ -1313,8 +1310,7 @@ export interface LoanStatementRequestDto {
 }
 
 export interface LoanStatementVerificationRequestDto {
-  /** @format int64 */
-  memberRegistrationId?: number;
+  memberId?: string | null;
   fromDateBs?: string | null;
   toDateBs?: string | null;
   branchIds?: string | null;
@@ -1570,14 +1566,6 @@ export interface MemberLookUpDtos {
   gender?: string | null;
   temporaryAddress?: string | null;
   mobileNo?: string | null;
-  /** @format int32 */
-  totalCount?: number;
-  /** @format int32 */
-  currentPage?: number;
-  /** @format int32 */
-  pageSize?: number;
-  /** @format int32 */
-  totalPages?: number;
 }
 
 export interface MemberPenaltyDepositWithdrawRequest {
@@ -1595,6 +1583,8 @@ export interface MemberPenaltyDepositWithdrawRequest {
 }
 
 export interface MemberSelectedDto {
+  /** @format int64 */
+  memMemberRegistrationId?: number;
   memberId?: string | null;
   memberName?: string | null;
 }
@@ -1696,12 +1686,6 @@ export interface Pagination {
   hasNextPage?: boolean | null;
   hasPreviousPage?: boolean | null;
   items?: any[] | null;
-}
-
-export interface ReportResponseDtos {
-  pdfData?: string | null;
-  reportName?: string | null;
-  pagination?: Pagination;
 }
 
 export interface PaginationOfLoanAccountLookUpDtos {
