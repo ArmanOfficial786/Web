@@ -8,6 +8,10 @@ const nextConfig = {
 
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
 
+  env: {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+  },
+
   // Webpack configuration
   webpack: (config) => {
     config.resolve.fallback = {
