@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 import * as yup from "yup";
 import type {
   PayableInterestTransferredRequestDto,
-  ReportResponseDtos,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import PayableInterestTransferredForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/InterestExpenseReport/PayableInterestTransferredForm";

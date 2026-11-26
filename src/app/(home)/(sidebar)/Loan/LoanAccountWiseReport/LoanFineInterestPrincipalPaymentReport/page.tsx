@@ -44,7 +44,6 @@ const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<LoanPrincipalInterestFinePaymentFormValues> = yup
   .object({
-    memberRegistrationId: yup.number().optional().default(-1),
     memberId: yup.string().optional().default(""),
     memberName: yup.string().optional().default(""),
     fromDateBs: yup
@@ -82,7 +81,7 @@ const toRequest = (
 ): LoanFineInterestPrinciplePaymentSummaryRequestDto => {
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   return {
-    memberRegistrationId: v.memberRegistrationId || -1,
+    memberId: v.memberId || undefined,
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
@@ -111,7 +110,6 @@ function LoanPrincipalInterestFinePaymentPage(): React.ReactElement {
 
   const handleMemberSelect = useCallback(
     (record: AccountLookUpDtos) => {
-      setValue("memberRegistrationId", record.mamAccountOpeningId ?? 0);
       setValue("memberId", record.memberId ?? "");
       setValue("memberName", record.memberName ?? "");
     },

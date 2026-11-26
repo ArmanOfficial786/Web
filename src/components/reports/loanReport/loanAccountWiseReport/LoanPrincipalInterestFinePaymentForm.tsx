@@ -253,7 +253,6 @@ export default function LoanPrincipalInterestFinePaymentForm({
                 <ClearFormButton
                   setValue={setValue}
                   clearFields={[
-                    "memberRegistrationId",
                     "memberId",
                     "memberName",
                     "fromDateBs",

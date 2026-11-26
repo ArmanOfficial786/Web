@@ -14,8 +14,8 @@ import { toast } from "react-toastify";
 import type {
   InterestPayableRequestDto,
   Pagination,
-  ReportResponseDtos,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import * as yup from "yup";
 
 export type InterestPayableFormValues = InterestPayableRequestDto;

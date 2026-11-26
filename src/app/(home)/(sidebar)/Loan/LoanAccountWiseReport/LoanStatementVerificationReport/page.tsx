@@ -40,7 +40,6 @@ const DATE_REQUIRED_MESSAGE = "Please select date";
 
 const schema: yup.ObjectSchema<LoanStatementVerificationFormValues> = yup
   .object({
-    memberRegistrationId: yup.number().optional().default(0),
     memberId: yup.string().optional().default(""),
     memberName: yup.string().optional().default(""),
     fromDateBs: yup
@@ -71,7 +70,7 @@ const toRequest = (
   const selectedIds = (v.branchIds ?? []).map(String).filter(Boolean);
   const collectorNum = Number(v.collectorId);
   return {
-    memberRegistrationId: v.memberRegistrationId || 0,
+    memberId: v.memberId || undefined,
     fromDateBs: v.fromDateBs || undefined,
     toDateBs: v.toDateBs || undefined,
     branchIds: selectedIds.length === 0 ? "-1" : selectedIds.join(","),
@@ -96,7 +95,6 @@ function LoanStatementVerificationPage(): React.ReactElement {
 
   const handleMemberSelect = useCallback(
     (record: AccountLookUpDtos) => {
-      setValue("memberRegistrationId", record.mamAccountOpeningId ?? 0);
       setValue("memberId", record.memberId ?? "");
       setValue("memberName", record.memberName ?? "");
     },

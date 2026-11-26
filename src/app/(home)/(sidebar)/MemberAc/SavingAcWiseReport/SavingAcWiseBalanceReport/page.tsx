@@ -40,10 +40,10 @@ import React, {
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import {
-  ReportResponseDtos,
   type Pagination,
   type SavingAcWiseBalanceRequest,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import * as yup from "yup";
 import memberAccountService from "@/services/memberAccount/memberAccountService";
 

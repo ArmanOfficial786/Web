@@ -8,8 +8,8 @@ import * as yup from "yup";
 import type {
   CollectorWiseCommissionSummaryRequestDto,
   Pagination,
-  ReportResponseDtos,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import CollectorWiseCommissionSummaryForm, {
   type ReportFormat,
 } from "@/components/reports/memberAccount/CollectorWiseCommissionReport/CollectorWiseCommissionSummaryForm";

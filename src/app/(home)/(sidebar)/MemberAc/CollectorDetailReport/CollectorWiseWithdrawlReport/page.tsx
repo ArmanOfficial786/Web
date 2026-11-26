@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 import type {
   CollectorWiseWithdrawalRequestDto,
   Pagination,
-  ReportResponseDtos,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import * as yup from "yup";
 
 import type { ReportFormat } from "@/components/reportForm/Common/ReportNavigation";

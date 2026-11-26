@@ -47,7 +47,7 @@
 
 
 
-import type { ReportResponseDtos } from "../../types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 
 export type ViewResult = {
   isView: true;

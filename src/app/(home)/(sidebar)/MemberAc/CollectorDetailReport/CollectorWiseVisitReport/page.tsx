@@ -15,8 +15,8 @@ import { toast } from "react-toastify";
 import type {
   CollectorWiseVisitRequestDto,
   Pagination,
-  ReportResponseDtos,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import * as yup from "yup";
 
 export type CollectorWiseVisitFormValues = CollectorWiseVisitRequestDto;

@@ -175,7 +175,6 @@ export default function LoanStatementVerificationForm({
                 <ClearFormButton
                   setValue={setValue}
                   clearFields={[
-                    "memberRegistrationId",
                     "memberId",
                     "memberName",
                     "fromDateBs",

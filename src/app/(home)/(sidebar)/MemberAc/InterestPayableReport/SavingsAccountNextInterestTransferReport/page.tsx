@@ -13,9 +13,9 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify";
 import type {
   Pagination,
-  ReportResponseDtos,
   SavingsAccountInterestTransferRequestDto,
 } from "types/api/api";
+import type { ReportResponseDtos } from "types/reportTypes";
 import * as yup from "yup";
 
 export type SavingAccountNextInterestTransferFormValues = Omit<
